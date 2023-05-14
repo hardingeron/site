@@ -123,10 +123,17 @@ def logout():
 @app.route('/change', methods=['POST', 'GET'])
 @login_required
 def change():
-    try:
+
+    if request.method == 'GET':
+        flight = request.args.get('flight')
+        number = request.args.get('number')
+
         myrecord = db.session.query(Purcell).filter_by(flight=flight, number=number).first()
 
+    try:
+
         if request.method == 'POST':
+            myrecord = db.session.query(Purcell).filter_by(flight=request.form['flight'], number=int(request.form['number'])).first()
             session = db.session()
             myrecord.sender = request.form['sender']
             myrecord.sender_phone = request.form['sender_phone']
@@ -142,6 +149,7 @@ def change():
             myrecord.flight = request.form['flight']
             session.commit()
             return redirect(url_for('all'))
+
     except ValueError:
         flash('ჩაწერეთ კორექტული მონაცემები!', category='error')
     menu=Menu.query.all()
@@ -150,21 +158,9 @@ def change():
 
 
 
-@app.route('/edit', methods=['POST', 'GET'])
-@login_required
-def edit():
-    distinct_flights = [flight for flight, in db.session.query(Purcell.flight.distinct()).order_by(Purcell.flight.desc()).all()]
-    global number, flight
-    if request.method == 'POST':
-        number = request.form['parcell_number']
-        flight = request.form['flight']
-        if db.session.query(Purcell).filter_by(flight=request.form['flight'], number=request.form['parcell_number']).first():
-            return redirect(url_for('change', flight=flight, number=number))
-        else:
-            flash('ამანათი ამ ნომრით არ არსებობს!', category='error')
-    menu=Menu.query.all()
-    db.session.close()
-    return render_template('edit.html', menu=menu, reis=distinct_flights)
+
+
+
 
 
 

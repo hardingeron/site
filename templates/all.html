@@ -57,7 +57,7 @@
                     <td>
                         <span class="hidden-inventory">{{ data.inventory }}</span>
                         <img class="icon" src="/static/images/check.jpg" onclick="openModal('{{ data.inventory }}')">
-                        <img src="/static/images/edit.jpg" class="icon" onclick="openEditModal('{{ data.number }}', '{{ data.flight }}')">
+                        <img src="/static/images/edit.jpg" class="icon" onclick="window.location.href='/change?number={{ data.number }}&flight={{ data.flight }}'">
                         <img src="/static/images/photo.png" class="icon" onclick="openImageModal('{{ data.image }}')">
                         
 
@@ -74,6 +74,7 @@
     {% for cat, msg in get_flashed_messages(True) %}
     <div class='flash {{cat}}'>{{msg}}</div>
     {% endfor %}
+
 
 
 
@@ -136,6 +137,14 @@ window.onclick = function(event) {
     modal.style.display = "none";
   }
 }
+
+
+
+
+
+
+
+
 
 
     </script>

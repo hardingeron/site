@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    სია
+{% endblock %}
+{% block content %}
+
+
+<div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <img id="imageModalImg" class="modal-content">
+  </div>
+
+    <div class="bg-image"></div>
+    <div class="all-filter">
+        <form class="filter">
+          <input type="text" id="flight-filter" name="flight-filter" placeholder="ფილტრი :">
+          <input type="text" id="filter-1" name="filter-1" placeholder="ფილტრი :">
+        </form>
+      </div>
+
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>გამგზავნი</th>
+                    <th>გამგზავნის ტელეფონი</th>
+                    <th>მიმღები</th>
+                    <th>მიმღების ტელეფონი</th>
+                    <th>ღირებულება</th>
+                    <th>პასპორტი</th>
+                    <th>წონა</th>
+                    <th>პასუხისმგებლობა</th>
+                    <th>ქალაქი</th>
+                    <th>თარიღი</th>
+                    <th>აღწერილობა</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for data in all_data %}
+                <tr class="table-row">
+                    <td>{{ data.number }}</td>
+                    <td>{{ data.sender }}</td>
+                    <td>{{ data.sender_phone }}</td>
+                    <td>{{ data.recipient }}</td>
+                    <td>{{ data.recipient_phone }}</td>
+                    <td {% if data.cost.startswith('-') %}style="color:#f24949;"{% elif data.cost.startswith('+') %}style="color:green;"{% else %}style="color:black;"{% endif %}>
+                        {{ data.cost }}
+                      </td>
+                    <td>{{ data.passport }}</td>
+                    <td>{{ data.weight }}</td>
+                    <td>{{ data.responsibility }}</td>
+                    <td>{{ data.city }}</td>
+                    <td>{{ data.flight }}</td>
+                    <td>
+                        <span class="hidden-inventory">{{ data.inventory }}</span>
+                        <img class="icon" src="/static/images/check.jpg" onclick="openModal('{{ data.inventory }}')">
+                        <img src="/static/images/edit.jpg" class="icon" onclick="openEditModal('{{ data.number }}', '{{ data.flight }}')">
+                        <img src="/static/images/photo.png" class="icon" onclick="openImageModal('{{ data.image }}')">
+                        
+
+
+                    </td>
+
+
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div class='flash {{cat}}'>{{msg}}</div>
+    {% endfor %}
+
+
+
+    
+<script>
+const filterInput = document.getElementById('flight-filter');
+const filterInput1 = document.getElementById('filter-1');
+const tableRows = document.querySelectorAll('.table-row');
+
+filterInput.addEventListener('keyup', function() {
+    const filterValue = this.value.trim().toLowerCase();
+
+    for (let i = 0; i < tableRows.length; i++) {
+        const row = tableRows[i];
+        const rowText = row.innerText.toLowerCase();
+        const filterText = filterInput1.value.trim().toLowerCase();
+
+        if (rowText.includes(filterValue) && rowText.includes(filterText)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+});
+
+filterInput1.addEventListener('keyup', function() {
+    const filterValue = this.value.trim().toLowerCase();
+
+    for (let i = 0; i < tableRows.length; i++) {
+        const row = tableRows[i];
+        const rowText = row.innerText.toLowerCase();
+        const filterText = filterInput.value.trim().toLowerCase();
+
+        if (rowText.includes(filterValue) && rowText.includes(filterText)) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    }
+});
+
+
+
+function openImageModal(imageUrl) {
+  var modal = document.getElementById("imageModal");
+  var img = document.getElementById("imageModalImg");
+  img.src = imageUrl;
+  modal.style.display = "block";
+}
+
+var span = document.getElementsByClassName("close")[0];
+span.onclick = function() {
+  var modal = document.getElementById("imageModal");
+  modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+  var modal = document.getElementById("imageModal");
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

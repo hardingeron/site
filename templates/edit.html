@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    {{ super() }}
+    რედაქტირება
+{% endblock %}
+{% block content %}
+    <div class="frame_edit">
+    <form action="edit" method="POST" class="edit_">
+        <p><label>ჩაწერეთ ამანათის ნომერი :</label><input type="text" name='parcell_number' required></p>
+        <p><label>ამოირჩიეთ რეისი :</label></p>
+        <select id="city-select" name="flight" class="form-control_edit">
+            {% for n in reis %}
+            <option value={{n}}>{{n}}</option>
+            {% endfor %}
+        </select>
+        <input class="edit_button" type="submit" value="რედაქტირება"/>
+    </form>
+    </div>
+{% for cat, msg in get_flashed_messages(True) %}
+<div class='flash {{cat}}'>{{msg}}</div>
+{% endfor %}
+
+{% endblock %}

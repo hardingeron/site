@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/static/images/icon.jpg">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <header class="header">
+        <nav class="menu">
+            <ul class="menu__list">
+                {% for n in menu %}
+                    <li class="menu__item">
+                        <a href="{{ n.url }}" class="menu__link">{{ n.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </header>
+    
+    <div class="content">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>
+
+
+
+
+
+
+

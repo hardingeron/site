@@ -4,19 +4,19 @@ from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, UserMixin, login_user, logout_user, current_user
 import os
-
+from functools import wraps
 from models import Purcell, db, User, login_manager, Menu
+from config import secret_key
 
 
-
-
-SECRET_KEY = 'eryi734i3nwe#^##*@&howijeoijojyYUNO55%&&@#whoi***hnjker'
+SECRET_KEY = secret_key
 app = Flask(__name__)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///packages.db'
+
 app.config.from_object(__name__)
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(minutes=90)
 app.config['PERMANENT_SESSION_LIFETIME'] = 5400
-
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/images')
 
 db.init_app(app)
@@ -26,30 +26,17 @@ login_manager.login_view = 'login'
 
 
 
-@app.route('/all', methods=['POST', 'GET'])
-@login_required
-def all():
+def roles_required(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            if current_user.role not in roles:
+                flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+                return redirect(url_for('all'))
+            return f(*args, **kwargs)
+        return wrapped
+    return wrapper
 
-    now = datetime.utcnow()
-    sixty_days_ago = now - timedelta(days=60)
-    all_data = list(reversed(Purcell.query.filter(Purcell.date >= sixty_days_ago).all()))
-    
-    menu = Menu.query.all()
-    db.session.close()
-    return render_template('all.html', menu=menu, all_data=all_data)
-
-
-
-
-@app.route('/', methods=['POST', 'GET'])
-@login_required
-def index():
-    db.session.close()
-    now = datetime.utcnow()
-    seventy_days_ago = now - timedelta(days=70)
-    old_data = Purcell.query.filter(Purcell.date < seventy_days_ago).delete()
-    db.session.commit()
-    return redirect(url_for('add'))
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -67,8 +54,32 @@ def login():
     return render_template('login.html', menu=menu)
 
 
+@app.route('/all', methods=['POST', 'GET'])
+@login_required
+def all():
+
+    now = datetime.utcnow()
+    sixty_days_ago = now - timedelta(days=60)
+    all_data = list(reversed(Purcell.query.filter(Purcell.date >= sixty_days_ago).all()))
+    
+    menu = Menu.query.all()
+    db.session.close()
+    return render_template('all.html', menu=menu, all_data=all_data)
+
+
+@app.route('/', methods=['POST', 'GET'])
+@login_required
+def index():
+    db.session.close()
+    now = datetime.utcnow()
+    seventy_days_ago = now - timedelta(days=70)
+    old_data = Purcell.query.filter(Purcell.date < seventy_days_ago).delete()
+    db.session.commit()
+    return redirect(url_for('all'))
+
 
 @app.route('/add', methods=['POST', 'GET'])
+@roles_required('admin')
 @login_required
 def add():
     last_record = db.session.query(Purcell).order_by(Purcell.id.desc()).first()
@@ -121,6 +132,7 @@ def logout():
 
 
 @app.route('/change', methods=['POST', 'GET'])
+@roles_required('admin')
 @login_required
 def change():
 
@@ -155,14 +167,6 @@ def change():
     menu=Menu.query.all()
     db.session.close()
     return render_template('change.html', menu=menu, edit=myrecord)
-
-
-
-
-
-
-
-
 
 
 

@@ -228,18 +228,18 @@
 
 
 .flash.success {
-  background: linear-gradient(to bottom right, #88c1db, #dfe9f3);
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 25%;
   max-width: 300px;
   padding: 10px;
+  background-color: #42a429;
   box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
   z-index: 9999;
-  border-radius: 5px; /* добавлено свойство для закругления граней */
-  color:  #007c0e;
-  font-weight: bold;
+  border-radius: 5px;
+  color: #fff; /* цвет текста */
+  text-align: center; /* выравнивание текста по центру */
+  font-family: Arial, sans-serif; /* выбранный шрифт */
 
 
 
@@ -250,15 +250,16 @@
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 25%;
   max-width: 300px;
   padding: 10px;
   background-color: #ff0000;
   box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
   z-index: 9999;
-  border-radius: 5px; /* добавлено свойство для закругления граней */
+  border-radius: 5px;
+  color: #fff; /* цвет текста */
+  text-align: center; /* выравнивание текста по центру */
+  font-family: Arial, sans-serif; /* выбранный шрифт */
 }
-
 
 
 

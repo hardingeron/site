@@ -1,28 +1,35 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, UserMixin, login_user, logout_user, current_user
-import os
+import os  
 from functools import wraps
 from models import Purcell, db, User, login_manager, Menu
 from config import secret_key
+import mysql
 
 
 SECRET_KEY = secret_key
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///packages.db'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://hardinger:ЙфяУвсЙцуЯчсЙысУыя123@localhost/packages'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:QazEdcQweZxcQscEsz123@localhost/packages'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Отключает отслеживание изменений
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=6)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/images')
 
 app.config.from_object(__name__)
-app.config['REMEMBER_COOKIE_DURATION'] = timedelta(minutes=90)
-app.config['PERMANENT_SESSION_LIFETIME'] = 5400
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/images')
 
 db.init_app(app)
 
 login_manager.init_app(app)
 login_manager.login_view = 'login'
+
+
+
+
 
 
 
@@ -36,6 +43,9 @@ def roles_required(*roles):
             return f(*args, **kwargs)
         return wrapped
     return wrapper
+
+
+
 
 
 
@@ -57,7 +67,6 @@ def login():
 @app.route('/all', methods=['POST', 'GET'])
 @login_required
 def all():
-
     now = datetime.utcnow()
     sixty_days_ago = now - timedelta(days=60)
     all_data = list(reversed(Purcell.query.filter(Purcell.date >= sixty_days_ago).all()))
@@ -80,7 +89,6 @@ def index():
 
 @app.route('/add', methods=['POST', 'GET'])
 @roles_required('admin')
-@login_required
 def add():
     last_record = db.session.query(Purcell).order_by(Purcell.id.desc()).first()
     
@@ -171,7 +179,8 @@ def change():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run(host='0.0.0.0')
 
 # with app.app_context():
 #     db.create_all()

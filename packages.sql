@@ -24,8 +24,8 @@ DROP TABLE IF EXISTS `menu`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `menu` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `name` varchar(8) DEFAULT NULL,
-  `url` varchar(8) DEFAULT NULL
+  `name` varchar(25) DEFAULT NULL,
+  `url` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -57,7 +57,7 @@ CREATE TABLE `purcell` (
   `passport` varchar(50) DEFAULT NULL,
   `weight` varchar(50) DEFAULT NULL,
   `responsibility` varchar(50) DEFAULT NULL,
-  `number` tinyint(4) DEFAULT NULL,
+  `number` tinyint(5) DEFAULT NULL,
   `city` varchar(50) DEFAULT NULL,
   `date` varchar(50) DEFAULT NULL,
   `flight` varchar(50) DEFAULT NULL,
@@ -85,9 +85,9 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `login` varchar(13) DEFAULT NULL,
-  `psw` varchar(102) DEFAULT NULL,
-  `role` varchar(5) DEFAULT NULL
+  `login` varchar(25) DEFAULT NULL,
+  `psw` varchar(200) DEFAULT NULL,
+  `role` varchar(25) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, UserMixin, login_user, logout_user, current_user
+import mysql
 
 
 db = SQLAlchemy()

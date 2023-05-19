@@ -68,9 +68,13 @@
 
                 </tr>
                 {% endfor %}
+
             </tbody>
+
         </table>
     </div>
+
+
     {% for cat, msg in get_flashed_messages(True) %}
     <div class='flash {{cat}}'>{{msg}}</div>
     {% endfor %}

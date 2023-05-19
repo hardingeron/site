@@ -663,3 +663,60 @@ input {
   border-radius: 5px;
   color: #000000;
 }
+
+
+
+/*404*/
+.not_found_img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../images/not_found.jpg");
+  background-size: cover;
+  opacity: 0.9;
+  z-index: -1;
+  background-position: center; /* Центрирование изображения */
+
+}
+
+
+.not_found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  text-align: center;
+  color: white;
+  margin-left: 5%;
+}
+
+.not_found h1 {
+  margin-left: 5%;
+  font-size: 36px;
+  margin-bottom: -15px;
+}
+
+.not_found h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.not_found a {
+  display: inline-block;
+  font-size: 18px;
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-left: 5%;
+  
+}
+
+.not_found a:hover {
+  background-color: gray;
+  color: white;
+}

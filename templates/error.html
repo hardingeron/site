@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    გვერდი არ მოიძებნა
+{% endblock %}
+{% block content %}
+<div class="not_found_img"></div>
+
+
+{% block styles_js %}
+{{ super() }}
+{% endblock %}
+
+
+
+
+<div class="not_found">
+<h1>OOOPS......</h1>
+<h2>ასეთი გვერდი არ არსებობს</h2>
+<a href="{{ url_for('all') }}">დაბრუნება</a>
+</div>
+
+
+
+
+
+
+{% endblock %}

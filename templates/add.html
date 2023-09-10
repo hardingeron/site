@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    დამატება
+    {% endblock %}
+
+{% block content %}
+    <div class="bg-image"></div>
+
+    {% block styles_js %}
+    {{ super() }}
+    {% endblock %}
+
+    <form action="add" method="post" class="add" enctype="multipart/form-data">
+        <div class="add_block">
+            <div class="head">
+                <h2>დამატება</h2>
+            </div>
+
+            <div class="flight_and_img">
+                <div class="flight_block">
+                    <label>გაგზავნის თარიღი</label>
+                    {% if fl %}    
+                    <input type="date" name="flight" value="{{fl}}" required class="fandm">
+                    {% else %}
+                    <input type="date" name="flight" value="{{fl}}" required class="fandm">
+                    {% endif %}
+                </div>
+                <div class="photo_block">
+                    <label>ფოტოს ატვირთვა</label>
+                    <input type="file" id="photo" required name="photo" class="fandm">
+                </div>
+            </div>
+            <div class="sender_block">
+                <div class="sender_name_block">
+                    <label>გამზავნი</label>
+                    <input type="text" name="sender" required value="{{ request.form.sender }}">
+                </div>
+                <div class="sender_phone_block">
+                    <label>გამგზავნის ტელ</label>
+                    <input type="text" name="sender_phone" required value="{{ request.form.sender_phone }}">                    
+                </div>
+            </div>
+            <div class="recipient_block">
+                <div class="recipient_name_block">
+                    <label>მიმღები</label>
+                    <input type="text" name="recipient"  required value="{{ request.form.sender_phone }}">
+                </div>
+                <div class="recipient_phone block">
+                    <label>მიმღების ტელ</label>
+                    <input type="text" name="recipient_phone" required value="{% if not request.form.recipient_phone %}+7{% else %}{{ request.form.recipient_phone }}{% endif %}">
+                </div>
+            </div>
+            <div class="description_block">
+                <label>აღწერა</label>
+                <textarea name="inventory" required>{{ request.form.inventory }}</textarea>
+            </div>
+            <div class="information_one_block">
+                <div class="weight_block">
+                    <label>წონა</label>
+                    <input type="text" name="weight" required class="information {{ 'invalid' if request.form.weight and not request.form.weight.isdigit() }}" value="{{ request.form.weight }}">
+
+                </div>
+                <div class="responsibility_block">
+                    <label>ღირებულება</label>
+                    <input type="text" name="responsibility" required value="{{ request.form.responsibility }}">
+                </div>
+                <div class="passport_block">
+                    <label>პასპორტი</label>
+                    <input type="text" name="passport" required value="{{ request.form.passport }}">
+                </div>
+            </div>
+
+            <div class="information_two_block">
+                <div class="number">
+                    <label>ნომერი</label>
+                    <input type="text" name="number" value="{{last_record}}" required>
+                </div>
+                <div class="price">
+                    <label>ფასი</label>
+                    <input type="text" name="cost" required value="{{ request.form.cost }}">
+                </div>
+                <div class="city">
+                    <label>ქალაქი</label>
+                    <select id="city-select" name="city">
+                        <option value="Moscow">Moscow</option>
+                        <option value="S.P.B">S.P.B</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="payment_block">
+                <label>
+                    <input type="radio" name="payment" value="paid" required>
+                    <span>გადახდილი</span>
+                </label>
+                <label>
+                    <input type="radio" name="payment" value="not_paid">
+                    <span>გადასახდელი</span>
+                </label>
+                <label>
+                    <input type="radio" name="payment" value="card">
+                    <span>ბარათით</span>
+                </label>
+            </div>
+            
+        <div class="button_block">
+            <input type="submit" value="დასრულება">
+        </div>
+
+    </form>
+    
+
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div class='flash {{cat}}'>{{msg}}</div>
+    {% endfor %}
+
+    
+    <script>
+        //проверка на числа в весе
+        document.addEventListener('DOMContentLoaded', function() {
+            const weightInput = document.querySelector('input[name="weight"]');
+            const form = document.querySelector('form.add');
+            
+            form.addEventListener('submit', function(event) {
+                if (weightInput && weightInput.value !== '' && !isNumeric(weightInput.value)) {
+                    event.preventDefault(); // Отменить отправку формы
+                    weightInput.classList.add('invalid');
+                }
+            });
+            
+            weightInput.addEventListener('input', function() {
+                weightInput.classList.remove('invalid'); // Убрать подсветку при вводе
+            });
+        });
+
+        function isNumeric(value) {
+            return !isNaN(parseFloat(value)) && isFinite(value);
+        }
+
+
+        // проверка на правильность введения номера получателя
+            document.addEventListener('DOMContentLoaded', function() {
+        const senderPhoneInput = document.querySelector('input[name="recipient_phone"]');
+        const form = document.querySelector('form.add');
+        
+        form.addEventListener('submit', function(event) {
+            if (senderPhoneInput) {
+                const inputValue = senderPhoneInput.value.trim();
+                const validFormat = /^(\+7\d{10}|\?)$/.test(inputValue);
+                
+                if (!validFormat) {
+                    event.preventDefault(); // Отменить отправку формы
+                    senderPhoneInput.classList.add('invalid');
+                }
+            }
+        });
+        
+        senderPhoneInput.addEventListener('input', function() {
+            senderPhoneInput.classList.remove('invalid'); // Убрать подсветку при вводе
+        });
+    });
+
+    //проверка на правильность номера отправителя
+    document.addEventListener('DOMContentLoaded', function() {
+    const senderPhoneInput = document.querySelector('input[name="sender_phone"]');
+    const form = document.querySelector('form.add');
+    
+    form.addEventListener('submit', function(event) {
+        if (senderPhoneInput) {
+            const inputValue = senderPhoneInput.value.trim();
+            const validFormat = /^(\d{9}|\?)$/.test(inputValue);
+            
+            if (!validFormat) {
+                event.preventDefault(); // Отменить отправку формы
+                senderPhoneInput.classList.add('invalid');
+            }
+        }
+    });
+    
+    senderPhoneInput.addEventListener('input', function() {
+        senderPhoneInput.classList.remove('invalid'); // Убрать подсветку при вводе
+    });
+});
+
+
+
+    
+    
+</script>
+    </body>
+
+{% endblock %}
+
+

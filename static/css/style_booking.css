@@ -1,0 +1,56 @@
+  /* Стили для контейнера с календарем */
+  .calendar-container {
+    margin: auto;
+    margin-top: 100px; /* Добавьте вертикальный отступ, если нужно */
+    /* Ваши стили для .calendar-container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 350px;
+    height: 450px;
+    background-color: white; /* Белая рамка */
+    border-radius: 10px; /* Убираем углы */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Добавляем тень */
+    padding: 20px;
+  }
+
+  /* Стили для календаря */
+  #calendar {
+    border: 1px solid transparent; /* Прозрачная рамка */
+    padding: 20px;
+    width: 300px; /* Ширина календаря */
+    height: 300px; /* Высота календаря */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Добавляем тень */
+    border-radius: 10px;
+  }
+
+  /* Стили для выбора маршрута */
+  label {
+    margin-top: 10px;
+    font-size: 16px;
+  }
+
+  #route {
+    margin-bottom: 20px;
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  /* Стили для кнопки "Выбрать" */
+  #select-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #3498db; /* Приятный синий цвет */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Добавляем тень */
+  }
+
+  #select-button:disabled {
+    background-color: #bdc3c7; /* Цвет кнопки, когда она неактивна */
+    cursor: not-allowed;
+  }
+

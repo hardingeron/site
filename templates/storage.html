@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    დამატება
+{% endblock %}
+
+{% block content %}
+{% block styles_storage %}
+    {{ super() }}
+{% endblock %}
+
+<div class="bg-image"></div>
+<div class="storage_forms">
+    <div id="add-container">
+        <div class="storage_add">
+            <form id="add-form" class="add-form" action="/save">
+                <label class="add_name">დამატება</label>
+                <input type="text" name="shelf" id="add_shelf" value="{{ last }}" autocomplete="off" placeholder="თარო" class="input-centered">
+                <input type="text" name="trecing" id="add_trecing" autocomplete="off" placeholder="თრექინგი" class="input-centered">
+                <input type="submit" value="დამატება">
+            </form>
+        </div>
+    </div>
+
+    <div class="storage_find">
+        <form id="find-form" class="find-form" action="/find" method="POST">
+            <label class="find_name">ძიება</label>
+            <div id="location-container">
+                <input type="text" name="shelf" id="find_shelf" readonly value="{{ location }}" class="input-centered">
+            </div>
+            <div class="f">
+                <input type="text" name="trecing" id="find_trecing" autocomplete="off" placeholder="თრექინგი" class="input-centered">
+                <input type="text" name="info" id="trecing_info" autocomplete="off" placeholder="კომენტარი" class="input-centered">
+            </div>
+            <input type="submit" value="ძიება" id="f_s">
+        </form>
+        <div id="result-container"></div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#add_trecing').focus();
+
+        $('#add-form').submit(function(event) {
+            event.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/save',
+                data: formData,
+                success: function(response) {
+                    var lastShelf = response.last;
+
+                    $('#add_shelf').val(lastShelf);
+                    $('#add_trecing').val('').blur();
+                    $('#add_trecing').focus();
+                },
+                error: function() {
+                    console.log('Ошибка при выполнении AJAX-запроса');
+                }
+            });
+        });
+
+        $('#find-form').submit(function(event) {
+            event.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: '/find',
+                data: formData,
+                success: function(response) {
+                    var location = response.shelf;
+
+                    $('#location-container').html('<input type="text" name="shelf" id="find_shelf" readonly value="' + location + '" class="input-centered">');
+                    $('#find_trecing').val('');
+                    $('#result-container').html(response.otherData);
+                    $('#find_trecing').focus();
+                },
+                error: function() {
+                    console.log('Ошибка при выполнении AJAX-запроса');
+                }
+            });
+        });
+    });
+</script>
+
+{% for cat, msg in get_flashed_messages(True) %}
+    <div class='flash {{cat}}'>{{msg}}</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,769 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    ჯავშანი
+    {% endblock %}
+
+{% block content %}
+<div class="bg-image"></div>
+<head>
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_reservation.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+
+<body>
+
+  
+
+  
+  <div class="bus_color">
+    <div class="bus_container">
+      <h1 class="bus_header_text">
+        {% if reis == '1' %}
+            მგზავრობა თბილისიდან მოსკოვში
+        {% elif reis == '2' %}
+            მგზავრობა მოსკოვიდან თბილისში
+        {% endif %}
+      </h1>
+      <div class="bus">
+        <div class="bus-seats">
+          {% for seat_number in range(1, 52, 4) %}
+              {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': ''}) %}
+              {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                                    else 'female_seats' if seat['gender'] == 'female'
+                                    else 'none_seats' %}
+              {% set payment_class = 'positive-payment' if seat['payment'] and (seat['payment'][0] == '+' or seat['payment'][0] == 'C')
+                                    else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                    else '' %}
+              
+              <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+                  <div class="seat-number">{{ seat_number }}</div>  
+                  <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
+                      <div class="name">{{ seat['name'] }}</div>
+                      <div class="phone">{{ seat['phone'] }}</div>
+                      <div class="payment">{{ seat['payment'] }}</div>
+                  </div>
+              </div>
+          {% endfor %}
+      </div>
+        
+        
+        <div class="bus-seats_2">
+          {% for seat_number in range(2, 51, 4) %}
+          {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': ''}) %}
+          {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                                else 'female_seats' if seat['gender'] == 'female'
+                                else 'none_seats' %}
+          {% set payment_class = 'positive-payment' if seat['payment'] and (seat['payment'][0] == '+' or seat['payment'][0] == 'C')
+                                else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                else '' %}
+          
+          <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+              <div class="seat-number">{{ seat_number }}</div>  
+              <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
+                  <div class="name">{{ seat['name'] }}</div>
+                  <div class="phone">{{ seat['phone'] }}</div>
+                  <div class="payment">{{ seat['payment'] }}</div>
+              </div>
+          </div>
+      {% endfor %}
+  </div>
+        
+          <div class="defit_block"></div>
+
+          <div class="bus-seats_3">
+            {% for seat_number in range(3, 48, 4) %}
+              {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': ''}) %}
+              {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                                else 'female_seats' if seat['gender'] == 'female'
+                                else 'none_seats' %}
+              {% set payment_class = 'positive-payment' if seat['payment'] and seat['payment'][0] == '+' or seat['payment'][0] == 'C'
+                                else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                else '' %}
+          <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+              <div class="seat-number">{{ seat_number }}</div>  
+              <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
+                  <div class="name">{{ seat['name'] }}</div>
+                  <div class="phone">{{ seat['phone'] }}</div>
+                  <div class="payment">{{ seat['payment'] }}</div>
+                </div>
+              </div>
+              {% if seat_number == 27 %}
+                <div class="door"></div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          
+          
+          <div class="bus-seats_4">
+            {% for seat_number in range(4, 49, 4) %}
+              {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': ''}) %}
+              {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                                else 'female_seats' if seat['gender'] == 'female'
+                                else 'none_seats' %}
+              {% set payment_class = 'positive-payment' if seat['payment'] and seat['payment'][0] == '+' or seat['payment'][0] == 'C'
+                                else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                else '' %}
+          <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+              <div class="seat-number">{{ seat_number }}</div>  
+              <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
+                  <div class="name">{{ seat['name'] }}</div>
+                  <div class="phone">{{ seat['phone'] }}</div>
+                  <div class="payment">{{ seat['payment'] }}</div>
+                </div>
+              </div>
+              {% if seat_number == 28 %}
+                <div class="door"></div>
+              {% endif %}
+            {% endfor %}
+          </div>
+          
+          
+
+          
+
+        </div>
+        <div class="bus-seats_5">
+          {% for seat_number in range(51, 56) %}
+            {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': ''}) %}
+            {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                              else 'female_seats' if seat['gender'] == 'female'
+                              else 'none_seats' %}
+            {% set payment_class = 'positive-payment' if seat['payment'] and seat['payment'][0] == '+' or seat['payment'][0] == 'C'
+                              else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                              else '' %}
+          <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+              <div class="seat-number">{{ seat_number }}</div>  
+              <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
+                <div class="name">{{ seat['name'] }}</div>
+                <div class="phone">{{ seat['phone'] }}</div>
+                <div class="payment">{{ seat['payment'] }}</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+    </div>
+
+
+  
+    
+  </div>
+
+
+  <div class="hidden_circ">
+    <label id="sum_rub">{{sum_rub}}</label>
+    <label id="sum_gel">{{sum_gel}}</label>
+    <label id="sum_card_gel">{{sum_card_gel}}</label>
+    <label id="sum_card_rub">{{sum_card_rub}}</label>
+    
+    <label id="male_count">{{ male_count }}</label>
+    <label id="female_count">{{ female_count }}</label>
+    <label id="number_of_free_records"> {{ number_of_free_records }}</label>
+    <label id="came_count">{{ came_count }}</label>
+    <label id="came_of_count_free">{{ came_of_count_free }}</label>
+  </div>
+
+  <div class="buttons_block_stat-ved">
+    <form id="download_form" action="/download_ved" method="POST">
+      <input type="hidden" name="reis" value="">
+      <input type="hidden" name="selected_date" value="">
+      <button type="submit" id="download_dev">ვედომოსტი</button>
+    </form>
+    <button id="openModal">სტატისტიკა</button>
+
+  </div>
+
+
+
+
+
+
+
+
+
+  <!-- Модальное окно -->
+  <div id="modal">
+    
+    <div class="exit_ticet_block">
+      <button type="button" class="ticket-button">ბილეთი</button>
+      <button id="delete">წაშლა</button>
+      <button id="action">მოვიდა</button>
+      <button id="exit">დახურვა</button>
+    </div>
+
+    <form id="modal-form" data-seat-number="{{ seat_number }}">
+      <h2 class="modal_text_block">ჩაწერეთ მონაცემები:</h2>
+      <input type="hidden" value="" name="old_seat_number">
+      <input type="hidden" value="{{reis}}" name="reis" required readonly><br>
+      <input type="hidden" value="{{d}}" name="selected_date" required readonly><br>
+  
+      <div class="chair_block">
+        <label>ადგილი</label>
+        <input type="text" value="" name="s_n" required ><br>
+      </div>
+  
+      <div class="gender_block">
+        <label>სქესი</label>
+        <input type="radio" id="male" name="gender" value="male" required>
+        <label>მმ</label>
+        <input type="radio" id="female" name="gender" value="female" required>
+        <label>მდ</label><br>
+      </div>
+  
+      <div class="fl_name_phone_block">
+        <div class="fl_name_block">
+          <label>სახელი გვარი</label>
+          <input type="text" name="flname" required ><br>
+        </div>
+        <div class="phone_block">
+          <label>ტელეფონი</label>
+          <input type="text" name="phone" required ><br>
+        </div>
+      </div>
+  
+      <div class="pass_comm_block">
+        <div class="passport_block">
+          <label>პასპორტი</label>
+          <input type="text" name="pasport" required ><br>
+        </div>
+        <div class="comment_block">
+          <label>კომენტარი</label>
+          <input type="text" name="comment" required ><br>
+        </div>
+      </div>
+      
+      <div class="pay_dest_block">
+        <div class="pay_block">
+          <label>გადახდა</label>
+          <input type="text" name="payment" required><br>
+        </div>
+        <div class="destination_block">
+          <label>დანიშნულება</label>
+          <select name="destination" required>
+            <option value="Москва">Москва</option>
+            <option value="Тула">Тула</option>
+            <option value="Воронеж">Воронеж</option>
+            <option value="Павловск">Павловск</option>
+            <option value="Богучар">Богучар</option>
+            <option value="Миллерово">Миллерово</option>
+            <option value="Каменск-Шахтинск">Каменск-Шахтинск</option>
+            <option value="Ростов">Ростов</option>
+            <option value="Тихорецк">Тихорецк</option>
+            <option value="Кропоткин">Кропоткин</option>
+            <option value="Армавир">Армавир</option>
+            <option value="Невинномысск">Невинномысск</option>
+            <option value="Мин. Воды">Мин. Воды</option>
+            <option value="Пятигорск">Пятигорск</option>
+            <option value="Владикавказ">Владикавказ</option>
+          </select><br>
+        </div>
+      </div>
+      
+      <div class="pay_radio_block">
+        <input type="radio" name="payment_method" value="+" required>
+        <label>ნაღდი</label>
+        <input type="radio" name="payment_method" value="C" required>
+        <label>ბარათი</label>
+        <input type="radio" name="payment_method" value="-" required>
+        <label>-</label><br>
+      </div>
+      
+      <div class="pay_radio_block_two">
+        <input type="radio" name="payment_method_card" value="GEL" required>
+        <label>ლარი</label>
+        <input type="radio" name="payment_method_card" value="RUB" required>
+        <label>რუბლი</label>
+      </div>
+  
+      <div class="button_block">
+        <input type="submit" value="დაჯავშნა">
+      </div>
+    </form>
+    
+    <div class="edit_block">
+      <button id="edit">რედაქტირება</button>
+    </div>
+    <div class="error_block">
+      <div id="error-message"></div>
+    </div>
+  </div>
+  
+
+  <div id="myModal" class="modal_statistic">
+    <div class="modal_statistic-content">
+          <h2 class="statistic_text">სტატისტიკა</h2>
+          <span class="close">&times;</span>
+          <div class="diagram_box_block">
+              <div class="diagram_block">
+                  <canvas id="myChart"></canvas>
+              </div>
+              <div class="diagram_block_two">
+                  <canvas id="combinedChart"></canvas>
+              </div>
+              <div class="diagram_block_three">
+                  <canvas id="cameChart"></canvas>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+
+<script>
+const modal = document.getElementById('modal');
+const modalForm = document.getElementById('modal-form');
+const submitButton = modalForm.querySelector('[type="submit"]');
+const editButton = document.getElementById('edit');
+const seats = document.querySelectorAll('.seat');
+let selectedSeatNumber = null;
+const exitButton = document.getElementById('exit');
+
+
+
+
+
+seats.forEach(seat => {
+  seat.addEventListener('click', () => {
+    selectedSeatNumber = seat.getAttribute('data-seat-number');
+    const seatDataJSON = '{{ seat_data|tojson|safe }}';
+    const seatData = JSON.parse(seatDataJSON)[selectedSeatNumber];
+
+    modalForm['selected_date'].value = '{{ d }}';
+    modalForm['gender'].value = seatData ? seatData.gender : '';
+    modalForm['flname'].value = seatData ? seatData.name : '';
+    modalForm['phone'].value = seatData ? seatData.phone : '';
+    modalForm['pasport'].value = seatData ? seatData.pasport : '';
+    modalForm['comment'].value = seatData ? seatData.comment : '';
+    modalForm['payment'].value = seatData ? seatData.payment : '';
+    modalForm['destination'].value = seatData ? seatData.destination : '';
+
+    const seatNumberInput = modalForm.querySelector('[name="s_n"]');
+    seatNumberInput.value = selectedSeatNumber;
+
+    if (seatData && seatData.name) {
+      submitButton.style.display = 'none';
+      submitButton.disabled = true;
+
+      if (editButton) {
+        editButton.style.display = 'block';
+      }
+
+      if (deleteButton) {
+        deleteButton.style.display = 'block';
+      }
+    } else {
+      submitButton.style.display = 'block';
+      submitButton.disabled = false;
+
+      if (editButton) {
+        editButton.style.display = 'none';
+      }
+
+      if (deleteButton) {
+        deleteButton.style.display = 'none';
+      }
+    }
+
+    // Обновляем значение старого места при открытии модального окна
+    const oldSeatNumberInput = modalForm.querySelector('[name="old_seat_number"]');
+    oldSeatNumberInput.value = selectedSeatNumber;
+
+    // Определение элементов радиокнопок
+    const paymentMethodRadios = modalForm.querySelectorAll('[name="payment_method"]');
+    const paymentMethodCardRadios = modalForm.querySelectorAll('[name="payment_method_card"]');
+
+    // Автозаполнение значений радиокнопок
+    if (seatData && seatData.payment) {
+      if (seatData.payment.includes('+')) {
+        paymentMethodRadios[0].checked = true;
+      } else if (seatData.payment.includes('C')) {
+        paymentMethodRadios[1].checked = true;
+      } else if (seatData.payment.includes('-')) {
+        paymentMethodRadios[2].checked = true;
+      }
+
+      if (seatData.payment.includes('GEL')) {
+        paymentMethodCardRadios[0].checked = true;
+      } else if (seatData.payment.includes('RUB')) {
+        paymentMethodCardRadios[1].checked = true;
+      }
+    } else {
+      // Если нет данных, снимаем выбор с радиокнопок
+      paymentMethodRadios.forEach(radio => {
+        radio.checked = false;
+      });
+
+      paymentMethodCardRadios.forEach(radio => {
+        radio.checked = false;
+      });
+    }
+
+    modal.style.display = 'block';
+  });
+});
+
+// ... (ваш текущий код для кнопки "Билет" и остальной код)
+
+
+modalForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  if (selectedSeatNumber !== null) {
+    const formData = new FormData(modalForm);
+    formData.append('seat_number', selectedSeatNumber);
+
+    const response = await fetch('/save_data', {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (response.ok) {
+      console.log('Данные успешно отправлены на сервер');
+      location.reload();
+    } else {
+      const responseData = await response.json();
+      console.error('Ошибка при отправке данных на сервер:', responseData.message);
+      // Отобразите сообщение об ошибке на странице
+      const errorMessageElement = document.getElementById('error-message');
+      errorMessageElement.textContent = responseData.message;
+      errorMessageElement.style.display = 'block';
+    }
+  } else {
+    console.error('Номер сиденья не выбран');
+  }
+});
+
+
+
+exitButton.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
+
+editButton.addEventListener('click', () => {
+  const gender = modalForm.querySelector('[name="gender"]:checked').value;
+  const flname = modalForm.querySelector('[name="flname"]').value;
+  const phone = modalForm.querySelector('[name="phone"]').value;
+  const pasport = modalForm.querySelector('[name="pasport"]').value;
+  const comment = modalForm.querySelector('[name="comment"]').value;
+  const payment = modalForm.querySelector('[name="payment"]').value;
+  const destination = modalForm.querySelector('[name="destination"]').value;
+  const reis = modalForm.querySelector('[name="reis"]').value;
+  const selectedDate = modalForm.querySelector('[name="selected_date"]').value;
+  const oldSeatNumberInput = modalForm.querySelector('[name="s_n"]');
+  const oldSeatNumber = oldSeatNumberInput.value.trim(); // Удаляем лишние пробелы
+
+  const selectedPaymentMethod = modalForm.querySelector('[name="payment_method"]:checked');
+  const paymentMethod = selectedPaymentMethod ? selectedPaymentMethod.value : '';
+
+  const selectedPaymentMethodCard = modalForm.querySelector('[name="payment_method_card"]:checked');
+  const paymentMethodCard = selectedPaymentMethodCard ? selectedPaymentMethodCard.value : '';
+
+  const formData = new FormData();
+  formData.append('seat_number', selectedSeatNumber);
+  formData.append('gender', gender);
+  formData.append('flname', flname);
+  formData.append('phone', phone);
+  formData.append('pasport', pasport);
+  formData.append('comment', comment);
+  formData.append('payment', payment);
+  formData.append('destination', destination);
+
+  // Добавляем старое место в FormData, если оно не пустое
+  if (oldSeatNumber !== '') {
+    formData.append('old_seat_number', oldSeatNumber);
+  }
+
+  formData.append('reis', reis);
+  formData.append('selected_date', selectedDate);
+  formData.append('payment_method', paymentMethod);
+  formData.append('payment_method_card', paymentMethodCard);
+
+  fetch('/edit_booking', {
+    method: 'POST',
+    body: formData,
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        console.log('Данные успешно обновлены');
+        location.reload();
+      } else {
+        console.error('Ошибка при обновлении данных:', data.message);
+        const errorMessageElement = document.getElementById('error-message');
+        errorMessageElement.textContent = data.message;
+        errorMessageElement.style.display = 'block';
+
+        // Скрываем сообщение через 2 секунды
+        setTimeout(() => {
+          errorMessageElement.style.display = 'none';
+        }, 2000);
+      }
+    });
+});
+
+
+const deleteButton = document.getElementById('delete');
+let deleteConfirmation = false;
+
+deleteButton.addEventListener('click', () => {
+  if (!deleteConfirmation) {
+    if (confirm('დარწმუნებული ხარ, რომ ბრონის წაშლა გინდა?')) {
+      // Выполняем удаление
+      const formData = new FormData();
+      formData.append('s_n', selectedSeatNumber);
+      formData.append('reis', modalForm.querySelector('[name="reis"]').value);
+      formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
+
+      fetch('/booking_del', {
+        method: 'POST',
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log('Бронирование успешно удалено');
+            location.reload();
+          } else {
+            console.error('Ошибка при удалении бронирования:', data.message);
+          }
+        });
+
+      deleteConfirmation = true;
+    }
+  }
+});
+
+
+
+
+
+
+const downloadForm = document.getElementById('download_form');
+const reisInput = downloadForm.querySelector('[name="reis"]');
+const selectedDateInput = downloadForm.querySelector('[name="selected_date"]');
+const downloadButton = downloadForm.querySelector('#download_dev');
+
+downloadButton.addEventListener('click', () => {
+  const reisValue = modalForm.querySelector('[name="reis"]').value;
+  const selectedDateValue = modalForm.querySelector('[name="selected_date"]').value;
+  
+  reisInput.value = reisValue; // Заполняем скрытые поля в форме
+  selectedDateInput.value = selectedDateValue;
+
+  downloadForm.submit(); // Отправляем форму на сервер
+});
+
+
+// Остальной код остается неизменным
+
+// ... Ваш текущий код ...
+
+// Объявляем переменную для кнопки "Билет"
+const ticketButton = document.querySelector('.ticket-button');
+
+ticketButton.addEventListener('click', async () => {
+  const formData = new FormData();
+  formData.append('s_n', selectedSeatNumber);
+  formData.append('reis', modalForm.querySelector('[name="reis"]').value);
+  formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
+
+  const response = await fetch('/ticket', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (response.ok) {
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = response.headers.get('content-disposition').split('filename=')[1];
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    console.log('Билет успешно сгенерирован');
+  } else {
+    const responseData = await response.json();
+    console.error('Ошибка при генерации билета:', responseData.message);
+    const errorMessageElement = document.getElementById('error-message');
+    errorMessageElement.textContent = responseData.message;
+    errorMessageElement.style.display = 'block';
+  }
+});
+
+// ... Остальной код ...
+
+
+</script>
+
+<script>
+  var sum_rub = parseFloat(document.querySelector('#sum_rub').textContent);
+  var sum_gel = parseFloat(document.querySelector('#sum_gel').textContent);
+  var sum_card_gel = parseFloat(document.querySelector('#sum_card_gel').textContent);
+  var sum_card_rub = parseFloat(document.querySelector('#sum_card_rub').textContent);
+
+  var ctx = document.getElementById('myChart').getContext('2d');
+  
+  var data = {
+      labels: ['რუბლი', 'ლარი', 'ბარათი (GEL)', 'ბარათი (RUB)'],
+      datasets: [{
+          data: [sum_rub, sum_gel, sum_card_gel, sum_card_rub],
+          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50']
+      }]
+  };
+
+  var options = {
+      responsive: true,
+      maintainAspectRatio: false
+  };
+
+  var myChart = new Chart(ctx, {
+      type: 'pie',
+      data: data,
+      options: options
+  });
+</script>
+
+
+<script>
+  var male_count = parseInt(document.querySelector('#male_count').textContent);
+  var female_count = parseInt(document.querySelector('#female_count').textContent);
+  var number_of_free_records = parseInt(document.querySelector('#number_of_free_records').textContent);
+
+  var ctx = document.getElementById('combinedChart').getContext('2d');
+
+  var data = {
+      labels: ['მამაკაცი', 'ქალბატონი', 'ცარიელი'],
+      datasets: [{
+          data: [male_count, female_count, number_of_free_records],
+          backgroundColor: ['#1E90FF', '#FF1493', '#696969']
+      }]
+  };
+
+  var options = {
+      responsive: true,
+      maintainAspectRatio: false
+  };
+
+  var combinedChart = new Chart(ctx, {
+      type: 'pie',
+      data: data,
+      options: options
+  });
+</script>
+
+
+<script>
+  var came_count = parseInt(document.querySelector('#came_count').textContent);
+  var came_of_count_free = parseInt(document.querySelector('#came_of_count_free').textContent);
+
+  var ctx = document.getElementById('cameChart').getContext('2d');
+
+  var data = {
+      labels: ['მოვიდა', 'არ მოვიდა', 'ადგილების რაოდენობა 55'],
+      datasets: [{
+          data: [came_count, came_of_count_free],
+          backgroundColor: ['#1E90FF', '#FF1493']
+      }]
+  };
+
+  var options = {
+      responsive: true,
+      maintainAspectRatio: false
+  };
+
+  var cameChart = new Chart(ctx, {
+      type: 'pie',
+      data: data,
+      options: options
+  });
+</script>
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const actionButton = document.getElementById("action");
+
+  actionButton.addEventListener("click", () => {
+    const modalForm = document.getElementById("modal-form");
+
+    const formData = new FormData(modalForm);
+
+    fetch('/booking_action', {
+      method: 'POST',
+      body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        location.reload(); // Перезагрузка страницы после успешной передачи данных
+      } else {
+        const errorMessage = document.getElementById('error-message');
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = data.message;
+
+        // Установка таймера для скрытия сообщения через 4 секунды (4000 миллисекунд)
+        setTimeout(() => {
+          errorMessage.style.display = 'none';
+        }, 4000);
+      }
+    });
+  });
+});
+  </script>
+
+
+
+
+<script>
+    // Открытие модального окна при нажатии на кнопку
+  document.getElementById("openModal").addEventListener("click", function() {
+      document.getElementById("myModal").style.display = "block";
+  });
+
+  // Закрытие модального окна при нажатии на крестик
+  document.querySelector(".close").addEventListener("click", function() {
+      document.getElementById("myModal").style.display = "none";
+  });
+
+  // Закрытие модального окна при клике вне его
+  window.addEventListener("click", function(event) {
+      var modal = document.getElementById("myModal");
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  });
+
+</script>
+
+
+
+
+
+
+{% for cat, msg in get_flashed_messages(True) %}
+<div class='flash {{cat}}'>{{msg}}</div>
+{% endfor %}
+
+
+</body>
+</html>
+
+
+
+
+{% endblock %}
+
+
+
+
+
+
+
+

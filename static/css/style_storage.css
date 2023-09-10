@@ -1,0 +1,109 @@
+
+.storage_forms {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  width: 1200px;
+  margin: 0 auto;
+}
+
+.storage_add,
+.storage_find {
+    width: 575px;
+}
+
+.storage_add form,
+.storage_find form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(to bottom right, #88c1db, #dfe9f3);
+  padding: 15%;
+  margin-top: 40%;
+  border-radius: 15px;
+  width: 400px;
+  height: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.storage_add label,
+.storage_find label {
+  border-radius: 50px;
+  background-color: #336699;
+  color: #fff;
+  padding: 10px 20px;
+  margin-bottom: 80px;
+  width: 250px;
+  text-align: center;
+  margin-top: -110px;
+  font-size: 25px;
+}
+
+.storage_add input {
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 300px;
+  font-size: 20px;
+  margin-top: 10px;
+
+}
+
+#find_shelf {
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 300px;
+  font-size: 20px;
+  margin-top: 10px;
+
+}
+
+.f input[type="text"] {
+  width: 100px;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 138px;
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+#f_s {
+  background-color: #336699;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  width: 150px;
+  font-size: 20px;
+  margin-top: 10px;
+
+
+}
+
+
+
+.storage_add input[type="submit"] {
+  background-color: #336699;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  width: 150px;
+}
+
+
+.storage_add input[type="submit"]:hover,
+.storage_find input[type="submit"]:hover {
+  background-color: #305577;
+  cursor: pointer;
+}
+
+.input-centered {
+  text-align: center;
+}
+

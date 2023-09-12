@@ -1,7 +1,7 @@
 .add {
   width: 600px;
   height: 720px;
-  background: linear-gradient(to bottom right, #7dbbe0, #f5f9fd);
+  background: linear-gradient(to bottom right, #7dbbe0, #b1cae5, #d4dce9, #e9eefb, #f5f9fd);
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
   padding: 10px;
@@ -59,15 +59,16 @@
 .recipient_phone label,
 .description_block label {
   width: 220px;
-  height: 20px;
+  height: 25px;
   display: block;
-  background-color: #7dbbe0;
-  color: #fff;
+  /* background-color: #7dbbe0;
+  color: #fff; */
   text-align: center;
   line-height: 20px;
   font-size: 15px;
   border-radius: 10px 10px 0 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+  font-weight: bold;
 }
 
 .description_block label {
@@ -77,15 +78,16 @@
 .information_one_block label,
 .information_two_block label {
   width: 130px;
-  height: 20px;
+  height: 25px;
   display: block;
-  background-color: #7dbbe0;
-  color: #fff;
+  /* background-color: #7dbbe0;
+  color: #fff; */
   text-align: center;
   line-height: 20px;
   font-size: 15px;
   border-radius: 10px 10px 0 0;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+  font-weight: bold;
 }
 
 .information_one_block input,
@@ -143,7 +145,7 @@
   resize: none;
   outline: none;
   transition: background-color 0.2s, color 0.2s;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -182,7 +184,7 @@
   height: 40px;
   display: flex;
   justify-content: center;
-  margin-bottom: 35px;
+  margin-bottom: 20px;
 }
 
 .payment_block label {
@@ -191,12 +193,13 @@
   margin-bottom: 10px;
   cursor: pointer;
   padding: 10px;
-  background-color: #7dbbe0;
-  color: white;
+  /* background-color: #7dbbe0;
+  color: white; */
   border-radius: 5px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s, color 0.2s;
   font-size: 12px;
+  font-weight: bold;
 }
 
 .payment_block input[type="radio"] {
@@ -218,7 +221,7 @@
 }
 
 .button_block input[type="submit"] {
-  background-color: #4CAF50;
+  background-color: #82bcdf;
   color: white;
   border: none;
   padding: 10px 20px;

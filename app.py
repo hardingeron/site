@@ -7,7 +7,6 @@ from models import Purcell, db, User, login_manager, Menu, Storage, Booking
 from config import secret_key
 from sqlalchemy import func, desc
 
-from openpyxl import Workbook
 from flask import send_file
 from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl import Workbook, load_workbook
@@ -22,6 +21,13 @@ from PIL import Image
 from PIL.ExifTags import TAGS
 from sqlalchemy.exc import SQLAlchemyError
 import re
+from openpyxl.drawing.image import Image
+
+
+
+
+import qrcode
+
 
 
 
@@ -731,28 +737,19 @@ def generate_ticket():
             bold_font = Font(bold=True)
 
             apply_styles_to_cell(sheet, 'G5', booking.flname)
-            apply_styles_to_cell(sheet, 'G26', booking.flname)
-
+            
             apply_styles_to_cell(sheet, 'S5', booking.pasport)
-            apply_styles_to_cell(sheet, 'S26', booking.pasport)
 
             apply_styles_to_cell(sheet, 'N8', booking.data)
-            apply_styles_to_cell(sheet, 'N29', booking.data)
 
             apply_styles_to_cell(sheet, 'W8', booking.destination)
-            apply_styles_to_cell(sheet, 'W29', booking.destination)
 
             apply_styles_to_cell(sheet, 'A11', booking.position)
-            apply_styles_to_cell(sheet, 'A32', booking.position)
 
 
             sheet['A14'] = '11 : 00'
             sheet['A14'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['A14'].font = bold_font
-
-            sheet['A35'] = '11 : 00'
-            sheet['A35'].alignment = Alignment(horizontal='center', vertical='center')
-            sheet['A35'].font = bold_font
 
 
             if booking.gender == 'male':
@@ -762,13 +759,6 @@ def generate_ticket():
             sheet['G8'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['G8'].font = bold_font
 
-
-            if booking.gender == 'male':
-                sheet['G29'] = 'М / მმ'
-            elif booking.gender == 'female':
-                sheet['G29'] = 'Ж / მდ'
-            sheet['G29'].alignment = Alignment(horizontal='center', vertical='center')
-            sheet['G29'].font = bold_font
 
             # Обработка оплаты
             payment_value = booking.payment
@@ -780,17 +770,34 @@ def generate_ticket():
             sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['D7'].font = bold_font
 
-            sheet['A28'] = '₾'
-            sheet['A28'].alignment = Alignment(horizontal='center', vertical='center')
-            sheet['A28'].font = bold_font
 
-            sheet['D28'] = 2000#payment_value[1:]  # Убираем первую букву
-            sheet['D28'].alignment = Alignment(horizontal='center', vertical='center')
-            sheet['D28'].font = bold_font
+            timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+            data = f"თანხა {booking.payment}, მგზავრის სახელი და გვარი {booking.flname}, ბილეთის ამოღების დრო {timestamp}, პასპორტის მონაცემები {booking.pasport}, კომენტარი {booking.comment} "
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_L,
+                box_size=8.8,
+                border=0,
+            )
+            qr.add_data(data)
+            qr.make(fit=True)
+
+            img = qr.make_image(fill_color="black", back_color="white")
+            img.save("qr_code.png")
+
+
+            # Вставьте QR-код в Excel
+            img = Image("qr_code.png")
+            img.width = img.width // 3.2  # Уменьшите размер изображения, если необходимо
+            img.height = img.height // 3.2
+            sheet.add_image(img, "X10")
+
+
+
+
 
 
         # Генерируем имя для сохраняемого файла
-        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         output_filename = f'bileti.xlsx'
 
         # Сохраняем файл

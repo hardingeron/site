@@ -10,7 +10,7 @@ justify-content: center;
   width: 950px;
   margin: 0 auto;
   border: 1px solid #ccc;
-  border-radius: 20px;
+  border-radius: 10px;
   display: flex;
   justify-content: center; /* Центрирование по горизонтали */ 
   margin-top: 5%;
@@ -19,6 +19,7 @@ justify-content: center;
 .bus-seats, .bus-seats_2, .bus-seats_3, .bus-seats_4 {
 flex-direction: column;
 margin-right: 20px; /* Добавьте отступ справа для разделения блоков */
+
 }
 
 .bus-seats {
@@ -60,17 +61,19 @@ text-align: center;
 
 .seat-number {
 font-weight: bold;
-align-self: flex-start;
+/* align-self: flex-start; */
 }
 
 .seat-details {
 font-size: 12px;
 }
 
-.name, .phone, .payment {
+.name, .phone {
 margin-bottom: 3px;
 }
-
+.payment {
+  display: none;
+}
 .bus-seats_5 {
 display: flex;
 flex-wrap: wrap;
@@ -246,8 +249,10 @@ margin-left: 20px;
 }
 
 
+
+
+
 .exit_ticet_block {
-  margin-top: 10px;
   display: flex; /* Устанавливаем flex-контейнер */
   justify-content: center; /* Выравнивание элементов по горизонтали (по центру) */
   align-items: center; /* Выравнивание элементов по вертикали (по центру) */
@@ -258,47 +263,34 @@ margin-left: 20px;
   height: 30px;
 }
 
-.exit_ticet_block > *:not(:last-child) {
-  margin-right: 20px; /* Отступ справа для всех элементов, кроме последнего */
-}
-
 .exit_ticet_block button {
-  display: inline-block;
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
+  background-color: #666666;
+  color: #fff;
   border: none;
-  /* Добавьте дополнительные стили по вашему усмотрению */
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px; /* Добавляет отступ между кнопками (кроме последней) */
 }
 
-.ticket-button {
-  color: #ffffff;
-  background-color: #45a049;
+.exit_ticet_block button:last-child {
+  margin-right: 0; /* Убирает отступ у последней кнопки */
 }
 
-.ticket-button:hover {
-  background-color: rgb(6, 75, 6);
+.exit_ticet_block button:hover {
+  background-color: #4fa050;
 }
 
 
-#exit {
-  color: #ffffff;
-  background-color: #f6b62c;
-}
 
-#exit:hover {
-  background-color: #9d7624;
-}
 
-#delete {
-  color: #ffffff;
-  background-color: #ff5b48;
-}
 
-#delete:hover {
-  background-color: #a33b2f;
-}
+
+
+
+
+
 
 
 .edit_block {
@@ -472,7 +464,7 @@ canvas {
   width: 950px;
   margin: 0 auto;
   border: 1px solid #ccc;
-  border-radius: 20px;
+  border-radius: 10px;
   display: flex;
   justify-content: center; /* Центрирование по горизонтали */ 
   margin-top: 1%;

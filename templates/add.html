@@ -184,7 +184,26 @@
     });
 });
 
+//проверка на целое число в номере посылок 
+document.addEventListener('DOMContentLoaded', function() {
+    const numberInput = document.querySelector('input[name="number"]');
+    const form = document.querySelector('form');
 
+    form.addEventListener('submit', function(event) {
+        if (numberInput && numberInput.value !== '' && !isInteger(numberInput.value)) {
+            event.preventDefault(); // Отменить отправку формы
+            numberInput.classList.add('invalid');
+        }
+    });
+
+    numberInput.addEventListener('input', function() {
+        numberInput.classList.remove('invalid'); // Убрать подсветку при вводе
+    });
+});
+
+function isInteger(value) {
+    return /^-?\d+$/.test(value);
+}
 
     
     

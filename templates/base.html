@@ -33,85 +33,51 @@
 
 
 
-    <style>
-        .loading-screen {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(to bottom right, #a6c8db, #b6d4e6, #c5e0f0, #d2ebfa);
-            z-index: 9999;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        .loaded {
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        .header {
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        .content {
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        
-        @keyframes fadeOut {
-            0% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 0.5;
-            }
-            100% {
-                opacity: 0;
-                display: none;
-            }
-        }
-        
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-                visibility: visible;
-            }
-        }
-
-        /* Анимация загрузки */
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
 </head>
+
+<style>
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff; /* Задний фон не прозрачный */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-spinner-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    background-color: #3498db;
+    border-radius: 50%;
+    margin: 0 10px; /* Расстояние между кружочками */
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out; /* Плавное изменение видимости */
+}
+</style>
+
 <body>
+
     <div id="loading-screen" class="loading-screen">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner-container">
+            <div class="loading-spinner" id="spinner1"></div>
+            <div class="loading-spinner" id="spinner2"></div>
+            <div class="loading-spinner" id="spinner3"></div>
+            <div class="loading-spinner" id="spinner4"></div>
+        </div>
     </div>
+
+
 
     {% block menu %}
         <header class="header">
@@ -131,26 +97,43 @@
         {% block content %}{% endblock %}
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                var loadingScreen = document.getElementById('loading-screen');
-                loadingScreen.style.animation = 'fadeOut 1s ease-in-out forwards';
-
-                setTimeout(function() {
-                    loadingScreen.style.display = 'none';
-
-                    var header = document.querySelector('.header');
-                    header.style.animation = 'fadeIn 0.5s ease-in-out forwards';
-                    header.style.opacity = 1;
-                    header.style.visibility = 'visible';
-
-                    var content = document.querySelector('.content');
-                    content.style.animation = 'fadeIn 0.5s ease-in-out forwards';
-                    content.style.opacity = 1;
-                }, 500);
-            }, 1000);
-        });
-    </script>
 </body>
+
+
+
+<script>
+// Функция для анимации кружочков
+function animateSpinners() {
+    var spinners = document.querySelectorAll(".loading-spinner");
+
+    function animate(index) {
+        if (index >= spinners.length) {
+            // Все кружочки исчезли, скрываем фон загрузки
+            var loadingScreen = document.getElementById("loading-screen");
+            loadingScreen.style.opacity = "0";
+            setTimeout(function () {
+                loadingScreen.style.display = "none";
+            }, 200); // После 500 миллисекунд (0.5 секунды) скрыть фон
+            return;
+        }
+
+        // Плавно скрываем текущий кружок
+        spinners[index].style.opacity = "0";
+        setTimeout(function () {
+            // Затем анимируем следующий кружок
+            animate(index + 1);
+        }, 200); // После 500 миллисекунд (0.5 секунды) анимировать следующий
+    }
+
+    animate(0); // Начнем с первого кружка
+}
+
+// Вызываем функцию анимации после загрузки страницы
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(animateSpinners, 10); // Запустить анимацию через 2 секунды после загрузки
+});
+
+
+</script>
+
 </html>

@@ -9,7 +9,6 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_booking.css') }}">
   <div class="bg-image"></div>
@@ -19,22 +18,32 @@
   <div class="calendar-container">
     <div id="calendar"></div>
     <!-- Скрытое поле для хранения выбранной даты -->
-    <input type="hidden" id="selected-date" name="selected_date">
+    <div class="select_block">
+      <div class="select_label_block">
+        <input type="hidden" id="selected-date" name="selected_date">
+        <label for="route">ამოირჩიეთ მარშრუტი</label>
+      </div>
     <!-- Выбор маршрута -->
-    <label for="route">ამოირჩიეთ მარშრუტი:</label>
     <select id="route">
       <option value="1">თბილისი-მოსკოვი</option>
       <option value="2">მოსკოვი-თბილისი</option>
     </select>
     <!-- Кнопка "Выбрать" -->
     <button id="select-button" disabled>არჩევა</button>
+    </div>
   </div>
 </body>
+
+
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/fullcalendar.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.10.2/locale/ru.js"></script> <!-- Подключение локализации на русский язык -->
+
+
+
 <script>
   $(document).ready(function() {
     var selectedDate = null; // Инициализируем переменную для хранения выбранной даты
@@ -44,10 +53,14 @@
       defaultView: 'month',
       selectable: true,
       selectHelper: true,
-      dayClick: function(date) {
+      dayClick: function(date, jsEvent, view) {
         // Обработчик клика на день календаря
         selectedDate = moment(date).format('YYYY-MM-DD');
         console.log('Выбранная дата: ', selectedDate);
+
+        // Подсвечиваем выбранный день
+        $('#calendar .fc-day').removeClass('selected');
+        $(jsEvent.target).addClass('selected');
 
         // Проверяем, была ли выбрана дата и маршрут, чтобы активировать кнопку "Выбрать"
         checkSelection();
@@ -72,27 +85,27 @@
       }
     }
 
-// Обработчик клика на кнопку "Выбрать"
-$('#select-button').click(function() {
-  var selectedRoute = $('#route').val();
-  if (selectedDate && selectedRoute) {
-    const dayOfWeek = moment(selectedDate).day();
+    // Обработчик клика на кнопку "Выбрать"
+    $('#select-button').click(function() {
+      var selectedRoute = $('#route').val();
+      if (selectedDate && selectedRoute) {
+        const dayOfWeek = moment(selectedDate).day();
 
-    if ((dayOfWeek === 4 && selectedRoute === '1') || (dayOfWeek === 0 && selectedRoute === '2')) {
-      // Если выбрано четверг и маршрут Тбилиси-Москва, или выбрано воскресенье и маршрут Москва-Тбилиси
-      window.location.href = '/reservation?date=' + selectedDate + '&route=' + selectedRoute;
-    } else if ((dayOfWeek === 3 && selectedRoute === '2') || (dayOfWeek === 0 && selectedRoute === '1')) {
-      // Если выбрана среда и маршрут Москва-Тбилиси, или выбрано суббота и маршрут Тбилиси-Москва
-      window.location.href = '/reservation_big?date=' + selectedDate + '&route=' + selectedRoute;
-    } else {
-      // Все остальные случаи
-      window.location.href = '/reservation_none?date=' + selectedDate + '&route=' + selectedRoute;
-    }
-  }
-});
-
-
+        if ((dayOfWeek === 4 && selectedRoute === '1') || (dayOfWeek === 0 && selectedRoute === '2')) {
+          // Если выбрано четверг и маршрут Тбилиси-Москва, или выбрано воскресенье и маршрут Москва-Тбилиси
+          window.location.href = '/reservation?date=' + selectedDate + '&route=' + selectedRoute;
+        } else if ((dayOfWeek === 3 && selectedRoute === '2') || (dayOfWeek === 0 && selectedRoute === '1')) {
+          // Если выбрана среда и маршрут Москва-Тбилиси, или выбрано суббота и маршрут Тбилиси-Москва
+          window.location.href = '/reservation_big?date=' + selectedDate + '&route=' + selectedRoute;
+        } else {
+          // Все остальные случаи
+          window.location.href = '/reservation_none?date=' + selectedDate + '&route=' + selectedRoute;
+        }
+      }
+    });
   });
+</script>
+
 </script>
 
 {% endblock %}

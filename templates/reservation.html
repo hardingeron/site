@@ -155,8 +155,13 @@
   <div class="hidden_circ">
     <label id="sum_rub">{{sum_rub}}</label>
     <label id="sum_gel">{{sum_gel}}</label>
+    <label id="sum_usd">{{sum_usd}}</label>
+    <label id="sum_eur">{{sum_eur}}</label>
     <label id="sum_card_gel">{{sum_card_gel}}</label>
     <label id="sum_card_rub">{{sum_card_rub}}</label>
+    <label id="sum_card_usd">{{sum_card_usd}}</label>
+    <label id="sum_card_eur">{{sum_card_eur}}</label>
+
     
     <label id="male_count">{{ male_count }}</label>
     <label id="female_count">{{ female_count }}</label>
@@ -272,9 +277,13 @@
       
       <div class="pay_radio_block_two">
         <input type="radio" name="payment_method_card" value="GEL" required>
-        <label>ლარი</label>
+        <label>₾</label>
         <input type="radio" name="payment_method_card" value="RUB" required>
-        <label>რუბლი</label>
+        <label>₽</label>
+        <input type="radio" name="payment_method_card" value="USD" required>
+        <label>$</label>
+        <input type="radio" name="payment_method_card" value="EUR" required>
+        <label>€</label>
       </div>
   
       <div class="button_block">
@@ -388,6 +397,10 @@ seats.forEach(seat => {
         paymentMethodCardRadios[0].checked = true;
       } else if (seatData.payment.includes('RUB')) {
         paymentMethodCardRadios[1].checked = true;
+      } else if (seatData.payment.includes('USD')) {
+        paymentMethodCardRadios[2].checked = true;
+      } else if (seatData.payment.includes('EUR')) {
+        paymentMethodCardRadios[3].checked = true;
       }
     } else {
       // Если нет данных, снимаем выбор с радиокнопок
@@ -603,16 +616,21 @@ ticketButton.addEventListener('click', async () => {
 <script>
   var sum_rub = parseFloat(document.querySelector('#sum_rub').textContent);
   var sum_gel = parseFloat(document.querySelector('#sum_gel').textContent);
+  var sum_usd = parseFloat(document.querySelector('#sum_usd').textContent);
+  var sum_eur = parseFloat(document.querySelector('#sum_eur').textContent);
+
   var sum_card_gel = parseFloat(document.querySelector('#sum_card_gel').textContent);
   var sum_card_rub = parseFloat(document.querySelector('#sum_card_rub').textContent);
+  var sum_card_usd = parseFloat(document.querySelector('#sum_card_usd').textContent);
+  var sum_card_eur = parseFloat(document.querySelector('#sum_card_eur').textContent);
 
   var ctx = document.getElementById('myChart').getContext('2d');
   
   var data = {
-      labels: ['რუბლი', 'ლარი', 'ბარათი (GEL)', 'ბარათი (RUB)'],
+      labels: ['რუბლი', 'ლარი', 'დოლარი', 'ევრო', '(RUB)', '(GEL)', '(USD)', '(EUR)'],
       datasets: [{
-          data: [sum_rub, sum_gel, sum_card_gel, sum_card_rub],
-          backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4CAF50']
+          data: [sum_rub, sum_gel, sum_usd, sum_eur, sum_card_rub, sum_card_gel, sum_card_usd, sum_card_eur],
+          backgroundColor: ['#e3f707', '#00c2fc', '#fc6900', '#fc004c', '#505706', '#01495e', '#6e2e01', '#4CAF50']
       }]
   };
 

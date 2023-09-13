@@ -1,0 +1,1 @@
+<p><label>Имя:</label> <input type='text' name="username" value="" required></p>

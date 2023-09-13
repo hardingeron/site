@@ -29,9 +29,6 @@ from openpyxl.drawing.image import Image
 import qrcode
 
 
-
-
-
 from functions import get_last_record, generate_number_and_flight, calculate_cost, add_record, handle_image, handle_uploaded_image
 
 
@@ -99,17 +96,19 @@ def all():
 
     # Получаем данные для отображения, отсортированные по дате и номеру
     all_data = list(reversed(Purcell.query.filter(Purcell.flight >= date_threshold)
-                         .order_by(Purcell.flight.asc(), Purcell.number.asc())
-                         .all()))
+                     .order_by(Purcell.flight.asc(), Purcell.number.asc())
+                     .all()))
+
+    # Получаем даты последних 10 рейсов для отображения из уже полученных данных
+    last_10_flights = list(set(row.flight for row in all_data))[:10]
 
     # Получаем список всех элементов меню
     menu = Menu.query.all()
 
-    # Получаем даты последних 10 рейсов для отображения
-    last_10_flights = [flight.flight for flight in Purcell.query.with_entities(Purcell.flight).order_by(Purcell.flight.desc()).distinct().limit(10)]
-
     # Отображаем шаблон страницы 'all.html' с данными
     return render_template('all.html', menu=menu, all_data=all_data, last_10_flights=last_10_flights)
+
+
 
 
 
@@ -172,7 +171,7 @@ def add():
             p_n = add_record(request.form, cost, db)
             
             # Обработка изображения
-            handle_image(request.files['photo'], request.form['number'], request.form['flight'], app)
+            handle_image(request.files['photo'], p_n, request.form['flight'], app)
             
             # Успешное сообщение и перенаправление
             flash(f'ამანათი წარმატებით დაემატა მისი ნომერერია " {p_n} "', category='success')
@@ -201,44 +200,66 @@ def logout():
 
 
 
-@app.route('/change', methods=['POST', 'GET'])
-@login_required  # Защита: только для авторизованных пользователей
-def change():
-    # Проверка роли пользователя, доступной только админам
-    if current_user.role != 'admin':
-        flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
-        return redirect(url_for('all'))
+@app.route('/change', methods=['GET'])
+@login_required
+def change_get():
+    try:
+        # Проверка прав доступа
+        if current_user.role != 'admin':
+            flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+            return redirect(url_for('all'))
 
-    # Обработка GET запроса для получения записи
-    if request.method == 'GET':
+        # Получение id записи из параметров запроса
         id = int(request.args.get('id'))
         myrecord = db.session.query(Purcell).filter_by(id=id).first()
 
+        # Получение списка меню и рендеринг шаблона
+        menu = Menu.query.all()
+        return render_template('change.html', menu=menu, edit=myrecord)
+    except SQLAlchemyError as e:
+        flash('Ошибка при обращении к базе данных: ' + str(e), category='error')
+        return redirect(url_for('all'))
+    except Exception as e:
+        flash('Произошла неизвестная ошибка: ' + str(e), category='error')
+        return redirect(url_for('all'))
+    
+
+@app.route('/change', methods=['POST'])
+@login_required
+def change_post():
     try:
-        # Обработка POST запроса для обновления записи
-        if request.method == 'POST':
-            id = int(request.form['id'])
-            myrecord = db.session.query(Purcell).filter_by(id=id).first()
-
-            # Используем ORM для обновления полей записи
-            for field in ['sender', 'sender_phone', 'recipient', 'recipient_phone', 'inventory',
-                          'cost', 'passport', 'weight', 'responsibility', 'number', 'city', 'flight']:
-                setattr(myrecord, field, request.form[field])
-
-            # Обработка загруженного изображения
-            if 'photo' in request.files and request.files['photo'].filename != '':
-                handle_uploaded_image(request.files['photo'], request.form['number'], request.form['flight'], app)
-
-            # Сохранение обновленной записи в базе данных
-            db.session.commit()
+        # Проверка прав доступа
+        if current_user.role != 'admin':
+            flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
             return redirect(url_for('all'))
+
+        # Получение id записи из формы
+        id = int(request.form['id'])
+        myrecord = db.session.query(Purcell).filter_by(id=id).first()
+
+        # Обновление полей записи
+        for field in ['sender', 'sender_phone', 'recipient', 'recipient_phone', 'inventory',
+                      'cost', 'passport', 'weight', 'responsibility', 'number', 'city', 'flight']:
+            setattr(myrecord, field, request.form[field])
+
+        # Обработка загруженного изображения
+        if 'photo' in request.files and request.files['photo'].filename != '':
+            handle_uploaded_image(request.files['photo'], request.form['number'], request.form['flight'], app)
+
+        # Сохранение обновленной записи в базе данных
+        db.session.commit()
+        return redirect(url_for('all'))
 
     except ValueError:
         flash('ჩაწერეთ კორექტული მონაცემები!', category='error')
+        return redirect(url_for('all'))
+    except SQLAlchemyError as e:
+        flash('შეცდომა მოხდა მოანცემთა ბაზიდან ამოკითხვისას: ' + str(e), category='error')
+        return redirect(url_for('all'))
+    except Exception as e:
+        flash('ამოუცნობი შეცდომა: ' + str(e), category='error')
+        return redirect(url_for('all'))
 
-    # Получение списка меню и рендеринг шаблона
-    menu = Menu.query.all()
-    return render_template('change.html', menu=menu, edit=myrecord)
 
 
 
@@ -263,9 +284,15 @@ def save():
         flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
         return redirect(url_for('all'))
     
-    shelf = request.form['shelf']
+    # Получение данных из формы
+    shelf = request.form.get('shelf')
+    trecing = request.form.get('trecing')
+
+    # Валидация данных
+    if not shelf or not trecing:
+        return jsonify({'error': 'შეავსეთ მოცემული ველები!'})
     
-    trecing = request.form['trecing']
+    # Форматирование номера trecing
     if not trecing.startswith(('mp', 'MP')):
         trecing = f'MP{trecing}'
     else:
@@ -273,24 +300,28 @@ def save():
 
     date = datetime.now().date()
 
-    if trecing and shelf:
-        existing_record = Storage.query.filter_by(trecing=trecing).first()
+    # Поиск существующей записи
+    existing_record = Storage.query.filter_by(trecing=trecing).first()
 
+    try:
         if existing_record:
+            # Обновление существующей записи
             existing_record.shelf = shelf
-            db.session.commit()
         else:
+            # Создание новой записи
             record = Storage(shelf=shelf, trecing=trecing, date=date)
             db.session.add(record)
-            db.session.commit()
-    else:
-        flash('შეავსეთ მოცემული ველები!', category='error')
-    
-    if not shelf:
-        last_record = db.session.query(Storage.shelf).order_by(desc(Storage.id)).first()
-        shelf = last_record[0] if last_record else None
-    
-    return jsonify({'last': shelf})
+
+        db.session.commit()
+
+        # Получение последнего значения shelf
+        last_shelf = Storage.query.order_by(desc(Storage.id)).first().shelf
+
+        return jsonify({'last': last_shelf})
+    except SQLAlchemyError as e:
+        return jsonify({'error': 'მოხდა შეცდომა მონაცემთა ბაზაში მონაცემების შენახვისას.'})
+    except Exception as e:
+        return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
 
 
 
@@ -317,6 +348,7 @@ def find():
     
     # Возвращаем данные в формате JSON
     return jsonify({'shelf': location})
+
 
 
 
@@ -391,8 +423,12 @@ def reservation():
 
     sum_gel = 0
     sum_rub = 0
+    sum_usd = 0
+    sum_eur = 0
     sum_card_gel = 0
     sum_card_rub = 0
+    sum_card_usd = 0
+    sum_card_eur = 0
     male_count = 0
     female_count = 0
     came_count = 0
@@ -419,6 +455,11 @@ def reservation():
                 sum_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
             elif payment_value.endswith('RUB'):
                 sum_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
+            elif payment_value.endswith('USD'):
+                sum_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
+            elif payment_value.endswith('EUR'):
+                sum_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
+
         elif payment_value.startswith('C'):
             payment_value = payment_value[1:]  # Убираем начальный символ "C"
             
@@ -426,6 +467,10 @@ def reservation():
                 sum_card_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
             elif payment_value.endswith('RUB'):
                 sum_card_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
+            elif payment_value.endswith('USD'):
+                sum_card_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
+            elif payment_value.endswith('EUR'):
+                sum_card_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
 
 
     seat_data = {}
@@ -452,8 +497,12 @@ def reservation():
                                                number_of_free_records=number_of_free_records,
                                                sum_gel=sum_gel,
                                                sum_rub=sum_rub,
+                                               sum_usd=sum_usd,
+                                               sum_eur=sum_eur,
                                                sum_card_gel=sum_card_gel,
                                                sum_card_rub=sum_card_rub,
+                                               sum_card_usd=sum_card_usd,
+                                               sum_card_eur=sum_card_eur,
                                                male_count=male_count,
                                                female_count=female_count,
                                                came_count=came_count,
@@ -469,12 +518,16 @@ def reservation_big():
     reis = request.args.get('route')
     data = Booking.query.filter_by(data=selected_date, fwc=reis).all()
     number_of_records = len(data)
-    number_of_free_records = 59 - number_of_records
+    number_of_free_records = 55 - number_of_records
 
     sum_gel = 0
     sum_rub = 0
+    sum_usd = 0
+    sum_eur = 0
     sum_card_gel = 0
     sum_card_rub = 0
+    sum_card_usd = 0
+    sum_card_eur = 0
     male_count = 0
     female_count = 0
     came_count = 0
@@ -501,6 +554,11 @@ def reservation_big():
                 sum_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
             elif payment_value.endswith('RUB'):
                 sum_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
+            elif payment_value.endswith('USD'):
+                sum_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
+            elif payment_value.endswith('EUR'):
+                sum_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
+
         elif payment_value.startswith('C'):
             payment_value = payment_value[1:]  # Убираем начальный символ "C"
             
@@ -508,6 +566,10 @@ def reservation_big():
                 sum_card_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
             elif payment_value.endswith('RUB'):
                 sum_card_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
+            elif payment_value.endswith('USD'):
+                sum_card_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
+            elif payment_value.endswith('EUR'):
+                sum_card_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
 
 
     seat_data = {}
@@ -534,8 +596,12 @@ def reservation_big():
                                                number_of_free_records=number_of_free_records,
                                                sum_gel=sum_gel,
                                                sum_rub=sum_rub,
+                                               sum_usd=sum_usd,
+                                               sum_eur=sum_eur,
                                                sum_card_gel=sum_card_gel,
                                                sum_card_rub=sum_card_rub,
+                                               sum_card_usd=sum_card_usd,
+                                               sum_card_eur=sum_card_eur,
                                                male_count=male_count,
                                                female_count=female_count,
                                                came_count=came_count,
@@ -733,7 +799,9 @@ def generate_ticket():
             Booking.position == s_n
         ).first()
 
+        print(booking)
         if booking:
+            db.session.commit()  # Сохранение изменений в базе данных
             bold_font = Font(bold=True)
 
             apply_styles_to_cell(sheet, 'G5', booking.flname)

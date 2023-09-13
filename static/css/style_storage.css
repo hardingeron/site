@@ -17,7 +17,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(to bottom right, #7dbbe0, #b1cae5, #d4dce9, #e9eefb, #f5f9fd);
   padding: 15%;
   margin-top: 40%;
   border-radius: 15px;
@@ -26,6 +25,12 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
 }
 
+.storage_find form {
+  background: linear-gradient(to top left, #7dbbe0, #b1cae5, #d4dce9, #e9eefb, #f5f9fd);
+}
+.storage_add form {
+  background: linear-gradient(to bottom right, #7dbbe0, #b1cae5, #d4dce9, #e9eefb, #f5f9fd);
+}
 .storage_add label,
 .storage_find label {
   border-radius: 10px;

@@ -71,6 +71,10 @@
   font-weight: bold;
 }
 
+.add_block input:hover {
+  background-color: #e0e0e0;
+}
+
 .description_block label {
   width: 490px;
 }

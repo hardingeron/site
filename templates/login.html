@@ -6,10 +6,8 @@
     ავტორიზაცია
 {% endblock %}
 {% block content %}
-
-{% block styles_login %}
-{{ super() }}
-{% endblock %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_login.css') }}">
 
 <body class="authorization">
   <div class="login-image"></div>

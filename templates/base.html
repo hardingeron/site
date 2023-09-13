@@ -4,37 +4,81 @@
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="/static/images/icon.jpg">
     <title>{% block title %}{% endblock %}</title>
-
-    {% block styles_login %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_login.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    {% endblock %}
     
     {% block styles_js %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='script_storage.js') }}"></script>
     {% endblock %}
-
-    {% block styles_storage %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_storage.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    {% endblock %}
-
-    {% block styles_all %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_all.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    {% endblock %}
-
-    {% block styles_add %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_add.css') }}">
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    {% endblock %}
-
-
-
-
 </head>
 
+<body>
+    {% block menu %}
+    <header class="header">
+        <nav class="menu">
+            <ul class="menu__list">
+                {% for n in menu %}
+                <li class="menu__item">
+                    <a href="{{ n.url }}" class="menu__link">{{ n.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+    </header>
+    {% endblock %}
+    
+    <div class="content">
+        {% block content %}
+        <script src="{{ url_for('static', filename='script_storage.js') }}"></script>
+        {% endblock %}
+    </div>
+    
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner-container">
+            <div class="loading-spinner" id="spinner1"></div>
+            <div class="loading-spinner" id="spinner2"></div>
+            <div class="loading-spinner" id="spinner3"></div>
+            <div class="loading-spinner" id="spinner4"></div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+
+<script>
+// Функция для анимации кружочков
+function animateSpinners() {
+    var spinners = document.querySelectorAll(".loading-spinner");
+    
+    function animate(index) {
+        if (index >= spinners.length) {
+            // Все кружочки исчезли, скрываем фон загрузки
+            var loadingScreen = document.getElementById("loading-screen");
+            loadingScreen.style.opacity = "0";
+            setTimeout(function () {
+                loadingScreen.style.display = "none";
+            }, 200); // После 500 миллисекунд (0.5 секунды) скрыть фон
+            return;
+        }
+        
+        // Плавно скрываем текущий кружок
+        spinners[index].style.opacity = "0";
+        setTimeout(function () {
+            // Затем анимируем следующий кружок
+            animate(index + 1);
+        }, 200); // После 500 миллисекунд (0.5 секунды) анимировать следующий
+    }
+    
+    animate(0); // Начнем с первого кружка
+}
+
+// Вызываем функцию анимации после загрузки страницы
+document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(animateSpinners, 10); // Запустить анимацию через 2 секунды после загрузки
+});
+
+
+</script>
 <style>
 .loading-screen {
     position: fixed;
@@ -66,74 +110,3 @@
 }
 </style>
 
-<body>
-
-    <div id="loading-screen" class="loading-screen">
-        <div class="loading-spinner-container">
-            <div class="loading-spinner" id="spinner1"></div>
-            <div class="loading-spinner" id="spinner2"></div>
-            <div class="loading-spinner" id="spinner3"></div>
-            <div class="loading-spinner" id="spinner4"></div>
-        </div>
-    </div>
-
-
-
-    {% block menu %}
-        <header class="header">
-            <nav class="menu">
-                <ul class="menu__list">
-                    {% for n in menu %}
-                        <li class="menu__item">
-                            <a href="{{ n.url }}" class="menu__link">{{ n.name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </nav>
-        </header>
-    {% endblock %}
-    
-    <div class="content">
-        {% block content %}{% endblock %}
-    </div>
-
-</body>
-
-
-
-<script>
-// Функция для анимации кружочков
-function animateSpinners() {
-    var spinners = document.querySelectorAll(".loading-spinner");
-
-    function animate(index) {
-        if (index >= spinners.length) {
-            // Все кружочки исчезли, скрываем фон загрузки
-            var loadingScreen = document.getElementById("loading-screen");
-            loadingScreen.style.opacity = "0";
-            setTimeout(function () {
-                loadingScreen.style.display = "none";
-            }, 200); // После 500 миллисекунд (0.5 секунды) скрыть фон
-            return;
-        }
-
-        // Плавно скрываем текущий кружок
-        spinners[index].style.opacity = "0";
-        setTimeout(function () {
-            // Затем анимируем следующий кружок
-            animate(index + 1);
-        }, 200); // После 500 миллисекунд (0.5 секунды) анимировать следующий
-    }
-
-    animate(0); // Начнем с первого кружка
-}
-
-// Вызываем функцию анимации после загрузки страницы
-document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(animateSpinners, 10); // Запустить анимацию через 2 секунды после загрузки
-});
-
-
-</script>
-
-</html>

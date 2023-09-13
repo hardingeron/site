@@ -4,19 +4,19 @@
     {{ super() }}
     სია
 {% endblock %}
-
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_all.css') }}">
-<script src="{{ url_for('static', filename='script.js') }}"></script>
 
+{% block styles_all %}
+{{ super() }}
+{% endblock %}
 <div class="download-container">
     <form id="download-form" method="POST" action="{{ url_for('download') }}">
-        <select id="flight" name="flight" required>
-            {% for flight in last_10_flights %}
-            <option value="{{ flight }}">{{ flight }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn-download">გადმოწერა</button>
+            <select id="flight" name="flight" required>
+                {% for flight in last_10_flights %}
+                <option value="{{ flight }}">{{ flight }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-download">გადმოწერა</button>
     </form>
 </div>
 
@@ -30,22 +30,37 @@
 
 <div class="bg-image"></div>
 
+
 <div class="table-container">
     <table class="table">
         <thead>
             <tr>
                 <th></th>
-                <th>#<input type="text" id="filter-number" name="filter-number" placeholder=""></th>
-                <th>გამგზავნი<input type="text" id="filter-sender" name="filter-sender" placeholder=""></th>
-                <th>გამგ/ტელ<input type="text" id="filter-sender-phone" name="filter-sender-phone" placeholder=""></th>
-                <th>მიმღები<input type="text" id="filter-recipient" name="filter-recipient" placeholder=""></th>
-                <th>მიმღ/ტელ<input type="text" id="filter-recipient-phone" name="filter-recipient-phone" placeholder=""></th>
-                <th>გადახდა<input type="text" id="filter-cost" name="filter-cost" placeholder=""></th>
-                <th>პასპორტი<input type="text" id="filter-passport" name="filter-passport" placeholder=""></th>
-                <th>წონა<input type="text" id="filter-weight" name="filter-weight" placeholder=""></th>
-                <th>ღირებულება<input type="text" id="filter-responsibility" name="filter-responsibility" placeholder=""></th>
-                <th>ქალაქი<input type="text" id="filter-city" name="filter-city" placeholder=""></th>
-                <th>თარიღი<input type="text" id="filter-flight" name="filter-flight" placeholder=""></th>
+                <th>#</th>
+                <th>გამგზავნი</th>
+                <th>გამგზავნის ტელეფონი</th>
+                <th>მიმღები</th>
+                <th>მიმღების ტელეფონი</th>
+                <th>ღირებულება</th>
+                <th>პასპორტი</th>
+                <th>წონა</th>
+                <th>ამანათის ფასი</th>
+                <th>ქალაქი</th>
+                <th>თარიღი</th>
+            </tr>
+            <tr class="filter-row">
+                <td></td>
+                <td><input type="text" id="filter-number" name="filter-number" placeholder=""></td>
+                <td><input type="text" id="filter-sender" name="filter-sender" placeholder=""></td>
+                <td><input type="text" id="filter-sender-phone" name="filter-sender-phone" placeholder=""></td>
+                <td><input type="text" id="filter-recipient" name="filter-recipient" placeholder=""></td>
+                <td><input type="text" id="filter-recipient-phone" name="filter-recipient-phone" placeholder=""></td>
+                <td><input type="text" id="filter-cost" name="filter-cost" placeholder=""></td>
+                <td><input type="text" id="filter-passport" name="filter-passport" placeholder=""></td>
+                <td><input type="text" id="filter-weight" name="filter-weight" placeholder=""></td>
+                <td><input type="text" id="filter-responsibility" name="filter-responsibility" placeholder=""></td>
+                <td><input type="text" id="filter-city" name="filter-city" placeholder=""></td>
+                <td><input type="text" id="filter-flight" name="filter-flight" placeholder=""></td>
             </tr>
         </thead>
         <tbody>
@@ -72,36 +87,18 @@
             {% endfor %}
         </tbody>
     </table>
+    
 </div>
 
 {% for cat, msg in get_flashed_messages(True) %}
 <div class='flash {{cat}}'>{{msg}}</div>
 {% endfor %}
 
+    
 <script>
-    function openImageModal(imageUrl, description) {
-    var modal = document.getElementById("image-modal");
-    var modalImage = document.getElementById("modal-image");
-    var modalDescription = document.getElementById("modal-description");
-
-    modalImage.src = imageUrl;
-    modalDescription.textContent = description;
-    modal.style.display = "block";
-
-    var closeBtn = document.getElementsByClassName("close")[0];
-    closeBtn.onclick = function() {
-        modal.style.display = "none";
-    };
-
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
-        }
-        };
-    }
 
 
-    document.getElementById("download-form").addEventListener("submit", function(event) {
+document.getElementById("download-form").addEventListener("submit", function(event) {
     event.preventDefault(); // Отмена отправки формы
 
     var form = event.target;
@@ -132,8 +129,6 @@
 
     xhr.send("flight=" + encodeURIComponent(flight));
 });
-
-//-----     -----     -----     -----     -----     -----     -----     -----     -----     -----     -----     -----     -----
 
 
     // Получаем поля ввода для фильтрации
@@ -220,8 +215,45 @@
             }
         }
     }
+
+
+
+    function openImageModal(imageUrl, description) {
+    var modal = document.getElementById("image-modal");
+    var modalImage = document.getElementById("modal-image");
+    var modalDescription = document.getElementById("modal-description");
+
+    modalImage.src = imageUrl;
+    modalDescription.textContent = description;
+    modal.style.display = "block";
+
+    var closeBtn = document.getElementsByClassName("close")[0];
+    closeBtn.onclick = function() {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+        };
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </script>
 
 
 {% endblock %}
-    

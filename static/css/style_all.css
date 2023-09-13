@@ -20,11 +20,11 @@
 }
 
 .table th {
-  padding: 10px;
+  padding: 5px;
   text-align: center;
   font-size: 18px;
-  background-color: #88c1db;
-  color: #fff;
+  background-color: #82caec;
+  color: #000000;
   position: sticky;
   top: 0;
   vertical-align: bottom;
@@ -34,7 +34,7 @@
 
 
 .table td {
-    padding: 6px;
+    padding: 1px;
     text-align: center;
     font-size: 14px;
 }
@@ -123,13 +123,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 15% auto;
+  margin: 5% auto;
   padding: 20px;
   background-color: #fff;
-  max-width: 600px;
-  max-height: 80%;
+  width: 600px;
+  min-height: 600px;
+  max-height: 700px;
   border-radius: 10px;
-  background: linear-gradient(to bottom right, #5b7890, #94b1c6);
+  background: linear-gradient(to bottom right, #7dbbe0, #b1cae5, #d4dce9, #e9eefb, #f5f9fd);
 }
 
 .close {
@@ -148,9 +149,10 @@
 }
 
 #modal-image {
-  max-width: 100%;
-  max-height: 400px;
+  max-height: 550px;
+  max-width: 550px;
   margin-bottom: 10px;
+  border-radius: 10px;
 }
 
 #modal-description {

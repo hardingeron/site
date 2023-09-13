@@ -62,6 +62,7 @@ text-align: center;
 .seat-number {
 font-weight: bold;
 /* align-self: flex-start; */
+
 }
 
 .seat-details {

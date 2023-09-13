@@ -52,6 +52,7 @@ def add_record(form_data, cost, db):
     flight = form_data['flight']
     
     while True:
+        print('1')
         existing_record = Purcell.query.filter_by(number=number, flight=flight).first()
         if existing_record is None:
             break
@@ -152,3 +153,13 @@ def process_image(image_path):
 
 
 #-------------------------- ДЛЯ ОБРАБОТЧИКА /change >----> конец <----< ---------------------------------------------------------------
+
+
+
+#-------------------------- ДЛЯ ОБРАБОТЧИКА /all
+
+
+#-------------------------- ДЛЯ ОБРАБОТЧИКА /all >----> конец <----< ---------------------------------------------------------------
+
+
+

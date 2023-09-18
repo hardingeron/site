@@ -29,7 +29,7 @@ from openpyxl.drawing.image import Image
 import qrcode
 
 
-from functions import get_last_record, generate_number_and_flight, calculate_cost, add_record, handle_image, handle_uploaded_image
+from functions import get_last_record, generate_number_and_flight, calculate_cost, add_record, handle_image, handle_uploaded_image, get_reservation_data
 
 
 app = Flask(__name__)
@@ -103,10 +103,9 @@ def all():
     last_10_flights = list(set(row.flight for row in all_data))[:10]
 
     # Получаем список всех элементов меню
-    menu = Menu.query.all()
 
     # Отображаем шаблон страницы 'all.html' с данными
-    return render_template('all.html', menu=menu, all_data=all_data, last_10_flights=last_10_flights)
+    return render_template('all.html', all_data=all_data, last_10_flights=last_10_flights)
 
 
 
@@ -139,8 +138,8 @@ def index():
     except Exception as e:
         # Если произошла ошибка, выводим ее и продолжаем
         print(f"An error occurred: {e}")
-
-    return redirect(url_for('all'))
+    return render_template('index.html')
+    # return redirect(url_for('all'))
 
 
 
@@ -177,11 +176,9 @@ def add():
             flash(f'ამანათი წარმატებით დაემატა მისი ნომერერია " {p_n} "', category='success')
             return redirect(url_for('add'))
         
-        # Получение меню
-        menu = Menu.query.all()
         
         # Рендеринг шаблона
-        return render_template('add.html', menu=menu, last_record=last, fl=fl)
+        return render_template('add.html', last_record=last, fl=fl)
     except SQLAlchemyError as e:
         flash('Ошибка при обращении к базе данных: ' + str(e), category='error')
     except Exception as e:
@@ -214,8 +211,7 @@ def change_get():
         myrecord = db.session.query(Purcell).filter_by(id=id).first()
 
         # Получение списка меню и рендеринг шаблона
-        menu = Menu.query.all()
-        return render_template('change.html', menu=menu, edit=myrecord)
+        return render_template('change.html', edit=myrecord)
     except SQLAlchemyError as e:
         flash('Ошибка при обращении к базе данных: ' + str(e), category='error')
         return redirect(url_for('all'))
@@ -273,8 +269,7 @@ def page_not_found(error):
 @app.route('/storage', methods=['POST', 'GET'])
 @login_required
 def storage():
-    menu=Menu.query.all()
-    return render_template('storage.html', menu=menu)
+    return render_template('storage.html')
 
 
 @app.route('/save', methods=['POST'])
@@ -414,198 +409,20 @@ def download():
 @app.route('/reservation', methods=['POST', 'GET'])
 @login_required
 def reservation():
-    menu = Menu.query.all()
     selected_date = request.args.get('date')
     reis = request.args.get('route')
-    data = Booking.query.filter_by(data=selected_date, fwc=reis).all()
-    number_of_records = len(data)
-    number_of_free_records = 55 - number_of_records
-
-    sum_gel = 0
-    sum_rub = 0
-    sum_usd = 0
-    sum_eur = 0
-    sum_card_gel = 0
-    sum_card_rub = 0
-    sum_card_usd = 0
-    sum_card_eur = 0
-    male_count = 0
-    female_count = 0
-    came_count = 0
-
-    for person in data:
-        if person.gender == 'male':
-            male_count += 1
-        elif person.gender == 'female':
-            female_count += 1
-    
-    for came in data:
-        if came.action == 'yes':
-            came_count += 1
-
-    came_of_count_free = number_of_records - came_count
-
-    for booking in data:
-        payment_value = booking.payment
-        
-        if payment_value.startswith('+'):
-            payment_value = payment_value[1:]  # Убираем начальный символ "+"
-            
-            if payment_value.endswith('GEL'):
-                sum_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
-            elif payment_value.endswith('RUB'):
-                sum_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
-            elif payment_value.endswith('USD'):
-                sum_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
-            elif payment_value.endswith('EUR'):
-                sum_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
-
-        elif payment_value.startswith('C'):
-            payment_value = payment_value[1:]  # Убираем начальный символ "C"
-            
-            if payment_value.endswith('GEL'):
-                sum_card_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
-            elif payment_value.endswith('RUB'):
-                sum_card_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
-            elif payment_value.endswith('USD'):
-                sum_card_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
-            elif payment_value.endswith('EUR'):
-                sum_card_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
-
-
-    seat_data = {}
-
-    for booking in data:
-        seat_data[booking.position] = {
-            'name': booking.flname,
-            'phone': booking.phone,
-            'payment': booking.payment,
-            'gender': booking.gender,
-            'pasport': booking.pasport,
-            'comment': booking.comment,
-            'destination': booking.destination,
-            'reis': booking.data,
-            'action': booking.action
-
-        }
-
-    return render_template('reservation.html', seat_data=seat_data, 
-                                               d=selected_date,
-                                               menu=menu, 
-                                               reis=reis,
-                                               number_of_records=number_of_records, 
-                                               number_of_free_records=number_of_free_records,
-                                               sum_gel=sum_gel,
-                                               sum_rub=sum_rub,
-                                               sum_usd=sum_usd,
-                                               sum_eur=sum_eur,
-                                               sum_card_gel=sum_card_gel,
-                                               sum_card_rub=sum_card_rub,
-                                               sum_card_usd=sum_card_usd,
-                                               sum_card_eur=sum_card_eur,
-                                               male_count=male_count,
-                                               female_count=female_count,
-                                               came_count=came_count,
-                                               came_of_count_free=came_of_count_free)
+    reservation_data = get_reservation_data(selected_date, reis, 55)
+    return render_template('reservation.html', **reservation_data)
 
 
 
 @app.route('/reservation_big', methods=['POST', 'GET'])
 @login_required
 def reservation_big():
-    menu = Menu.query.all()
     selected_date = request.args.get('date')
     reis = request.args.get('route')
-    data = Booking.query.filter_by(data=selected_date, fwc=reis).all()
-    number_of_records = len(data)
-    number_of_free_records = 55 - number_of_records
-
-    sum_gel = 0
-    sum_rub = 0
-    sum_usd = 0
-    sum_eur = 0
-    sum_card_gel = 0
-    sum_card_rub = 0
-    sum_card_usd = 0
-    sum_card_eur = 0
-    male_count = 0
-    female_count = 0
-    came_count = 0
-
-    for person in data:
-        if person.gender == 'male':
-            male_count += 1
-        elif person.gender == 'female':
-            female_count += 1
-    
-    for came in data:
-        if came.action == 'yes':
-            came_count += 1
-
-    came_of_count_free = number_of_records - came_count
-
-    for booking in data:
-        payment_value = booking.payment
-        
-        if payment_value.startswith('+'):
-            payment_value = payment_value[1:]  # Убираем начальный символ "+"
-            
-            if payment_value.endswith('GEL'):
-                sum_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
-            elif payment_value.endswith('RUB'):
-                sum_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
-            elif payment_value.endswith('USD'):
-                sum_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
-            elif payment_value.endswith('EUR'):
-                sum_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
-
-        elif payment_value.startswith('C'):
-            payment_value = payment_value[1:]  # Убираем начальный символ "C"
-            
-            if payment_value.endswith('GEL'):
-                sum_card_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
-            elif payment_value.endswith('RUB'):
-                sum_card_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
-            elif payment_value.endswith('USD'):
-                sum_card_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
-            elif payment_value.endswith('EUR'):
-                sum_card_eur += float(payment_value[:-3])  # Убираем "EUR" и преобразуем в число
-
-
-    seat_data = {}
-
-    for booking in data:
-        seat_data[booking.position] = {
-            'name': booking.flname,
-            'phone': booking.phone,
-            'payment': booking.payment,
-            'gender': booking.gender,
-            'pasport': booking.pasport,
-            'comment': booking.comment,
-            'destination': booking.destination,
-            'reis': booking.data,
-            'action': booking.action
-
-        }
-
-    return render_template('reservation_big.html', seat_data=seat_data, 
-                                               d=selected_date,
-                                               menu=menu, 
-                                               reis=reis,
-                                               number_of_records=number_of_records, 
-                                               number_of_free_records=number_of_free_records,
-                                               sum_gel=sum_gel,
-                                               sum_rub=sum_rub,
-                                               sum_usd=sum_usd,
-                                               sum_eur=sum_eur,
-                                               sum_card_gel=sum_card_gel,
-                                               sum_card_rub=sum_card_rub,
-                                               sum_card_usd=sum_card_usd,
-                                               sum_card_eur=sum_card_eur,
-                                               male_count=male_count,
-                                               female_count=female_count,
-                                               came_count=came_count,
-                                               came_of_count_free=came_of_count_free)
+    reservation_data = get_reservation_data(selected_date, reis, 59)
+    return render_template('reservation_big.html', **reservation_data)
 
 
 
@@ -651,8 +468,7 @@ def save_data():
 @app.route('/booking', methods=['POST', 'GET'])
 @login_required
 def booking():
-    menu = Menu.query.all()
-    return render_template('booking.html', menu=menu)
+    return render_template('booking.html')
 
 
 @app.route('/edit_booking', methods=['POST'])

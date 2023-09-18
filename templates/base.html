@@ -12,26 +12,6 @@
 </head>
 
 <body>
-    {% block menu %}
-    <header class="header">
-        <nav class="menu">
-            <ul class="menu__list">
-                {% for n in menu %}
-                <li class="menu__item">
-                    <a href="{{ n.url }}" class="menu__link">{{ n.name }}</a>
-                </li>
-                {% endfor %}
-            </ul>
-        </nav>
-    </header>
-    {% endblock %}
-    
-    <div class="content">
-        {% block content %}
-        <script src="{{ url_for('static', filename='script_storage.js') }}"></script>
-        {% endblock %}
-    </div>
-    
     <div id="loading-screen" class="loading-screen">
         <div class="loading-spinner-container">
             <div class="loading-spinner" id="spinner1"></div>
@@ -40,73 +20,147 @@
             <div class="loading-spinner" id="spinner4"></div>
         </div>
     </div>
+
+    <div id="page-content" style="display: none;">
+        {% block menu %}
+        <div class="menu_block">
+            <div class="menu_button">
+                <img src="/static/images/menu.webp" alt="Изображение" id="openModalButton">
+            </div>
+        </div>
+        {% endblock %}
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+        
+        <div class="modal" id="ModalMenu">
+            <div class="Menu-content">
+                <div class="first_line_block">
+                    <div class="menu_element_block">
+                        <div class="el">
+                            <a href="/all">
+                                <img src="/static/images/all.webp" alt="Изображение">
+                            </a>
+                            <label>სია</label>
+                        </div>
+                        <div class="el">
+                            <a href="/add">
+                                <img src="/static/images/add.webp" alt="Изображение">
+                            </a>
+                            <label>დამატება</label>
+                        </div>
+                        <div class="el">
+                            <a href="/storage">
+                                <img src="/static/images/storage.webp" alt="Изображение">
+                            </a>
+                            <label>საწყობი</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="last_line_block">
+                    <div class="menu_element_block">
+                        <div class="el2">
+                            <a href="/booking">
+                                <img src="/static/images/booking.webp" alt="Изображение">
+                            </a>
+                            <label>ჯავშანი</label>
+                        </div>
+                        <div class="el2">
+                            <a href="/logout">
+                                <img src="/static/images/exit.webp" alt="Изображение">
+                            </a>
+                            <label>გასვლა</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 </body>
 
 </html>
 
 
 <script>
-// Функция для анимации кружочков
-function animateSpinners() {
-    var spinners = document.querySelectorAll(".loading-spinner");
-    
-    function animate(index) {
-        if (index >= spinners.length) {
-            // Все кружочки исчезли, скрываем фон загрузки
-            var loadingScreen = document.getElementById("loading-screen");
-            loadingScreen.style.opacity = "0";
+    // Функция для анимации кружочков
+    function animateSpinners() {
+        var spinners = document.querySelectorAll(".loading-spinner");
+        
+        function animate(index) {
+            if (index >= spinners.length) {
+                // Все кружочки исчезли, скрываем фон загрузки
+                var loadingScreen = document.getElementById("loading-screen");
+                loadingScreen.style.opacity = "0";
+                setTimeout(function () {
+                    loadingScreen.style.display = "none";
+                    
+                    // Показываем остальной контент страницы
+                    var pageContent = document.getElementById('page-content');
+                    pageContent.style.display = 'block';
+                }, 100); // После 200 миллисекунд (0.2 секунды) скрыть фон
+                return;
+            }
+            
+            // Плавно скрываем текущий кружок
+            spinners[index].style.opacity = "0";
             setTimeout(function () {
-                loadingScreen.style.display = "none";
-            }, 200); // После 500 миллисекунд (0.5 секунды) скрыть фон
-            return;
+                // Затем анимируем следующий кружок
+                animate(index + 1);
+            }, 300); // После 200 миллисекунд (0.2 секунды) анимировать следующий
         }
         
-        // Плавно скрываем текущий кружок
-        spinners[index].style.opacity = "0";
-        setTimeout(function () {
-            // Затем анимируем следующий кружок
-            animate(index + 1);
-        }, 200); // После 500 миллисекунд (0.5 секунды) анимировать следующий
+        animate(0); // Начнем с первого кружка
     }
     
-    animate(0); // Начнем с первого кружка
+    // Вызываем функцию анимации после загрузки страницы
+    document.addEventListener("DOMContentLoaded", function () {
+        setTimeout(animateSpinners, 10); // Запустить анимацию через 10 миллисекунд после загрузки
+    });
+    </script>
+
+
+<script>
+const openModalButton = document.getElementById('openModalButton');
+const menu_modal = document.getElementById('ModalMenu');
+
+function openModal() {
+    menu_modal.style.display = 'block';
+
+    // Используем setTimeout, чтобы добавить класс "open" через короткой задержки
+    setTimeout(function () {
+        menu_modal.classList.add('open');
+    }, 100);
 }
 
-// Вызываем функцию анимации после загрузки страницы
-document.addEventListener("DOMContentLoaded", function () {
-    setTimeout(animateSpinners, 10); // Запустить анимацию через 2 секунды после загрузки
+function closeModal() {
+    menu_modal.classList.remove('open');
+
+    // После окончания анимации, скрываем модальное окно
+    setTimeout(function () {
+        menu_modal.style.display = 'none';
+    }, 500); // Задержка должна быть равной длительности анимации (0.5s)
+}
+
+openModalButton.addEventListener('click', openModal);
+
+menu_modal.addEventListener('click', function (event) {
+    if (event.target === menu_modal) {
+        closeModal();
+    }
 });
 
-
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+});
 </script>
-<style>
-.loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #ffffff; /* Задний фон не прозрачный */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
 
-.loading-spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
 
-.loading-spinner {
-    width: 20px;
-    height: 20px;
-    background-color: #3498db;
-    border-radius: 50%;
-    margin: 0 10px; /* Расстояние между кружочками */
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out; /* Плавное изменение видимости */
-}
-</style>
+
+
+
 

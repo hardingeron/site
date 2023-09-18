@@ -1,0 +1,109 @@
+.menu_block {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 550px;
+    background-color: #f0f0f0;
+    border-radius: 15px; /* Увеличиваем радиус закругления углов */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4); /* Улучшаем тень */
+    text-align: center;
+}
+
+.first_line_block, .last_line_block {
+    width: 100%;
+    height: 50%;
+    text-align: center;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu_element_block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.el, .el2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-right: 50px; /* Уменьшаем отступ между элементами "el" */
+}
+
+.el:last-child, .el2:last-child {
+    margin-right: 0; /* Убираем отступ у последнего элемента "el" */
+}
+
+.el img, .el2 img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Добавляем закругление углов для изображений */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Улучшаем тень изображений */
+}
+
+.el label, .el2 label {
+    width: 150px;
+    height: 20px;
+    color: #020202; /* Белый текст */
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 18px; /* Увеличиваем размер шрифта */
+}
+
+
+@media screen and (max-width: 600px) {
+    .menu_block {
+        width: 100%;
+        height: 50%;
+        border-radius: 0;
+    }
+
+    .menu_button img {
+        width: 100%;
+        height: 25%;
+        float: right;
+    }
+
+    .first_line_block, .last_line_block {
+        height: 50%;
+    }
+
+    .el, .el2 {
+        margin-right: 20px;
+        margin-bottom: 20px; /* Добавляем отступ снизу между элементами "el" */
+    }
+
+    .el:last-child, .el2:last-child {
+        margin-right: 0; /* Убираем отступ у последнего элемента "el" */
+    }
+
+    .el img, .el2 img {
+        width: 100px; /* Уменьшаем размер изображения для мобильных устройств */
+        height: 100px;
+    }
+
+    .el label, .el2 label {
+        width: 100px;
+        height: 10px;
+        font-size: 16px; /* Уменьшаем размер шрифта для мобильных устройств */
+    }
+}
+
+
+.information {
+    text-align: center; /* Центрируем текст */
+    background-color: #f0f0f0; /* Фоновый цвет для информационного блока */
+    position: absolute;
+    bottom: 0; /* Размещаем блок внизу страницы */
+    width: 100%; /* Растягиваем блок на всю ширину страницы */
+    margin-top: 200px; /* Внешний отступ сверху на 20 пикселей */
+
+}

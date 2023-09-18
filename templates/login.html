@@ -5,6 +5,7 @@
     {{ super() }}
     ავტორიზაცია
 {% endblock %}
+
 {% block content %}
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_login.css') }}">
@@ -31,3 +32,6 @@
 </body>
 
 {% endblock %}
+
+{% block menu %}{% endblock %}
+{% block loading %}{% endblock %}

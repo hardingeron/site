@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_index.css') }}">
+    <title>მთავარი მენიუ</title>
+</head>
+<body>
+
+
+<div class="menu_block">
+    <div class="first_line_block">
+        <div class="menu_element_block">
+            <div class="el">
+                <a href="/all">
+                <img src="/static/images/all.webp" alt="Изображение"></a>
+                <label>სია</label>
+            </div>
+
+            <div class="el">
+                <a href="/add">
+                <img src="/static/images/add.webp" alt="Изображение"></a>
+                <label>დამატება</label>
+            </div>
+
+            <div class="el">
+                <a href="/storage">
+                <img src="/static/images/storage.webp" alt="Изображение"></a>
+                <label>საწყობი</label>
+            </div>
+        </div>
+
+    </div>
+    <div class="last_line_block">
+        <div class="menu_element_block">
+                <div class="el2">
+                    <a href="/booking">
+                    <img src="/static/images/booking.webp" alt="Изображение"></a>
+                    <label>ჯავშანი</label>
+                </div>
+                <div class="el2">
+                    <a href="/logout">
+                    <img src="/static/images/exit.webp" alt="Изображение"></a>
+                    <label>გასვლა</label>
+                </div>
+        </div>  
+    </div>
+</div>
+
+
+    <footer>
+        <div class="information">
+            <p>&copy; 2023  -  " VIP-TOUR საერთაშორისო სატრანსპორტო კომპანია."</p>
+            <p>ბოლო განახლება 18.09.2023</p>
+
+        </div>
+    </footer>
+</body>
+</html>

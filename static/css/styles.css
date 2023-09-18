@@ -23,56 +23,7 @@
 /* конец заднего фона  */
 
 /* меню сайта */
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(to bottom right, #88c1db, #dfe9f3);
-  box-shadow: 0 3px 5px rgba(70, 56, 21, 0.3);
-  z-index: 999; /* добавьте z-index для обеспечения корректного отображения меню */
-}
 
-
-.menu {
-  display: flex;
-  justify-content: center;
-}
-
-.menu__list {
-  list-style: none;
-  margin: 0;
-  display: flex;
-  justify-content: center; /* центрируем пункты меню */
-  align-items: center; /* центрируем текст внутри пунктов меню */
-  width: 75%;
-}
-
-
-.menu__item {
-  margin: 0.5%;
-  margin-right: 5%;
-  padding: 0.5rem; /* уменьшаем отступы */
-}
-
-.menu__link {
-  text-decoration: none;
-  color: #000;
-  font-size: 1.2rem; /* уменьшаем размер шрифта */
-  font-weight: bold;
-  text-transform: uppercase;
-  transition: all 0.2s ease-in-out;
-}
-
-.menu__link:hover {
-  color: #666;
-}
-
-@media only screen and (max-width: 768px) {
-  .menu__list {
-    width: 100%;
-  }
-}
 
 /* флеш сообщения */
 
@@ -180,4 +131,161 @@
 
 
 /* загрузка сайта */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff; /* Задний фон не прозрачный */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  background-color: #3498db;
+  border-radius: 50%;
+  margin: 0 10px; /* Расстояние между кружочками */
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out; /* Плавное изменение видимости */
+}
+
+
+/*модельное окно меню*/
+    /* Стили для модального окна */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.Menu-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 550px;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+}
+
+/* Стили для кнопки закрытия модального окна */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.first_line_block, .last_line_block {
+    width: 100%;
+    height: 50%;
+    text-align: center;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu_element_block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.el, .el2 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-right: 50px;
+}
+
+.el:last-child, .el2:last-child {
+    margin-right: 0;
+}
+
+.el img, .el2 img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.el label, .el2 label {
+    width: 150px;
+    height: 20px;
+    color: #020202;
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.menu_button {
+    position: absolute; /* Абсолютное позиционирование */
+    top: 5px; /* Располагаем кнопку вверху */
+    right: 20px; /* Располагаем кнопку вправо */
+    width: 75px; /* Задаем ширину кнопки */
+    height: 75px; /* Задаем высоту кнопки */
+}
+
+#openModalButton {
+    width: 100px; /* Заполняем всю доступную ширину */
+    height: 100%; /* Заполняем всю доступную высоту */
+    
+}
+
+.menu_block {
+    position: fixed; /* Задаем позицию блока как фиксированную */
+    top: 0; /* Закрепляем блок в верхней части окна браузера */
+    right: 0; /* Закрепляем блок в правой части окна браузера */
+    z-index: 99; /* Задаем z-index, чтобы блок был выше других элементов */
+
+}
+
+
+/* CSS для начального состояния модального окна */
+#ModalMenu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    background-color: rgba(77, 79, 126, 0.7);
+    overflow: hidden;
+    transition: 0.5s; /* Длительность анимации */
+    transform-origin: right top; /* Устанавливаем точку начала анимации в правом верхнем углу */
+    transform: scale(0); /* Начальный масштаб 0 */
+    z-index: 999; /* Задаем z-index, чтобы блок был выше других элементов */
+}
+
+/* CSS для открытого состояния модального окна */
+#ModalMenu.open {
+    width: 100%;
+    height: 100%;
+    transform: scale(1); /* Завершение анимации с масштабом 1 (обычный размер) */
+}
+
 

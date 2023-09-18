@@ -1,7 +1,8 @@
+/* background: linear-gradient(to top left, #a7b2bc, #e4be91, #ff9719, #c5cdd4, #eef2f2); */
 .add {
   width: 600px;
   height: 720px;
-  background: linear-gradient(to bottom right, #7dbbe0, #b1cae5, #d4dce9, #e9eefb, #f5f9fd);
+  background: linear-gradient(to top left, #4e8fc2, #7dbbe0, #a7d7f5, #d2ecfa, #f5f9fd);
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
   padding: 10px;

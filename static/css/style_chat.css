@@ -1,0 +1,32 @@
+#chat-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px; /* Добавьте отступ, если нужно */
+    background-color: #f4f4f4; /* Цвет фона */
+    box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.1); /* Тень для элемента снизу */
+    display: flex;
+    justify-content: center; /* Центрируем по горизонтали */
+    align-items: center; /* Выравниваем по вертикали по центру */
+}
+    
+    /* Текстовое поле */
+    #chat {
+        width: 100%;
+        max-width: 500px; /* Максимальная ширина для читаемости текста */
+        height: 150px; /* Фиксированная высота */
+        resize: none; /* Запрет на изменение размера */
+        border: 2px solid #ccc; /* Подчеркивание текстового поля */
+        border-radius: 10px; /* Закругление углов */
+        padding: 10px; /* Внутренний отступ для текста */
+        background-color: #f4f4f4; /* Цвет фона */
+        color: #333; /* Цвет текста */
+        font-size: 16px; /* Размер шрифта */
+    }
+
+.send_button img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 110px;
+    margin-left: 10px;
+}

@@ -474,3 +474,19 @@ canvas {
 .buttons_block_stat-ved > *:not(:last-child) {
   margin-right: 20px;
 }
+
+
+.button_block input[type="submit"] {
+  margin-top: 20px;
+  background-color: #ff9719; /* Задаем цвет кнопки */
+  color: #fff; /* Задаем цвет текста на кнопке */
+  border: none; /* Убираем границу кнопки */
+  border-radius: 10px; /* Закругляем углы */
+  padding: 10px 20px; /* Задаем отступы вокруг текста кнопки */
+  font-size: 20px; /* Задаем размер шрифта */
+  cursor: pointer; /* Делаем курсор в виде указателя при наведении */
+}
+
+.button_block input[type="submit"]:hover {
+  background-color: #e4be91; /* Задаем цвет кнопки при наведении */
+}

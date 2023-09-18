@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    ჩათი
+{% endblock %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_chat.css') }}">
+
+    <div id="chat-container">
+        <textarea id="chat" placeholder="ჩაწერეთ ტექსტი  .  .  .  ."></textarea>
+        <div class="send_button">
+            <img src="/static/images/send-msg.webp" alt="Изображение" id="SendMessage">
+        </div>
+    </div>
+{% endblock %}

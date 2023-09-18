@@ -728,7 +728,9 @@ def action():
     # Верните какой-то ответ, например:
     return jsonify(success=True, message="Data received successfully")
 
-
+@app.route('/chat',  methods=['POST', 'GET'])
+def chat():
+    return render_template('chat.html')
 
     
 

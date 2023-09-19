@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from flask_login import login_required, login_user, logout_user, current_user
 import os 
-from models import Purcell, db, User, login_manager, Menu, Storage, Booking
+from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Messages
 from config import secret_key
 from sqlalchemy import func, desc
 
@@ -24,6 +24,10 @@ import re
 from openpyxl.drawing.image import Image
 
 
+from flask_socketio import SocketIO
+from flask_socketio import emit
+
+
 
 
 import qrcode
@@ -33,7 +37,7 @@ from functions import get_last_record, generate_number_and_flight, calculate_cos
 
 
 app = Flask(__name__)
-
+socketio = SocketIO(app)  # Подключите SocketIO к вашему Flask-приложению
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:QazEdcQweZxcQscEsz123@localhost/packages'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Отключает отслеживание изменений
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=6)
@@ -732,12 +736,49 @@ def action():
     # Верните какой-то ответ, например:
     return jsonify(success=True, message="Data received successfully")
 
-@app.route('/chat',  methods=['POST', 'GET'])
-def chat():
-    return render_template('chat.html')
 
+
+@app.route('/chat', methods=['POST', 'GET'])
+def chat():
+    messages = Messages.query.order_by(Messages.timestamp.desc()).limit(50).all()
+    messages.reverse()  # Обратный порядок сообщений
+    return render_template('chat.html', messages=messages)
+
+
+# @app.route('/send_message', methods=['POST'])
+# def send_message():
+#     try:
+#         data = request.get_json()
+#         message_content = data.get('message')
+#         user_id = current_user.get_id()
+#         user = User.query.filter_by(id=user_id).first()
+        
+#         if user:
+#             # Создайте новую запись сообщения в базе данных
+#             new_message = Messages(user_id=user.login, content=message_content)
+#             db.session.add(new_message)
+#             db.session.commit()
+
+#             return jsonify({'success': True, 'message': 'Сообщение успешно отправлено'})
+#         else:
+#             return jsonify({'success': False, 'message': 'Пользователь не найден'})
+#     except Exception as e:
+#         return jsonify({'success': False, 'message': str(e)})
     
 
+@socketio.on('new_message')
+def handle_new_message(data):
+    message_content = data['message']
+    user_id = current_user.get_id()
+    user = User.query.filter_by(id=user_id).first()
+
+    # Создайте новое сообщение и добавьте его в базу данных
+    new_message = Messages(user_id=user.login, content=message_content)
+    db.session.add(new_message)
+    db.session.commit()
+
+    # Отправьте новое сообщение всем клиентам через WebSocket
+    emit('new_message', {'content': message_content}, broadcast=True)
 
 
 

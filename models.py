@@ -75,3 +75,10 @@ class Booking(db.Model):
     fwc = db.Column(db.String(20))
     destination = db.Column(db.String(50))
     action = db.Column(db.String(20))
+
+
+class Messages(db.Model):
+    message_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(20), nullable=False)
+    content = db.Column(db.Text)
+    timestamp = db.Column(db.TIMESTAMP, server_default='CURRENT_TIMESTAMP')

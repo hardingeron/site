@@ -10,7 +10,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 bot = Bot(token='6370693434:AAEEPDaX9BrzkY07Xsp78AlP8Z4owmXSVX0')
 dp = Dispatcher(bot)
 
-user_id = [423361340, 6112643352]
+user_id = [423361340, 6112643352, 2058945208, 5757920808, 5160668613]
 
 
 @dp.message_handler(commands=['start'])

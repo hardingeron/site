@@ -308,9 +308,9 @@ def save():
             db.session.add(record)
 
         db.session.commit()
-
+        # Storage.query.order_by(desc(Storage.id)).first().shelf
         # Получение последнего значения shelf
-        last_shelf = Storage.query.order_by(desc(Storage.id)).first().shelf
+        last_shelf = shelf
 
         return jsonify({'last': last_shelf})
     except SQLAlchemyError as e:
@@ -328,18 +328,22 @@ def save():
 def find():
     trecing = request.form['trecing']
     info = request.form['info']
-
+    print('aaaaaaaaaaaaaaa')
     # Выполняем поиск посылки в базе данных
     storage = Storage.query.filter_by(trecing=trecing).first()
 
     if storage:
+        print('bbbbbb')
         location = storage.shelf  # Местоположение посылки
+        print(trecing, location, info)
         asyncio.run(send_location_message(trecing, location, info))  # асинхронный вызов функции
         if info:
             db.session.delete(storage)
             db.session.commit()
+            print('ccccccccc')
     else:
         location = "ამანათი არ მოიძებნა"
+        print('dddddddddd')
     
     # Возвращаем данные в формате JSON
     return jsonify({'shelf': location})

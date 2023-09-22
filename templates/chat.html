@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var sendMessageButton = document.getElementById('SendMessage');
 
     // Подключение к сокс-серверу
-    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var socket = io.connect('https://' + document.domain + ':' + location.port);
 
     function appendMessage(message) {
         var messageContainer = document.createElement('div');

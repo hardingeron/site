@@ -1,51 +1,62 @@
 
 .storage_forms {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-  width: 1200px;
-  margin: 0 auto;
+  justify-content: center; /* Выравнивание по центру по горизонтали */
+  background-color: #ffffff6d; 
+  position: absolute;
+  top: 50%; /* Положение блока относительно верхней границы страницы */
+  left: 0; /* Положение блока относительно левой границы страницы */
+  transform: translateX(0) translateY(-50%); /* Сдвиг блока на половину его высоты наверх */
+  width: 100%;
+  height: 400px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Тень со всех сторон */
 }
 
-.storage_add,
-.storage_find {
-    width: 575px;
-}
 
-.storage_add form,
-.storage_find form {
+
+.storage_forms > * {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15%;
-  margin-top: 40%;
-  border-radius: 15px;
-  width: 400px;
-  height: 200px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+  justify-content: center; /* Выравнивание элементов по центру по горизонтали */
+  align-items: center; /* Выравнивание элементов по центру по вертикали */
 }
 
-/* Стиль для формы поиска */
-.storage_find form {
-  background: linear-gradient(to top left, #4e8fc2, #7dbbe0, #a7d7f5, #d2ecfa, #f5f9fd);
+/* Настройки для элементов внутри .storage_forms */
+.storage_forms > *:not(:last-child) {
+  margin-right: 50px; /* Отступ между элементами, кроме последнего */
 }
 
-/* Стиль для формы добавления */
-.storage_add form {
-  background: linear-gradient(to bottom right, #4e8fc2, #7dbbe0, #a7d7f5, #d2ecfa, #f5f9fd);
-}
+
+
+
+
+
 /* Стиль для заголовка формы и общих меток */
-.storage_add label, .storage_find label {
+.storage_add label,
+.storage_find label {
   border-radius: 10px;
-  background-color: #336699;
-  color: #fff;
+  color: #000000;
   padding: 10px 20px;
-  margin-bottom: 80px;
+  margin-bottom: 20px;
   width: 250px;
   text-align: center;
-  margin-top: -110px;
+  margin-top: -40px;
   font-size: 25px;
+  position: relative; /* Добавляем позицию относительно элемента */
+  font-weight: bold;
 }
+
+.storage_add label::after,
+.storage_find label::after {
+  content: ""; /* Добавляем пустой контент */
+  position: absolute; /* Позиционируем абсолютно относительно родителя */
+  left: 0; /* Размещаем слева */
+  bottom: 0; /* Размещаем снизу */
+  width: 100%; /* Занимает всю ширину родителя */
+  height: 2px; /* Высота линии (можно настроить по желанию) */
+  background-color: rgb(0, 0, 0); /* Цвет линии */
+}
+
+
 
 .storage_add input {
   border: none;
@@ -59,14 +70,13 @@
 }
 
 #find_shelf {
-  border: none;
   border-radius: 10px;
+  border: none;
   padding: 10px;
   margin-bottom: 10px;
   width: 300px;
   font-size: 20px;
   margin-top: 10px;
-
 }
 
 .f input[type="text"] {
@@ -81,9 +91,6 @@
 }
 
 #f_s {
-  background-color: #336699;
-  color: #fff;
-  border: none;
   border-radius: 10px;
   padding: 10px 20px;
   width: 150px;
@@ -95,23 +102,54 @@
 
 
 
-.storage_add input[type="submit"] {
-  background-color: #336699;
-  color: #fff;
+
+
+
+
+.storage_add input[type="submit"],
+.storage_find input[type="submit"] {
+  background-color: #007bff;
+  cursor: pointer;
   border: none;
   border-radius: 10px;
   padding: 10px 20px;
   width: 150px;
+  color: #fff;
 }
 
 
-.storage_add input[type="submit"]:hover,
-.storage_find input[type="submit"]:hover {
-  background-color: #305577;
-  cursor: pointer;
+.storage_find input[type="submit"]:hover,
+.storage_add input[type="submit"]:hover {
+  background-color: #0056b3; /* Синий цвет с наведением */
 }
 
 .input-centered {
   text-align: center;
 }
 
+
+/* 
+background-color: #40414f;
+box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное смещение, вертикальное смещение, радиус размытия и цвет тени */
+
+
+.storage_add input,
+.storage_find input {
+  background-color: #ffffff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+
+/* Стиль для формы поиска */
+.storage_find form,
+.storage_add form {
+  background: linear-gradient(to top left, #4e8fc2, #7dbbe0, #a7d7f5, #d2ecfa, #f5f9fd);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px;
+  border-radius: 15px;
+  width: 400px;
+  height: 200px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}

@@ -311,6 +311,7 @@ margin-left: 20px;
 }
 
 #edit {
+  
   background-color: green;
   color: white;
 }
@@ -410,12 +411,11 @@ margin-left: 20px;
 
 .modal_statistic-content {
   background-color: #fff;
-  margin: 10% auto;
+  margin: 1% auto;
   padding: 20px;
   border-radius: 10px;
-  width: 80%;
-  max-width: 800px;
-  height: auto;
+  width: 850px;
+  height: 500px;
   position: relative;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
 }
@@ -433,8 +433,8 @@ margin-left: 20px;
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
-  height: 500px;
-  width: 800px;
+  height: 80%;
+  width: 100%;
 }
 
 /* Стили для каждой диаграммы */

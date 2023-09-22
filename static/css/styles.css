@@ -3,7 +3,6 @@
 
 
 
-
 /*конец стиля для добавления посылки*/
 
 
@@ -19,6 +18,9 @@
   opacity: 0.9;
   z-index: -1;
 }
+
+
+
 
 /* конец заднего фона  */
 
@@ -180,7 +182,7 @@
     transform: translate(-50%, -50%);
     width: 800px;
     height: 550px;
-    background-color: #f0f0f0;
+    background-color: #ffffff;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     text-align: center;
@@ -235,7 +237,7 @@
 .el label, .el2 label {
     width: 150px;
     height: 20px;
-    color: #020202;
+    color: #000000;
     display: block;
     margin-top: 10px;
     font-weight: bold;
@@ -273,7 +275,7 @@
     right: 0;
     width: 0;
     height: 0;
-    background-color: rgba(77, 79, 126, 0.7);
+    background-color: rgba(255, 255, 255, 0.7);
     overflow: hidden;
     transition: 0.5s; /* Длительность анимации */
     transform-origin: right top; /* Устанавливаем точку начала анимации в правом верхнем углу */

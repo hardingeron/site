@@ -6,67 +6,109 @@
 {% endblock %}
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_chat.css') }}">
-
 <div id="chat-window">
     <div id="chat-messages">
         {% for message in messages %}
+        <div class="message-container">
+            <div class="message_info">
+                <div class="message-user">{{ message.user_id }}</div>
+                <div class="message-time">{{ message.timestamp }}</div>
+            </div>
             <div class="message">{{ message.content }}</div>
+        </div>
         {% endfor %}
     </div>
 </div>
 
 <div id="chat-container">
+    <div class="buttons-block">
+        <img src="/static/images/load-photo.png" alt="ფოტო" id="LoadPhoto">
+    </div>
     <textarea id="chat" placeholder="ჩაწერეთ ტექსტი  .  .  .  ."></textarea>
     <div class="send_button">
-        <img src="/static/images/send-msg.webp" alt="გაგზავნა" id="SendMessage">
+        <img src="/static/images/send.png" alt="გაგზავნა" id="SendMessage">
     </div>
 </div>
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var chatMessages = document.getElementById('chat-messages');
-        var chatInput = document.getElementById('chat');
-        var sendMessageButton = document.getElementById('SendMessage');
+document.addEventListener('DOMContentLoaded', function() {
+    var chatMessages = document.getElementById('chat-messages');
+    var chatInput = document.getElementById('chat');
+    var sendMessageButton = document.getElementById('SendMessage');
 
-        // Подключение к сокс-серверу
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // Подключение к сокс-серверу
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-        // Функция для добавления нового сообщения на страницу
-        function appendMessage(message) {
-            var messageElement = document.createElement('div');
-            messageElement.className = 'message';
-            messageElement.textContent = message.content;
-            chatMessages.appendChild(messageElement);
-            scrollToBottom(); // Прокрутка вниз при получении нового сообщения
-        }
+    function appendMessage(message) {
+        var messageContainer = document.createElement('div');
+        messageContainer.className = 'message-container';
 
-        // Обработка события "новое сообщение"
-        socket.on('new_message', function(data) {
-            appendMessage(data);
-        });
+        var messageInfo = document.createElement('div');
+        messageInfo.className = 'message_info';
 
-        // Обработка отправки нового сообщения
-        sendMessageButton.addEventListener('click', function() {
-            var message = chatInput.value;
+        var userElement = document.createElement('div');
+        userElement.className = 'message-user';
+        userElement.textContent = message.user_id;
+
+        var messageElement = document.createElement('div');
+        messageElement.className = 'message';
+        messageElement.textContent = message.content;
+
+        var timeElement = document.createElement('div');
+        timeElement.className = 'message-time';
+        timeElement.textContent = message.timestamp;
+
+        messageInfo.appendChild(userElement);
+        messageInfo.appendChild(timeElement);
+
+        messageContainer.appendChild(messageInfo);
+        messageContainer.appendChild(messageElement);
+
+        chatMessages.appendChild(messageContainer);
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function sendMessage() {
+        var message = chatInput.value.trim(); // Удалить начальные и конечные пробелы
+
+        if (message !== '') {
             socket.emit('new_message', { message: message });
             chatInput.value = '';  // Очистка текстового поля
-        });
-
-        // Загрузка начальных сообщений
-        function loadMessages() {
-            // Здесь можно использовать AJAX-запрос для загрузки начальных сообщений
-            // и отобразить их на странице.
-            // ...
         }
+    }
 
-        // Вызов функции загрузки сообщений при загрузке страницы
-        loadMessages();
-
-        // Функция для установки прокрутки вниз
-        function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+    sendMessageButton.addEventListener('click', function() {
+        sendMessage();
+    });
+    
+    chatInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
         }
     });
+
+    // Обработка события "новое сообщение"
+    socket.on('new_message', function(data) {
+        appendMessage(data);
+    });
+
+    // Загрузка начальных сообщений
+    function loadMessages() {
+        // Здесь можно использовать AJAX-запрос для загрузки начальных сообщений
+        // и отобразить их на странице.
+        // ...
+    }
+
+    // Вызов функции загрузки сообщений при загрузке страницы
+    loadMessages();
+
+    // Функция для установки прокрутки вниз
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+});
 </script>
 {% endblock %}

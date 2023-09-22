@@ -771,6 +771,7 @@ def handle_new_message(data):
     message_content = data['message']
     user_id = current_user.get_id()
     user = User.query.filter_by(id=user_id).first()
+    timestamp = datetime.now().strftime('%H:%M:%S')
 
     # Создайте новое сообщение и добавьте его в базу данных
     new_message = Messages(user_id=user.login, content=message_content)
@@ -778,12 +779,13 @@ def handle_new_message(data):
     db.session.commit()
 
     # Отправьте новое сообщение всем клиентам через WebSocket
-    emit('new_message', {'content': message_content}, broadcast=True)
+    emit('new_message', {'user_id': user.login, 'timestamp': timestamp, 'content': message_content}, broadcast=True)
+
 
 
 
 if __name__ == '__main__':
-    # app.run(debug=True)
+
     app.run(host='0.0.0.0', debug=True)
 
 # with app.app_context():

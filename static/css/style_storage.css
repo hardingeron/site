@@ -34,7 +34,7 @@
 .storage_add label,
 .storage_find label {
   border-radius: 10px;
-  color: #000000;
+  color: #8e8ea0;
   padding: 10px 20px;
   margin-bottom: 20px;
   width: 250px;
@@ -53,7 +53,7 @@
   bottom: 0; /* Размещаем снизу */
   width: 100%; /* Занимает всю ширину родителя */
   height: 2px; /* Высота линии (можно настроить по желанию) */
-  background-color: rgb(0, 0, 0); /* Цвет линии */
+  background-color: #8e8ea0;; /* Цвет линии */
 }
 
 
@@ -108,13 +108,13 @@
 
 .storage_add input[type="submit"],
 .storage_find input[type="submit"] {
-  background-color: #007bff;
+  background-color: #333333;
+  color: #8e8ea0;
   cursor: pointer;
   border: none;
   border-radius: 10px;
   padding: 10px 20px;
   width: 150px;
-  color: #fff;
 }
 
 
@@ -135,7 +135,7 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное сме
 
 .storage_add input,
 .storage_find input {
-  background-color: #ffffff;
+  background-color: #40414f;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
@@ -143,7 +143,7 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное сме
 /* Стиль для формы поиска */
 .storage_find form,
 .storage_add form {
-  background: linear-gradient(to top left, #4e8fc2, #7dbbe0, #a7d7f5, #d2ecfa, #f5f9fd);
+  background: #444654;
   display: flex;
   flex-direction: column;
   align-items: center;

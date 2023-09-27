@@ -9,7 +9,8 @@
   border-radius: 20px;
   font-family: Arial, sans-serif;
   width: 100%;
-  background-color: #f2f2f2c6;
+  background-color: #8e8ea0;
+  color:#ffffff;
   position: relative;
   top: 1%;
 }
@@ -23,8 +24,8 @@
   padding: 5px;
   text-align: center;
   font-size: 18px;
-  background-color: #82caec;
-  color: #000000;
+  background-color: #343641;
+  color: #8e8ea0;
   position: sticky;
   top: 0;
   vertical-align: bottom;
@@ -71,6 +72,7 @@
   #filter-number {
     width: 25px;
     padding: 5px;
+    background-color: #40414f;
     border: 1px solid #000000;
     border-radius: 4px;
     font-size: 14px;
@@ -91,6 +93,7 @@
 #filter-flight {
   width: 100px;
   padding: 5px;
+  background-color: #40414f;
   border: 1px solid #000000;
   border-radius: 4px;
   font-size: 14px;
@@ -201,14 +204,16 @@
 .download-container select {
   width: 100%;
   padding: 10px;
+  background-color: #40414f;
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-right: 10px;
+  color: #8e8ea0;
 }
 
 .download-container button.btn-download {
-  background-color:  #7fb3d8;
-  color: white;
+  background-color: #40414f;
+  color: #8e8ea0;
   border: none;
   padding: 10px 20px;
   font-size: 16px;

@@ -38,9 +38,40 @@ document.addEventListener('DOMContentLoaded', function() {
     var chatMessages = document.getElementById('chat-messages');
     var chatInput = document.getElementById('chat');
     var sendMessageButton = document.getElementById('SendMessage');
+    var socket;
 
-    // Подключение к сокс-серверу
-    var socket = io.connect('https://' + document.domain + ':' + location.port);
+    function createWebSocket() {
+        // Здесь устанавливаем WebSocket-соединение
+        var uri = 'http://' + document.domain + ':' + location.port;
+        socket = io.connect(uri);
+
+        socket.onopen = function(event) {
+            // Соединение успешно установлено
+            console.log('WebSocket connection opened');
+        };
+
+        socket.onmessage = function(event) {
+            // Обработка входящих сообщений
+            console.log('Received message:', event.data);
+            appendMessage(JSON.parse(event.data)); // Парсинг JSON-сообщения
+        };
+
+        socket.onerror = function(error) {
+            // Обработка ошибок
+            console.error('WebSocket error:', error);
+            // Попытка повторного создания WebSocket-соединения через 2 секунды
+            setTimeout(createWebSocket, 2000);
+        };
+
+        socket.onclose = function(event) {
+            // Соединение закрыто
+            console.log('WebSocket connection closed');
+            // Попытка повторного создания WebSocket-соединения через 2 секунды
+            setTimeout(createWebSocket, 2000);
+        };
+    }
+
+    createWebSocket(); // Первоначальная попытка создания WebSocket-соединения
 
     function appendMessage(message) {
         var messageContainer = document.createElement('div');

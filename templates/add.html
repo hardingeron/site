@@ -62,11 +62,11 @@
                 </div>
                 <div class="responsibility_block">
                     <label>ღირებულება</label>
-                    <input type="text" name="responsibility" required value="{{ request.form.responsibility }}">
+                    <input type="text" name="responsibility" value="{{ request.form.responsibility }}">
                 </div>
                 <div class="passport_block">
                     <label>პასპორტი</label>
-                    <input type="text" name="passport" required value="{{ request.form.passport }}">
+                    <input type="text" name="passport" value="{{ request.form.passport }}">
                 </div>
             </div>
 
@@ -91,15 +91,15 @@
             <div class="payment_block">
                 <label>
                     <input type="radio" name="payment" value="paid" required>
-                    <span>გადახდილი</span>
+                    <span>+</span>
                 </label>
                 <label>
                     <input type="radio" name="payment" value="not_paid">
-                    <span>გადასახდელი</span>
+                    <span>-</span>
                 </label>
                 <label>
                     <input type="radio" name="payment" value="card">
-                    <span>ბარათით</span>
+                    <span>ბარათი</span>
                 </label>
             </div>
             

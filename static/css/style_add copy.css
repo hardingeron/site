@@ -2,12 +2,12 @@
 .add {
   width: 600px;
   height: 720px;
-  background: #444654;
+  background: linear-gradient(to top left, #4e8fc2, #7dbbe0, #a7d7f5, #d2ecfa, #f5f9fd);
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
   padding: 10px;
   position: absolute;
-  top: 50%;
+  top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -24,7 +24,7 @@
 
 .head h2 {
   font-size: 25px;
-  color: #8e8ea0;
+  color: #333;
 }
 
 .flight_and_img,
@@ -60,7 +60,20 @@
 .recipient_phone label,
 .description_block label {
   width: 220px;
+  height: 25px;
+  display: block;
+  /* background-color: #7dbbe0;
+  color: #fff; */
+  text-align: center;
   line-height: 20px;
+  font-size: 15px;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+  font-weight: bold;
+}
+
+.add_block input:hover {
+  background-color: #e0e0e0;
 }
 
 .description_block label {
@@ -70,7 +83,16 @@
 .information_one_block label,
 .information_two_block label {
   width: 130px;
+  height: 25px;
+  display: block;
+  /* background-color: #7dbbe0;
+  color: #fff; */
+  text-align: center;
   line-height: 20px;
+  font-size: 15px;
+  border-radius: 10px 10px 0 0;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
+  font-weight: bold;
 }
 
 .information_one_block input,
@@ -78,7 +100,8 @@
   width: 90px;
   height: 20px;
   border: none;
-  font-weight: bold;
+  background-color: #f0f0f0;
+  border-radius: 0 0 10px 10px;
   padding: 5px 10px;
   font-size: 14px;
   outline: none;
@@ -93,12 +116,11 @@
 .fandm {
   width: 180px;
   height: 25px;
-  border: 1px solid #8e8ea0;
-  color: #8e8ea0;
+  border: 1px solid #ccc;
   border-radius: 5px;
   padding: 5px 10px;
   font-size: 14px;
-  background-color: #40414f;
+  background-color: #f0f0f0;
   border-radius: 0 0 10px 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
@@ -108,6 +130,8 @@
   width: 180px;
   height: 20px;
   border: none;
+  background-color: #f0f0f0;
+  border-radius: 0 0 10px 10px;
   padding: 5px 10px;
   font-size: 14px;
   outline: none;
@@ -118,6 +142,7 @@
   width: 450px;
   height: 60px;
   border: none;
+  background-color: #f0f0f0;
   border-radius: 5px;
   border-radius: 0 0 10px 10px;
   padding: 10px;
@@ -129,6 +154,10 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.description_block textarea:hover {
+  background-color: #e0e0e0;
+  color: #000;
+}
 
 .description_block {
   display: flex;
@@ -164,6 +193,7 @@
 }
 
 .payment_block label {
+  display: block;
   width: 90px;
   margin-bottom: 10px;
   cursor: pointer;
@@ -173,6 +203,8 @@
   border-radius: 5px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   transition: background-color 0.2s, color 0.2s;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .payment_block input[type="radio"] {
@@ -194,49 +226,15 @@
 }
 
 .button_block input[type="submit"] {
-  background-color: #333333;
-  color: #8e8ea0;
+  background-color: #82bcdf;
+  color: white;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
   font-size: 16px;
   border-radius: 5px;
-  font-weight: bold;
 }
 
 .button_block input[type="submit"]:hover {
-  background-color: #1a1a1a;
-}
-
-
-
-
-
-
-.add label {
-  background-color: #343641;
-  color: #8e8ea0;
-  text-align: center;
-  border-radius: 10px 10px 0 0;
-  font-weight: bold;
-  font-size: 15px;
-  display: block;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
-  height: 25px;
-}
-
-.add input[type='text'],
-.description_block textarea,
-.city select {
-  background-color: #40414f;
-  color: #8e8ea0;
-  font-weight: bold;
-  border-radius: 0 0 10px 10px;
-}
-
-
-.add input[type='text']:hover,
-.description_block textarea:hover {
-  background-color: #343641;
-
+  background-color: #45a049;
 }

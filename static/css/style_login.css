@@ -1,5 +1,5 @@
 body {
-  background: #d2ebfa;
+  background: #353745;
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
@@ -15,7 +15,7 @@ body {
 .login-form {
     width: 400px;
     padding: 30px;
-    background: #f2f7fa;
+    background: #444654;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
     animation: slideIn 0.5s ease;
@@ -23,7 +23,7 @@ body {
 
 .login-title {
   text-align: center;
-  color: #2d4b67;
+  color: #8e8ea0;
   font-size: 24px;
   margin-bottom: 30px;
 }
@@ -35,14 +35,14 @@ body {
   margin-bottom: 20px;
   border: none;
   border-radius: 5px;
-  background: #e8f2f7;
-  color: #2d4b67;
+  background: #40414f;
+  color: #8e8ea0;
   font-size: 16px;
 }
 
 .login-form input[type="text"]::placeholder,
 .login-form input[type="password"]::placeholder {
-  color: #86a4b9;
+  color: #8e8ea0;
 }
 
 .submit-button {
@@ -51,8 +51,8 @@ body {
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background: linear-gradient(to bottom right, #738ea3, #8fa7ba, #a6c1d1, #bcdbe8);
-  color: #fff;
+  background: #333333;
+  color: #8e8ea0;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
@@ -62,7 +62,7 @@ body {
 }
 
 .submit-button:hover {
-  background: linear-gradient(to bottom right, #5b7890, #94b1c6);
+  background: #202020;
 }
 
 .flash.success {

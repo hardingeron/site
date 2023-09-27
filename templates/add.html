@@ -57,7 +57,7 @@
             <div class="information_one_block">
                 <div class="weight_block">
                     <label>წონა</label>
-                    <input type="text" name="weight" required class="information {{ 'invalid' if request.form.weight and not request.form.weight.isdigit() }}" value="{{ request.form.weight }}">
+                    <input type="text" name="weight" required class=" information {{ 'invalid' if request.form.weight and not request.form.weight.isdigit() }}" value="{{ request.form.weight }}">
 
                 </div>
                 <div class="responsibility_block">
@@ -108,7 +108,7 @@
         </div>
 
     </form>
-    
+
 
     {% for cat, msg in get_flashed_messages(True) %}
     <div class='flash {{cat}}'>{{msg}}</div>

@@ -9,11 +9,29 @@
   border-radius: 20px;
   font-family: Arial, sans-serif;
   width: 100%;
-  background-color: #8e8ea0;
-  color:#ffffff;
-  position: relative;
+  background-color: #51515e;
+  color: #8e8ea0;
+
   top: 1%;
+  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.1);
+  font-weight: bold;
+
 }
+
+.table-container::-webkit-scrollbar {
+  width: 10px; /* Ширина полосы прокрутки */
+  height: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background-color: #19191b; /* Цвет полосы прокрутки */
+  border-radius: 10px; /* Скругление углов полосы прокрутки */
+}
+
+.table-container::-webkit-scrollbar-track {
+  background-color: #2a2a2c; /* Цвет фона полосы прокрутки */
+}
+
 
 .table {
   width: 100%;
@@ -118,7 +136,7 @@
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
 }
 
 .modal-content {
@@ -128,12 +146,11 @@
   justify-content: center;
   margin: 5% auto;
   padding: 20px;
-  background-color: #fff;
   width: 600px;
   min-height: 600px;
   max-height: 700px;
   border-radius: 10px;
-  background: linear-gradient(to bottom right, #7dbbe0, #b1cae5, #d4dce9, #e9eefb, #f5f9fd);
+  background: #444654;
 }
 
 .close {

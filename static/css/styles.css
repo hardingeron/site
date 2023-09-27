@@ -3,21 +3,23 @@
 
 
 /*конец стиля для добавления посылки*/
-
+body {
+  background-color: #353745;
+}
 
 /* Задний фон */
-.bg-image {
+/* .bg-image {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("../images/2801.jpg");
+  background-image: url("../images/2801-.jpg");
   background-size: cover;
   opacity: 0.9;
   z-index: -1;
 }
-
+ */
 
 
 
@@ -138,7 +140,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #ffffff; /* Задний фон не прозрачный */
+  background-color: #444654; /* Задний фон не прозрачный */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -171,7 +173,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
 }
 
 .Menu-content {

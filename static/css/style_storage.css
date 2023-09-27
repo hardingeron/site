@@ -2,7 +2,6 @@
 .storage_forms {
   display: flex;
   justify-content: center; /* Выравнивание по центру по горизонтали */
-  background-color: #ffffff6d; 
   position: absolute;
   top: 50%; /* Положение блока относительно верхней границы страницы */
   left: 0; /* Положение блока относительно левой границы страницы */
@@ -137,6 +136,8 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное сме
 .storage_find input {
   background-color: #40414f;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  color: #8e8ea0;
+
 }
 
 

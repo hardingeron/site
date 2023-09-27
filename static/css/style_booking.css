@@ -6,12 +6,18 @@
   transform: translate(-50%, -50%);
   width: 450px;
   max-width: 90%; /* Максимальная ширина для удобства чтения */
-  height: 500px;
-  background-color: #f0f0f0; /* Светлый фон */
+  height: 570px;
+  background-color: #444654; /* Светлый фон */
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Более мягкая тень */
   padding: 20px;
   text-align: center; /* Центрирование текста */
+  color: #8e8ea0;
+}
+
+.fc-state-default {
+  background-color: #333333;
+  color: #8e8ea0;
 }
 
 
@@ -19,25 +25,27 @@
 #calendar {
   padding: 20px;
   width: 90%; /* Ширина 100% контейнера */
-
-  height: 400px;
+  font-weight: bold;
+  height: 450px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Более мягкая тень */
   border-radius: 10px;
 }
 
 /* Стили для выбора маршрута */
 label {
-  margin-top: 10px;
-  font-size: 16px;
-  color: #333; /* Черный цвет текста */
+  font-size: 20px;
+  color: #8e8ea0; /* Черный цвет текста */
+  font-weight: bold;
+  margin-bottom: 5px; /* Добавляем 5 пикселей нижнего отступа */
 }
 
 #route {
-  margin-bottom: 20px;
+  margin-top: 10px;
   padding: 8px;
   font-size: 16px;
   border: 1px solid #ccc; /* Слабая граница */
   border-radius: 5px;
+  background-color: #40414f;
 }
 
 /* Стили для кнопки "Выбрать" */
@@ -54,8 +62,9 @@ label {
 }
 
 #select-button:disabled {
-  background-color: #bdc3c7;
+  background-color: #333333;
   cursor: not-allowed;
+  color: #8e8ea0;
 }
 
 #select-button:hover {

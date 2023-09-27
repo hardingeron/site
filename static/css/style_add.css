@@ -13,10 +13,10 @@
   text-align: center;
 }
 
-.invalid {
-  color: rgb(255, 0, 0); /* Установите цвет текста на красном фоне */
-}
+body{
 
+  color: red;;
+}
 .head {
   text-align: center;
   margin-top: 10px;
@@ -50,6 +50,21 @@
 .sender_block > *,
 .recipient_block > * {
   margin-right: 50px;
+}
+
+.payment_block label {
+  width: 90px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  padding: 10px;
+  /* background-color: #7dbbe0;
+  color: white; */
+  border-radius: 5px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.payment_block label:hover {
+  background-color: #64a2c4;
 }
 
 .flight_block label,
@@ -141,7 +156,6 @@
   width: 90%;
   height: 30px;
   border: none;
-  background-color: #f0f0f0;
   border-radius: 5px;
   padding: 5px;
   font-size: 14px;
@@ -163,25 +177,12 @@
   margin-bottom: 20px;
 }
 
-.payment_block label {
-  width: 90px;
-  margin-bottom: 10px;
-  cursor: pointer;
-  padding: 10px;
-  /* background-color: #7dbbe0;
-  color: white; */
-  border-radius: 5px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  transition: background-color 0.2s, color 0.2s;
-}
 
 .payment_block input[type="radio"] {
   display: none;
 }
 
-.payment_block label:hover {
-  background-color: #64a2c4;
-}
+
 
 .payment_block input[type="radio"]:checked + span {
   background-color: #64a2c4;
@@ -239,4 +240,10 @@
 .description_block textarea:hover {
   background-color: #343641;
 
+}
+
+
+
+input[type='text'].invalid {
+  color: rgb(255, 0, 0); /* Установите цвет текста на красном фоне */
 }

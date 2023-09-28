@@ -2,6 +2,8 @@
 import logging
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.utils import exceptions
+import json
 
 
 # bot.py
@@ -10,8 +12,11 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 bot = Bot(token='6370693434:AAEEPDaX9BrzkY07Xsp78AlP8Z4owmXSVX0')
 dp = Dispatcher(bot)
 
-user_id = [423361340, 6112643352, 2058945208, 5160668613]
-#2058945208, 5757920808, 5160668613
+try:
+    with open('bot_users.json', 'r') as file:
+        user_id = json.load(file)
+except FileNotFoundError:
+    user_id = []
 
 @dp.message_handler(commands=['start'])
 async def start_handler(message: types.Message):
@@ -21,7 +26,6 @@ async def start_handler(message: types.Message):
         user_id.append(message.from_user.id)
     else:
         await bot.send_message(chat_id=message.from_user.id, text='თქვენ უკე ხართ ჩატში')
-        print(user_id[1])
 
 
 
@@ -31,9 +35,13 @@ async def send_location_message(trecing, location, info):
     keyboard = types.InlineKeyboardMarkup()
     delete_button = types.InlineKeyboardButton(text="წაშლა", callback_data=f"delete_{trecing}")
     keyboard.add(delete_button)
+    
     for user in user_id:
-        await bot.send_message(chat_id=user, text=message_text, reply_markup=keyboard)
-
+        try:
+            await bot.send_message(chat_id=user, text=message_text, reply_markup=keyboard)
+        except exceptions.BotBlocked as e:
+            logging.error(f"Пользователь {user} заблокировал бота")
+            continue  # Пропустить итерацию и перейти к следующему пользователю
 
 @dp.callback_query_handler(lambda c: c.data.startswith('delete_'))
 async def delete_message(callback_query: types.CallbackQuery):

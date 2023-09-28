@@ -21,6 +21,14 @@
         </div>
     </div>
 
+    <div class="add_user_bot">
+        <form id="user_add" action="/user_add" method="POST">
+            <label class="user_add_label">ბოტი</label>
+            <input type="text" name="user_id"  class="user_add_input" placeholder="telegram ID">
+            <input type="submit" value="დამატება" id="user_add_submit">
+        </form>
+    </div>
+
     <div class="storage_find">
         <form id="find-form" class="find-form" action="/find" method="POST">
             <label class="find_name">ძიება</label>
@@ -35,6 +43,8 @@
         </form>
         <div id="result-container"></div>
     </div>
+
+
 </div>
 
 
@@ -89,6 +99,39 @@
         });
     });
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("user_add");
+      const userInput = document.querySelector(".user_add_input");
+  
+      form.addEventListener("submit", function(event) {
+        event.preventDefault(); // Предотвратить стандартное поведение отправки формы
+        const user_id = userInput.value;
+  
+        // Отправить POST-запрос на сервер
+        fetch("/user_add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            // Обработать ответ от сервера, если необходимо
+            console.log(data);
+            
+            // Очистить инпут после успешной отправки
+            userInput.value = '';
+          })
+          .catch((error) => {
+            console.error("Ошибка при отправке POST-запроса:", error);
+          });
+      });
+    });
+  </script>
 
 {% for cat, msg in get_flashed_messages(True) %}
     <div class='flash {{cat}}'>{{msg}}</div>

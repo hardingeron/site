@@ -26,6 +26,7 @@ from openpyxl.drawing.image import Image
 
 from flask_socketio import SocketIO
 from flask_socketio import emit
+import json
 
 
 
@@ -785,6 +786,30 @@ def handle_new_message(data):
     # Отправьте новое сообщение всем клиентам через WebSocket
     emit('new_message', {'user_id': user.login, 'timestamp': timestamp, 'content': message_content}, broadcast=True)
 
+
+@app.route('/user_add', methods=['POST'])
+def add_user():
+    user_id = request.json.get('user_id')
+    print('wwwwwwwww', user_id)
+
+    # Открываем файл bot_users.json и загружаем его содержимое
+    try:
+        with open('bot_users.json', 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        data = []
+
+    # Проверяем, что user_id является уникальным числовым значением
+    if user_id.isdigit() and int(user_id) not in data:
+        data.append(int(user_id))
+        # Сохраняем обновленные данные в файл bot_users.json
+        with open('bot_users.json', 'w') as file:
+            json.dump(data, file)
+        response_data = {"message": "Пользователь добавлен успешно"}
+    else:
+        response_data = {"message": "Недопустимый или дублирующийся пользователь"}
+
+    return jsonify(response_data)
 
 
 

@@ -1,4 +1,5 @@
 
+/* главная форма */
 .storage_forms {
   display: flex;
   justify-content: center; /* Выравнивание по центру по горизонтали */
@@ -12,7 +13,6 @@
 }
 
 
-
 .storage_forms > * {
   display: flex;
   justify-content: center; /* Выравнивание элементов по центру по горизонтали */
@@ -21,7 +21,7 @@
 
 /* Настройки для элементов внутри .storage_forms */
 .storage_forms > *:not(:last-child) {
-  margin-right: 50px; /* Отступ между элементами, кроме последнего */
+  margin-right: 20px; /* Отступ между элементами, кроме последнего */
 }
 
 
@@ -29,23 +29,11 @@
 
 
 
-/* Стиль для заголовка формы и общих меток */
-.storage_add label,
-.storage_find label {
-  border-radius: 10px;
-  color: #8e8ea0;
-  padding: 10px 20px;
-  margin-bottom: 20px;
-  width: 250px;
-  text-align: center;
-  margin-top: -40px;
-  font-size: 25px;
-  position: relative; /* Добавляем позицию относительно элемента */
-  font-weight: bold;
-}
+
 
 .storage_add label::after,
-.storage_find label::after {
+.storage_find label::after,
+.add_user_bot label::after {
   content: ""; /* Добавляем пустой контент */
   position: absolute; /* Позиционируем абсолютно относительно родителя */
   left: 0; /* Размещаем слева */
@@ -57,37 +45,11 @@
 
 
 
-.storage_add input {
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
-  width: 300px;
-  font-size: 20px;
-  margin-top: 10px;
 
-}
 
-#find_shelf {
-  border-radius: 10px;
-  border: none;
-  padding: 10px;
-  margin-bottom: 10px;
-  width: 300px;
-  font-size: 20px;
-  margin-top: 10px;
-}
 
-.f input[type="text"] {
-  width: 100px;
-  border: none;
-  border-radius: 10px;
-  padding: 10px;
-  margin-bottom: 10px;
-  width: 138px;
-  font-size: 20px;
-  margin-top: 10px;
-}
+
+
 
 #f_s {
   border-radius: 10px;
@@ -106,7 +68,8 @@
 
 
 .storage_add input[type="submit"],
-.storage_find input[type="submit"] {
+.storage_find input[type="submit"],
+.add_user_bot [type="submit"] {
   background-color: #333333;
   color: #8e8ea0;
   cursor: pointer;
@@ -114,6 +77,7 @@
   border-radius: 10px;
   padding: 10px 20px;
   width: 150px;
+  font-size: 20px;
 }
 
 
@@ -132,13 +96,7 @@ background-color: #40414f;
 box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное смещение, вертикальное смещение, радиус размытия и цвет тени */
 
 
-.storage_add input,
-.storage_find input {
-  background-color: #40414f;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  color: #8e8ea0;
 
-}
 
 
 /* Стиль для формы поиска */
@@ -153,4 +111,112 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное сме
   width: 400px;
   height: 200px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.add_user_bot {
+  width: 400px;
+}
+
+#user_add {
+  background: #444654;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px;
+  border-radius: 15px;
+  width: 150px;
+  height: 120px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.add_user_bot label {
+  margin-bottom: 20px;
+  width: 150px;
+  text-align: center;
+  margin-top: -40px;
+  position: relative; /* Добавляем позицию относительно элемента */
+  
+}
+
+/* Стиль для заголовка формы и общих меток */
+.storage_add label,
+.storage_find label {
+  margin-bottom: 20px;
+  width: 250px;
+  text-align: center;
+  margin-top: -40px;
+  position: relative; /* Добавляем позицию относительно элемента */
+  
+}
+
+/* ---------------------------------------------------------------------------- */
+
+
+/* цвета для LABEL */
+.storage_add label,
+.storage_find label,
+.add_user_bot label {
+  color: #8e8ea0;
+}
+
+/* цвета для INPUT=TEXT */
+.storage_add input,
+.storage_find input,
+.add_user_bot input {
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  color: #8e8ea0;
+}
+
+/* одинаковые стили для INPUT=TEXT */
+.storage_add input,
+.f input[type="text"],
+.add_user_bot input[type='text'],
+#find_shelf {
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+
+
+/* одинаковые стили для LABEL */
+.storage_add label,
+.storage_find label,
+.add_user_bot label {
+  border-radius: 10px;
+  font-weight: bold;
+  padding: 10px 20px;
+  font-size: 25px;
+  
+}
+
+#find_shelf,
+.storage_add input {
+  margin-bottom: 10px;
+  width: 300px;
+}
+
+
+
+
+/* ---- */
+
+
+
+.f input[type="text"] {
+  width: 100px;
+  margin-bottom: 10px;
+  width: 138px;
+}
+
+.add_user_bot input[type='text'] {
+  width: 100px;
+  margin-bottom: 20px;
+  width: 138px;
+  text-align: center;
+
+
 }

@@ -11,7 +11,7 @@ from flask import send_file
 from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl import Workbook, load_workbook
 from sqlalchemy import or_
-
+import asyncio
 import openpyxl
 
 from bot import send_location_message
@@ -336,22 +336,18 @@ def save():
 def find():
     trecing = request.form['trecing']
     info = request.form['info']
-    print('aaaaaaaaaaaaaaa')
     # Выполняем поиск посылки в базе данных
     storage = Storage.query.filter_by(trecing=trecing).first()
 
     if storage:
-        print('bbbbbb')
         location = storage.shelf  # Местоположение посылки
         print(trecing, location, info)
         asyncio.run(send_location_message(trecing, location, info))  # асинхронный вызов функции
         if info:
             db.session.delete(storage)
             db.session.commit()
-            print('ccccccccc')
     else:
         location = "ამანათი არ მოიძებნა"
-        print('dddddddddd')
     
     # Возвращаем данные в формате JSON
     return jsonify({'shelf': location})
@@ -813,11 +809,11 @@ def add_user():
 
 
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0')
-
 # if __name__ == '__main__':
-#     socketio.run(app, host='0.0.0.0', debug=True)
+#     socketio.run(app, host='0.0.0.0')
+
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', debug=True)
 
 
 # with app.app_context():

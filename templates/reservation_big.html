@@ -231,18 +231,18 @@
       <div class="pass_comm_block">
         <div class="passport_block">
           <label>პასპორტი</label>
-          <input type="text" name="pasport" required ><br>
+          <input type="text" name="pasport"><br>
         </div>
         <div class="comment_block">
           <label>კომენტარი</label>
-          <input type="text" name="comment" required ><br>
+          <input type="text" name="comment"><br>
         </div>
       </div>
       
       <div class="pay_dest_block">
         <div class="pay_block">
           <label>გადახდა</label>
-          <input type="text" name="payment" required><br>
+          <input type="text" name="payment" ><br>
         </div>
         <div class="destination_block">
           <label>დანიშნულება</label>
@@ -682,7 +682,7 @@ ticketButton.addEventListener('click', async () => {
   var ctx = document.getElementById('cameChart').getContext('2d');
 
   var data = {
-      labels: ['მოვიდა', 'არ მოვიდა', 'ადგილების რაოდენობა 59'],
+      labels: ['მოვიდა', 'არ მოვიდა', 'ადგილების რაოდენობა 55'],
       datasets: [{
           data: [came_count, came_of_count_free],
           backgroundColor: ['#1E90FF', '#FF1493']

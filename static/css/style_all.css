@@ -13,7 +13,7 @@
   color: #8e8ea0;
 
   top: 1%;
-  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.501); /* Добавление тени со всех сторон */
   font-weight: bold;
 
 }

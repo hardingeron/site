@@ -46,6 +46,7 @@ label {
   border: 1px solid #ccc; /* Слабая граница */
   border-radius: 5px;
   background-color: #40414f;
+  color: #8e8ea0;
 }
 
 /* Стили для кнопки "Выбрать" */

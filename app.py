@@ -37,7 +37,10 @@ from functions import get_last_record, generate_number_and_flight, calculate_cos
 
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="https://vipost.ge")
+
+# socketio = SocketIO(app, cors_allowed_origins="https://vipost.ge")
+socketio = SocketIO(app)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:QazEdcQweZxcQscEsz123@localhost/packages'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Отключает отслеживание изменений
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=6)
@@ -785,8 +788,12 @@ def handle_new_message(data):
 
 
 
+# if __name__ == '__main__':
+#     socketio.run(app, host='0.0.0.0')
+
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0')
+    socketio.run(app, host='0.0.0.0', debug=True)
+
 
 # with app.app_context():
 #     db.create_all()

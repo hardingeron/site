@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function createWebSocket() {
         // Здесь устанавливаем WebSocket-соединение
-        var uri = 'https://' + document.domain + ':' + location.port;
+        var uri = 'http://' + document.domain + ':' + location.port;
         socket = io.connect(uri);
 
         socket.onopen = function(event) {

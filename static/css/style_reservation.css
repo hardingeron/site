@@ -146,12 +146,15 @@ margin-left: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
+
 }
 
 #modal-form input[type='text'], select {
   background-color: #40414f;
   border: none;
   border-radius: 5px;
+  color: #8e8ea0;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
 .modal_text_block {
@@ -186,14 +189,16 @@ margin-left: 20px;
 
 
 .gender_block, .pay_radio_block, .pay_radio_block_two {
-  border: 1px solid #ccc; /* Граница серого цвета */
+  border: none; /* Граница серого цвета */
   border-radius: 5px; /* Закругление углов */
   padding: 10px; /* Добавляем внутренний отступ */
   display: flex;
   align-items: center;
   justify-content: center;
   width: 350px;
-  margin-bottom: 5px;
+  margin-bottom: 15px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
 
 .gender_block label, .pay_radio_block label, .pay_radio_block_two label  {
@@ -489,7 +494,7 @@ canvas {
 
 .button_block input[type="submit"] {
   margin-top: 20px;
-  background-color: #ff9719; /* Задаем цвет кнопки */
+  background-color: #1a1a1a; /* Задаем цвет кнопки */
   color: #fff; /* Задаем цвет текста на кнопке */
   border: none; /* Убираем границу кнопки */
   border-radius: 10px; /* Закругляем углы */
@@ -499,5 +504,8 @@ canvas {
 }
 
 .button_block input[type="submit"]:hover {
-  background-color: #e4be91; /* Задаем цвет кнопки при наведении */
+  background-color: #333333; /* Задаем цвет кнопки при наведении */
 }
+
+
+

@@ -42,6 +42,18 @@ async def send_location_message(trecing, location, info):
         except exceptions.BotBlocked as e:
             logging.error(f"Пользователь {user} заблокировал бота")
             continue  # Пропустить итерацию и перейти к следующему пользователю
+        except exceptions.ChatNotFound as e:
+            logging.error(f"Чат с пользователем {user} не найден")
+            continue  # Пропустить итерацию и перейти к следующему пользователю
+        except exceptions.RetryAfter as e:
+            logging.error(f"Пользователь {user} вызвал RetryAfter с задержкой {e.timeout} секунд")
+            continue  # Пропустить итерацию и перейти к следующему пользователю
+        except exceptions.TelegramAPIError as e:
+            logging.error(f"Ошибка Telegram API при отправке сообщения пользователю {user}: {e}")
+            continue  # Пропустить итерацию и перейти к следующему пользователю
+        except Exception as e:
+            logging.error(f"Необработанная ошибка при отправке сообщения пользователю {user}: {e}")
+            continue  # Пропустить итерацию и перейти к следующему пользователю
 
 @dp.callback_query_handler(lambda c: c.data.startswith('delete_'))
 async def delete_message(callback_query: types.CallbackQuery):

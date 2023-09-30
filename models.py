@@ -82,3 +82,24 @@ class Messages(db.Model):
     user_id = db.Column(db.String(20), nullable=False)
     content = db.Column(db.Text)
     timestamp = db.Column(db.TIMESTAMP, server_default='CURRENT_TIMESTAMP')
+
+
+
+class Form(db.Model):
+    __tablename__ = 'forms'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    date = db.Column(db.String(20))
+    number = db.Column(db.Integer)
+    sender_fio = db.Column(db.String(50))
+    sender_phone = db.Column(db.String(15))
+    recipient_fio = db.Column(db.String(50))
+    recipient_phone = db.Column(db.String(15))
+    passport = db.Column(db.String(20))
+    city = db.Column(db.String(20))
+    comment = db.Column(db.Text)
+    price = db.Column(db.Integer)
+    weights = db.Column(db.String(100))
+    cost = db.Column(db.Integer)
+    payment_status = db.Column(db.String(5))
+    currency = db.Column(db.String(5))

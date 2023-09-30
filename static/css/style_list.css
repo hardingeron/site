@@ -1,0 +1,92 @@
+.blanks_block {
+    height: 300px;
+    width: 750px;
+    margin: 0 auto; /* Устанавливаем автоматические отступы по горизонтали, что центрирует блок */
+    border-radius: 20px;
+    background-color: #444654;
+    color: #8e8ea0;
+    border: none;
+    margin-bottom: 30px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.sender_block > *:not(:last-child),
+.recipient_block > *:not(:last-child),
+.information_block > *:not(:last-child),
+.weights_comment_block > *:not(:last-child),
+.payment_block > *:not(:last-child) {
+    margin-right: 40px; /* Отступ справа 30 пикселей для всех дочерних элементов, кроме последнего */
+  }
+
+
+
+
+.blanks_block input {
+    background-color: #40414f;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    color: #8e8ea0;
+    text-align: center;
+}
+
+.number_block {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+
+.sender_block,
+.recipient_block,
+.information_block,
+.weights_comment_block,
+.payment_block {
+    display: flex; /* Устанавливаем flex-контейнер */
+    align-items: center; /* Размещаем элементы по центру блока только по вертикали */
+    height: 50px;
+}
+
+.sender_block input,
+.recipient_block input,
+.weights_comment_block input,
+.payment_value_block input {
+    border: none;
+    border-radius: 10px;
+    padding: 5px;
+    font-size: 14px;
+    margin-top: 2px;
+    width: 230px;
+}
+
+.passport_block input,
+.city_block input,
+.cost_block input {
+    border: none;
+    border-radius: 10px;
+    padding: 5px;
+    font-size: 14px;
+    margin-top: 2px;
+    width: 135px;
+}
+
+.label_block {
+    width: 130px;
+    font-size: 20px;
+}
+
+
+.sender_fl_block,
+.sender_phone_block,
+.recipient_fl_block,
+.recipient_phone_block,
+.passport_block,
+.city_block,
+.cost_block,
+.weights_block,
+.comment_block,
+.payment_value_block {
+    display: flex;            /* Устанавливаем flex-контейнер */
+    flex-direction: column;   /* Располагаем элементы в столбик по вертикали */
+    align-items: center;      /* Центрируем элементы по горизонтали */
+    justify-content: center;  /* Центрируем элементы по вертикали */
+}

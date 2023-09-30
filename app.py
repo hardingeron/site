@@ -338,7 +338,6 @@ def find():
     info = request.form['info']
     # Выполняем поиск посылки в базе данных
     storage = Storage.query.filter_by(trecing=trecing).first()
-
     if storage:
         location = storage.shelf  # Местоположение посылки
         print(trecing, location, info)
@@ -639,9 +638,9 @@ def generate_ticket():
             apply_styles_to_cell(sheet, 'A11', booking.position)
 
 
-            sheet['A14'] = '11 : 00'
-            sheet['A14'].alignment = Alignment(horizontal='center', vertical='center')
-            sheet['A14'].font = bold_font
+            sheet['A15'] = '11 : 00'
+            sheet['A15'].alignment = Alignment(horizontal='center', vertical='center')
+            sheet['A15'].font = bold_font
 
 
             if booking.gender == 'male':
@@ -664,11 +663,11 @@ def generate_ticket():
 
 
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            data = f"თანხა {booking.payment}, მგზავრის სახელი და გვარი {booking.flname}, ბილეთის ამოღების დრო {timestamp}, პასპორტის მონაცემები {booking.pasport}, კომენტარი {booking.comment} "
+            data = f"კომპანია VIP-TOUR, მისამართი: გულიას ქუჩა №5 / Компания VIP-TOUR, Адрес:  ул.Гулия №5, ბილეთის მიღების დრო / Время получения билета {timestamp}, ბოლო გაჩერება-ოფისი: იუჟნაპორტოვაიას ქუჩა, სახლი 7, შენობა 25 / конечная остановка-офис: ул.Южнопоровая дом 7, строение 25"
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
-                box_size=8.8,
+                box_size=6.8,
                 border=0,
             )
             qr.add_data(data)
@@ -808,12 +807,18 @@ def add_user():
     return jsonify(response_data)
 
 
+@app.route('/list', methods=['POST', 'GET'])
+def list():
+    return render_template('list.html')
 
-# if __name__ == '__main__':
-#     socketio.run(app, host='0.0.0.0')
+
+
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True)
+    socketio.run(app, host='0.0.0.0')
+
+# if __name__ == '__main__':
+#     socketio.run(app, host='0.0.0.0', debug=True)
 
 
 # with app.app_context():

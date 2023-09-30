@@ -1,0 +1,232 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    დამატება
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
+
+
+<div class="blanks_block">
+    <div class="number_block">
+        <label>შესავსები</label>
+    </div>
+
+    <div class="sender_block">
+        <div class="label_block">
+            <label>გამგზავნი:</label>
+        </div>
+        <div class="sender_fl_block">
+            <label>სახელი/გვარი</label>
+            <input type="text">
+        </div>
+        <div class="sender_phone_block">
+            <label>ტელეფონი</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="recipient_block">
+        <div class="label_block">
+            <label>მიმღები:</label>
+        </div>
+        <div class="recipient_fl_block">
+            <label>სახელი/გვარი</label>
+            <input type="text">
+        </div>
+        <div class="recipient_phone_block">
+            <label>ტელეფონი</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="information_block">
+        <div class="label_block">
+            <label>ინფორმაცია:</label>
+        </div>
+        <div class="passport_block">
+            <label>პასპორტი</label>
+            <input type="text">
+        </div>
+        <div class="city_block">
+            <label>ქალაქი</label>
+            <input type="text">
+        </div>
+        <div class="cost_block">
+            <label>ღირებულება</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="weights_comment_block">
+        <div class="label_block">
+            <label>წონა/კომენტარი:</label>
+        </div>
+        <div class="weights_block">
+            <label>წონები</label>
+            <input type="text">
+        </div>
+        <div class="comment_block">
+            <label>კომენტარი</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="payment_block">
+        <div class="label_block">
+            <label>გადახდა:</label>
+        </div>
+        <div class="payment_value_block">
+            <label>გადახდა</label>
+            <input type="text">
+        </div>
+        <div class="pay_block">
+            <div class="payment_status_block">
+                <label>
+                    <input type="radio" name="payment_status" value="paid"> +
+                </label>
+                <label>
+                    <input type="radio" name="payment_status" value="not_paid"> -
+                </label>
+                <label>
+                    <input type="radio" name="payment_status" value="card"> ბარათი
+                </label>
+            </div>
+            <div class="payment_currency_block">
+                <label>
+                    <input type="radio" name="payment_currency" value="GEL"> ₾
+                </label>
+                <label>
+                    <input type="radio" name="payment_currency" value="RUB"> ₽
+                </label>
+                <label>
+                    <input type="radio" name="payment_currency" value="EUR"> €
+                </label>
+                <label>
+                    <input type="radio" name="payment_currency" value="USD"> $
+                </label>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+{% for i in range(10) %}
+
+
+
+<div class="blanks_block">
+    <div class="number_block">
+        <label>122</label>
+    </div>
+
+    <div class="sender_block">
+        <div class="label_block">
+            <label>გამგზავნი:</label>
+        </div>
+        <div class="sender_fl_block">
+            <label>სახელი/გვარი</label>
+            <input type="text">
+        </div>
+        <div class="sender_phone_block">
+            <label>ტელეფონი</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="recipient_block">
+        <div class="label_block">
+            <label>მიმღები:</label>
+        </div>
+        <div class="recipient_fl_block">
+            <label>სახელი/გვარი</label>
+            <input type="text">
+        </div>
+        <div class="recipient_phone_block">
+            <label>ტელეფონი</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="information_block">
+        <div class="label_block">
+            <label>ინფორმაცია:</label>
+        </div>
+        <div class="passport_block">
+            <label>პასპორტი</label>
+            <input type="text">
+        </div>
+        <div class="city_block">
+            <label>ქალაქი</label>
+            <input type="text">
+        </div>
+        <div class="cost_block">
+            <label>ღირებულება</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="weights_comment_block">
+        <div class="label_block">
+            <label>წონა/კომენტარი:</label>
+        </div>
+        <div class="weights_block">
+            <label>წონები</label>
+            <input type="text">
+        </div>
+        <div class="comment_block">
+            <label>კომენტარი</label>
+            <input type="text">
+        </div>
+    </div>
+
+    <div class="payment_block">
+        <div class="label_block">
+            <label>გადახდა:</label>
+        </div>
+        <div class="payment_value_block">
+            <label>გადახდა</label>
+            <input type="text">
+        </div>
+        <div class="pay_block">
+            <div class="payment_status_block">
+                <label>
+                    <input type="radio" name="payment_status" value="paid"> +
+                </label>
+                <label>
+                    <input type="radio" name="payment_status" value="not_paid"> -
+                </label>
+                <label>
+                    <input type="radio" name="payment_status" value="card"> ბარათი
+                </label>
+            </div>
+            <div class="payment_currency_block">
+                <label>
+                    <input type="radio" name="payment_currency" value="GEL"> ₾
+                </label>
+                <label>
+                    <input type="radio" name="payment_currency" value="RUB"> ₽
+                </label>
+                <label>
+                    <input type="radio" name="payment_currency" value="EUR"> €
+                </label>
+                <label>
+                    <input type="radio" name="payment_currency" value="USD"> $
+                </label>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+{% endfor %}
+
+
+
+{% endblock %}

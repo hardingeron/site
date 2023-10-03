@@ -85,9 +85,7 @@ class Messages(db.Model):
 
 
 
-class Form(db.Model):
-    __tablename__ = 'forms'
-
+class Forms(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.String(20))
     number = db.Column(db.Integer)
@@ -101,5 +99,6 @@ class Form(db.Model):
     price = db.Column(db.Integer)
     weights = db.Column(db.String(100))
     cost = db.Column(db.Integer)
-    payment_status = db.Column(db.String(5))
+    payment_status = db.Column(db.String(20))
     currency = db.Column(db.String(5))
+    where_from = db.Column(db.String(30))

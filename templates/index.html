@@ -29,11 +29,6 @@
                 <img src="/static/images/storage.webp" alt="Изображение"></a>
                 <label>საწყობი</label>
             </div>
-            <div class="el">
-                <a href="/list">
-                <img src="/static/images/storage.webp" alt="Изображение"></a>
-                <label>სიები</label>
-            </div>
         </div>
 
     </div>
@@ -45,9 +40,9 @@
                     <label>ჯავშანი</label>
                 </div>
                 <div class="el2">
-                    <a href="/chat">
-                    <img src="/static/images/chat.webp" alt="Изображение"></a>
-                    <label>ჩათი</label>
+                    <a href="#" onclick="openModal()">
+                        <img src="/static/images/blanks.png" alt="Изображение"></a>
+                    <label>ბლანკები</label>
                 </div>
                 <div class="el2">
                     <a href="/logout">
@@ -57,6 +52,88 @@
         </div>  
     </div>
 </div>
+
+
+
+
+
+
+
+<!-- Модальное окно -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>ამოირჩიეთ გასვლის თარიღი და ქალაქი</h2>
+        <input type="date" id="datepicker">
+        <label for="citySelect">ქალაქი:</label>
+        <select id="citySelect">
+            <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
+            <option value="Москва">მოსკოვი</option>
+        </select>
+        <button onclick="redirectToPage()">Перейти</button>
+    </div>
+</div>
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+
+<script>
+function openModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'block';
+
+    // Инициализация календаря с использованием flatpickr
+    const datepicker = flatpickr("#datepicker", {
+        dateFormat: "d-m-Y", // Формат даты
+    });
+
+    // Добавляем обработчик события на клавишу "Esc"
+    window.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // Добавляем обработчик события на клик вне модального окна
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+// Функция закрытия модального окна
+function closeModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'none';
+}
+
+// Функция перенаправления на страницу /list с выбранной датой
+function redirectToPage() {
+    const selectedDate = document.getElementById('datepicker').value;
+    const selectedCity = document.getElementById('citySelect').value;
+    
+    if (selectedDate) {
+        // Передаем выбранную дату и город в URL
+        window.location.href = `/list?date=${selectedDate}&where_from=${selectedCity}`;
+    }
+}
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
 
 
 <div class="footer">

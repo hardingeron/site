@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from flask_login import login_required, login_user, logout_user, current_user
 import os 
-from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Messages
+from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Messages, Forms
 from config import secret_key
 from sqlalchemy import func, desc
 
@@ -624,6 +624,7 @@ def generate_ticket():
 
         print(booking)
         if booking:
+            booking.action = 'yes'
             db.session.commit()  # Сохранение изменений в базе данных
             bold_font = Font(bold=True)
 
@@ -688,52 +689,23 @@ def generate_ticket():
 
 
 
-        # Генерируем имя для сохраняемого файла
-        output_filename = f'bileti.xlsx'
+            # Генерируем имя для сохраняемого файла
+            output_filename = f'bileti.xlsx'
 
-        # Сохраняем файл
-        workbook.save(output_filename)
+            # Сохраняем файл
+            workbook.save(output_filename)
 
-        # Отправляем файл в ответе с правильными заголовками
-        return send_file(
-            output_filename,
-            as_attachment=True,
-            download_name=output_filename
-        )
+            # Отправляем файл в ответе с правильными заголовками
+            return send_file(
+                output_filename,
+                as_attachment=True,
+                download_name=output_filename
+            )
+        else:
+            return jsonify({'success': False, 'message': 'Данные не найдены'})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
 
-
-
-@app.route('/booking_action', methods=['POST'])
-@login_required
-def action():
-    form_data = request.form  # Получение данных из полей формы
-    old_seat_number = form_data.get('old_seat_number')
-    reis = form_data.get('reis')
-    selected_date = form_data.get('selected_date')
-
-    payment = form_data.get('payment')
-    pay = request.form.get('payment_method')
-    pay_method = request.form.get('payment_method_card')
-    payment = re.sub(r'[^0-9]', '', payment)
-    if payment == "":
-        payment = 0
-        
-    if pay_method != None:
-        payment = f"{pay}{payment}{pay_method}"
-    else:
-        payment = f"-{payment}"
-    booking = Booking.query.filter_by(fwc=reis, data=selected_date, position=old_seat_number).first()
-    if booking:
-        booking.action = 'yes'  # Изменение значения столбца 'action'
-        booking.payment = payment
-        db.session.commit()  # Сохранение изменений в базе данных
-
-    # Далее вы можете использовать полученные данные как вам нужно
-
-    # Верните какой-то ответ, например:
-    return jsonify(success=True, message="Data received successfully")
 
 
 
@@ -744,26 +716,7 @@ def chat():
     return render_template('chat.html', messages=messages)
 
 
-# @app.route('/send_message', methods=['POST'])
-# def send_message():
-#     try:
-#         data = request.get_json()
-#         message_content = data.get('message')
-#         user_id = current_user.get_id()
-#         user = User.query.filter_by(id=user_id).first()
-        
-#         if user:
-#             # Создайте новую запись сообщения в базе данных
-#             new_message = Messages(user_id=user.login, content=message_content)
-#             db.session.add(new_message)
-#             db.session.commit()
-
-#             return jsonify({'success': True, 'message': 'Сообщение успешно отправлено'})
-#         else:
-#             return jsonify({'success': False, 'message': 'Пользователь не найден'})
-#     except Exception as e:
-#         return jsonify({'success': False, 'message': str(e)})
-    
+  
 
 @socketio.on('new_message')
 def handle_new_message(data):
@@ -808,17 +761,155 @@ def add_user():
 
 
 @app.route('/list', methods=['POST', 'GET'])
-def list():
-    return render_template('list.html')
+def blanks():
+    date_param = request.args.get('date')  # Получите значение параметра "date"
+    city_param = request.args.get('where_from')  # Получите значение параметра "city"
+
+    data = Forms.query.filter_by(date=date_param, where_from=city_param).order_by(desc(Forms.number)).all()
+
+    data_dict = {
+        'GEL': {'paid': 0, 'card': 0, 'not_paid': 0},
+        'RUB': {'paid': 0, 'card': 0, 'not_paid': 0},
+        'USD': {'paid': 0, 'card': 0, 'not_paid': 0},
+        'EUR': {'paid': 0, 'card': 0, 'not_paid': 0}
+    }
+
+    for item in data:
+        currency = item.currency
+        payment_status = item.payment_status
+        price = int(item.cost)
+
+        data_dict[currency][payment_status] += price
+
+    # Теперь у вас есть словарь, в котором данные разделены по валюте и статусу оплаты.
+    # Вы можете обращаться к данным по следующему синтаксису:
+    # data_dict['валюта']['статус оплаты']
+
+    gel_paid = data_dict['GEL']['paid']
+    gel_card = data_dict['GEL']['card']
+    gel_not_paid = data_dict['GEL']['not_paid']
+    
+    rub_paid = data_dict['RUB']['paid']
+    rub_card = data_dict['RUB']['card']
+    rub_not_paid = data_dict['RUB']['not_paid']
+
+    usd_paid = data_dict['USD']['paid']
+    usd_card = data_dict['USD']['card']
+    usd_not_paid = data_dict['USD']['not_paid']
+
+    eur_paid = data_dict['EUR']['paid']
+    eur_card = data_dict['EUR']['card']
+    eur_not_paid = data_dict['EUR']['not_paid']
+
+    # Здесь вы можете использовать отфильтрованные данные для вашей веб-страницы
+    return render_template('list.html', data=data, gel_paid=gel_paid, gel_card=gel_card, gel_not_paid=gel_not_paid,
+                           rub_paid=rub_paid, rub_card=rub_card, rub_not_paid=rub_not_paid,
+                           usd_paid=usd_paid, usd_card=usd_card, usd_not_paid=usd_not_paid,
+                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid)
 
 
 
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0')
+@app.route('/add_to_the_list', methods=['POST'])
+@login_required
+def add_to_the_list():
+    try:
+        data = request.get_json()
+        print(int(data['payment']))
+
+        # Получение наивысшего номера посылки для заданной даты
+        highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
+                                                                         Forms.where_from == data['where_from']).scalar()
+
+        if highest_number is not None:
+            new_number = highest_number + 1
+        else:
+            new_number = 1
+  
+        # Получите данные из JSON-запроса
+
+        new_parcel = Forms(
+            number = new_number,
+            date=data['date'],
+            sender_fio=data['sender_fl'],
+            sender_phone=data['sender_phone'],
+            recipient_fio=data['recipient_fl'],
+            recipient_phone=data['recipient_phone'],
+            passport=data['passport'],
+            city=data['city'],
+            comment=data['comment'],
+            price=int(data['price']),
+            weights=data['weights'],
+            cost=int(data['payment']),
+            payment_status=data['payment_status'],
+            currency=data['payment_currency'],
+            where_from=data['where_from']
+        )
+
+        db.session.add(new_parcel)
+        db.session.commit()
+
+        # Верните успешный ответ
+        response = {"message": "Данные успешно добавлены!"}
+        return jsonify(response), 200
+    except Exception as e:
+        # В случае ошибки верните сообщение об ошибке
+        response = {"error": str(e)}
+        print(response, 'wwwwwww')
+        return jsonify(response), 500
+
+
+
+@app.route('/edit-the-list', methods=['POST'])
+def edit_the_list():
+
+    data = request.get_json()
+    print(data)
+    date = data['date']
+    where_from = data['where_from']
+    number = int(data['item_id'])
+
+    filtered_form = Forms.query.filter_by(date=date, where_from=where_from, number=number).first()
+    if filtered_form:
+       filtered_form.sender_fio = data['sender_fio']
+       filtered_form.sender_phone = data['sender_phone']
+       filtered_form.recipient_fio = data['recipient_fio']
+       filtered_form.recipient_phone = data['recipient_phone']
+       filtered_form.passport = data['passport']
+       filtered_form.city = data['city']
+       filtered_form.comment = data['comment']
+       filtered_form.price = int(data['cost'])
+       filtered_form.weights = data['weights']
+       filtered_form.cost = int(data['payment'])
+       filtered_form.payment_status = data['payment_status']
+       filtered_form.currency = data['currency']
+       db.session.commit()
+
+    return jsonify({'message': 'Данные успешно отредактированы'})
+
+@app.route('/deleted_from_list', methods=['POST'])
+def delete_from_list():
+    try:
+        data = request.get_json()
+        itemId = data.get('itemId')
+        dateParam = data.get('dateParam')
+        cityParam = data.get('cityParam')
+        data = Forms.query.filter_by(date=dateParam, where_from=cityParam, number=itemId).first()
+        db.session.delete(data)
+        db.session.commit()
+        # Выполните удаление элемента по данным itemId, dateParam и cityParam
+
+        # Верните успешный ответ
+        return jsonify({'success': True, 'message': 'Элемент успешно удален.'})
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False, 'message': str(e)})
 
 # if __name__ == '__main__':
-#     socketio.run(app, host='0.0.0.0', debug=True)
+#     socketio.run(app, host='0.0.0.0')
+
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', debug=True)
 
 
 # with app.app_context():

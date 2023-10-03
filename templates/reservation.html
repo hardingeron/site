@@ -23,9 +23,9 @@
     <div class="bus_container">
       <h1 class="bus_header_text">
         {% if reis == '1' %}
-            მგზავრობა თბილისიდან მოსკოვში
+            მგზავრობა თბილისიდან მოსკოვში - {{ d }}
         {% elif reis == '2' %}
-            მგზავრობა მოსკოვიდან თბილისში
+            მგზავრობა მოსკოვიდან თბილისში - {{ d }}
         {% endif %}
       </h1>
       <div class="bus">
@@ -177,7 +177,7 @@
       <input type="hidden" name="selected_date" value="">
       <button type="submit" id="download_dev">ვედომოსტი</button>
     </form>
-    <button id="openModal">სტატისტიკა</button>
+    <button id="openModalStatistic">სტატისტიკა</button>
 
   </div>
 
@@ -195,7 +195,6 @@
     <div class="exit_ticet_block">
       <button type="button" class="ticket-button">ბილეთი</button>
       <button id="delete">წაშლა</button>
-      <button id="action">მოვიდა</button>
       <button id="exit">დახურვა</button>
     </div>
 
@@ -301,10 +300,10 @@
   </div>
   
 
-  <div id="myModal" class="modal_statistic">
+  <div id="myModalStatistic" class="modal_statistic">
     <div class="modal_statistic-content">
           <h2 class="statistic_text">სტატისტიკა</h2>
-          <span class="close">&times;</span>
+          <span class="close-statistic">&times;</span>
           <div class="diagram_box_block">
               <div class="diagram_block">
                   <canvas id="myChart"></canvas>
@@ -600,6 +599,9 @@ ticketButton.addEventListener('click', async () => {
     document.body.removeChild(a);
 
     console.log('Билет успешно сгенерирован');
+
+    // Перезагрузите страницу
+    window.location.reload();
   } else {
     const responseData = await response.json();
     console.error('Ошибка при генерации билета:', responseData.message);
@@ -705,62 +707,31 @@ ticketButton.addEventListener('click', async () => {
 
 
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const actionButton = document.getElementById("action");
 
-  actionButton.addEventListener("click", () => {
-    const modalForm = document.getElementById("modal-form");
-
-    const formData = new FormData(modalForm);
-
-    fetch('/booking_action', {
-      method: 'POST',
-      body: formData,
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        location.reload(); // Перезагрузка страницы после успешной передачи данных
-      } else {
-        const errorMessage = document.getElementById('error-message');
-        errorMessage.style.display = 'block';
-        errorMessage.textContent = data.message;
-
-        // Установка таймера для скрытия сообщения через 4 секунды (4000 миллисекунд)
-        setTimeout(() => {
-          errorMessage.style.display = 'none';
-        }, 4000);
-      }
-    });
-  });
-});
-  </script>
 
 
 
 
 <script>
-    // Открытие модального окна при нажатии на кнопку
-  document.getElementById("openModal").addEventListener("click", function() {
-      document.getElementById("myModal").style.display = "block";
+  // Открытие модального окна при нажатии на кнопку
+  document.getElementById("openModalStatistic").addEventListener("click", function() {
+      document.getElementById("myModalStatistic").style.display = "block";
   });
 
   // Закрытие модального окна при нажатии на крестик
-  document.querySelector(".close").addEventListener("click", function() {
-      document.getElementById("myModal").style.display = "none";
+  document.querySelector(".close-statistic").addEventListener("click", function() {
+      document.getElementById("myModalStatistic").style.display = "none";
   });
 
   // Закрытие модального окна при клике вне его
   window.addEventListener("click", function(event) {
-      var modal = document.getElementById("myModal");
+      var modal = document.getElementById("myModalStatistic");
       if (event.target == modal) {
           modal.style.display = "none";
       }
   });
 
 </script>
-
 
 
 

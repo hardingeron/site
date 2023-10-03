@@ -67,10 +67,11 @@
                             <label>ჯავშანი</label>
                         </div>
                         <div class="el2">
-                            <a href="/chat">
-                                <img src="/static/images/chat.webp" alt="Изображение">
-                            </a>
-                            <label>ჩათი</label>
+                            <div class="el2">
+                                <a href="#" onclick="openModal()">
+                                    <img src="/static/images/blanks.png" alt="Изображение"></a>
+                                <label>ბლანკები</label>
+                            </div>
                         </div>
                         <div class="el2">
                             <a href="/logout">
@@ -87,10 +88,28 @@
     </div>
 
     
+<!-- Модальное окно -->
+<div id="myModal" class="modal-blanks-select">
+    <div class="modal-blanks-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>ამოირჩიეთ გასვლის თარიღი და ქალაქი</h2>
+        <input type="date" id="datepicker">
+        <label for="citySelect">ქალაქი:</label>
+        <select id="citySelect">
+            <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
+            <option value="Москва">მოსკოვი</option>
+        </select>
+        <button onclick="redirectToPage()">Перейти</button>
+    </div>
+</div>  
+
+    
 </body>
 
 </html>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
     // Функция для анимации кружочков
@@ -131,44 +150,89 @@
 
 
 <script>
-const openModalButton = document.getElementById('openModalButton');
-const menu_modal = document.getElementById('ModalMenu');
-
-function openModal() {
-    menu_modal.style.display = 'block';
-
-    // Используем setTimeout, чтобы добавить класс "open" через короткой задержки
-    setTimeout(function () {
-        menu_modal.classList.add('open');
-    }, 100);
-}
-
-function closeModal() {
-    menu_modal.classList.remove('open');
-
-    // После окончания анимации, скрываем модальное окно
-    setTimeout(function () {
-        menu_modal.style.display = 'none';
-    }, 500); // Задержка должна быть равной длительности анимации (0.5s)
-}
-
-openModalButton.addEventListener('click', openModal);
-
-menu_modal.addEventListener('click', function (event) {
-    if (event.target === menu_modal) {
-        closeModal();
+    const openMenuModalButton = document.getElementById('openModalButton');
+    const menu_modal = document.getElementById('ModalMenu');
+    
+    function openMenuModal() {
+        menu_modal.style.display = 'block';
+    
+        // Используем setTimeout, чтобы добавить класс "open" через короткой задержки
+        setTimeout(function () {
+            menu_modal.classList.add('open');
+        }, 100);
     }
-});
-
-document.addEventListener('keydown', function (event) {
-    if (event.key === 'Escape') {
-        closeModal();
+    
+    function closeMenuModal() {
+        menu_modal.classList.remove('open');
+    
+        // После окончания анимации, скрываем модальное окно
+        setTimeout(function () {
+            menu_modal.style.display = 'none';
+        }, 500); // Задержка должна быть равной длительности анимации (0.5s)
     }
-});
+    
+    openMenuModalButton.addEventListener('click', openMenuModal);
+    
+    menu_modal.addEventListener('click', function (event) {
+        if (event.target === menu_modal) {
+            closeMenuModal();
+        }
+    });
+    
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeMenuModal();
+        }
+    });
+    </script>
+
+
+
+
+
+
+
+<script>
+    function openModal() {
+        const modal = document.getElementById('myModal');
+        modal.style.display = 'block';
+
+        // Инициализация календаря с использованием flatpickr
+        const datepicker = flatpickr("#datepicker", {
+            dateFormat: "d-m-Y", // Формат даты
+        });
+
+        // Добавляем обработчик события на клавишу "Esc"
+        window.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Добавляем обработчик события на клик вне модального окна
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    // Функция закрытия модального окна
+    function closeModal() {
+        const modal = document.getElementById('myModal');
+        modal.style.display = 'none';
+    }
+
+    // Функция перенаправления на страницу /list с выбранной датой
+    function redirectToPage() {
+        const selectedDate = document.getElementById('datepicker').value;
+        const selectedCity = document.getElementById('citySelect').value;
+        
+        if (selectedDate) {
+            // Передаем выбранную дату и город в URL
+            window.location.href = `/list?date=${selectedDate}&where_from=${selectedCity}`;
+        }
+    }
+
+
 </script>
-
-
-
-
-
-

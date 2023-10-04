@@ -1,3 +1,37 @@
+.total_weight_block {
+    display: flex;
+    flex-direction: column; /* Выставляем вертикальное направление для элементов */
+    justify-content: center; /* Выравниваем элементы по центру по вертикали */
+    align-items: center; /* Выравниваем элементы по центру по горизонтали */
+    width: 400px;
+    height: 150px;
+    margin: 0 auto; /* Добавляем автоматические отступы слева и справа */
+    background-color: #444654;
+    margin-bottom: 20px;
+    color: #8e8ea0;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+.total_weight_block button, #add, .modal-content button {
+    background-color: #333333;
+    color: #8e8ea0;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+#add {
+    margin: 0 auto 20px; /* 20px сверху, автоматически справа и слева, 0px снизу */
+    display: block; /* Это может понадобиться, если элемент ранее был встроенным (inline) */
+}
+.total_weight_block button:hover {
+    background-color: #1a1a1a;
+  }
+
 .blanks_block,
 .blanks_block_ {
     height: 320px;
@@ -25,7 +59,8 @@
 
 
 
-  .blanks_block input {
+  .blanks_block input,
+  .blanks_block_ input {
     background-color: #40414f;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
     color: #8e8ea0;;
@@ -131,7 +166,8 @@
 }
 
 .modal-content {
-    background-color: #fff;
+    color:#8e8ea0;
+    background-color: #353745;
     border-radius: 10px;
     width: 80%;
     max-width: 1000px;
@@ -142,6 +178,7 @@
     transform: translateY(-50%);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 
 .close {
     position: absolute;
@@ -167,7 +204,7 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    width: 1000px;
+    width: 800px;
     background-color: rgba(0, 0, 0, 0.7);
     border: none;
     border-radius: 20px;
@@ -207,4 +244,11 @@
     display: flex; /* Располагаем элементы внутри блока в ряд */
     align-items: center; /* Выравниваем элементы по вертикали по центру блока */
     justify-content: center; /* Выравниваем элементы по горизонтали по центру блока */
+}
+
+
+
+.red_blanks_block {
+    /* Ваши стили для блоков, сумма весов в которых >= 30 */
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.776);
 }

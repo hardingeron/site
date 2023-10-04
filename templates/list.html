@@ -10,8 +10,10 @@
 
 
 <!-- Кнопка для открытия модального окна "payment" -->
-<button id="openPaymentModal">Открыть окно Payment</button>
-
+<div class="total_weight_block">
+    <h2>საერთო წონა - {{ total_weight }}კგ</h2>
+    <button id="openPaymentModal">სტატისტიკა</button>
+</div>
 
 
 <div class="blanks_block_">
@@ -72,7 +74,7 @@
             </div>
             <div class="weights_block">
                 <label>წონები</label>
-                <input type="text" name="weights">
+                <input type="text" name="weights" id="weightsInput" oninput="weightsInputHandler(this)">
             </div>
             <div class="comment_block">
                 <label>კომენტარი</label>
@@ -144,8 +146,8 @@
 
 
 
-<div class="blanks_block" data-item="{{ item.number }}">
-    <div class="number_block">
+<div class="blanks_block" data-item="{{ item.number }}" data-weights="{{ item.weights}}">
+    <div class="number_block" data-item="{{ item.number }}">
         <label>{{ item.number }}</label>
     </div>
 
@@ -155,11 +157,11 @@
         </div>
         <div class="sender_fl_block">
             <label>სახელი/გვარი</label>
-            <input type="text" value="{{ item.sender_fio }}">
+            <input type="text" value="{{ item.sender_fio }}" readonly>
         </div>
         <div class="sender_phone_block">
             <label>ტელეფონი</label>
-            <input type="text" value="{{ item.sender_phone }}">
+            <input type="text" value="{{ item.sender_phone }}" readonly>
         </div>
     </div>
 
@@ -169,11 +171,11 @@
         </div>
         <div class="recipient_fl_block">
             <label>სახელი/გვარი</label>
-            <input type="text" value="{{ item.recipient_fio }}">
+            <input type="text" value="{{ item.recipient_fio }}" readonly>
         </div>
         <div class="recipient_phone_block">
             <label>ტელეფონი</label>
-            <input type="text" value="{{ item.recipient_phone }}">
+            <input type="text" value="{{ item.recipient_phone }}" readonly>
         </div>
     </div>
 
@@ -183,15 +185,15 @@
         </div>
         <div class="passport_block">
             <label>პასპორტი</label>
-            <input type="text" value="{{ item.passport }}">
+            <input type="text" value="{{ item.passport }}" readonly>
         </div>
         <div class="city_block">
             <label>ქალაქი</label>
-            <input type="text" value="{{ item.city }}">
+            <input type="text" value="{{ item.city }}" readonly>
         </div>
         <div class="cost_block">
             <label>ღირებულება</label>
-            <input type="text" value="{{ item.price }}" id="numericInput" oninput="sanitizeInput(this)">
+            <input type="text" value="{{ item.price }}" id="numericInput" oninput="sanitizeInput(this)" readonly>
         </div>
     </div>
 
@@ -201,11 +203,11 @@
         </div>
         <div class="weights_block">
             <label>წონები</label>
-            <input type="text" value="{{ item.weights }}">
+            <input type="text" value="{{ item.weights }}" readonly id="weightsInput" oninput="weightsInputHandler(this)">
         </div>
         <div class="comment_block">
             <label>კომენტარი</label>
-            <input type="text" value="{{ item.comment }}">
+            <input type="text" value="{{ item.comment }}" readonly>
         </div>
     </div>
 
@@ -215,7 +217,7 @@
         </div>
         <div class="payment_value_block">
             <label>გადახდა</label>
-            <input type="text" value="{{ item.cost }}" id="numericInput" oninput="sanitizeInput(this)">
+            <input type="text" value="{{ item.cost }}" id="numericInput" oninput="sanitizeInput(this)" readonly>
         </div>
         <div class="pay_block">
             <label>___</label>
@@ -260,8 +262,10 @@
         <span class="close" onclick="closeEditModal()">&times;</span>
         <h2>მონაცემების რედაქტირება</h2>
         <div id="edit-modal-data"></div>
-        <button onclick="saveChanges()">შენახვა</button>
-        <button onclick="deleteNumber()">წაშლა</button>
+        <div class="modal_buttons_block">
+            <button onclick="saveChanges()">შენახვა</button>
+            <button onclick="deleteNumber()">წაშლა</button>
+        </div>  
     </div>
 </div>
 
@@ -374,6 +378,12 @@ function openModalWithData(item) {
     // Клонируем блок данных из .blanks_block
     var itemClone = item.cloneNode(true);
 
+    // Убираем атрибут readonly для всех полей ввода
+    var inputFields = itemClone.querySelectorAll("input");
+    inputFields.forEach(function(inputField) {
+        inputField.removeAttribute("readonly");
+    });
+
     modalData.innerHTML = "";
     modalData.appendChild(itemClone);
 
@@ -405,10 +415,14 @@ window.addEventListener("click", function(event) {
     }
 });
 
-// Обработчик события для открытия модального окна при клике на .blanks_block
-var blanksBlocks = document.querySelectorAll(".blanks_block");
-blanksBlocks.forEach(function(blanksBlock) {
-    blanksBlock.addEventListener("click", function() {
+// Обработчик события для открытия модального окна при клике на .number_block
+var numberBlocks = document.querySelectorAll(".number_block");
+numberBlocks.forEach(function(numberBlock) {
+    numberBlock.addEventListener("click", function() {
+        // Находим ближайший родительский элемент с классом .blanks_block
+        var blanksBlock = numberBlock.closest(".blanks_block");
+        
+        // Передаем данные из .blanks_block в функцию открытия модального окна
         openModalWithData(blanksBlock);
     });
 });
@@ -544,7 +558,7 @@ function saveChanges() {
     var gelChart = new Chart(ctx, {
         type: 'pie',
         data: {
-            labels: ['ქეშით', 'ბარათით', 'გადასახდელი'],
+            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
             datasets: [{
                 data: [gelPaid, gelCard, gelNotPaid],
                 backgroundColor: ['green', 'blue', 'red']
@@ -569,7 +583,7 @@ function saveChanges() {
     var rubChart = new Chart(ctxRub, {
         type: 'pie',
         data: {
-            labels: ['ქეშით', 'ბარათით', 'გადასახდელი'],
+            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
             datasets: [{
                 data: [rubPaid, rubCard, rubNotPaid],
                 backgroundColor: ['green', 'blue', 'red']
@@ -594,7 +608,7 @@ function saveChanges() {
     var usdChart = new Chart(ctxUSD, {
         type: 'pie',
         data: {
-            labels: ['ქეშით', 'ბარათით', 'გადასახდელი'],
+            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
             datasets: [{
                 data: [usdPaid, usdCard, usdNotPaid],
                 backgroundColor: ['green', 'blue', 'red']
@@ -619,7 +633,7 @@ function saveChanges() {
     var eurChart = new Chart(ctxEUR, {
         type: 'pie',
         data: {
-            labels: ['ქეშით', 'ბარათით', 'გადასახდელი'],
+            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
             datasets: [{
                 data: [eurPaid, eurCard, eurNotPaid],
                 backgroundColor: ['green', 'blue', 'red']
@@ -689,6 +703,47 @@ function deleteNumber() {
 </script>
 
 
+
+<script>
+    function weightsInputHandler(input) {
+        // Получаем значение из поля ввода
+        var value = input.value;
+    
+        // Заменяем запятую на точку
+        value = value.replace(',', '.');
+    
+        // Оставляем только цифры, точку и пробелы
+        value = value.replace(/[^0-9.\s]/g, '');
+    
+        // Устанавливаем очищенное значение обратно в поле ввода
+        input.value = value;
+    }
+</script>
+    
+
+
+<script>
+    // Получаем все элементы с классом "blanks_block"
+    var blanksBlocks = document.querySelectorAll(".blanks_block");
+
+    // Перебираем каждый элемент
+    blanksBlocks.forEach(function(blanksBlock) {
+        // Получаем значение из атрибута "data-item"
+        var itemWeights = blanksBlock.getAttribute("data-weights");
+
+        // Разбиваем строку на числа и суммируем их
+        var weightsArray = itemWeights.split(" ");
+        var sum = 0;
+        for (var i = 0; i < weightsArray.length; i++) {
+            sum += parseFloat(weightsArray[i]);
+        }
+
+        // Если сумма больше или равна 30, добавляем класс
+        if (sum >= 30) {
+            blanksBlock.classList.add("red_blanks_block");
+        }
+    });
+</script>
 
 
 

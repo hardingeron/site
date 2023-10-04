@@ -118,7 +118,6 @@ def all():
 
 
 
-
 @app.route('/', methods=['POST', 'GET'])
 @login_required
 def index():
@@ -654,11 +653,19 @@ def generate_ticket():
 
             # Обработка оплаты
             payment_value = booking.payment
-            sheet['A7'] = '₾'
+            payment_currency = payment_value[-3:]
+            if payment_currency == 'GEL':
+                sheet['A7'] = '₾'
+            elif payment_currency == 'RUB':
+                sheet['A7'] = '₽'
+            elif payment_currency == 'USD':
+                sheet['A7'] = '$'
+            elif payment_currency == 'EUR':
+                sheet['A7'] = '€    '
             sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['A7'].font = bold_font
 
-            sheet['D7'] = 200#payment_value[1:]  # Убираем первую букву
+            sheet['D7'] = re.sub(r'\D', '', payment_value)  # Убираем первую букву
             sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['D7'].font = bold_font
 
@@ -773,6 +780,12 @@ def blanks():
         'USD': {'paid': 0, 'card': 0, 'not_paid': 0},
         'EUR': {'paid': 0, 'card': 0, 'not_paid': 0}
     }
+    total_weight = 0
+    for record in data:
+        weights_data = record.weights  # Получение значения поля weights из записи
+        numbers = [float(num) for num in weights_data.split()]  # Разбиение на числа и преобразование во float
+        total_weight += sum(numbers)  # Суммирование чисел
+
 
     for item in data:
         currency = item.currency
@@ -805,7 +818,7 @@ def blanks():
     return render_template('list.html', data=data, gel_paid=gel_paid, gel_card=gel_card, gel_not_paid=gel_not_paid,
                            rub_paid=rub_paid, rub_card=rub_card, rub_not_paid=rub_not_paid,
                            usd_paid=usd_paid, usd_card=usd_card, usd_not_paid=usd_not_paid,
-                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid)
+                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid, total_weight=total_weight)
 
 
 
@@ -825,7 +838,7 @@ def add_to_the_list():
             new_number = highest_number + 1
         else:
             new_number = 1
-  
+        print(data['city'])
         # Получите данные из JSON-запроса
 
         new_parcel = Forms(

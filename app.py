@@ -44,8 +44,8 @@ socketio = SocketIO(app, cors_allowed_origins="https://vipost.ge")
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:QazEdcQweZxcQscEsz123@localhost/packages'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Отключает отслеживание изменений
-app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=6)
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=6)
+app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=8)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=48)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/purcells')
 app.config['SECRET_KEY'] = secret_key
 
@@ -57,8 +57,9 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
-
-
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /login               ------------------------------#
+   
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -83,14 +84,13 @@ def login():
     return render_template('login.html')
 
 
-@app.teardown_request
-def teardown_request(exception=None):
-    db.session.close()
 
 
 
 
 
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /all                 ------------------------------#
 
 @app.route('/all', methods=['POST', 'GET'])
 @login_required
@@ -117,6 +117,66 @@ def all():
 
 
 
+@app.route('/download', methods=['POST'])
+@login_required
+def download():
+    flight = request.form['flight']
+    
+    # Создание нового файла Excel
+    wb = Workbook()
+    ws = wb.active
+    
+    # Запись данных в файл Excel
+    ws.append(['ნომერი', 'მიმღები', 'ტელეფონი', 'გადახდა', 'ქალაქი', 'გაცემა'])
+    
+    # Получение данных из базы данных и добавление их в файл Excel
+    data = Purcell.query.filter_by(flight=flight).all()
+    
+    for item in data:
+        ws.append([item.number, item.recipient, item.recipient_phone, item.cost, item.city, ''])
+        # ^ Здесь столбец "Выдача" перемещен в конец и оставлен пустым
+    
+    # Применение стилей к ячейкам
+    header_font = Font(bold=True)
+    header_alignment = Alignment(horizontal='center', vertical='center')
+    data_alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'), top=Side(border_style='thin'), bottom=Side(border_style='thin'))
+    
+    # Применение стилей к заголовкам
+    for cell in ws[1]:
+        cell.font = header_font
+        cell.alignment = header_alignment
+    
+    # Применение стилей к данным
+    for row in ws.iter_rows(min_row=2):
+        for cell in row:
+            cell.alignment = data_alignment
+            cell.border = border
+    
+    # Автоматическое расширение ширины столбцов для помещения данных
+    for column in ws.columns:
+        max_length = 0
+        for cell in column:
+            value = cell.value
+            if value:
+                cell_length = len(str(value))
+                if cell_length > max_length:
+                    max_length = cell_length
+        adjusted_width = (max_length + 2) * 1.2
+        column_letter = column[0].column_letter
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Сохранение файла Excel
+    filename = f'data.xlsx'
+    wb.save(filename)
+    
+    # Возврат файла для скачивания
+    return send_file(filename, as_attachment=True)
+
+
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /index               ------------------------------#
+   
 
 @app.route('/', methods=['POST', 'GET'])
 @login_required
@@ -150,7 +210,8 @@ def index():
 
 
 
-
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /add                 ------------------------------#
 
 
 
@@ -193,16 +254,8 @@ def add():
         return redirect(url_for('add'))  # Перенаправление в случае ошибки
 
 
-
-
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-
-
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /change              ------------------------------#
 
 @app.route('/change', methods=['GET'])
 @login_required
@@ -264,13 +317,8 @@ def change_post():
         return redirect(url_for('all'))
 
 
-
-
-@app.errorhandler(404)
-def page_not_found(error):
-    return render_template('error.html', message='Страница не найдена'), 404
-
-
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /storage             ------------------------------#
 
 
 @app.route('/storage', methods=['POST', 'GET'])
@@ -351,64 +399,32 @@ def find():
     return jsonify({'shelf': location})
 
 
+@app.route('/user_add', methods=['POST'])
+def add_user():
+    user_id = request.json.get('user_id')
+    print('wwwwwwwww', user_id)
 
+    # Открываем файл bot_users.json и загружаем его содержимое
+    try:
+        with open('bot_users.json', 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        data = []
 
+    # Проверяем, что user_id является уникальным числовым значением
+    if user_id.isdigit() and int(user_id) not in data:
+        data.append(int(user_id))
+        # Сохраняем обновленные данные в файл bot_users.json
+        with open('bot_users.json', 'w') as file:
+            json.dump(data, file)
+        response_data = {"message": "Пользователь добавлен успешно"}
+    else:
+        response_data = {"message": "Недопустимый или дублирующийся пользователь"}
 
-@app.route('/download', methods=['POST'])
-@login_required
-def download():
-    flight = request.form['flight']
-    
-    # Создание нового файла Excel
-    wb = Workbook()
-    ws = wb.active
-    
-    # Запись данных в файл Excel
-    ws.append(['ნომერი', 'მიმღები', 'ტელეფონი', 'გადახდა', 'ქალაქი', 'გაცემა'])
-    
-    # Получение данных из базы данных и добавление их в файл Excel
-    data = Purcell.query.filter_by(flight=flight).all()
-    
-    for item in data:
-        ws.append([item.number, item.recipient, item.recipient_phone, item.cost, item.city, ''])
-        # ^ Здесь столбец "Выдача" перемещен в конец и оставлен пустым
-    
-    # Применение стилей к ячейкам
-    header_font = Font(bold=True)
-    header_alignment = Alignment(horizontal='center', vertical='center')
-    data_alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
-    border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'), top=Side(border_style='thin'), bottom=Side(border_style='thin'))
-    
-    # Применение стилей к заголовкам
-    for cell in ws[1]:
-        cell.font = header_font
-        cell.alignment = header_alignment
-    
-    # Применение стилей к данным
-    for row in ws.iter_rows(min_row=2):
-        for cell in row:
-            cell.alignment = data_alignment
-            cell.border = border
-    
-    # Автоматическое расширение ширины столбцов для помещения данных
-    for column in ws.columns:
-        max_length = 0
-        for cell in column:
-            value = cell.value
-            if value:
-                cell_length = len(str(value))
-                if cell_length > max_length:
-                    max_length = cell_length
-        adjusted_width = (max_length + 2) * 1.2
-        column_letter = column[0].column_letter
-        ws.column_dimensions[column_letter].width = adjusted_width
-    
-    # Сохранение файла Excel
-    filename = f'data.xlsx'
-    wb.save(filename)
-    
-    # Возврат файла для скачивания
-    return send_file(filename, as_attachment=True)
+    return jsonify(response_data)
+
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /reservation         ------------------------------#
 
 
 
@@ -468,13 +484,6 @@ def save_data():
 
             return jsonify({"message": "Данные успешно сохранены"})
 
-
-
-
-@app.route('/booking', methods=['POST', 'GET'])
-@login_required
-def booking():
-    return render_template('booking.html')
 
 
 @app.route('/edit_booking', methods=['POST'])
@@ -716,6 +725,25 @@ def generate_ticket():
 
 
 
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /booking             ------------------------------#
+
+
+
+
+
+@app.route('/booking', methods=['POST', 'GET'])
+@login_required
+def booking():
+    return render_template('booking.html')
+
+
+
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /chat                ------------------------------#
+
+
+
 @app.route('/chat', methods=['POST', 'GET'])
 def chat():
     messages = Messages.query.order_by(Messages.timestamp.desc()).limit(50).all()
@@ -742,29 +770,9 @@ def handle_new_message(data):
     emit('new_message', {'user_id': user.login, 'timestamp': timestamp, 'content': message_content}, broadcast=True)
 
 
-@app.route('/user_add', methods=['POST'])
-def add_user():
-    user_id = request.json.get('user_id')
-    print('wwwwwwwww', user_id)
 
-    # Открываем файл bot_users.json и загружаем его содержимое
-    try:
-        with open('bot_users.json', 'r') as file:
-            data = json.load(file)
-    except FileNotFoundError:
-        data = []
-
-    # Проверяем, что user_id является уникальным числовым значением
-    if user_id.isdigit() and int(user_id) not in data:
-        data.append(int(user_id))
-        # Сохраняем обновленные данные в файл bot_users.json
-        with open('bot_users.json', 'w') as file:
-            json.dump(data, file)
-        response_data = {"message": "Пользователь добавлен успешно"}
-    else:
-        response_data = {"message": "Недопустимый или дублирующийся пользователь"}
-
-    return jsonify(response_data)
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /list                ------------------------------#
 
 
 @app.route('/list', methods=['POST', 'GET'])
@@ -917,6 +925,32 @@ def delete_from_list():
     except Exception as e:
         print(e)
         return jsonify({'success': False, 'message': str(e)})
+
+
+
+
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               other                ------------------------------#
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+
+@app.teardown_request
+def teardown_request(exception=None):
+    db.session.close()
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('error.html', message='Страница не найдена'), 404
+
+
+
+
+
 
 # if __name__ == '__main__':
 #     socketio.run(app, host='0.0.0.0')

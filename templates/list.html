@@ -8,6 +8,7 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
 
+<div class="content_list_block">
 
 <!-- Кнопка для открытия модального окна "payment" -->
 <div class="total_weight_block">
@@ -148,7 +149,7 @@
 
 <div class="blanks_block" data-item="{{ item.number }}" data-weights="{{ item.weights}}">
     <div class="number_block" data-item="{{ item.number }}">
-        <label>{{ item.number }}</label>
+        <label>0{{ item.number }}</label>
     </div>
 
     <div class="sender_block">
@@ -256,6 +257,7 @@
 
 {% endfor %}
 
+</div>
 
 <div id="EditModal" class="modal-edit">
     <div class="modal-content">
@@ -649,48 +651,54 @@ function saveChanges() {
 
 <script>
     // Функция для отправки AJAX-запроса на сервер для удаления элемента
-function deleteNumber() {
-    var modalData = document.getElementById("edit-modal-data");
-    var itemId = modalData.getAttribute("data-id"); // Получаем идентификатор элемента из атрибута data-id
-    var dateParam = urlParams.get('date');
-    var cityParam = urlParams.get('where_from');
+    function deleteNumber() {
+    // Всплывающее окно с предупреждением
+    var confirmation = confirm("ნამდვილად გსურთ ამანათის წაშლა?");
 
-    // Создаем объект XMLHttpRequest для отправки запроса
-    var xhr = new XMLHttpRequest();
+    // Если пользователь подтвердил удаление
+    if (confirmation) {
+        var modalData = document.getElementById("edit-modal-data");
+        var itemId = modalData.getAttribute("data-id"); // Получаем идентификатор элемента из атрибута data-id
+        var dateParam = urlParams.get('date');
+        var cityParam = urlParams.get('where_from');
 
-    // Устанавливаем метод и URL для запроса
-    xhr.open("POST", "/deleted_from_list", true);
+        // Создаем объект XMLHttpRequest для отправки запроса
+        var xhr = new XMLHttpRequest();
 
-    // Устанавливаем заголовок Content-Type для отправки данных в формате JSON
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        // Устанавливаем метод и URL для запроса
+        xhr.open("POST", "/deleted_from_list", true);
 
-    // Создаем объект данных для отправки на сервер
-    var data = {
-        itemId: itemId,
-        dateParam: dateParam,
-        cityParam: cityParam
-    };
+        // Устанавливаем заголовок Content-Type для отправки данных в формате JSON
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
-    // Преобразуем объект данных в формат JSON
-    var jsonData = JSON.stringify(data);
+        // Создаем объект данных для отправки на сервер
+        var data = {
+            itemId: itemId,
+            dateParam: dateParam,
+            cityParam: cityParam
+        };
 
-    // Устанавливаем обработчик события успешного завершения запроса
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            // Обработка успешного ответа от сервера
-            var response = JSON.parse(xhr.responseText);
-            if (response.success) {
-                // Можете выполнить какие-либо действия, например, обновить страницу
-                location.reload();
-            } else {
-                // Обработка ошибки, если не удалось удалить элемент
-                alert("Произошла ошибка при удалении элемента.");
+        // Преобразуем объект данных в формат JSON
+        var jsonData = JSON.stringify(data);
+
+        // Устанавливаем обработчик события успешного завершения запроса
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                // Обработка успешного ответа от сервера
+                var response = JSON.parse(xhr.responseText);
+                if (response.success) {
+                    // Можете выполнить какие-либо действия, например, обновить страницу
+                    location.reload();
+                } else {
+                    // Обработка ошибки, если не удалось удалить элемент
+                    alert("Произошла ошибка при удалении элемента.");
+                }
             }
-        }
-    };
+        };
 
-    // Отправляем запрос на сервер
-    xhr.send(jsonData);
+        // Отправляем запрос на сервер
+        xhr.send(jsonData);
+    }
 }
 </script>
 
@@ -723,26 +731,29 @@ function deleteNumber() {
 
 
 <script>
-    // Получаем все элементы с классом "blanks_block"
-    var blanksBlocks = document.querySelectorAll(".blanks_block");
+// Получаем все элементы с классом "blanks_block"
+var blanksBlocks = document.querySelectorAll(".blanks_block");
 
-    // Перебираем каждый элемент
-    blanksBlocks.forEach(function(blanksBlock) {
-        // Получаем значение из атрибута "data-item"
-        var itemWeights = blanksBlock.getAttribute("data-weights");
+// Перебираем каждый элемент
+blanksBlocks.forEach(function(blanksBlock) {
+    // Получаем значение из атрибута "data-weights"
+    var itemWeights = blanksBlock.getAttribute("data-weights");
 
-        // Разбиваем строку на числа и суммируем их
-        var weightsArray = itemWeights.split(" ");
-        var sum = 0;
-        for (var i = 0; i < weightsArray.length; i++) {
-            sum += parseFloat(weightsArray[i]);
-        }
+    // Используем регулярное выражение для разделения чисел
+    var weightsArray = itemWeights.split(/\s+/).filter(Boolean); // Разделение по одному или более пробелу и удаление пустых значений
 
-        // Если сумма больше или равна 30, добавляем класс
-        if (sum >= 30) {
-            blanksBlock.classList.add("red_blanks_block");
-        }
-    });
+    // Заменяем запятые на точки и вычисляем сумму чисел
+    var sum = 0;
+    for (var i = 0; i < weightsArray.length; i++) {
+        var weight = weightsArray[i].replace(",", ".");
+        sum += parseFloat(weight);
+    }
+
+    // Если сумма больше или равна 30, добавляем класс
+    if (sum >= 30.0) {
+        blanksBlock.classList.add("red_blanks_block");
+    }
+});
 </script>
 
 

@@ -1,3 +1,16 @@
+.content_list_block {
+    width: 900px;
+    background-color: #353742;
+    margin: 0 auto; /* Добавляем автоматические отступы слева и справа */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 20px;
+}   
+
+
+.content_list_block label {
+    font-weight: bold;
+}
 .total_weight_block {
     display: flex;
     flex-direction: column; /* Выставляем вертикальное направление для элементов */
@@ -208,6 +221,7 @@
     background-color: rgba(0, 0, 0, 0.7);
     border: none;
     border-radius: 20px;
+
 }
 
     /* Стили для контейнера модального окна */
@@ -221,29 +235,41 @@
     padding: 20px;
     border: none;
     border-radius: 20px;
-    color: #8e8ea0;
+    color: #000000;
+    font-weight: bold;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    
+    
+
 }
 
     /* Стили для заголовка модального окна */
     h2 {
         text-align: center;
+        color: #8e8ea0;
 
     }
 
 .chart-container {
-    width: 350px;
+    width: 250px;
     height: 250px;
+
 }
 
 
 
 
 .diagrams_position {
-    width: 800px;
+    width: 600px;
     height: 300px;
     display: flex; /* Располагаем элементы внутри блока в ряд */
     align-items: center; /* Выравниваем элементы по вертикали по центру блока */
     justify-content: center; /* Выравниваем элементы по горизонтали по центру блока */
+    margin-bottom: 20px;
+    background-color: rgb(255, 255, 255);
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px rgba(255, 255, 255, 0.74);
 }
 
 

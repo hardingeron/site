@@ -33,7 +33,7 @@ import json
 import qrcode
 
 
-from functions import get_last_record, generate_number_and_flight, calculate_cost, add_record, handle_image, handle_uploaded_image, get_reservation_data
+from functions import get_last_record, generate_number_and_flight, calculate_cost, add_record, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record
 
 
 app = Flask(__name__)
@@ -332,48 +332,23 @@ def save():
         flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
         return redirect(url_for('all'))
     
-    # Получение данных из формы
     shelf = request.form.get('shelf')
     trecing = request.form.get('trecing')
 
-    # Валидация данных
-    if not shelf or not trecing:
+    if not validate_input(shelf, trecing):
+        print('aaaa')
         return jsonify({'error': 'შეავსეთ მოცემული ველები!'})
     
-    # Форматирование номера trecing
-    if not trecing.startswith(('mp', 'MP')):
-        trecing = f'MP{trecing}'
-    else:
-        trecing = trecing.upper()
-
+    trecing = format_trecing(trecing)
     date = datetime.now().date()
 
-    # Поиск существующей записи
-    existing_record = Storage.query.filter_by(trecing=trecing).first()
-
     try:
-        if existing_record:
-            # Обновление существующей записи
-            existing_record.shelf = shelf
-        else:
-            # Создание новой записи
-            record = Storage(shelf=shelf, trecing=trecing, date=date)
-            db.session.add(record)
-
-        db.session.commit()
-        # Storage.query.order_by(desc(Storage.id)).first().shelf
-        # Получение последнего значения shelf
-        last_shelf = shelf
-
+        last_shelf = save_record(shelf, trecing, date, db)
         return jsonify({'last': last_shelf})
     except SQLAlchemyError as e:
         return jsonify({'error': 'მოხდა შეცდომა მონაცემთა ბაზაში მონაცემების შენახვისას.'})
     except Exception as e:
         return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
-
-
-
-
 
 
 @app.route('/find', methods=['POST'])
@@ -398,6 +373,7 @@ def find():
 
 
 @app.route('/user_add', methods=['POST'])
+@login_required
 def add_user():
     user_id = request.json.get('user_id')
     print('wwwwwwwww', user_id)
@@ -726,6 +702,7 @@ def generate_ticket():
 
 
 @app.route('/list', methods=['POST', 'GET'])
+@login_required
 def blanks():
     print('kkkk')
     date_param = request.args.get('date')  # Получите значение параметра "date"
@@ -833,6 +810,7 @@ def add_to_the_list():
 
 
 @app.route('/edit-the-list', methods=['POST'])
+@login_required
 def edit_the_list():
 
     data = request.get_json()
@@ -860,6 +838,7 @@ def edit_the_list():
     return jsonify({'message': 'Данные успешно отредактированы'})
 
 @app.route('/deleted_from_list', methods=['POST'])
+@login_required
 def delete_from_list():
     try:
         data = request.get_json()

@@ -9,7 +9,7 @@ from sqlalchemy import func, desc
 from PIL import Image
 from PIL.ExifTags import TAGS
 from sqlalchemy import func
-from models import Purcell, Booking
+from models import Purcell, Booking, Storage
 
 
 #===========================================================================================================================================================
@@ -266,3 +266,34 @@ def get_reservation_data(selected_date, reis, bus):
 
 
 
+#===========================================================================================================================================================
+#                                                ДЛЯ ОБРАБОТЧИКА /storage   /add
+#===========================================================================================================================================================
+
+
+def validate_input(shelf, trecing):
+    return bool(shelf) and bool(trecing)
+
+
+def format_trecing(trecing):
+    if not trecing.startswith(('mp', 'MP')):
+        trecing = f'MP{trecing}'
+    else:
+        trecing = trecing.upper()
+    return trecing
+
+
+def save_record(shelf, trecing, date, db):
+    existing_record = Storage.query.filter_by(trecing=trecing).first()
+    if existing_record:
+        existing_record.shelf = shelf
+    else:
+        record = Storage(shelf=shelf, trecing=trecing, date=date)
+        db.session.add(record)
+    db.session.commit()
+    return shelf
+
+
+#===========================================================================================================================================================
+#-------------------------- ДЛЯ ОБРАБОТЧИКА /storage /add >----> конец <----< ---------------------------------------------------------------
+#===========================================================================================================================================================

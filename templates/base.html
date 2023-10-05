@@ -110,6 +110,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 
 <script>
     // Функция для анимации кружочков
@@ -200,6 +201,7 @@
         // Инициализация календаря с использованием flatpickr
         const datepicker = flatpickr("#datepicker", {
             dateFormat: "d-m-Y", // Формат даты
+            locale: "ru", // Установка русского языка
         });
 
         // Добавляем обработчик события на клавишу "Esc"

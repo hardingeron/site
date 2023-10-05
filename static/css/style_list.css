@@ -52,7 +52,7 @@
     margin: 0 auto; /* Устанавливаем автоматические отступы по горизонтали, что центрирует блок */
     border-radius: 20px;
     background-color: #444654;
-    color: #8e8ea0;
+    color: #d2d2d2;
     border: none;
     margin-bottom: 30px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
@@ -68,6 +68,8 @@
 .payment_block > *:not(:last-child) {
     margin-right: 40px; /* Отступ справа 30 пикселей для всех дочерних элементов, кроме последнего */
   }
+
+
 
 
 
@@ -101,10 +103,12 @@
     margin-bottom: 5px;
 }
 
+
+
+
 .sender_block input,
 .recipient_block input,
-.weights_comment_block input,
-.payment_value_block input {
+.weights_comment_block input {
     border: none;
     border-radius: 5px;
     padding: 5px;
@@ -113,6 +117,18 @@
     width: 230px;
     height: 20px;
 }
+
+.payment_value_block input {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+    margin-top: 2px;
+    width: 135px;
+    height: 20px;
+}
+
+
 
 .passport_block input,
 .city_block input,
@@ -202,8 +218,19 @@
 }
 
 
-
-
+.border_block_,
+.border_block {
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    width: 145px;
+    border-radius: 10px;
+    text-align: center; /* Выравниваем текст по центру по горизонтали */
+    margin-top: auto; /* Задаем отступ сверху, например, 10px */
+}
+.border_block_,
+.border_block > * {
+    margin: 0 auto; /* Выравниваем элементы по центру по горизонтали */
+}
 
 
 
@@ -243,6 +270,11 @@
 
 }
 
+.modal_buttons_block {
+    margin: 0 auto;
+    max-width: 200px;
+}
+
     /* Стили для заголовка модального окна */
     h2 {
         text-align: center;
@@ -277,4 +309,57 @@
 .red_blanks_block {
     /* Ваши стили для блоков, сумма весов в которых >= 30 */
     box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.776);
+}
+
+
+
+
+/* Скрыть оригинальные радиокнопки */
+.radio-label input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+}
+
+/* Создать стилизованные заменители для радиокнопок */
+.radio-label {
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.radio-custom {
+    display: inline-block;
+    
+    background-color: #444654;
+    border: none;
+    border-radius: 10px;
+}
+
+
+.radio-custom img {
+    width: 28px;
+    height: 28px;
+}
+
+.radio-icon {
+    font-size: 20px; /* Размер кубика или другой иконки */
+    margin-right: 5px; /* Расстояние между кубиком и описанием */
+}
+
+.radio-label-text {
+    font-size: 30px; /* Размер описания радио кнопки */
+}
+
+/* При наведении добавить эффекты */
+.radio-label:hover .radio-custom {
+    background-color: #ddd;
+    color: #000000;
+}
+
+/* При выборе радиокнопки изменять стили заменителя */
+.radio-label input[type="radio"]:checked + .radio-custom {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
 }

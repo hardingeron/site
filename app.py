@@ -22,10 +22,9 @@ from PIL.ExifTags import TAGS
 from sqlalchemy.exc import SQLAlchemyError
 import re
 from openpyxl.drawing.image import Image
+from decimal import Decimal
 
 
-from flask_socketio import SocketIO
-from flask_socketio import emit
 import json
 
 
@@ -39,8 +38,7 @@ from functions import get_last_record, generate_number_and_flight, calculate_cos
 
 app = Flask(__name__)
 
-socketio = SocketIO(app, cors_allowed_origins="https://vipost.ge")
-# socketio = SocketIO(app)
+
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:QazEdcQweZxcQscEsz123@localhost/packages'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Отключает отслеживание изменений
@@ -723,60 +721,13 @@ def generate_ticket():
         return jsonify({'success': False, 'message': str(e)})
 
 
-
-
-#-------------------------------------------------------------------------------------------------#
-# ------------------------------               /booking             ------------------------------#
-
-
-
-
-
-@app.route('/booking', methods=['POST', 'GET'])
-@login_required
-def booking():
-    return render_template('booking.html')
-
-
-
-#-------------------------------------------------------------------------------------------------#
-# ------------------------------               /chat                ------------------------------#
-
-
-
-@app.route('/chat', methods=['POST', 'GET'])
-def chat():
-    messages = Messages.query.order_by(Messages.timestamp.desc()).limit(50).all()
-    messages.reverse()  # Обратный порядок сообщений
-    return render_template('chat.html', messages=messages)
-
-
-  
-
-@socketio.on('new_message')
-def handle_new_message(data):
-    message_content = data['message']
-    user_id = current_user.get_id()
-    user = User.query.filter_by(id=user_id).first()
-    timestamp = datetime.now().strftime('%H:%M:%S')
-
-    # Создайте новое сообщение и добавьте его в базу данных
-    new_message = Messages(user_id=user.login, content=message_content)
-    print(new_message)
-    db.session.add(new_message)
-    db.session.commit()
-
-    # Отправьте новое сообщение всем клиентам через WebSocket
-    emit('new_message', {'user_id': user.login, 'timestamp': timestamp, 'content': message_content}, broadcast=True)
-
-
-
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /list                ------------------------------#
 
 
 @app.route('/list', methods=['POST', 'GET'])
 def blanks():
+    print('kkkk')
     date_param = request.args.get('date')  # Получите значение параметра "date"
     city_param = request.args.get('where_from')  # Получите значение параметра "city"
 
@@ -791,7 +742,7 @@ def blanks():
     total_weight = 0
     for record in data:
         weights_data = record.weights  # Получение значения поля weights из записи
-        numbers = [float(num) for num in weights_data.split()]  # Разбиение на числа и преобразование во float
+        numbers = [Decimal(num) for num in weights_data.split()]
         total_weight += sum(numbers)  # Суммирование чисел
 
 
@@ -956,7 +907,7 @@ def page_not_found(error):
 #     socketio.run(app, host='0.0.0.0')
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=False)
 
 
 # with app.app_context():

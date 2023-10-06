@@ -886,7 +886,7 @@ def page_not_found(error):
 #     socketio.run(app, host='0.0.0.0')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=False)
+    app.run(host='0.0.0.0', debug=True)
 
 
 # with app.app_context():

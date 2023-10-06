@@ -11,6 +11,7 @@
 .content_list_block label {
     font-weight: bold;
 }
+.filter_block,
 .total_weight_block {
     display: flex;
     flex-direction: column; /* Выставляем вертикальное направление для элементов */
@@ -26,6 +27,7 @@
     border-radius: 20px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
 }
+.filter_block button,
 .total_weight_block button, #add, .modal-content button {
     background-color: #333333;
     color: #8e8ea0;
@@ -36,6 +38,22 @@
     border-radius: 5px;
     font-weight: bold;
 }
+
+.filter_block input {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+    margin-top: 10px;
+    width: 135px;
+    height: 20px;
+    background-color: #40414f;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+    color: #8e8ea0;;
+    text-align: center;
+    font-weight: bold;
+}
+
 
 #add {
     margin: 0 auto 20px; /* 20px сверху, автоматически справа и слева, 0px снизу */
@@ -118,6 +136,7 @@
     height: 20px;
 }
 
+
 .payment_value_block input {
     border: none;
     border-radius: 5px;
@@ -141,6 +160,24 @@
     margin-top: 2px;
     width: 135px;
     
+}
+
+
+.city_block select {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    height: 30px;
+    font-size: 16px;
+    margin-top: 2px;
+    width: 150px;
+    background-color: #40414f;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+    color: #8e8ea0;;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 2px;
+
 }
 
 .label_block {
@@ -342,10 +379,7 @@
     height: 28px;
 }
 
-.radio-icon {
-    font-size: 20px; /* Размер кубика или другой иконки */
-    margin-right: 5px; /* Расстояние между кубиком и описанием */
-}
+
 
 .radio-label-text {
     font-size: 30px; /* Размер описания радио кнопки */
@@ -359,7 +393,30 @@
 
 /* При выборе радиокнопки изменять стили заменителя */
 .radio-label input[type="radio"]:checked + .radio-custom {
-    background-color: #007bff;
+    background-color: #ffffff;
+    padding: 1px;
     border-color: #007bff;
-    color: white;
+    color: rgb(0, 0, 0);
+}
+
+
+
+
+#scrollToTopButton {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 20px; /* Расстояние от нижнего края страницы */
+    right: 20px; /* Расстояние от правого края страницы */
+    cursor: pointer;
+}
+
+
+
+.blocks {
+    /* Чтобы блоки внутри .blocks выстроились в ряд */
+    display: flex;
+    /* Чтобы блоки выравнивались по горизонтали */
+    justify-content: space-between; /* Равномерное распределение между элементами */
+    /* align-items: center; */ /* Выравнивание элементов по вертикали (если нужно) */
 }

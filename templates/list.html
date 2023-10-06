@@ -11,10 +11,17 @@
 <div class="content_list_block">
 
     <!-- Кнопка для открытия модального окна "payment" -->
-    <div class="total_weight_block">
-        <h2>საერთო წონა - {{ total_weight }}კგ</h2>
-        <button id="openPaymentModal">სტატისტიკა</button>
+    <div class="blocks">
+        <div class="total_weight_block">
+            <h2>საერთო წონა - {{ total_weight }}კგ</h2>
+            <button id="openPaymentModal">სტატისტიკა</button>
+        </div>
+        <div class="filter_block">
+            <input type="text" id="filterInput" placeholder="ფილტრის ველი">
+            <button onclick="filterData()">ძიება</button>
+        </div>
     </div>
+    
 
 
     <div class="blanks_block_">
@@ -61,7 +68,66 @@
                 </div>
                 <div class="city_block">
                     <label>ქალაქი</label>
-                    <input type="text" name="city">
+                    <select name="city" id="city">
+                        <option value="TBILISI">TBILISI</option>
+                        <option value="BATUMI">BATUMI</option>
+                        <option value="KOBULETI">KOBULETI</option>
+                        <option value="KUTAISI">KUTAISI</option>
+                        <option value="TELAVI">TELAVI</option>
+                        <option value="GORI">GORI</option>
+                        <option value="ZUGDIDI">ZUGDIDI</option>
+                        <option value="POTI">POTI</option>
+                        <option value="KHASHURI">KHASHURI</option>
+                        <option value="RUSTAVI">RUSTAVI</option>
+                        <option value="SAMTREDIA">SAMTREDIA</option>
+                        <option value="SENAKI">SENAKI</option>
+                        <option value="ZESTAPHONI">ZESTAPHONI</option>
+                        <option value="MARNEULI">MARNEULI</option>
+                        <option value="AKHALTSIKHE">AKHALTSIKHE</option>
+                        <option value="OZURGETI">OZURGETI</option>
+                        <option value="KASPI">KASPI</option>
+                        <option value="TCHIATURA">TCHIATURA</option>
+                        <option value="TSKALTUBO">TSKALTUBO</option>
+                        <option value="SAGAREJO">SAGAREJO</option>
+                        <option value="GARDABANI">GARDABANI</option>
+                        <option value="BORJOMI">BORJOMI</option>
+                        <option value="TKIBULI">TKIBULI</option>
+                        <option value="KHONI">KHONI</option>
+                        <option value="BOLNISI">BOLNISI</option>
+                        <option value="AKHALKALAKI">AKHALKALAKI</option>
+                        <option value="GURJAANI">GURJAANI</option>
+                        <option value="MTSKHETA">MTSKHETA</option>
+                        <option value="KVARELI">KVARELI</option>
+                        <option value="AKHMETA">AKHMETA</option>
+                        <option value="KARELI">KARELI</option>
+                        <option value="LANCHKHUTA">LANCHKHUTA</option>
+                        <option value="DUSHETI">DUSHETI</option>
+                        <option value="SACHKHERE">SACHKHERE</option>
+                        <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
+                        <option value="LAGODEKHI">LAGODEKHI</option>
+                        <option value="NINOTSMINDA">NINOTSMINDA</option>
+                        <option value="ABASHA">ABASHA</option>
+                        <option value="TSNORI">TSNORI</option>
+                        <option value="TERJOBA">TERJOBA</option>
+                        <option value="MARTVILI">MARTVILI</option>
+                        <option value="KHOBI">KHOBI</option>
+                        <option value="TSALENJIKHA">TSALENJIKHA</option>
+                        <option value="VANI">VANI</option>
+                        <option value="BAGDADI">BAGDADI</option>
+                        <option value="VALE">VALE</option>
+                        <option value="CHKHOROTSKU">CHKHOROTSKU</option>
+                        <option value="TETRITSQARO">TETRITSQARO</option>
+                        <option value="DMANISI">DMANISI</option>
+                        <option value="ONI">ONI</option>
+                        <option value="TSALKA">TSALKA</option>
+                        <option value="AMBROLAURI">AMBROLAURI</option>
+                        <option value="SIGNAGI">SIGNAGI</option>
+                        <option value="TSAGERI">TSAGERI</option>
+                        <option value="JVARI">JVARI</option>
+    
+    
+                        <!-- Добавьте остальные города в том же формате -->
+                    </select>
                 </div>
                 <div class="cost_block">
                     <label>ღირებულება</label>
@@ -153,24 +219,6 @@
 {% for item in data %}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="blanks_block" data-item="{{ item.number }}" data-weights="{{ item.weights}}">
     <div class="number_block" data-item="{{ item.number }}">
         <label>0{{ item.number }}</label>
@@ -247,21 +295,21 @@
 
         <div class="border_block">
                 <label class="radio-label">
-                    <input type="radio" name="payment_status_{{ item.id }}" value="paid" {% if item.payment_status == 'paid' %} checked {% endif %}>
+                    <input type="radio" name="payment_status_{{ item.id }}" value="paid" {% if item.payment_status == 'paid' %} checked {% endif %} disabled>
                     <span class="radio-custom">
                         <img src="/static/images/paid cash.png" alt="Картинка">
                     </span>
                 </label>
 
                 <label class="radio-label">
-                    <input type="radio" name="payment_status_{{ item.id }}" value="card" {% if item.payment_status == 'card' %} checked {% endif %}>
+                    <input type="radio" name="payment_status_{{ item.id }}" value="card" {% if item.payment_status == 'card' %} checked {% endif %} disabled>
                     <span class="radio-custom">
                         <img src="/static/images/paid card.png" alt="Картинка">
                     </span>
                 </label>
 
                 <label class="radio-label">
-                    <input type="radio" name="payment_status_{{ item.id }}" value="not_paid" {% if item.payment_status == 'not_paid' %} checked {% endif %}>
+                    <input type="radio" name="payment_status_{{ item.id }}" value="not_paid" {% if item.payment_status == 'not_paid' %} checked {% endif %} disabled>
                     <span class="radio-custom">
                         <img src="/static/images/not paid.png" alt="Картинка">
                     </span>
@@ -270,25 +318,25 @@
 
         <div class="border_block_">
                 <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="GEL" {% if item.currency == 'GEL' %} checked {% endif %}>
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="GEL" {% if item.currency == 'GEL' %} checked {% endif %} disabled>
                     <span class="radio-custom">
                         <span class="radio-label-text">₾</span>
                     </span>
                 </label>
                 <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="RUB" {% if item.currency == 'RUB' %} checked {% endif %}>
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="RUB" {% if item.currency == 'RUB' %} checked {% endif %} disabled>
                     <span class="radio-custom">
                         <span class="radio-label-text">₽</span>
                     </span>
                 </label>
                 <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="EUR" {% if item.currency == 'EUR' %} checked {% endif %}>
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="EUR" {% if item.currency == 'EUR' %} checked {% endif %} disabled>
                     <span class="radio-custom">
                         <span class="radio-label-text">€</span>
                     </span>
                 </label>
                 <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="USD" {% if item.currency == 'USD' %} checked {% endif %}>
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="USD" {% if item.currency == 'USD' %} checked {% endif %} disabled>
                     <span class="radio-custom">
                         <span class="radio-label-text">$</span>
                     </span>
@@ -301,6 +349,12 @@
 
 {% endfor %}
 
+</div>
+
+
+<div class="scroll_block">
+    <!-- Вставьте вашу фотографию здесь -->
+    <img src="/static/images/up.png" alt="ზემოთ" id="scrollToTopButton">
 </div>
 
 <div id="EditModal" class="modal-edit">
@@ -373,7 +427,7 @@ $(document).ready(function() {
             recipient_fl: $("input[name='recipient_fl']").val(),
             recipient_phone: $("input[name='recipient_phone']").val(),
             passport: $("input[name='passport']").val(),
-            city: $("input[name='city']").val(),
+            city: $("select[name='city']").val(),
             price: $("input[name='cost']").val(),
             weights: $("input[name='weights']").val(),
             comment: $("input[name='comment']").val(),
@@ -431,6 +485,12 @@ function openModalWithData(item) {
         inputField.removeAttribute("readonly");
     });
 
+    // Разрешаем радио кнопки для редактирования
+    var radioButtons = itemClone.querySelectorAll("input[type='radio']");
+    radioButtons.forEach(function(radioButton) {
+        radioButton.removeAttribute("disabled");
+    });
+
     modalData.innerHTML = "";
     modalData.appendChild(itemClone);
 
@@ -444,6 +504,8 @@ function openModalWithData(item) {
 function closeEditModal() {
     var modal = document.getElementById("EditModal");
     modal.style.display = "none";
+
+    
     
 }
 
@@ -801,6 +863,85 @@ blanksBlocks.forEach(function(blanksBlock) {
 });
 </script>
 
+
+<script>
+    // Находим элемент фотографии
+var scrollToTopButton = document.getElementById("scrollToTopButton");
+
+// Добавляем обработчик события для клика
+scrollToTopButton.addEventListener("click", function() {
+    // Прокручиваем страницу наверх
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
+</script>
+
+
+
+<script>
+function filterData() {
+    var filterValue = document.getElementById("filterInput").value.toLowerCase(); // Получаем значение из поля ввода и приводим его к нижнему регистру
+
+    // Находим все элементы с классом "blanks_block"
+    var blanksBlocks = document.querySelectorAll(".blanks_block");
+
+    // Флаг для отслеживания наличия совпадения
+    var foundMatch = false;
+
+    // Создаем регулярное выражение для поиска слова целиком
+    var regex = new RegExp("\\b" + filterValue + "\\b");
+
+    // Перебираем найденные элементы
+    for (var i = 0; i < blanksBlocks.length; i++) {
+        var item = blanksBlocks[i];
+        
+        // Получаем значения всех полей, которые хотим учитывать
+        var senderFIO = item.querySelector(".sender_fl_block input").value.toLowerCase();
+        var recipientFIO = item.querySelector(".recipient_fl_block input").value.toLowerCase();
+        var passport = item.querySelector(".passport_block input").value.toLowerCase();
+        var number = item.querySelector(".number_block label").textContent.toLowerCase(); // Для номера
+
+        // Сравниваем значения полей с введенным значением фильтра, используя регулярное выражение
+        if (
+            regex.test(senderFIO) ||
+            regex.test(recipientFIO) ||
+            regex.test(passport) ||
+            regex.test(number)
+        ) {
+            // Найдено совпадение, прокручиваем страницу к этому элементу
+            item.scrollIntoView({ behavior: "smooth" });
+            // Выделяем элемент
+            item.style.backgroundColor = "#353745";
+
+            // Устанавливаем флаг в true для остановки поиска после первого совпадения
+            foundMatch = true;
+
+            // Устанавливаем таймер для снятия выделения через 2 секунды
+            setTimeout(function(element) {
+                element.style.backgroundColor = ""; // Снимаем выделение
+            }, 2000, item);
+
+            // Выход из цикла после первого совпадения
+            break;
+        }
+    }
+
+    // Если не найдено совпадений, снимаем выделение с предыдущего совпадения (если оно было)
+    if (!foundMatch) {
+        var highlightedItems = document.querySelectorAll(".blanks_block[style='background-color: #353745;']");
+        highlightedItems.forEach(function (highlightedItem) {
+            highlightedItem.style.backgroundColor = "";
+        });
+    }
+}
+    // Если не найдено совпадений, снимаем выделение с предыдущего совпадения (если оно было)
+    if (!foundMatch) {
+        var highlightedItems = document.querySelectorAll(".blanks_block[style='background-color: yellow;']");
+        highlightedItems.forEach(function (highlightedItem) {
+            highlightedItem.style.backgroundColor = "";
+        });
+    }
+
+</script>
 
 
 {% endblock %}

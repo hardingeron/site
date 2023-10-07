@@ -43,7 +43,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:QazEdcQweZxcQscEsz123@localhost/packages'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Отключает отслеживание изменений
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=8)
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=48)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=8)
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'static/purcells')
 app.config['SECRET_KEY'] = secret_key
 
@@ -639,18 +639,20 @@ def generate_ticket():
             payment_currency = payment_value[-3:]
             if payment_currency == 'GEL':
                 sheet['A7'] = '₾'
-            elif payment_currency == 'RUB':
-                sheet['A7'] = '₽'
-            elif payment_currency == 'USD':
-                sheet['A7'] = '$'
-            elif payment_currency == 'EUR':
-                sheet['A7'] = '€    '
-            sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
-            sheet['A7'].font = bold_font
 
-            sheet['D7'] = re.sub(r'\D', '', payment_value)  # Убираем первую букву
-            sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
-            sheet['D7'].font = bold_font
+                sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
+                sheet['A7'].font = bold_font
+                sheet['D7'] = re.sub(r'\D', '', payment_value)  # Убираем первую букву
+                sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
+                sheet['D7'].font = bold_font
+            else:
+                sheet['A7'] = '₾'
+                sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
+                sheet['A7'].font = bold_font
+                sheet['D7'] = '200'
+                sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
+                sheet['D7'].font = bold_font
+                
 
 
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')

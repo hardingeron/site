@@ -780,9 +780,9 @@ def add_to_the_list():
         new_parcel = Forms(
             number = new_number,
             date=data['date'],
-            sender_fio=data['sender_fl'],
+            sender_fio = data['sender_fl'].upper(),
             sender_phone=data['sender_phone'],
-            recipient_fio=data['recipient_fl'],
+            recipient_fio=data['recipient_fl'].upper(),
             recipient_phone=data['recipient_phone'],
             passport=data['passport'],
             city=data['city'],
@@ -821,9 +821,9 @@ def edit_the_list():
 
     filtered_form = Forms.query.filter_by(date=date, where_from=where_from, number=number).first()
     if filtered_form:
-       filtered_form.sender_fio = data['sender_fio']
+       filtered_form.sender_fio = data['sender_fio'].upper()
        filtered_form.sender_phone = data['sender_phone']
-       filtered_form.recipient_fio = data['recipient_fio']
+       filtered_form.recipient_fio = data['recipient_fio'].upper()
        filtered_form.recipient_phone = data['recipient_phone']
        filtered_form.passport = data['passport']
        filtered_form.city = data['city']

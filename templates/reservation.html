@@ -31,16 +31,16 @@
       <div class="bus">
         <div class="bus-seats">
           {% for seat_number in range(1, 52, 4) %}
-              {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': ''}) %}
+              {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
               {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
-                                    else 'female_seats' if seat['gender'] == 'female'
-                                    else 'none_seats' %}
+                                      else 'female_seats' if seat['gender'] == 'female'
+                                      else 'none_seats' %}
               {% set payment_class = 'positive-payment' if seat['payment'] and (seat['payment'][0] == '+' or seat['payment'][0] == 'C')
-                                    else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
-                                    else '' %}
-              
+                                      else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                      else '' %}
+            
               <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
-                  <div class="seat-number">{{ seat_number }}</div>  
+                  <div class="seat-number {% if seat['comment'] %}yellow-text{% endif %}">{{ seat_number }}</div>  
                   <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
                       <div class="name">{{ seat['name'] }}</div>
                       <div class="phone">{{ seat['phone'] }}</div>
@@ -53,16 +53,16 @@
         
         <div class="bus-seats_2">
           {% for seat_number in range(2, 51, 4) %}
-          {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': ''}) %}
+          {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
           {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
-                                else 'female_seats' if seat['gender'] == 'female'
-                                else 'none_seats' %}
+                                  else 'female_seats' if seat['gender'] == 'female'
+                                  else 'none_seats' %}
           {% set payment_class = 'positive-payment' if seat['payment'] and (seat['payment'][0] == '+' or seat['payment'][0] == 'C')
-                                else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
-                                else '' %}
-          
+                                  else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                  else '' %}
+        
           <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
-              <div class="seat-number">{{ seat_number }}</div>  
+              <div class="seat-number {% if seat['comment'] %}yellow-text{% endif %}">{{ seat_number }}</div>  
               <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
                   <div class="name">{{ seat['name'] }}</div>
                   <div class="phone">{{ seat['phone'] }}</div>
@@ -76,19 +76,20 @@
 
           <div class="bus-seats_3">
             {% for seat_number in range(3, 48, 4) %}
-              {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': ''}) %}
-              {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
-                                else 'female_seats' if seat['gender'] == 'female'
-                                else 'none_seats' %}
-              {% set payment_class = 'positive-payment' if seat['payment'] and seat['payment'][0] == '+' or seat['payment'][0] == 'C'
-                                else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
-                                else '' %}
-          <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
-              <div class="seat-number">{{ seat_number }}</div>  
-              <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
-                  <div class="name">{{ seat['name'] }}</div>
-                  <div class="phone">{{ seat['phone'] }}</div>
-                  <div class="payment">{{ seat['payment'] }}</div>
+            {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
+            {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                                    else 'female_seats' if seat['gender'] == 'female'
+                                    else 'none_seats' %}
+            {% set payment_class = 'positive-payment' if seat['payment'] and (seat['payment'][0] == '+' or seat['payment'][0] == 'C')
+                                    else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                    else '' %}
+          
+            <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+                <div class="seat-number {% if seat['comment'] %}yellow-text{% endif %}">{{ seat_number }}</div>  
+                <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
+                    <div class="name">{{ seat['name'] }}</div>
+                    <div class="phone">{{ seat['phone'] }}</div>
+                    <div class="payment">{{ seat['payment'] }}</div>
                 </div>
               </div>
               {% if seat_number == 27 %}
@@ -100,19 +101,20 @@
           
           <div class="bus-seats_4">
             {% for seat_number in range(4, 49, 4) %}
-              {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': ''}) %}
-              {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
-                                else 'female_seats' if seat['gender'] == 'female'
-                                else 'none_seats' %}
-              {% set payment_class = 'positive-payment' if seat['payment'] and seat['payment'][0] == '+' or seat['payment'][0] == 'C'
-                                else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
-                                else '' %}
-          <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
-              <div class="seat-number">{{ seat_number }}</div>  
-              <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
-                  <div class="name">{{ seat['name'] }}</div>
-                  <div class="phone">{{ seat['phone'] }}</div>
-                  <div class="payment">{{ seat['payment'] }}</div>
+            {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
+            {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                                    else 'female_seats' if seat['gender'] == 'female'
+                                    else 'none_seats' %}
+            {% set payment_class = 'positive-payment' if seat['payment'] and (seat['payment'][0] == '+' or seat['payment'][0] == 'C')
+                                    else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                    else '' %}
+          
+            <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+                <div class="seat-number {% if seat['comment'] %}yellow-text{% endif %}">{{ seat_number }}</div>  
+                <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
+                    <div class="name">{{ seat['name'] }}</div>
+                    <div class="phone">{{ seat['phone'] }}</div>
+                    <div class="payment">{{ seat['payment'] }}</div>
                 </div>
               </div>
               {% if seat_number == 28 %}
@@ -128,19 +130,20 @@
         </div>
         <div class="bus-seats_5">
           {% for seat_number in range(51, 56) %}
-            {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': ''}) %}
-            {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
-                              else 'female_seats' if seat['gender'] == 'female'
-                              else 'none_seats' %}
-            {% set payment_class = 'positive-payment' if seat['payment'] and seat['payment'][0] == '+' or seat['payment'][0] == 'C'
-                              else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
-                              else '' %}
+          {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
+          {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
+                                  else 'female_seats' if seat['gender'] == 'female'
+                                  else 'none_seats' %}
+          {% set payment_class = 'positive-payment' if seat['payment'] and (seat['payment'][0] == '+' or seat['payment'][0] == 'C')
+                                  else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
+                                  else '' %}
+        
           <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
-              <div class="seat-number">{{ seat_number }}</div>  
+              <div class="seat-number {% if seat['comment'] %}yellow-text{% endif %}">{{ seat_number }}</div>  
               <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
-                <div class="name">{{ seat['name'] }}</div>
-                <div class="phone">{{ seat['phone'] }}</div>
-                <div class="payment">{{ seat['payment'] }}</div>
+                  <div class="name">{{ seat['name'] }}</div>
+                  <div class="phone">{{ seat['phone'] }}</div>
+                  <div class="payment">{{ seat['payment'] }}</div>
               </div>
             </div>
           {% endfor %}

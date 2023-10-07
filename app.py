@@ -765,19 +765,20 @@ def add_to_the_list():
     try:
         data = request.get_json()
         print(int(data['payment']))
+        print(data['sender_fl'], 'wwwwww')
+        check = data['sender_fl'].upper()
+        print(check)
 
-        # Получение наивысшего номера посылки для заданной даты
-        highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
+        if check == 'DAMIR':
+            min_number = db.session.query(func.min(Forms.number)).filter(Forms.date == data['date'],
                                                                          Forms.where_from == data['where_from']).scalar()
+            if min_number is not None:
+                new_number = min_number - 1
+            else:
+                new_number = 0
 
-        if highest_number is not None:
-            new_number = highest_number + 1
-        else:
-            new_number = 1
-        print(data['city'])
-        # Получите данные из JSON-запроса
-
-        new_parcel = Forms(
+            
+            new_parcel = Forms(
             number = new_number,
             date=data['date'],
             sender_fio = data['sender_fl'].upper(),
@@ -793,14 +794,52 @@ def add_to_the_list():
             payment_status=data['payment_status'],
             currency=data['payment_currency'],
             where_from=data['where_from']
-        )
+            )
 
-        db.session.add(new_parcel)
-        db.session.commit()
+            db.session.add(new_parcel)
+            db.session.commit()  
 
-        # Верните успешный ответ
-        response = {"message": "Данные успешно добавлены!"}
-        return jsonify(response), 200
+            
+
+            return jsonify({"message": "Данные успешно добавлены!"}), 200  # Вернуть успешный ответ
+        else:
+            # Остальная часть кода, как у вас уже есть
+            highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
+                                                                         Forms.where_from == data['where_from']).scalar()
+            if highest_number is not None:
+                new_number = highest_number + 1
+            else:
+                new_number = 1
+            print(data['city'])
+            # Получите данные из JSON-запроса
+
+            new_parcel = Forms(
+                number = new_number,
+                date=data['date'],
+                sender_fio = data['sender_fl'].upper(),
+                sender_phone=data['sender_phone'],
+                recipient_fio=data['recipient_fl'].upper(),
+                recipient_phone=data['recipient_phone'],
+                passport=data['passport'],
+                city=data['city'],
+                comment=data['comment'],
+                price=int(data['price']),
+                weights=data['weights'],
+                cost=int(data['payment']),
+                payment_status=data['payment_status'],
+                currency=data['payment_currency'],
+                where_from=data['where_from']
+            )
+
+            db.session.add(new_parcel)
+            db.session.commit()
+
+
+            
+
+            # Верните успешный ответ
+            response = {"message": "Данные успешно добавлены!"}
+            return jsonify(response), 200
     except Exception as e:
         # В случае ошибки верните сообщение об ошибке
         response = {"error": str(e)}

@@ -11,14 +11,13 @@
 .content_list_block label {
     font-weight: bold;
 }
-.filter_block,
 .total_weight_block {
     display: flex;
     flex-direction: column; /* Выставляем вертикальное направление для элементов */
     justify-content: center; /* Выравниваем элементы по центру по вертикали */
     align-items: center; /* Выравниваем элементы по центру по горизонтали */
-    width: 400px;
-    height: 150px;
+    width: 350px;
+    height: 120px;
     margin: 0 auto; /* Добавляем автоматические отступы слева и справа */
     background-color: #444654;
     margin-bottom: 20px;
@@ -39,14 +38,30 @@
     font-weight: bold;
 }
 
+.filter_block {
+    display: flex;
+    justify-content: center; /* Выравниваем элементы по центру по вертикали */
+    align-items: center; /* Выравниваем элементы по центру по горизонтали */
+    width: 350px;
+    height: 120px;
+    margin: 0 auto; /* Добавляем автоматические отступы слева и справа */
+    background-color: #444654;
+    margin-bottom: 20px;
+    color: #8e8ea0;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+
 .filter_block input {
     border: none;
     border-radius: 5px;
     padding: 5px;
     font-size: 16px;
-    margin-top: 10px;
+
     width: 135px;
-    height: 20px;
+    height: 30px;
     background-color: #40414f;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
     color: #8e8ea0;;
@@ -83,7 +98,8 @@
 .recipient_block > *:not(:last-child),
 .information_block > *:not(:last-child),
 .weights_comment_block > *:not(:last-child),
-.payment_block > *:not(:last-child) {
+.payment_block > *:not(:last-child),
+.filter_block > *:not(:last-child) {
     margin-right: 40px; /* Отступ справа 30 пикселей для всех дочерних элементов, кроме последнего */
   }
 

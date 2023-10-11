@@ -706,7 +706,6 @@ def generate_ticket():
 @app.route('/list', methods=['POST', 'GET'])
 @login_required
 def blanks():
-    print('kkkk')
     date_param = request.args.get('date')  # Получите значение параметра "date"
     city_param = request.args.get('where_from')  # Получите значение параметра "city"
 
@@ -720,9 +719,12 @@ def blanks():
     }
     total_weight = 0
     for record in data:
-        weights_data = record.weights  # Получение значения поля weights из записи
-        numbers = [Decimal(num) for num in weights_data.split()]
-        total_weight += sum(numbers)  # Суммирование чисел
+        try:
+            weights_data = record.weights  # Получение значения поля weights из записи
+            numbers = [Decimal(num) for num in weights_data.split()]
+            total_weight += sum(numbers)  # Суммирование чисел
+        except Exception as e:
+            total_weight = ' [ ERROR !! ] '
 
 
     for item in data:
@@ -768,7 +770,7 @@ def add_to_the_list():
         data = request.get_json()
         print(int(data['payment']))
         print(data['sender_fl'], 'wwwwww')
-        check = data['sender_fl'].upper()
+        check = data['sender_fl'].upper().replace(" ", "")
         print(check)
 
         if check == 'DAMIR':
@@ -812,7 +814,6 @@ def add_to_the_list():
                 new_number = highest_number + 1
             else:
                 new_number = 1
-            print(data['city'])
             # Получите данные из JSON-запроса
 
             new_parcel = Forms(

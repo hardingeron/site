@@ -271,15 +271,22 @@
 }
 
 
-.border_block_,
-.border_block {
+.border_block_, .border_block {
     border: 1px solid #ccc;
     box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
     width: 145px;
     border-radius: 10px;
-    text-align: center; /* Выравниваем текст по центру по горизонтали */
-    margin-top: auto; /* Задаем отступ сверху, например, 10px */
+    text-align: center;
+    margin-top: auto;
+    display: flex; /* Добавьте это свойство для отображения дочерних элементов в ряд */
+    justify-content: center; /* Центрирование радио кнопок по горизонтали */
 }
+
+/* Стили для радио кнопок внутри .border_block */
+.border_block input[type="radio"] {
+    margin: 0 5px; /* Расстояние между радио кнопками */
+}
+
 
 
 
@@ -366,7 +373,6 @@
 
 
 
-
 /* Скрыть оригинальные радиокнопки */
 .radio-label input[type="radio"] {
     opacity: 0;
@@ -435,4 +441,14 @@
     /* Чтобы блоки выравнивались по горизонтали */
     justify-content: space-between; /* Равномерное распределение между элементами */
     /* align-items: center; */ /* Выравнивание элементов по вертикали (если нужно) */
+}
+
+
+
+
+
+/* Стили для радио кнопок в ряд */
+.edit-modal-data input[type="radio"] {
+    display: inline-block;
+    margin-right: 10px; /* Можно настроить отступы по вашему усмотрению */
 }

@@ -2,7 +2,7 @@
 
 {% block title %}
   {{ super() }}
-  ჯავშანი
+  ბლანკები
 {% endblock %}
 
 {% block content %}
@@ -159,7 +159,7 @@
                 </div>
 
 
-                    <div class="border_block">
+                    <div class="border_block_">
                         <label class="radio-label">
                             <input type="radio" name="payment_status" value="paid">
                             <span class="radio-custom">
@@ -183,7 +183,7 @@
                     </div>
 
 
-                    <div class="border_block">
+                    <div class="border_block_">
                         <label class="radio-label">
                             <input type="radio" name="payment_currency" value="GEL">
                             <span class="radio-custom">
@@ -462,6 +462,25 @@ $(document).ready(function() {
 
 
 
+<script>
+// Функция для скрытия не выбранных радио кнопок при загрузке страницы
+function hideUnselectedRadios() {
+    var radioGroups = document.querySelectorAll(".border_block input[type='radio']");
+    radioGroups.forEach(function(radio) {
+        if (!radio.checked) {
+            radio.parentNode.style.display = "none";
+        }
+    });
+}
+
+// Вызываем функцию hideUnselectedRadios при загрузке страницы
+window.addEventListener('load', hideUnselectedRadios);
+
+// Остальной ваш скрипт...
+</script>
+
+
+
 
 
 
@@ -479,16 +498,18 @@ function openModalWithData(item) {
     // Клонируем блок данных из .blanks_block
     var itemClone = item.cloneNode(true);
 
-    // Убираем атрибут readonly для всех полей ввода
-    var inputFields = itemClone.querySelectorAll("input");
-    inputFields.forEach(function(inputField) {
-        inputField.removeAttribute("readonly");
-    });
-
     // Разрешаем радио кнопки для редактирования
     var radioButtons = itemClone.querySelectorAll("input[type='radio']");
     radioButtons.forEach(function(radioButton) {
         radioButton.removeAttribute("disabled");
+        // Делаем радио кнопки видимыми
+        radioButton.parentNode.style.display = "block";
+    });
+
+    // Убираем атрибут readonly для всех полей ввода
+    var inputFields = itemClone.querySelectorAll("input");
+    inputFields.forEach(function(inputField) {
+        inputField.removeAttribute("readonly");
     });
 
     modalData.innerHTML = "";
@@ -933,14 +954,6 @@ function filterData() {
         });
     }
 }
-    // Если не найдено совпадений, снимаем выделение с предыдущего совпадения (если оно было)
-    if (!foundMatch) {
-        var highlightedItems = document.querySelectorAll(".blanks_block[style='background-color: yellow;']");
-        highlightedItems.forEach(function (highlightedItem) {
-            highlightedItem.style.backgroundColor = "";
-        });
-    }
-
 </script>
 
 

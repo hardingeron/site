@@ -424,33 +424,29 @@ seats.forEach(seat => {
 
 
 modalForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  if (selectedSeatNumber !== null) {
-    const formData = new FormData(modalForm);
-    formData.append('seat_number', selectedSeatNumber);
+    if (selectedSeatNumber !== null) {
+        const formData = new FormData(modalForm);
+        formData.append('seat_number', selectedSeatNumber);
 
-    const response = await fetch('/save_data', {
-      method: 'POST',
-      body: formData,
-    });
+        const response = await fetch('/save_data', {
+            method: 'POST',
+            body: formData,
+        });
 
-    if (response.ok) {
-      console.log('Данные успешно отправлены на сервер');
-      location.reload();
+        if (response.ok) {
+            console.log('Данные успешно отправлены на сервер');
+            location.reload();
+        } else {
+            const responseData = await response.json();
+
+            showMessage(responseData.message, false);
+        }
     } else {
-      const responseData = await response.json();
-      console.error('Ошибка при отправке данных на сервер:', responseData.message);
-      // Отобразите сообщение об ошибке на странице
-      const errorMessageElement = document.getElementById('error-message');
-      errorMessageElement.textContent = responseData.message;
-      errorMessageElement.style.display = 'block';
+        console.error('Номер сиденья не выбран');
     }
-  } else {
-    console.error('Номер сиденья не выбран');
-  }
 });
-
 
 
 exitButton.addEventListener('click', () => {

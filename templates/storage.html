@@ -50,30 +50,34 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#add_trecing').focus();
+$(document).ready(function() {
+    $('#add_trecing').focus();
 
-        $('#add-form').submit(function(event) {
-            event.preventDefault();
+    $('#add-form').submit(function(event) {
+        event.preventDefault();
 
-            var formData = $(this).serialize();
+        var formData = $(this).serialize();
 
-            $.ajax({
-                type: 'POST',
-                url: '/save',
-                data: formData,
-                success: function(response) {
+        $.ajax({
+            type: 'POST',
+            url: '/save',
+            data: formData,
+            success: function(response) {
+                if (response.success === false) {
+                    showMessage(response.message, false);
+                } else {
+                    // Обработка успешного ответа
                     var lastShelf = response.last;
-
                     $('#add_shelf').val(lastShelf);
                     $('#add_trecing').val('').blur();
                     $('#add_trecing').focus();
-                },
-                error: function() {
-                    console.log('Ошибка при выполнении AJAX-запроса');
                 }
-            });
+            },
+            error: function() {
+                console.log('Ошибка при выполнении AJAX-запроса');
+            }
         });
+    });
 
         $('#find-form').submit(function(event) {
             event.preventDefault();

@@ -375,3 +375,23 @@ body {
 
 
 
+
+
+#message-container {
+  display: none;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  z-index: 9999;
+}
+
+#message-container.success {
+  background-color: #4CAF50;
+}
+
+#message-container.error {
+  background-color: #c72b1f;
+}

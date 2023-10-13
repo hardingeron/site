@@ -8,6 +8,8 @@
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
 
+
+
 <div class="content_list_block">
 
     <!-- Кнопка для открытия модального окна "payment" -->
@@ -221,7 +223,8 @@
 
 <div class="blanks_block" data-item="{{ item.number }}" data-weights="{{ item.weights}}">
     <div class="number_block" data-item="{{ item.number }}">
-        <label>0{{ item.number }}</label>
+        <label>{% if item.number < 0 %}00{% else %}0{% endif %}{{ item.number }}</label>
+
     </div>
 
     <div class="sender_block">
@@ -438,24 +441,29 @@ $(document).ready(function() {
             where_from: cityParam
         };
 
-        $.ajax({
-            type: "POST",
-            url: "/add_to_the_list",  // Замените на адрес вашего обработчика
-            data: JSON.stringify(formData),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(response) {
-                // Обработайте успешный ответ с сервера, если необходимо
-                console.log(response);
+$.ajax({
+    type: "POST",
+    url: "/add_to_the_list",  // Замените на адрес вашего обработчика
+    data: JSON.stringify(formData),
+    contentType: "application/json; charset=utf-8",
+    dataType: "json",
+    success: function(response) {
+        // Обработайте успешный ответ с сервера, если необходимо
+        console.log(response);
 
-                // Перезагрузите страницу после успешной отправки
-                window.location.reload();
-            },
-            error: function(error) {
-                // Обработайте ошибку, если необходимо
-                console.error(error);
-            }
-        });
+        if (response.success) {
+            // Если сервер вернул True, перезагрузите страницу
+            window.location.reload();
+        } else {
+            // Если сервер вернул False, покажите сообщение
+            showMessage(response.message, false);
+        }
+    },
+    error: function(error) {
+        // Обработайте ошибку, если необходимо
+        console.error(error);
+    }
+});
     });
 });
 </script>
@@ -610,19 +618,25 @@ function saveChanges() {
     };
 
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/edit-the-list", true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
+xhr.open("POST", "/edit-the-list", true);
+xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
             // Обработайте успешный ответ сервера
             closeEditModal(); // Закрываем модальное окно после успешного сохранения
             window.location.reload();
-        } else if (xhr.readyState === 4) {
-            // Обработайте ошибку
-            console.error('Ошибка при сохранении данных на сервере');
+        } else if (xhr.status === 400) {
+            // Обработка ошибки
+            var response = JSON.parse(xhr.responseText);
+            console.error('Ошибка при сохранении данных на сервере:', response.message);
+            // Отобразите сообщение об ошибке на странице
+            showMessage(response.message, false);
         }
-    };
-    xhr.send(JSON.stringify(newData));
+    }
+};
+xhr.send(JSON.stringify(newData));
+
 }
 </script>
 
@@ -815,11 +829,12 @@ function saveChanges() {
                 // Обработка успешного ответа от сервера
                 var response = JSON.parse(xhr.responseText);
                 if (response.success) {
+                    showMessage(response.message, response.success);
                     // Можете выполнить какие-либо действия, например, обновить страницу
                     location.reload();
                 } else {
                     // Обработка ошибки, если не удалось удалить элемент
-                    alert("Произошла ошибка при удалении элемента.");
+                    showMessage(response.message, response.success);
                 }
             }
         };
@@ -899,6 +914,13 @@ scrollToTopButton.addEventListener("click", function() {
 
 
 <script>
+// Обработчик события keydown для поля ввода
+document.getElementById("filterInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        filterData(); // Вызываем функцию filterData() при нажатии Enter
+    }
+});
+
 function filterData() {
     var filterValue = document.getElementById("filterInput").value.toLowerCase(); // Получаем значение из поля ввода и приводим его к нижнему регистру
 
@@ -955,6 +977,9 @@ function filterData() {
     }
 }
 </script>
+
+
+
 
 
 {% endblock %}

@@ -216,11 +216,12 @@ def index():
 @app.route('/add', methods=['POST', 'GET'])
 @login_required
 def add():
+    access = ['admin', 'Tbilisi']
     try:
         # Проверка прав доступа
-        if current_user.role != 'admin':
+        if current_user.role not in access:
             flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
-            return redirect(url_for('all'))
+            return redirect(url_for('index'))
 
         # Получение последней записи
         last_record = get_last_record(db)
@@ -258,11 +259,12 @@ def add():
 @app.route('/change', methods=['GET'])
 @login_required
 def change_get():
+    access = ['admin', 'Tbilisi']
     try:
         # Проверка прав доступа
-        if current_user.role != 'admin':
+        if current_user.role not in access:
             flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
-            return redirect(url_for('all'))
+            return redirect(url_for('index'))
 
         # Получение id записи из параметров запроса
         id = int(request.args.get('id'))
@@ -281,11 +283,12 @@ def change_get():
 @app.route('/change', methods=['POST'])
 @login_required
 def change_post():
+    access = ["admin", 'Tbilisi']
     try:
         # Проверка прав доступа
-        if current_user.role != 'admin':
+        if current_user.role not in access:
             flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
-            return redirect(url_for('all'))
+            return redirect(url_for('index'))
 
         # Получение id записи из формы
         id = int(request.form['id'])
@@ -322,22 +325,26 @@ def change_post():
 @app.route('/storage', methods=['POST', 'GET'])
 @login_required
 def storage():
+
+    access = ['admin', 'Tbilisi']
+
+    if current_user.role not in access:
+        flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+
+        return redirect(url_for('index'))
+    
     return render_template('storage.html')
 
 
 @app.route('/save', methods=['POST'])
 @login_required
 def save():
-    if current_user.role != 'admin':
-        flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
-        return redirect(url_for('all'))
-    
     shelf = request.form.get('shelf')
     trecing = request.form.get('trecing')
 
     if not validate_input(shelf, trecing):
-        print('aaaa')
-        return jsonify({'error': 'შეავსეთ მოცემული ველები!'})
+
+        return jsonify({'success': False, 'message': 'დამატება ვერ მოხერხდა: შეავსეთ მოცემული ველები!'})
     
     trecing = format_trecing(trecing)
     date = datetime.now().date()
@@ -346,9 +353,10 @@ def save():
         last_shelf = save_record(shelf, trecing, date, db)
         return jsonify({'last': last_shelf})
     except SQLAlchemyError as e:
-        return jsonify({'error': 'მოხდა შეცდომა მონაცემთა ბაზაში მონაცემების შენახვისას.'})
+        return jsonify({'success': False, 'message': 'დაიკარგა მონაცემთა ბაზასთან კავშირი!'})
     except Exception as e:
         return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
+
 
 
 @app.route('/find', methods=['POST'])
@@ -376,7 +384,6 @@ def find():
 @login_required
 def add_user():
     user_id = request.json.get('user_id')
-    print('wwwwwwwww', user_id)
 
     # Открываем файл bot_users.json и загружаем его содержимое
     try:
@@ -405,6 +412,12 @@ def add_user():
 @app.route('/reservation', methods=['POST', 'GET'])
 @login_required
 def reservation():
+
+    access = ['admin', 'Tbilisi', 'Moscow']
+    if current_user.role not in access:
+        flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+        return redirect(url_for('index'))
+    
     selected_date = request.args.get('date')
     reis = request.args.get('route')
     reservation_data = get_reservation_data(selected_date, reis, 55)
@@ -415,6 +428,10 @@ def reservation():
 @app.route('/reservation_big', methods=['POST', 'GET'])
 @login_required
 def reservation_big():
+    access = ['admin', 'Tbilisi', 'Moscow']
+    if current_user.role not in access:
+        flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+        return redirect(url_for('index'))
     selected_date = request.args.get('date')
     reis = request.args.get('route')
     reservation_data = get_reservation_data(selected_date, reis, 59)
@@ -766,6 +783,9 @@ def blanks():
 @app.route('/add_to_the_list', methods=['POST'])
 @login_required
 def add_to_the_list():
+    access = ['admin', 'Moscow', 'SPB']
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
     try:
         data = request.get_json()
         print(int(data['payment']))
@@ -805,7 +825,7 @@ def add_to_the_list():
 
             
 
-            return jsonify({"message": "Данные успешно добавлены!"}), 200  # Вернуть успешный ответ
+            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
         else:
             # Остальная часть кода, как у вас уже есть
             highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
@@ -839,10 +859,8 @@ def add_to_the_list():
 
 
             
+            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
 
-            # Верните успешный ответ
-            response = {"message": "Данные успешно добавлены!"}
-            return jsonify(response), 200
     except Exception as e:
         # В случае ошибки верните сообщение об ошибке
         response = {"error": str(e)}
@@ -854,6 +872,9 @@ def add_to_the_list():
 @app.route('/edit-the-list', methods=['POST'])
 @login_required
 def edit_the_list():
+    access = ['admin', 'Moscow', 'SPB']
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 400
 
     data = request.get_json()
     print(data)
@@ -882,6 +903,11 @@ def edit_the_list():
 @app.route('/deleted_from_list', methods=['POST'])
 @login_required
 def delete_from_list():
+
+    access = ['admin', 'Tbilisi', 'Moscow', 'SPB']
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
+
     try:
         data = request.get_json()
         itemId = data.get('itemId')
@@ -893,7 +919,7 @@ def delete_from_list():
         # Выполните удаление элемента по данным itemId, dateParam и cityParam
 
         # Верните успешный ответ
-        return jsonify({'success': True, 'message': 'Элемент успешно удален.'})
+        return jsonify({'success': True, 'message': 'ნომერი წარმატებით წაიშალა'})
     except Exception as e:
         print(e)
         return jsonify({'success': False, 'message': str(e)})

@@ -40,7 +40,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     login = db.Column(db.String(50), nullable=True)
     psw = db.Column(db.String(500), nullable=True)
-    role = db.Column(db.String(20), default='user')
+    role = db.Column(db.String(20), nullable=True)
 
 
     def check_password(self, password):

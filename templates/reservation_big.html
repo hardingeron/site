@@ -324,440 +324,432 @@
 
 
 
-<script>
-const modal = document.getElementById('modal');
-const modalForm = document.getElementById('modal-form');
-const submitButton = modalForm.querySelector('[type="submit"]');
-const editButton = document.getElementById('edit');
-const seats = document.querySelectorAll('.seat');
-let selectedSeatNumber = null;
-const exitButton = document.getElementById('exit');
-
-
-
-
-
-seats.forEach(seat => {
-  seat.addEventListener('click', () => {
-    selectedSeatNumber = seat.getAttribute('data-seat-number');
-    const seatDataJSON = '{{ seat_data|tojson|safe }}';
-    const seatData = JSON.parse(seatDataJSON)[selectedSeatNumber];
-
-    modalForm['selected_date'].value = '{{ d }}';
-    modalForm['gender'].value = seatData ? seatData.gender : '';
-    modalForm['flname'].value = seatData ? seatData.name : '';
-    modalForm['phone'].value = seatData ? seatData.phone : '';
-    modalForm['pasport'].value = seatData ? seatData.pasport : '';
-    modalForm['comment'].value = seatData ? seatData.comment : '';
-    modalForm['payment'].value = seatData ? seatData.payment : '';
-    modalForm['destination'].value = seatData ? seatData.destination : '';
-
-    const seatNumberInput = modalForm.querySelector('[name="s_n"]');
-    seatNumberInput.value = selectedSeatNumber;
-
-    if (seatData && seatData.name) {
-      submitButton.style.display = 'none';
-      submitButton.disabled = true;
-
-      if (editButton) {
-        editButton.style.display = 'block';
-      }
-
-      if (deleteButton) {
-        deleteButton.style.display = 'block';
-      }
-    } else {
-      submitButton.style.display = 'block';
-      submitButton.disabled = false;
-
-      if (editButton) {
-        editButton.style.display = 'none';
-      }
-
-      if (deleteButton) {
-        deleteButton.style.display = 'none';
-      }
-    }
-
-    // Обновляем значение старого места при открытии модального окна
-    const oldSeatNumberInput = modalForm.querySelector('[name="old_seat_number"]');
-    oldSeatNumberInput.value = selectedSeatNumber;
-
-    // Определение элементов радиокнопок
-    const paymentMethodRadios = modalForm.querySelectorAll('[name="payment_method"]');
-    const paymentMethodCardRadios = modalForm.querySelectorAll('[name="payment_method_card"]');
-
-    // Автозаполнение значений радиокнопок
-    if (seatData && seatData.payment) {
-      if (seatData.payment.includes('+')) {
-        paymentMethodRadios[0].checked = true;
-      } else if (seatData.payment.includes('C')) {
-        paymentMethodRadios[1].checked = true;
-      } else if (seatData.payment.includes('-')) {
-        paymentMethodRadios[2].checked = true;
-      }
-
-      if (seatData.payment.includes('GEL')) {
-        paymentMethodCardRadios[0].checked = true;
-      } else if (seatData.payment.includes('RUB')) {
-        paymentMethodCardRadios[1].checked = true;
-      } else if (seatData.payment.includes('USD')) {
-        paymentMethodCardRadios[2].checked = true;
-      } else if (seatData.payment.includes('EUR')) {
-        paymentMethodCardRadios[3].checked = true;
-      }
-    } else {
-      // Если нет данных, снимаем выбор с радиокнопок
-      paymentMethodRadios.forEach(radio => {
-        radio.checked = false;
+  <script>
+    const modal = document.getElementById('modal');
+    const modalForm = document.getElementById('modal-form');
+    const submitButton = modalForm.querySelector('[type="submit"]');
+    const editButton = document.getElementById('edit');
+    const seats = document.querySelectorAll('.seat');
+    let selectedSeatNumber = null;
+    const exitButton = document.getElementById('exit');
+    
+    
+    
+    
+    
+    seats.forEach(seat => {
+      seat.addEventListener('click', () => {
+        selectedSeatNumber = seat.getAttribute('data-seat-number');
+        const seatDataJSON = '{{ seat_data|tojson|safe }}';
+        const seatData = JSON.parse(seatDataJSON)[selectedSeatNumber];
+    
+        modalForm['selected_date'].value = '{{ d }}';
+        modalForm['gender'].value = seatData ? seatData.gender : '';
+        modalForm['flname'].value = seatData ? seatData.name : '';
+        modalForm['phone'].value = seatData ? seatData.phone : '';
+        modalForm['pasport'].value = seatData ? seatData.pasport : '';
+        modalForm['comment'].value = seatData ? seatData.comment : '';
+        modalForm['payment'].value = seatData ? seatData.payment : '';
+        modalForm['destination'].value = seatData ? seatData.destination : '';
+    
+        const seatNumberInput = modalForm.querySelector('[name="s_n"]');
+        seatNumberInput.value = selectedSeatNumber;
+    
+        if (seatData && seatData.name) {
+          submitButton.style.display = 'none';
+          submitButton.disabled = true;
+    
+          if (editButton) {
+            editButton.style.display = 'block';
+          }
+    
+          if (deleteButton) {
+            deleteButton.style.display = 'block';
+          }
+        } else {
+          submitButton.style.display = 'block';
+          submitButton.disabled = false;
+    
+          if (editButton) {
+            editButton.style.display = 'none';
+          }
+    
+          if (deleteButton) {
+            deleteButton.style.display = 'none';
+          }
+        }
+    
+        // Обновляем значение старого места при открытии модального окна
+        const oldSeatNumberInput = modalForm.querySelector('[name="old_seat_number"]');
+        oldSeatNumberInput.value = selectedSeatNumber;
+    
+        // Определение элементов радиокнопок
+        const paymentMethodRadios = modalForm.querySelectorAll('[name="payment_method"]');
+        const paymentMethodCardRadios = modalForm.querySelectorAll('[name="payment_method_card"]');
+    
+        // Автозаполнение значений радиокнопок
+        if (seatData && seatData.payment) {
+          if (seatData.payment.includes('+')) {
+            paymentMethodRadios[0].checked = true;
+          } else if (seatData.payment.includes('C')) {
+            paymentMethodRadios[1].checked = true;
+          } else if (seatData.payment.includes('-')) {
+            paymentMethodRadios[2].checked = true;
+          }
+    
+          if (seatData.payment.includes('GEL')) {
+            paymentMethodCardRadios[0].checked = true;
+          } else if (seatData.payment.includes('RUB')) {
+            paymentMethodCardRadios[1].checked = true;
+          } else if (seatData.payment.includes('USD')) {
+            paymentMethodCardRadios[2].checked = true;
+          } else if (seatData.payment.includes('EUR')) {
+            paymentMethodCardRadios[3].checked = true;
+          }
+        } else {
+          // Если нет данных, снимаем выбор с радиокнопок
+          paymentMethodRadios.forEach(radio => {
+            radio.checked = false;
+          });
+    
+          paymentMethodCardRadios.forEach(radio => {
+            radio.checked = false;
+          });
+        }
+    
+        modal.style.display = 'block';
       });
-
-      paymentMethodCardRadios.forEach(radio => {
-        radio.checked = false;
-      });
-    }
-
-    modal.style.display = 'block';
-  });
-});
-
-// ... (ваш текущий код для кнопки "Билет" и остальной код)
-
-
-modalForm.addEventListener('submit', async (event) => {
-  event.preventDefault();
-
-  if (selectedSeatNumber !== null) {
-    const formData = new FormData(modalForm);
-    formData.append('seat_number', selectedSeatNumber);
-
-    const response = await fetch('/save_data', {
-      method: 'POST',
-      body: formData,
     });
-
-    if (response.ok) {
-      console.log('Данные успешно отправлены на сервер');
-      location.reload();
-    } else {
-      const responseData = await response.json();
-      console.error('Ошибка при отправке данных на сервер:', responseData.message);
-      // Отобразите сообщение об ошибке на странице
-      const errorMessageElement = document.getElementById('error-message');
-      errorMessageElement.textContent = responseData.message;
-      errorMessageElement.style.display = 'block';
-    }
-  } else {
-    console.error('Номер сиденья не выбран');
-  }
-});
-
-
-
-exitButton.addEventListener('click', () => {
-  modal.style.display = 'none';
-});
-
-editButton.addEventListener('click', () => {
-  const gender = modalForm.querySelector('[name="gender"]:checked').value;
-  const flname = modalForm.querySelector('[name="flname"]').value;
-  const phone = modalForm.querySelector('[name="phone"]').value;
-  const pasport = modalForm.querySelector('[name="pasport"]').value;
-  const comment = modalForm.querySelector('[name="comment"]').value;
-  const payment = modalForm.querySelector('[name="payment"]').value;
-  const destination = modalForm.querySelector('[name="destination"]').value;
-  const reis = modalForm.querySelector('[name="reis"]').value;
-  const selectedDate = modalForm.querySelector('[name="selected_date"]').value;
-  const oldSeatNumberInput = modalForm.querySelector('[name="s_n"]');
-  const oldSeatNumber = oldSeatNumberInput.value.trim(); // Удаляем лишние пробелы
-
-  const selectedPaymentMethod = modalForm.querySelector('[name="payment_method"]:checked');
-  const paymentMethod = selectedPaymentMethod ? selectedPaymentMethod.value : '';
-
-  const selectedPaymentMethodCard = modalForm.querySelector('[name="payment_method_card"]:checked');
-  const paymentMethodCard = selectedPaymentMethodCard ? selectedPaymentMethodCard.value : '';
-
-  const formData = new FormData();
-  formData.append('seat_number', selectedSeatNumber);
-  formData.append('gender', gender);
-  formData.append('flname', flname);
-  formData.append('phone', phone);
-  formData.append('pasport', pasport);
-  formData.append('comment', comment);
-  formData.append('payment', payment);
-  formData.append('destination', destination);
-
-  // Добавляем старое место в FormData, если оно не пустое
-  if (oldSeatNumber !== '') {
-    formData.append('old_seat_number', oldSeatNumber);
-  }
-
-  formData.append('reis', reis);
-  formData.append('selected_date', selectedDate);
-  formData.append('payment_method', paymentMethod);
-  formData.append('payment_method_card', paymentMethodCard);
-
-  fetch('/edit_booking', {
-    method: 'POST',
-    body: formData,
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        console.log('Данные успешно обновлены');
-        location.reload();
-      } else {
-        console.error('Ошибка при обновлении данных:', data.message);
-        const errorMessageElement = document.getElementById('error-message');
-        errorMessageElement.textContent = data.message;
-        errorMessageElement.style.display = 'block';
-
-        // Скрываем сообщение через 2 секунды
-        setTimeout(() => {
-          errorMessageElement.style.display = 'none';
-        }, 2000);
-      }
+    
+    // ... (ваш текущий код для кнопки "Билет" и остальной код)
+    
+    
+    modalForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+    
+        if (selectedSeatNumber !== null) {
+            const formData = new FormData(modalForm);
+            formData.append('seat_number', selectedSeatNumber);
+    
+            const response = await fetch('/save_data', {
+                method: 'POST',
+                body: formData,
+            });
+    
+            if (response.ok) {
+                console.log('Данные успешно отправлены на сервер');
+                location.reload();
+            } else {
+                const responseData = await response.json();
+    
+                showMessage(responseData.message, false);
+            }
+        } else {
+            console.error('Номер сиденья не выбран');
+        }
     });
-});
-
-
-const deleteButton = document.getElementById('delete');
-let deleteConfirmation = false;
-
-deleteButton.addEventListener('click', () => {
-  if (!deleteConfirmation) {
-    if (confirm('დარწმუნებული ხარ, რომ ბრონის წაშლა გინდა?')) {
-      // Выполняем удаление
+    
+    
+    exitButton.addEventListener('click', () => {
+      modal.style.display = 'none';
+    });
+    
+    editButton.addEventListener('click', () => {
+      const gender = modalForm.querySelector('[name="gender"]:checked').value;
+      const flname = modalForm.querySelector('[name="flname"]').value;
+      const phone = modalForm.querySelector('[name="phone"]').value;
+      const pasport = modalForm.querySelector('[name="pasport"]').value;
+      const comment = modalForm.querySelector('[name="comment"]').value;
+      const payment = modalForm.querySelector('[name="payment"]').value;
+      const destination = modalForm.querySelector('[name="destination"]').value;
+      const reis = modalForm.querySelector('[name="reis"]').value;
+      const selectedDate = modalForm.querySelector('[name="selected_date"]').value;
+      const oldSeatNumberInput = modalForm.querySelector('[name="s_n"]');
+      const oldSeatNumber = oldSeatNumberInput.value.trim(); // Удаляем лишние пробелы
+    
+      const selectedPaymentMethod = modalForm.querySelector('[name="payment_method"]:checked');
+      const paymentMethod = selectedPaymentMethod ? selectedPaymentMethod.value : '';
+    
+      const selectedPaymentMethodCard = modalForm.querySelector('[name="payment_method_card"]:checked');
+      const paymentMethodCard = selectedPaymentMethodCard ? selectedPaymentMethodCard.value : '';
+    
       const formData = new FormData();
-      formData.append('s_n', selectedSeatNumber);
-      formData.append('reis', modalForm.querySelector('[name="reis"]').value);
-      formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
-
-      fetch('/booking_del', {
+      formData.append('seat_number', selectedSeatNumber);
+      formData.append('gender', gender);
+      formData.append('flname', flname);
+      formData.append('phone', phone);
+      formData.append('pasport', pasport);
+      formData.append('comment', comment);
+      formData.append('payment', payment);
+      formData.append('destination', destination);
+    
+      // Добавляем старое место в FormData, если оно не пустое
+      if (oldSeatNumber !== '') {
+        formData.append('old_seat_number', oldSeatNumber);
+      }
+    
+      formData.append('reis', reis);
+      formData.append('selected_date', selectedDate);
+      formData.append('payment_method', paymentMethod);
+      formData.append('payment_method_card', paymentMethodCard);
+    
+      fetch('/edit_booking', {
         method: 'POST',
         body: formData,
       })
         .then(response => response.json())
         .then(data => {
           if (data.success) {
-            console.log('Бронирование успешно удалено');
+            console.log('Данные успешно обновлены');
             location.reload();
           } else {
-            console.error('Ошибка при удалении бронирования:', data.message);
+            console.error('Ошибка при обновлении данных:', data.message);
+            const errorMessageElement = document.getElementById('error-message');
+            errorMessageElement.textContent = data.message;
+            errorMessageElement.style.display = 'block';
+    
+            // Скрываем сообщение через 2 секунды
+            setTimeout(() => {
+              errorMessageElement.style.display = 'none';
+            }, 2000);
           }
         });
-
-      deleteConfirmation = true;
-    }
-  }
-});
-
-
-
-
-
-
-const downloadForm = document.getElementById('download_form');
-const reisInput = downloadForm.querySelector('[name="reis"]');
-const selectedDateInput = downloadForm.querySelector('[name="selected_date"]');
-const downloadButton = downloadForm.querySelector('#download_dev');
-
-downloadButton.addEventListener('click', () => {
-  const reisValue = modalForm.querySelector('[name="reis"]').value;
-  const selectedDateValue = modalForm.querySelector('[name="selected_date"]').value;
-  
-  reisInput.value = reisValue; // Заполняем скрытые поля в форме
-  selectedDateInput.value = selectedDateValue;
-
-  downloadForm.submit(); // Отправляем форму на сервер
-});
-
-
-// Остальной код остается неизменным
-
-// ... Ваш текущий код ...
-
-// Объявляем переменную для кнопки "Билет"
-const ticketButton = document.querySelector('.ticket-button');
-
-ticketButton.addEventListener('click', async () => {
-  const formData = new FormData();
-  formData.append('s_n', selectedSeatNumber);
-  formData.append('reis', modalForm.querySelector('[name="reis"]').value);
-  formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
-
-  const response = await fetch('/ticket', {
-    method: 'POST',
-    body: formData,
-  });
-
-  if (response.ok) {
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = response.headers.get('content-disposition').split('filename=')[1];
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    console.log('Билет успешно сгенерирован');
-
-    // Перезагрузите страницу
-    window.location.reload();
-  } else {
-    const responseData = await response.json();
-    console.error('Ошибка при генерации билета:', responseData.message);
-    const errorMessageElement = document.getElementById('error-message');
-    errorMessageElement.textContent = responseData.message;
-    errorMessageElement.style.display = 'block';
-  }
-});
-
-// ... Остальной код ...
-
-
-</script>
-
-<script>
-  var sum_rub = parseFloat(document.querySelector('#sum_rub').textContent);
-  var sum_gel = parseFloat(document.querySelector('#sum_gel').textContent);
-  var sum_usd = parseFloat(document.querySelector('#sum_usd').textContent);
-  var sum_eur = parseFloat(document.querySelector('#sum_eur').textContent);
-
-  var sum_card_gel = parseFloat(document.querySelector('#sum_card_gel').textContent);
-  var sum_card_rub = parseFloat(document.querySelector('#sum_card_rub').textContent);
-  var sum_card_usd = parseFloat(document.querySelector('#sum_card_usd').textContent);
-  var sum_card_eur = parseFloat(document.querySelector('#sum_card_eur').textContent);
-
-  var ctx = document.getElementById('myChart').getContext('2d');
-  
-  var data = {
-      labels: ['რუბლი', 'ლარი', 'დოლარი', 'ევრო', '(RUB)', '(GEL)', '(USD)', '(EUR)'],
-      datasets: [{
-          data: [sum_rub, sum_gel, sum_usd, sum_eur, sum_card_rub, sum_card_gel, sum_card_usd, sum_card_eur],
-          backgroundColor: ['#e3f707', '#00c2fc', '#fc6900', '#fc004c', '#505706', '#01495e', '#6e2e01', '#4CAF50']
-      }]
-  };
-
-  var options = {
-      responsive: true,
-      maintainAspectRatio: false
-  };
-
-  var myChart = new Chart(ctx, {
-      type: 'pie',
-      data: data,
-      options: options
-  });
-</script>
-
-
-<script>
-  var male_count = parseInt(document.querySelector('#male_count').textContent);
-  var female_count = parseInt(document.querySelector('#female_count').textContent);
-  var number_of_free_records = parseInt(document.querySelector('#number_of_free_records').textContent);
-
-  var ctx = document.getElementById('combinedChart').getContext('2d');
-
-  var data = {
-      labels: ['მამაკაცი', 'ქალბატონი', 'ცარიელი'],
-      datasets: [{
-          data: [male_count, female_count, number_of_free_records],
-          backgroundColor: ['#1E90FF', '#FF1493', '#696969']
-      }]
-  };
-
-  var options = {
-      responsive: true,
-      maintainAspectRatio: false
-  };
-
-  var combinedChart = new Chart(ctx, {
-      type: 'pie',
-      data: data,
-      options: options
-  });
-</script>
-
-
-<script>
-  var came_count = parseInt(document.querySelector('#came_count').textContent);
-  var came_of_count_free = parseInt(document.querySelector('#came_of_count_free').textContent);
-
-  var ctx = document.getElementById('cameChart').getContext('2d');
-
-  var data = {
-      labels: ['მოვიდა', 'არ მოვიდა', 'ადგილების რაოდენობა 59'],
-      datasets: [{
-          data: [came_count, came_of_count_free],
-          backgroundColor: ['#1E90FF', '#FF1493']
-      }]
-  };
-
-  var options = {
-      responsive: true,
-      maintainAspectRatio: false
-  };
-
-  var cameChart = new Chart(ctx, {
-      type: 'pie',
-      data: data,
-      options: options
-  });
-</script>
-
-
-
-
-
-
-
-
-
-<script>
-  // Открытие модального окна при нажатии на кнопку
-  document.getElementById("openModalStatistic").addEventListener("click", function() {
-      document.getElementById("myModalStatistic").style.display = "block";
-  });
-
-  // Закрытие модального окна при нажатии на крестик
-  document.querySelector(".close-statistic").addEventListener("click", function() {
-      document.getElementById("myModalStatistic").style.display = "none";
-  });
-
-  // Закрытие модального окна при клике вне его
-  window.addEventListener("click", function(event) {
-      var modal = document.getElementById("myModalStatistic");
-      if (event.target == modal) {
-          modal.style.display = "none";
+    });
+    
+    
+    const deleteButton = document.getElementById('delete');
+    let deleteConfirmation = false;
+    
+    deleteButton.addEventListener('click', () => {
+      if (!deleteConfirmation) {
+        if (confirm('დარწმუნებული ხარ, რომ ბრონის წაშლა გინდა?')) {
+          // Выполняем удаление
+          const formData = new FormData();
+          formData.append('s_n', selectedSeatNumber);
+          formData.append('reis', modalForm.querySelector('[name="reis"]').value);
+          formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
+    
+          fetch('/booking_del', {
+            method: 'POST',
+            body: formData,
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                console.log('Бронирование успешно удалено');
+                location.reload();
+              } else {
+                console.error('Ошибка при удалении бронирования:', data.message);
+              }
+            });
+    
+          deleteConfirmation = true;
+        }
       }
-  });
-
-</script>
-
-
-
-
-
-{% for cat, msg in get_flashed_messages(True) %}
-<div class='flash {{cat}}'>{{msg}}</div>
-{% endfor %}
-
-
-</body>
-</html>
-
-
-
-
-{% endblock %}
-
-
-
-
-
+    });
+    
+    
+    
+    
+    
+    
+    const downloadForm = document.getElementById('download_form');
+    const reisInput = downloadForm.querySelector('[name="reis"]');
+    const selectedDateInput = downloadForm.querySelector('[name="selected_date"]');
+    const downloadButton = downloadForm.querySelector('#download_dev');
+    
+    downloadButton.addEventListener('click', () => {
+      const reisValue = modalForm.querySelector('[name="reis"]').value;
+      const selectedDateValue = modalForm.querySelector('[name="selected_date"]').value;
+      
+      reisInput.value = reisValue; // Заполняем скрытые поля в форме
+      selectedDateInput.value = selectedDateValue;
+    
+      downloadForm.submit(); // Отправляем форму на сервер
+    });
+    
+    
+    // Остальной код остается неизменным
+    
+    // ... Ваш текущий код ...
+    
+    // Объявляем переменную для кнопки "Билет"
+    const ticketButton = document.querySelector('.ticket-button');
+    
+    ticketButton.addEventListener('click', async () => {
+      const formData = new FormData();
+      formData.append('s_n', selectedSeatNumber);
+      formData.append('reis', modalForm.querySelector('[name="reis"]').value);
+      formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
+    
+      const response = await fetch('/ticket', {
+        method: 'POST',
+        body: formData,
+      });
+    
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+    
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = response.headers.get('content-disposition').split('filename=')[1];
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    
+        console.log('Билет успешно сгенерирован');
+    
+        // Перезагрузите страницу
+        window.location.reload();
+      } else {
+        const responseData = await response.json();
+        console.error('Ошибка при генерации билета:', responseData.message);
+        const errorMessageElement = document.getElementById('error-message');
+        errorMessageElement.textContent = responseData.message;
+        errorMessageElement.style.display = 'block';
+      }
+    });
+    
+    // ... Остальной код ...
+    
+    
+    </script>
+    
+    <script>
+      var sum_rub = parseFloat(document.querySelector('#sum_rub').textContent);
+      var sum_gel = parseFloat(document.querySelector('#sum_gel').textContent);
+      var sum_usd = parseFloat(document.querySelector('#sum_usd').textContent);
+      var sum_eur = parseFloat(document.querySelector('#sum_eur').textContent);
+    
+      var sum_card_gel = parseFloat(document.querySelector('#sum_card_gel').textContent);
+      var sum_card_rub = parseFloat(document.querySelector('#sum_card_rub').textContent);
+      var sum_card_usd = parseFloat(document.querySelector('#sum_card_usd').textContent);
+      var sum_card_eur = parseFloat(document.querySelector('#sum_card_eur').textContent);
+    
+      var ctx = document.getElementById('myChart').getContext('2d');
+      
+      var data = {
+          labels: ['რუბლი', 'ლარი', 'დოლარი', 'ევრო', '(RUB)', '(GEL)', '(USD)', '(EUR)'],
+          datasets: [{
+              data: [sum_rub, sum_gel, sum_usd, sum_eur, sum_card_rub, sum_card_gel, sum_card_usd, sum_card_eur],
+              backgroundColor: ['#e3f707', '#00c2fc', '#fc6900', '#fc004c', '#505706', '#01495e', '#6e2e01', '#4CAF50']
+          }]
+      };
+    
+      var options = {
+          responsive: true,
+          maintainAspectRatio: false
+      };
+    
+      var myChart = new Chart(ctx, {
+          type: 'pie',
+          data: data,
+          options: options
+      });
+    </script>
+    
+    
+    <script>
+      var male_count = parseInt(document.querySelector('#male_count').textContent);
+      var female_count = parseInt(document.querySelector('#female_count').textContent);
+      var number_of_free_records = parseInt(document.querySelector('#number_of_free_records').textContent);
+    
+      var ctx = document.getElementById('combinedChart').getContext('2d');
+    
+      var data = {
+          labels: ['მამაკაცი', 'ქალბატონი', 'ცარიელი'],
+          datasets: [{
+              data: [male_count, female_count, number_of_free_records],
+              backgroundColor: ['#1E90FF', '#FF1493', '#696969']
+          }]
+      };
+    
+      var options = {
+          responsive: true,
+          maintainAspectRatio: false
+      };
+    
+      var combinedChart = new Chart(ctx, {
+          type: 'pie',
+          data: data,
+          options: options
+      });
+    </script>
+    
+    
+    <script>
+      var came_count = parseInt(document.querySelector('#came_count').textContent);
+      var came_of_count_free = parseInt(document.querySelector('#came_of_count_free').textContent);
+    
+      var ctx = document.getElementById('cameChart').getContext('2d');
+    
+      var data = {
+          labels: ['მოვიდა', 'არ მოვიდა', 'ადგილების რაოდენობა 55'],
+          datasets: [{
+              data: [came_count, came_of_count_free],
+              backgroundColor: ['#1E90FF', '#FF1493']
+          }]
+      };
+    
+      var options = {
+          responsive: true,
+          maintainAspectRatio: false
+      };
+    
+      var cameChart = new Chart(ctx, {
+          type: 'pie',
+          data: data,
+          options: options
+      });
+    </script>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script>
+      // Открытие модального окна при нажатии на кнопку
+      document.getElementById("openModalStatistic").addEventListener("click", function() {
+          document.getElementById("myModalStatistic").style.display = "block";
+      });
+    
+      // Закрытие модального окна при нажатии на крестик
+      document.querySelector(".close-statistic").addEventListener("click", function() {
+          document.getElementById("myModalStatistic").style.display = "none";
+      });
+    
+      // Закрытие модального окна при клике вне его
+      window.addEventListener("click", function(event) {
+          var modal = document.getElementById("myModalStatistic");
+          if (event.target == modal) {
+              modal.style.display = "none";
+          }
+      });
+    
+    </script>
+    
+    
+    
+    
+    
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div class='flash {{cat}}'>{{msg}}</div>
+    {% endfor %}
+    
+    
+    </body>
+    </html>
+    
+    
+    
+    
+    {% endblock %}
+    
 
 
 

@@ -203,7 +203,8 @@ body {
 
 
 .modal-reservation,
-.modal-blanks-select {
+.modal-blanks-select,
+.modal-add-select {
   display: none;
   position: fixed;
   z-index: 100;
@@ -218,7 +219,9 @@ body {
 .modal-reservation input,
 .modal-reservation select,
 .modal-blanks-select input,
-.modal-blanks-select select {
+.modal-blanks-select select,
+.modal-add-select input,
+.modal-add-select select {
   background-color: #40414f;
   border: none;
   border-radius: 5px;
@@ -234,7 +237,8 @@ body {
 }
 
 .modal-reservation button,
-.modal-blanks-select button {
+.modal-blanks-select button,
+.modal-add-select button {
   background-color: #333333;
   color: #8e8ea0;
   border: none;
@@ -252,11 +256,13 @@ body {
 }
 
 .modal-reservation button:hover,
-.modal-blanks-select button:hover {
+.modal-blanks-select button:hover,
+.modal-add-select button:hover {
   background-color: #1a1a1a;
 }
 .modal-reservation-content,
-.modal-blanks-content {
+.modal-blanks-content,
+.modal-add-content {
   background-color: #444654;
   margin: 15% auto;
   padding: 20px;

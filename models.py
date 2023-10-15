@@ -32,6 +32,7 @@ class Purcell(db.Model):
     date = db.Column(db.DateTime, default=datetime.utcnow)
     flight = db.Column(db.String(50), nullable=True)
     image = db.Column(db.String(100))
+    where_from = db.Column(db.String(20), nullable=True)
     
 
 

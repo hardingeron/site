@@ -19,8 +19,9 @@
             </div>
 
             <div class="el">
-                <a href="/add">
-                <img src="/static/images/add.webp" alt="Изображение"></a>
+                <a href="#" onclick="openAddModal()">
+                    <img src="/static/images/add.webp" alt="Изображение">
+                </a>
                 <label>დამატება</label>
             </div>
 
@@ -73,7 +74,7 @@ setTimeout(function() {
 <div id="myModal" class="modal-blanks-select">
     <div class="modal-blanks-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h2>ამოირჩიეთ გასვლის თარიღი და ქალაქი</h2>
+        <h2>ამოირჩიეთ გაგზავნის თარიღი</h2>
         <input type="date" id="datepicker">
         <label for="citySelect">ქალაქი:</label>
         <select id="citySelect">
@@ -83,6 +84,18 @@ setTimeout(function() {
         <button onclick="redirectToPage()">გადასვლა</button>
     </div>
 </div>  
+
+
+<!-- Модальное окно -->
+<div id="ModalAdd" class="modal-add-select">
+    <div class="modal-add-content">
+        <span class="close" onclick="closeAddModal()">&times;</span>
+        <h2>ამოირჩიეთ გასვლის თარიღი და ქალაქი</h2>
+        <input type="date" id="datepickerAdd">
+        <button onclick="redirectAddPage()">გადასვლა</button>
+    </div>
+</div>  
+
 
 
 
@@ -238,6 +251,72 @@ function redirectToPage() {
 
 
 
+
+
+
+
+
+<!--  -->
+
+
+<script>
+// Функция открытия второго модального окна
+function openAddModal() {
+    const modal = document.getElementById('ModalAdd');
+    modal.style.display = 'block';
+
+    // Инициализация календаря с использованием flatpickr
+    const datepicker = flatpickr("#datepickerAdd", {
+        dateFormat: "Y-m-d", // Формат даты
+        locale: "ru", // Установка русского языка
+    });
+
+    // Добавляем обработчик события на клавишу "Esc"
+    window.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeAddModal();
+        }
+    });
+
+    // Добавляем обработчик события на клик вне модального окна
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            closeAddModal();
+        }
+    });
+}
+
+// Функция закрытия второго модального окна
+function closeAddModal() {
+    const modal = document.getElementById('ModalAdd');
+    modal.style.display = 'none';
+}
+
+function redirectAddPage() {
+    const selectedDate = document.getElementById('datepickerAdd').value;
+    console.log('Selected Date:', selectedDate);
+
+    if (selectedDate) {
+        // Преобразование даты в формат "год-месяц-день"
+        const formattedDate = formatDate(selectedDate);
+
+        // Перенаправление пользователя на страницу `/add` с выбранной датой
+        window.location.href = '/add?date=' + formattedDate;
+    }
+}
+
+// Функция форматирования даты в "год-месяц-день"
+function formatDate(selectedDate) {
+    const dateObject = new Date(selectedDate);
+    const year = dateObject.getFullYear();
+    const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
+    const day = dateObject.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+</script>
+
+
+<!--  -->
 
 
 

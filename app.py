@@ -33,7 +33,7 @@ import json
 import qrcode
 
 
-from functions import get_last_record, generate_number_and_flight, calculate_cost, add_record, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record
+from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record
 
 
 app = Flask(__name__)
@@ -216,42 +216,42 @@ def index():
 @app.route('/add', methods=['POST', 'GET'])
 @login_required
 def add():
-    access = ['admin', 'Tbilisi']
-    try:
-        # Проверка прав доступа
-        if current_user.role not in access:
+
+    access = ['admin', 'Tbilisi', 'Batumi']
+    if current_user.role not in access:
             flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
             return redirect(url_for('index'))
+    
+    return render_template('add.html')
 
-        # Получение последней записи
-        last_record = get_last_record(db)
-        
-        # Генерация номера и рейса
-        last, fl = generate_number_and_flight(last_record)
-        
-        if request.method == 'POST':
-            # Расчет стоимости
-            cost = calculate_cost(request.form.get('payment'), request.form.get('cost'))
-            
-            # Добавление записи в базу данных
-            p_n = add_record(request.form, cost, db)
-            
-            # Обработка изображения
-            handle_image(request.files['photo'], p_n, request.form['flight'], app)
-            
-            # Успешное сообщение и перенаправление
-            flash(f'ამანათი წარმატებით დაემატა მისი ნომერერია " {p_n} "', category='success')
-            return redirect(url_for('add'))
-        
-        
-        # Рендеринг шаблона
-        return render_template('add.html', last_record=last, fl=fl)
-    except SQLAlchemyError as e:
-        flash('Ошибка при обращении к базе данных: ' + str(e), category='error')
+
+
+@app.route('/saving_a_parcel', methods=['POST'])
+def saving_a_parcel():
+    date = request.form.get('date')
+    last_record = get_last_record(date, db)
+    new_record = generate_new_number(date, last_record)
+    cost = calculate_cost(request.form.get('payment'), request.form.get('cost'))
+    
+    try:
+        handle_image(request.files['photo'], new_record, date, app)
     except Exception as e:
-        flash('Произошла неизвестная ошибка: ' + str(e), category='error')
-        return redirect(url_for('add'))  # Перенаправление в случае ошибки
-
+        # Обработка ошибки и возврат сообщения об ошибке
+        response_data = {'success': False, 'message': f'დაფიქსირდა შეცდომა ფოტოს შენახვისას: {str(e)}'}
+        return jsonify(response_data)
+    
+    try:
+        add_record(new_record, request.form, cost, db, current_user.role)
+    except Exception as e:
+        # Обработка ошибки при сохранении записи и возврат сообщения об ошибке
+        response_data = {'success': False, 'message': f'Ошибка при сохранении записи: {str(e)}'}
+        return jsonify(response_data)
+    
+    response_data = {
+        'success': True,
+        'message': f'ამანათი წარმატებიით დაემატა! № {new_record}'
+    }
+    return jsonify(response_data)
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /change              ------------------------------#

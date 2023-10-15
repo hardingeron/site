@@ -46,13 +46,14 @@
                 <th>ღირებულება<input type="text" id="filter-responsibility" name="filter-responsibility" placeholder=""></th>
                 <th>ქალაქი<input type="text" id="filter-city" name="filter-city" placeholder=""></th>
                 <th>თარიღი<input type="text" id="filter-flight" name="filter-flight" placeholder=""></th>
+                <th>გამგ/ქალაქი<input type="text" id="filter-where_from" name="filter-where_from" placeholder=""></th>
             </tr>
         </thead>
         <tbody>
             {% for data in all_data %}
             <tr class="table-row">
                 <td class="description">
-                    <img src="/static/images/edit.jpg" class="icon" onclick="window.location.href='/change?id={{ data.id }}'">
+                    <img src="/static/images/edit.png" class="icon" onclick="window.location.href='/change?id={{ data.id }}'">
                     <img src="/static/images/photo.png" class="icon" onclick="openImageModal('{{ data.image }}', '{{ data.inventory }}')">
                 </td>
                 <td class="number">{{ data.number }}</td>
@@ -68,6 +69,7 @@
                 <td>{{ data.responsibility }}</td>
                 <td>{{ data.city }}</td>
                 <td>{{ data.flight }}</td>
+                <td>{{ data.where_from }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -148,6 +150,7 @@
     var filterResponsibilityInput = document.getElementById('filter-responsibility');
     var filterCityInput = document.getElementById('filter-city');
     var filterFlightInput = document.getElementById('filter-flight');
+    var filterWhereFromInput = document.getElementById('filter-where_from');
 
     // Обработчик события ввода в поля фильтров
     filterNumberInput.addEventListener('input', filterTable);
@@ -161,6 +164,7 @@
     filterResponsibilityInput.addEventListener('input', filterTable);
     filterCityInput.addEventListener('input', filterTable);
     filterFlightInput.addEventListener('input', filterTable);
+    filterWhereFromInput.addEventListener('input', filterTable);
 
     function filterTable() {
         var filterNumberValue = filterNumberInput.value.toLowerCase();
@@ -174,6 +178,8 @@
         var filterResponsibilityValue = filterResponsibilityInput.value.toLowerCase();
         var filterCityValue = filterCityInput.value.toLowerCase();
         var filterFlightValue = filterFlightInput.value.toLowerCase();
+        var filterWhereFromValue = filterWhereFromInput.value.toLowerCase();
+
 
         var tableRows = document.getElementsByClassName('table-row');
 
@@ -190,6 +196,7 @@
             var responsibilityCell = row.querySelectorAll('td')[9];
             var cityCell = row.querySelectorAll('td')[10];
             var flightCell = row.querySelectorAll('td')[11];
+            var whereFromCell = row.querySelectorAll('td')[12];
 
             var numberValue = numberCell.textContent.toLowerCase();
             var senderValue = senderCell.textContent.toLowerCase();
@@ -202,6 +209,7 @@
             var responsibilityValue = responsibilityCell.textContent.toLowerCase();
             var cityValue = cityCell.textContent.toLowerCase();
             var flightValue = flightCell.textContent.toLowerCase();
+            var whereFromValue = whereFromCell.textContent.toLowerCase();
 
             if (numberValue.indexOf(filterNumberValue) > -1 &&
                 senderValue.indexOf(filterSenderValue) > -1 &&
@@ -213,7 +221,8 @@
                 weightValue.indexOf(filterWeightValue) > -1 &&
                 responsibilityValue.indexOf(filterResponsibilityValue) > -1 &&
                 cityValue.indexOf(filterCityValue) > -1 &&
-                flightValue.indexOf(filterFlightValue) > -1) {
+                flightValue.indexOf(filterFlightValue) > -1 &&
+                whereFromValue.indexOf(filterWhereFromValue) > -1) {
                 row.style.display = ''; // Показываем строку, если соответствует фильтру
             } else {
                 row.style.display = 'none'; // Скрываем строку, если не соответствует фильтру

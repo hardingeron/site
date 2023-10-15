@@ -108,7 +108,8 @@
 #filter-weight,
 #filter-responsibility,
 #filter-city,
-#filter-flight {
+#filter-flight,
+#filter-where_from {
   width: 100px;
   padding: 5px;
   background-color: #40414f;
@@ -188,8 +189,8 @@
 
 
   .icon {
-    width: 35px;
-    height: 35px;
+    width: 25px;
+    height: 25px;
     margin-right: 5px;
   }
   

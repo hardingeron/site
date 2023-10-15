@@ -19,25 +19,22 @@ from models import Purcell, Booking, Storage
 #===========================================================================================================================================================
 
 # Функция для получения последней записи в базе данных
-def get_last_record(db):
-    # Используем SQLAlchemy для запроса к базе данных
-    # Получаем запись с максимальным номером рейса
-    # Сортируем по убыванию номера, чтобы получить самую последнюю запись
-    return db.session.query(Purcell).filter(
-        Purcell.flight == db.session.query(func.max(Purcell.flight)).scalar_subquery()
-    ).order_by(Purcell.number.desc()).first()
-
-# Функция для генерации номера и рейса
-def generate_number_and_flight(last_record):
+def get_last_record(selected_date, db): 
+    last_record = db.session.query(Purcell).filter(Purcell.flight == selected_date).order_by(Purcell.number.desc()).first()
     if last_record:
-        # Если есть последняя запись, увеличиваем номер на 1
-        last = int(last_record.number) + 1
-        fl = last_record.flight
+        number = last_record.number
     else:
-        # Если нет записей, начинаем с номера 1
-        last = 1
-        fl = False
-    return last, fl
+        number = 1
+    return number
+
+def generate_new_number(date, number):
+    while True:
+        existing_record = Purcell.query.filter_by(number=int(number), flight=date).first()
+        if existing_record is None:
+            break
+        number += 1
+    return number
+
 
 # Функция для расчета стоимости
 def calculate_cost(payment_type, cost_amount):
@@ -50,43 +47,41 @@ def calculate_cost(payment_type, cost_amount):
     return cost
 
 # Функция для добавления записи в базу данных
-def add_record(form_data, cost, db):
-    number = int(form_data['number'])
-    flight = form_data['flight']
+def add_record(last, form_data, cost, db, user_role):
+    date = form_data['date']
     
-    while True:
-        print('1')
-        existing_record = Purcell.query.filter_by(number=number, flight=flight).first()
-        if existing_record is None:
-            break
-        number += 1
-    
-    add = Purcell(
-        sender=form_data['sender'].upper(),
-        sender_phone=form_data['sender_phone'],
-        recipient=form_data['recipient'].upper(),
-        recipient_phone=form_data['recipient_phone'],
-        inventory=form_data['inventory'].replace('\n', ' ').replace('\r', ' '),
-        cost=cost,
-        passport=form_data['passport'],
-        weight=form_data['weight'].upper(),
-        responsibility=form_data['responsibility'].upper(),
-        number=number,
-        city=form_data['city'],
-        flight=flight,
-        image=f"static/purcells/{number}-{flight}.jpeg"
-    )
-    
-    # Добавляем запись в сессию и фиксируем изменения в базе данных
-    db.session.add(add)
-    db.session.commit()
-    return number
+    try:
+        add = Purcell(
+            sender=form_data['sender'].upper(),
+            sender_phone=form_data['sender_phone'],
+            recipient=form_data['recipient'].upper(),
+            recipient_phone=form_data['recipient_phone'],
+            inventory=form_data['inventory'].replace('\n', ' ').replace('\r', ' '),
+            cost=cost,
+            passport=form_data['passport'],
+            weight=form_data['weight'].upper(),
+            responsibility=form_data['responsibility'].upper(),
+            number=last,
+            city=form_data['city'],
+            flight=date,
+            image=f"static/purcells/{last}-{date}.jpeg",
+            where_from=user_role
+        )
+        
+        # Добавляем запись в сессию и фиксируем изменения в базе данных
+        db.session.add(add)
+        db.session.commit()
+        
+        return last
+    except Exception as e:
+        # Обработка ошибки и возвращение сообщения об ошибке
+        return f"Ошибка при сохранении записи: {str(e)}"
+
 
 # Функция для обработки изображения
 def handle_image(file, number, flight, app):
     filename = f"{number}-{flight}.jpeg"
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    
     # Сохраняем загруженное изображение
     file.save(image_path)
     

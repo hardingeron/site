@@ -10,7 +10,7 @@
   font-family: Arial, sans-serif;
   width: 100%;
   background-color: #51515e;
-  color: #8e8ea0;
+  color: #d2d2d2;
 
   top: 1%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.501); /* Добавление тени со всех сторон */
@@ -43,7 +43,7 @@
   text-align: center;
   font-size: 18px;
   background-color: #343641;
-  color: #8e8ea0;
+  color: #d2d2d2;
   position: sticky;
   top: 0;
   vertical-align: bottom;
@@ -151,11 +151,12 @@
   min-height: 600px;
   max-height: 700px;
   border-radius: 10px;
-  background: #444654;
+  background: #6c6f81;
+  box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.633);
 }
 
 .close {
-  color: #aaa;
+  color: #d2d2d2;
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -226,12 +227,12 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-right: 10px;
-  color: #8e8ea0;
+  color: #d2d2d2;
 }
 
 .download-container button.btn-download {
   background-color: #40414f;
-  color: #8e8ea0;
+  color: #d2d2d2;
   border: none;
   padding: 10px 20px;
   font-size: 16px;

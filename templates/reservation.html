@@ -39,7 +39,7 @@
                                       else 'negative-payment' if seat['payment'] and seat['payment'][0] == 'g'
                                       else '' %}
             
-              <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-background{% endif %}" data-seat-number="{{ seat_number }}">
+              <div class="seat {{ gender_class }} {{ payment_class }} {% if seat['action'] == 'yes' %}gray-box{% endif %}" data-seat-number="{{ seat_number }}">
                   <div class="seat-number {% if seat['comment'] %}yellow-text{% endif %}">{{ seat_number }}</div>  
                   <div class="seat-details {% if seat['gender'] == 'male' %}male-text{% elif seat['gender'] == 'female' %}female-text{% endif %}">
                       <div class="name">{{ seat['name'] }}</div>

@@ -61,7 +61,7 @@
                 <td>{{ data.sender_phone }}</td>
                 <td>{{ data.recipient }}</td>
                 <td>{{ data.recipient_phone }}</td>
-                <td {% if data.cost.startswith('-') %}style="color:#f24949;"{% elif data.cost.startswith('+') %}style="color:green;"{% else %}style="color:black;"{% endif %}>
+                <td {% if data.cost.startswith('-') %}style="color:#f24949;"{% elif data.cost.startswith('+') %}style="color:#00ff00;"{% else %}style="color:black;"{% endif %}>
                     {{ data.cost }}
                 </td>
                 <td>{{ data.passport }}</td>

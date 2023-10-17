@@ -231,7 +231,7 @@ def saving_a_parcel():
     date = request.form.get('date')
     last_record = get_last_record(date, db)
     new_record = generate_new_number(date, last_record)
-    cost = calculate_cost(request.form.get('payment'), request.form.get('cost'))
+    cost = calculate_cost(request.form.get('payment'), request.form.get('cost'), request.form.get('payment_currency'))
     
     try:
         handle_image(request.files['photo'], new_record, date, app)

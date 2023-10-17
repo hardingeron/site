@@ -1,6 +1,6 @@
 /* блк с контентом для добавления посылок */
 .add {
-  width: 580px;
+  width: 550px;
   height: 630px;
   background: #444654;
   border-radius: 10px;
@@ -22,13 +22,13 @@
 
 .head h2 {
   font-size: 25px;
-  color: #8e8ea0;
+  color: #d2d2d2;
 }
 
 .flight_and_img,
 .sender_block,
 .recipient_block{
-  width: 580px;
+  width: 550px;
   height: 40px;
   display: flex;
   justify-content: center;
@@ -37,7 +37,7 @@
 
 .information_one_block,
 .information_two_block  {
-  width: 580px;
+  width: 550px;
   height: 40px;
   display: flex;
   justify-content: center;
@@ -60,17 +60,17 @@
 .recipient_name_block label,
 .recipient_phone label,
 .description_block label {
-  width: 220px;
+  width: 200px;
   line-height: 20px;
 }
 
 .description_block label {
-  width: 490px;
+  width: 450px;
 }
 
 .information_one_block label,
 .information_two_block label {
-  width: 130px;
+  width: 110px;
   line-height: 20px;
 }
 
@@ -79,7 +79,7 @@
 
 .information_one_block input,
 .information_two_block input {
-  width: 90px;
+  width: 80px;
   height: 20px;
   font-weight: bold;
   padding: 5px 10px;
@@ -89,14 +89,14 @@
 
 .information_one_block > *:not(:last-child),
 .information_two_block > *:not(:last-child) {
-  margin-right: 30px;
+  margin-right: 60px;
 }
 
 .fandm {
   width: 180px;
   height: 25px;
   border: 1px solid #8e8ea0;
-  color: #8e8ea0;
+  color: #d2d2d2;
   border-radius: 5px;
   padding: 5px 10px;
   font-size: 14px;
@@ -118,7 +118,7 @@
 
 .sender_block input,
 .recipient_block input {
-  width: 180px;
+  width: 170px;
   height: 20px;
   padding: 5px 10px;
   font-size: 14px;
@@ -126,7 +126,7 @@
 }
 
 .description_block textarea {
-  width: 450px;
+  width: 420px;
   height: 60px;
   border: none;
   border-radius: 5px;
@@ -146,6 +146,7 @@
   flex-direction: column;
   align-items: center;
   border-radius: 0 0 10px 10px;
+  width: 550px;
 }
 
 .city select {
@@ -176,7 +177,7 @@
 
 #saveButton {
   background-color: #333333;
-  color: #8e8ea0;
+  color: #d2d2d2;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
@@ -194,9 +195,9 @@
 
 
 
-.add label:not(.payment_block label) {
+.add label:not(.payment_block label, .payment_block_two label) {
   background-color: #343641;
-  color: #8e8ea0;
+  color: #d2d2d2;
   text-align: center;
   border-radius: 10px 10px 0 0;
   font-weight: bold;
@@ -210,7 +211,7 @@
 .description_block textarea,
 .city select {
   background-color: #40414f;
-  color: #8e8ea0;
+  color: #d2d2d2;
   font-weight: bold;
   border-radius: 0 0 10px 10px;
   border: none;
@@ -242,29 +243,39 @@ input[type='text'].invalid {
   border: 2px solid red;
 }/*  */
 
+.pay {
+  display: flex;
+  width: 550px;
+}
 
+.pay > *:not(:last-child) {
+  margin-right: -30px;
+}
 
-.payment_block {
+.payment_block,
+.payment_block_two {
   display: flex; /* Элементы будут располагаться в ряду по горизонтали */
   align-items: center; /* Выравнивание элементов по центру по вертикали */
   justify-content: center; /* Центрирование элементов по горизонтали */
   margin: 0 auto; /* Горизонтальное центрирование */
-  width: 400px;
-  height: 50px;
+  width: 210px;
+  height: 32px;
   border: 1px solid white;
   border-radius: 10px;
 }
 
 
-.payment_block > *:not(:last-child) {
-  margin-right: 60px; /* Расстояние в 20 пикселей между элементами, кроме последнего */
+.payment_block > *:not(:last-child),
+.payment_block_two > *:not(:last-child) {
+  margin-right: 25px; /* Расстояние в 20 пикселей между элементами, кроме последнего */
 }
 
-
-.payment_block label {
-  width: 50px;
-  height:  50px;
-}
+/* 
+.payment_block label,
+.payment_block_two label {
+  width: 30px;
+  height:  30px;
+} */
 
 
 
@@ -297,8 +308,8 @@ input[type='text'].invalid {
 
 
 .radio-custom img {
-  width: 40px;
-  height: 40px;
+  width: 25px;
+  height: 25px;
 }
 
 

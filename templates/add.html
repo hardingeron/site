@@ -76,32 +76,61 @@
                 </div>
             </div>
 
-            <div class="payment_block">
-                <label class="radio-label">
-                    <input type="radio" name="payment" value="paid" required data-error="payment">
-                    <span class="radio-custom">
-                        <img src="/static/images/paid cash.png" alt="Картинка">
-                    </span>
-                </label>
+            <div class="pay">
+                <div class="payment_block">
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="paid" required data-error="payment">
+                        <span class="radio-custom">
+                            <img src="/static/images/cash.png" alt="Картинка">
+                        </span>
+                    </label>
 
-                <label class="radio-label">
-                    <input type="radio" name="payment" value="card">
-                    <span class="radio-custom">
-                        <img src="/static/images/paid card.png" alt="Картинка">
-                    </span>
-                </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="card">
+                        <span class="radio-custom">
+                            <img src="/static/images/card.png" alt="Картинка">
+                        </span>
+                    </label>
 
-                <label class="radio-label">
-                    <input type="radio" name="payment" value="not_paid">
-                    <span class="radio-custom">
-                        <img src="/static/images/not paid.png" alt="Картинка">
-                    </span>
-                </label>
-            </div>
-            
-        <div class="button_block">
-            <button id="saveButton" type="button">დასრულება</button>
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="not_paid">
+                        <span class="radio-custom">
+                            <img src="/static/images/np.png" alt="Картинка">
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="payment_block_two">
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="GEL" required data-error="payment_currency">
+                        <span class="radio-custom">
+                            <img src="/static/images/gel.png" alt="Картинка">
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="RUB">
+                        <span class="radio-custom">
+                            <img src="/static/images/rub.png" alt="Картинка">
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="EUR">
+                        <span class="radio-custom">
+                            <img src="/static/images/eur.png" alt="Картинка">
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="USD">
+                        <span class="radio-custom">
+                            <img src="/static/images/usd.png" alt="Картинка">
+                        </span>
+                    </label>
+                </div>
+
         </div>
+            <div class="button_block">
+                <button id="saveButton" type="button">დასრულება</button>
+            </div>
 
     </div>
 
@@ -158,6 +187,8 @@
         const cityValue = city.value;
         const payment = document.querySelector('input[name="payment"]:checked');
         const paymentValue = payment ? payment.value : '';
+        const paymentCurrency = document.querySelector('input[name="payment_currency"]:checked');
+        const paymentCurrencyValue = paymentCurrency ? paymentCurrency.value : '';
     
         // Проверка каждого поля на заполнение
         const requiredFields = [
@@ -172,6 +203,7 @@
             { field: cost, value: costValue, error: 'cost' },
             { field: city, value: cityValue, error: 'city' },
             { field: payment, value: paymentValue, error: 'payment' },
+            { field: paymentCurrency, value: paymentCurrencyValue, error: 'payment_currency' },
         ];
     
         let isValid = true;
@@ -190,7 +222,7 @@
                 // Вернуть цвет границы к исходному состоянию через 2 секунды
                 setTimeout(() => {
                     if (field) {
-                        field.style.border = '1px solid #ccc'; // Замените #ccc на цвет по умолчанию, если он отличается
+                        field.style.border = 'none'; // Замените #ccc на цвет по умолчанию, если он отличается
                     }
                 }, 2000); // 2000 миллисекунд = 2 секунды
             }
@@ -210,6 +242,7 @@
             formData.append('cost', costValue);
             formData.append('city', cityValue);
             formData.append('payment', paymentValue);
+            formData.append('payment_currency', paymentCurrencyValue);
     
             // Получение файла (фото)
             const photoInput = document.getElementById('photo');
@@ -253,6 +286,12 @@
                     const radioButtons = document.querySelectorAll('.payment_block input[type="radio"]');
                     radioButtons.forEach(radio => {
                         radio.checked = false;
+                    });
+
+                    // Сбросить выбранные радиокнопки payment_currency
+                    const paymentCurrencyButtons = document.querySelectorAll('input[name="payment_currency"]');
+                    paymentCurrencyButtons.forEach(button => {
+                        button.checked = false;
                     });
                 } else {
                     // Показать сообщение об ошибке

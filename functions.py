@@ -37,13 +37,13 @@ def generate_new_number(date, number):
 
 
 # Функция для расчета стоимости
-def calculate_cost(payment_type, cost_amount):
+def calculate_cost(payment_type, cost_amount, currency):
     if payment_type == 'paid':
-        cost = f"+{cost_amount}"
+        cost = f"+ {cost_amount} {currency}"
     elif payment_type == 'not_paid':
-        cost = f"-{cost_amount}"
+        cost = f"- {cost_amount} {currency}"
     else:
-        cost = f"+{cost_amount}(ბარათით)"
+        cost = f"+ {cost_amount} {currency}💳"
     return cost
 
 # Функция для добавления записи в базу данных

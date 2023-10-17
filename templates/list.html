@@ -52,7 +52,7 @@
                 </div>
                 <div class="recipient_fl_block">
                     <label>სახელი/გვარი</label>
-                    <input type="text" name="recipient_fl">
+                    <input type="text" name="recipient_fl" >
                 </div>
                 <div class="recipient_phone_block">
                     <label>ტელეფონი</label>
@@ -423,23 +423,67 @@ console.log('Выбранный город:', cityParam);
 
 $(document).ready(function() {
     $("#add").click(function() {
-        // Соберем данные из полей в формате JSON
+        // Получить значения из полей
+        var senderFl = $("input[name='sender_fl']").val();
+        var senderPhone = $("input[name='sender_phone']").val();
+        var recipientFl = $("input[name='recipient_fl']").val();
+        var recipientPhone = $("input[name='recipient_phone']").val();
+        var passport = $("input[name='passport']").val();
+        var city = $("select[name='city']").val();
+        var price = $("input[name='cost']").val();
+        var weights = $("input[name='weights']").val();
+        var comment = $("input[name='comment']").val();
+        var payment = $("input[name='payment']").val();
+        var paymentStatus = $("input[name='payment_status']:checked").val();
+        var paymentCurrency = $("input[name='payment_currency']:checked").val();
+
+// Функция для проверки поля на пустоту и подсветки его красным при ошибке
+function validateAndHighlightField(fieldName) {
+    var fieldValue = $(fieldName).val();
+    if (fieldValue === "") {
+        $(fieldName).css("box-shadow", "0 0 10px red");
+        setTimeout(function() {
+            $(fieldName).css("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.596)"); // Удалить красную подсветку через 2 секунды
+        }, 2000);
+        return false;
+    } else {
+        $(fieldName).css("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.596)");
+        return true;
+    }
+}
+
+// Проверить, что обязательные поля не пусты
+var isValid = true;
+
+isValid = validateAndHighlightField("input[name='recipient_fl']") && isValid;
+isValid = validateAndHighlightField("input[name='recipient_phone']") && isValid;
+isValid = validateAndHighlightField("input[name='weights']") && isValid;
+isValid = validateAndHighlightField("input[name='payment']") && isValid;
+
+if (!isValid) {
+    showMessage('გთხოვთ შეავსოთ სავალდებულო ველები!', false);
+    return; // Остановить отправку формы
+}
+
+
+        // Создать объект formData
         var formData = {
-            sender_fl: $("input[name='sender_fl']").val(),
-            sender_phone: $("input[name='sender_phone']").val(),
-            recipient_fl: $("input[name='recipient_fl']").val(),
-            recipient_phone: $("input[name='recipient_phone']").val(),
-            passport: $("input[name='passport']").val(),
-            city: $("select[name='city']").val(),
-            price: $("input[name='cost']").val(),
-            weights: $("input[name='weights']").val(),
-            comment: $("input[name='comment']").val(),
-            payment: $("input[name='payment']").val(),
-            payment_status: $("input[name='payment_status']:checked").val(),
-            payment_currency: $("input[name='payment_currency']:checked").val(),
-            date: dateParam, // Используем выбранную дату из URL
+            sender_fl: senderFl,
+            sender_phone: senderPhone,
+            recipient_fl: recipientFl,
+            recipient_phone: recipientPhone,
+            passport: passport,
+            city: city,
+            price: price,
+            weights: weights,
+            comment: comment,
+            payment: payment,
+            payment_status: paymentStatus,
+            payment_currency: paymentCurrency,
+            date: dateParam,
             where_from: cityParam
         };
+
 
 $.ajax({
     type: "POST",
@@ -913,6 +957,11 @@ scrollToTopButton.addEventListener("click", function() {
 
 
 
+
+
+
+
+<!-- фильтр -->
 <script>
 // Обработчик события keydown для поля ввода
 document.getElementById("filterInput").addEventListener("keydown", function(event) {

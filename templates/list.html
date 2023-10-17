@@ -2,7 +2,7 @@
 
 {% block title %}
   {{ super() }}
-  ბლანკები
+  
 {% endblock %}
 
 {% block content %}
@@ -223,9 +223,15 @@
 
 <div class="blanks_block" data-item="{{ item.number }}" data-weights="{{ item.weights}}">
     <div class="number_block" data-item="{{ item.number }}">
-        <label>{% if item.number < 0 %}00{% else %}0{% endif %}{{ item.number }}</label>
-
+        <label>
+            {% if city_param == 'Москва' %}
+                {{ item.number }}
+            {% else %}
+                {% if item.number < 0 %}00{% else %}0{% endif %}{{ item.number }}
+            {% endif %}
+        </label>
     </div>
+
 
     <div class="sender_block">
         <div class="label_block">
@@ -437,6 +443,9 @@ $(document).ready(function() {
         var paymentStatus = $("input[name='payment_status']:checked").val();
         var paymentCurrency = $("input[name='payment_currency']:checked").val();
 
+
+        
+
 // Функция для проверки поля на пустоту и подсветки его красным при ошибке
 function validateAndHighlightField(fieldName) {
     var fieldValue = $(fieldName).val();
@@ -452,6 +461,7 @@ function validateAndHighlightField(fieldName) {
     }
 }
 
+
 // Проверить, что обязательные поля не пусты
 var isValid = true;
 
@@ -459,6 +469,7 @@ isValid = validateAndHighlightField("input[name='recipient_fl']") && isValid;
 isValid = validateAndHighlightField("input[name='recipient_phone']") && isValid;
 isValid = validateAndHighlightField("input[name='weights']") && isValid;
 isValid = validateAndHighlightField("input[name='payment']") && isValid;
+isValid = validateAndHighlightField("input[name='cost']") && isValid;
 
 if (!isValid) {
     showMessage('გთხოვთ შეავსოთ სავალდებულო ველები!', false);
@@ -1028,6 +1039,24 @@ function filterData() {
 </script>
 
 
+
+<script>
+    const whereFrom = urlParams.get('where_from');
+
+
+    // Определяем аббревиатуру на основе значения "whereFrom"
+    let abbreviation = "";
+    if (whereFrom === "Санкт-Петербург") {
+        abbreviation = "С.П.Б";
+    } else if (whereFrom === "Москва") {
+        abbreviation = "МСК";
+    }
+
+    // Добавляем значение "where_from" к заголовку страницы с аббревиатурой
+    if (whereFrom) {
+        document.title = `${abbreviation}-ს ბლანკი`;
+    }
+</script>
 
 
 

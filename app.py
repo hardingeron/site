@@ -726,6 +726,7 @@ def blanks():
     date_param = request.args.get('date')  # Получите значение параметра "date"
     city_param = request.args.get('where_from')  # Получите значение параметра "city"
 
+
     data = Forms.query.filter_by(date=date_param, where_from=city_param).order_by(desc(Forms.number)).all()
 
     data_dict = {
@@ -775,7 +776,7 @@ def blanks():
     return render_template('list.html', data=data, gel_paid=gel_paid, gel_card=gel_card, gel_not_paid=gel_not_paid,
                            rub_paid=rub_paid, rub_card=rub_card, rub_not_paid=rub_not_paid,
                            usd_paid=usd_paid, usd_card=usd_card, usd_not_paid=usd_not_paid,
-                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid, total_weight=total_weight)
+                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid, total_weight=total_weight, city_param=city_param)
 
 
 
@@ -788,12 +789,11 @@ def add_to_the_list():
         return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
     try:
         data = request.get_json()
-        print(int(data['payment']))
-        print(data['sender_fl'], 'wwwwww')
-        check = data['sender_fl'].upper().replace(" ", "")
-        print(check)
 
-        if check == 'DAMIR':
+        check = data['sender_fl'].upper().replace(" ", "")
+        where_from = data['where_from']
+
+        if check == 'DAMIR' and where_from == 'Санкт-Петербург':
             min_number = db.session.query(func.min(Forms.number)).filter(Forms.date == data['date'],
                                                                          Forms.where_from == data['where_from']).scalar()
             if min_number is not None:

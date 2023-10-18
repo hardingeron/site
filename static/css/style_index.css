@@ -214,7 +214,7 @@ body {
   height: 100%;
   overflow: auto;
   background-color: rgba(0,0,0,0.7);
-  color: #8e8ea0;
+  color: #d2d2d2;
 }
 .modal-reservation input,
 .modal-reservation select,
@@ -264,7 +264,7 @@ body {
 .modal-blanks-content,
 .modal-add-content {
   background-color: #444654;
-  margin: 15% auto;
+  margin: 5% auto;
   padding: 20px;
   border: none;
   border-radius: 20px;
@@ -324,3 +324,69 @@ body {
   font-family: Arial, sans-serif; /* выбранный шрифт */
 }
 
+
+
+
+.dates_block {
+  display: flex;
+  flex-direction: row; /* Расположение элементов в ряд по горизонтали */
+}
+
+
+
+
+.dates_block > *:not(:last-child) {
+  margin-right: 30px;
+}
+
+.msk_list_block,
+.spb_list_block {
+  height: 150px; /* Установите максимальную высоту блока в 50 пикселей */
+  width: 180px;
+  overflow-y: auto; /* Добавьте вертикальную прокрутку при необходимости */
+  border: solid 1px;
+  border-top-left-radius: 20px; /* Закругляем левый верхний угол */
+  border-bottom-left-radius: 20px; /* Закругляем левый нижний угол */
+  border-top-right-radius: 0; /* Убираем закругление с правого верхнего угла */
+  border-bottom-right-radius: 0; /* Убираем закругление с правого нижнего угла */
+}
+
+/* Изменяем стиль полосы прокрутки */
+.msk_list_block::-webkit-scrollbar,
+.spb_list_block::-webkit-scrollbar {
+  width: 5px; /* Ширина элемента прокрутки */
+  background: rgba(0, 0, 0, 0.2); /* Задаем прозрачный цвет фона */
+  
+}
+
+/* Изменяем стиль ползунка полосы прокрутки */
+.msk_list_block::-webkit-scrollbar-thumb,
+.spb_list_block::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5); /* Задаем более прозрачный цвет ползунка */
+  border-radius: 5px; /* Закругляем углы ползунка */
+  
+  
+}
+
+/* Изменяем стиль трека полосы прокрутки */
+.msk_list_block::-webkit-scrollbar-track,
+.spb_list_block::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* Задаем прозрачный цвет трека */
+  
+}
+
+
+.dates_block label {
+  font-size: 20px;
+}
+
+
+
+a:link, a:visited {
+  color: white; /* Цвет текста для невыбранной и посещенной ссылки */
+  text-decoration: none; /* Убираем подчеркивание */
+}
+
+.dates_block a {
+    padding: 5px; /* Добавляем отступы в 5 пикселей вокруг ссылок */
+}

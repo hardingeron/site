@@ -180,6 +180,21 @@ def download():
 @login_required
 def index():
     try:
+        unique_dates_cities = db.session.query(Forms.date, Forms.where_from).filter(Forms.date.isnot(None)).distinct()
+
+        msk_dates = []
+        spb_dates = []
+
+        for date, city in unique_dates_cities:
+            if city == 'Москва':
+                msk_dates.append(date)
+            elif city == 'Санкт-Петербург':
+                spb_dates.append(date)
+
+        # Отсортировать даты по убыванию (от новых к старым)
+        msk_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
+        spb_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
+
         today = datetime.now().date()
         delta = timedelta(days=90)
         date_threshold = today - delta
@@ -203,7 +218,7 @@ def index():
     except Exception as e:
         # Если произошла ошибка, выводим ее и продолжаем
         print(f"An error occurred: {e}")
-    return render_template('index.html')
+    return render_template('index.html', msk_dates=msk_dates, spb_dates=spb_dates)
     # return redirect(url_for('all'))
 
 
@@ -670,10 +685,10 @@ def generate_ticket():
                 sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
                 sheet['D7'].font = bold_font
                 
-
+ 
 
             timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-            data = f"კომპანია VIP-TOUR, მისამართი: გულიას ქუჩა №5 / Компания VIP-TOUR, Адрес:  ул.Гулия №5, ბილეთის მიღების დრო / Время получения билета {timestamp}, ბოლო გაჩერება-ოფისი: იუჟნაპორტოვაიას ქუჩა, სახლი 7, შენობა 25 / конечная остановка-офис: ул.Южнопоровая дом 7, строение 25"
+            data = f"კომპანია VIP-TOUR, მისამართი: გულიას ქუჩა №5. ბილეთის მიღების დრო {timestamp}. ბოლო გაჩერება-ოფისი: იუჟნაპორტოვაიას ქუჩა, სახლი 7, შენობა 25.\nКомпания VIP-TOUR, Адрес:  ул.Гулия №5.  / Время получения билета {timestamp}.  / конечная остановка-офис: ул.Южнопоровая дом 7, строение 25."
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,

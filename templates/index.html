@@ -82,7 +82,30 @@ setTimeout(function() {
             <option value="Москва">მოსკოვი</option>
         </select>
         <button onclick="redirectToPage()">გადასვლა</button>
+        <div class="dates_block">
+            <div class="spb_dates_block">
+                <label>პეტერბურგი</label>
+                <div class="spb_list_block">
+                    <ul>
+                        {% for date in spb_dates %}
+                            <li><a href="/list?date={{ date }}&where_from=Санкт-Петербург">{{ date }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="msk_dates_block">
+                <label>მოსკოვი</label>
+                <div class="msk_list_block">
+                    <ul>
+                        {% for date in msk_dates %}
+                            <li><a href="/list?date={{ date }}&where_from=Москва">{{ date }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
+
 </div>  
 
 

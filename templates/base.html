@@ -105,6 +105,22 @@
             <option value="Москва">მოსკოვი</option>
         </select>
         <button onclick="redirectToPage()">გადასვლა</button>
+        <div class="dates_block">
+            <div class="spb_dates_block">
+                <label>Санкт-Петербург</label>
+                <div class="spb_list_block">
+                    <ul id="spb_dates_list">
+                    </ul>
+                </div>
+            </div>
+            <div class="msk_dates_block">
+                <label>Москва</label>
+                <div class="msk_list_block">
+                    <ul id="msk_dates_list">
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </div>  
 
@@ -377,4 +393,35 @@
         const day = dateObject.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
+</script>
+
+
+
+
+
+<script>
+    fetch('static/json/dates.json')
+        .then(response => response.json())
+        .then(data => {
+            const spbDatesList = document.getElementById('spb_dates_list');
+            const mskDatesList = document.getElementById('msk_dates_list');
+
+            data.spb_dates.forEach(date => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `/list?date=${date}&where_from=Санкт-Петербург`;
+                a.textContent = date;
+                li.appendChild(a);
+                spbDatesList.appendChild(li);
+            });
+
+            data.msk_dates.forEach(date => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `/list?date=${date}&where_from=Москва`;
+                a.textContent = date;
+                li.appendChild(a);
+                mskDatesList.appendChild(li);
+            });
+        });
 </script>

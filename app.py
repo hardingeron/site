@@ -55,6 +55,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
+
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /login               ------------------------------#
    
@@ -194,6 +195,16 @@ def index():
         # Отсортировать даты по убыванию (от новых к старым)
         msk_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
         spb_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
+
+        data = {
+            "msk_dates": msk_dates,
+            "spb_dates": spb_dates
+        }
+
+        # Откройте файл для записи
+        with open("static/json/dates.json", "w") as json_file:
+            # Запишите данные в файл в формате JSON
+            json.dump(data, json_file)
 
         today = datetime.now().date()
         delta = timedelta(days=90)

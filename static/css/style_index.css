@@ -382,11 +382,14 @@ body {
 
 
 
-a:link, a:visited {
+.dates_block a:link, .dates_block a:visited {
   color: white; /* Цвет текста для невыбранной и посещенной ссылки */
   text-decoration: none; /* Убираем подчеркивание */
 }
 
-.dates_block a {
-    padding: 5px; /* Добавляем отступы в 5 пикселей вокруг ссылок */
+
+
+
+.dates_block a:hover {
+  color: red; /* Цвет текста при наведении курсора */
 }

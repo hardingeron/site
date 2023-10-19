@@ -403,3 +403,73 @@ body {
 }
 
 
+
+.dates_block {
+  display: flex;
+  flex-direction: row; /* Расположение элементов в ряд по горизонтали */
+}
+
+
+
+
+.dates_block > *:not(:last-child) {
+  margin-right: 30px;
+}
+
+.msk_list_block,
+.spb_list_block {
+  height: 150px; /* Установите максимальную высоту блока в 50 пикселей */
+  width: 180px;
+  overflow-y: auto; /* Добавьте вертикальную прокрутку при необходимости */
+  border: solid 1px;
+  border-top-left-radius: 20px; /* Закругляем левый верхний угол */
+  border-bottom-left-radius: 20px; /* Закругляем левый нижний угол */
+  border-top-right-radius: 0; /* Убираем закругление с правого верхнего угла */
+  border-bottom-right-radius: 0; /* Убираем закругление с правого нижнего угла */
+}
+
+/* Изменяем стиль полосы прокрутки */
+.msk_list_block::-webkit-scrollbar,
+.spb_list_block::-webkit-scrollbar {
+  width: 5px; /* Ширина элемента прокрутки */
+  background: rgba(0, 0, 0, 0.2); /* Задаем прозрачный цвет фона */
+  
+}
+
+/* Изменяем стиль ползунка полосы прокрутки */
+.msk_list_block::-webkit-scrollbar-thumb,
+.spb_list_block::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.5); /* Задаем более прозрачный цвет ползунка */
+  border-radius: 5px; /* Закругляем углы ползунка */
+  
+  
+}
+
+/* Изменяем стиль трека полосы прокрутки */
+.msk_list_block::-webkit-scrollbar-track,
+.spb_list_block::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1); /* Задаем прозрачный цвет трека */
+  
+}
+
+
+.dates_block label {
+  font-size: 20px;
+}
+
+
+
+.dates_block a:link,
+.dates_block a:visited {
+  color: white; /* Цвет текста для невыбранной и посещенной ссылки */
+  text-decoration: none; /* Убираем подчеркивание */
+}
+
+.dates_block a:hover {
+  color: red; /* Цвет текста при наведении курсора */
+}
+
+
+li {
+  margin-bottom: 8px;
+}

@@ -201,10 +201,13 @@ def index():
             "spb_dates": spb_dates
         }
 
-        # Откройте файл для записи
-        with open("static/json/dates.json", "w") as json_file:
-            # Запишите данные в файл в формате JSON
-            json.dump(data, json_file)
+        try:
+            # Откройте файл для записи
+            with open("static/json/dates.json", "w") as json_file:
+                # Запишите данные в файл в формате JSON
+                json.dump(data, json_file)
+        except Exception as e:
+            pass
 
         today = datetime.now().date()
         delta = timedelta(days=90)

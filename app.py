@@ -33,7 +33,7 @@ import json
 import qrcode
 
 
-from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record
+from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error
 
 
 app = Flask(__name__)
@@ -84,8 +84,28 @@ def login():
 
 
 
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /index               ------------------------------#
+   
 
-
+@app.route('/', methods=['POST', 'GET'])
+@login_required
+def index():
+    try:
+        # Получаем и сортируем даты
+        msk_dates, spb_dates = get_sorted_dates(db)
+        # Обновляем JSON-файл с датами
+        update_json_file(msk_dates, spb_dates)
+        # Удаляем устаревшие данные
+        delete_old_data(db)
+        # Очищаем старые файлы
+        clean_old_files(app.config['UPLOAD_FOLDER'])
+    except Exception as e:
+        # Если произошла ошибка, логируем её
+        log_error(e)
+    
+    # Возвращаем HTML-шаблон с данными для отображения на странице
+    return render_template('index.html', msk_dates=msk_dates, spb_dates=spb_dates)  
 
 
 #-------------------------------------------------------------------------------------------------#
@@ -171,69 +191,6 @@ def download():
     
     # Возврат файла для скачивания
     return send_file(filename, as_attachment=True)
-
-
-#-------------------------------------------------------------------------------------------------#
-# ------------------------------               /index               ------------------------------#
-   
-
-@app.route('/', methods=['POST', 'GET'])
-@login_required
-def index():
-    try:
-        unique_dates_cities = db.session.query(Forms.date, Forms.where_from).filter(Forms.date.isnot(None)).distinct()
-
-        msk_dates = []
-        spb_dates = []
-
-        for date, city in unique_dates_cities:
-            if city == 'Москва':
-                msk_dates.append(date)
-            elif city == 'Санкт-Петербург':
-                spb_dates.append(date)
-
-        # Отсортировать даты по убыванию (от новых к старым)
-        msk_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
-        spb_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
-
-        data = {
-            "msk_dates": msk_dates,
-            "spb_dates": spb_dates
-        }
-
-        try:
-            # Откройте файл для записи
-            with open("static/json/dates.json", "w") as json_file:
-                # Запишите данные в файл в формате JSON
-                json.dump(data, json_file)
-        except Exception as e:
-            pass
-
-        today = datetime.now().date()
-        delta = timedelta(days=90)
-        date_threshold = today - delta
-
-        # Попытка удаления старых данных
-        old_data = Purcell.query.filter(Purcell.flight < date_threshold).delete()
-        db.session.commit()
-
-        # Попытка очистки старых загруженных файлов
-        folder_path = app.config['UPLOAD_FOLDER']
-        for filename in os.listdir(folder_path):
-            file_path = os.path.join(folder_path, filename)
-            if os.path.isfile(file_path):
-                file_extension = os.path.splitext(filename)[1].lower()
-                file_modification_time = datetime.fromtimestamp(os.path.getmtime(file_path)).date()
-                days_since_modification = (today - file_modification_time).days
-
-                if file_extension in [".jpeg", ".jpg", ".png"] and days_since_modification > 90:
-                    os.remove(file_path)
-
-    except Exception as e:
-        # Если произошла ошибка, выводим ее и продолжаем
-        print(f"An error occurred: {e}")
-    return render_template('index.html', msk_dates=msk_dates, spb_dates=spb_dates)
-    # return redirect(url_for('all'))
 
 
 

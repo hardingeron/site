@@ -33,7 +33,7 @@ import json
 import qrcode
 
 
-from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error
+from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking
 
 
 app = Flask(__name__)
@@ -429,6 +429,7 @@ def reservation_big():
 @login_required
 def save_data():
     if request.method == 'POST':
+        # Получаем данные из запроса
         selected_date = request.form.get('selected_date')
         seat_number = request.form.get('seat_number')
         flname = request.form.get('flname').upper()
@@ -441,23 +442,17 @@ def save_data():
         destination = request.form.get('destination')
         pay = request.form.get('payment_method')
         pay_method = request.form.get('payment_method_card')
-        payment = re.sub(r'[^0-9]', '', payment) 
-        if payment == "":
-            payment = 0   
 
-        if pay_method is not None:
-            payment = f"{pay}{payment}{pay_method}"
-        else:
-            payment = f"-{payment}"
+        # Обработка оплаты
+        payment = process_payment(payment, pay, pay_method)
         
         # Проверяем, существует ли уже запись с таким flname
         existing_booking = Booking.query.filter_by(flname=flname, data=selected_date, fwc=fwc).first()
         if existing_booking:
             return jsonify({'success': False, 'message': 'ამ სახელსა და გვარზე ადგილი უკვე დაჯავშნილია!!!!'}), 400
         else:
-            booking = Booking(flname=flname, gender=gender, phone=phone, pasport=pasport, comment=comment, payment=payment, data=selected_date, position=seat_number, fwc=fwc, destination=destination)
-            db.session.add(booking)
-            db.session.commit()
+            # Сохранение данных в базе данных
+            save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination)
 
             return jsonify({"message": "Данные успешно сохранены"})
 
@@ -480,43 +475,30 @@ def edit_booking():
         selected_date = request.form.get('selected_date')
         pay = request.form.get('payment_method')
         pay_method = request.form.get('payment_method_card')
-        payment = re.sub(r'[^0-9]', '', payment)
-        if payment == "":
-            payment = 0
-        
-        if pay_method != None:
-            payment = f"{pay}{payment}{pay_method}"
-        else:
-            payment = f"-{payment}"
 
-        existing_booking = Booking.query.filter_by(fwc=reis, data=selected_date, position=old_seat_number).first() #новое место
-        existing_booking_old = Booking.query.filter_by(fwc=reis, data=selected_date, position=seat_number).first() #старое место 
+        payment = process_payment(payment, pay, pay_method)
+        
+        existing_booking = get_existing_booking(reis, selected_date, old_seat_number)
+        existing_booking_old = get_existing_booking(reis, selected_date, seat_number)
+        
         if seat_number == old_seat_number:
             if existing_booking_old:
-                existing_booking_old.gender = gender
-                existing_booking_old.flname = flname
-                existing_booking_old.phone = phone
-                existing_booking_old.pasport = pasport
-                existing_booking_old.payment = payment
-                existing_booking_old.destination = destination
-                existing_booking_old.comment = comment
-                db.session.commit()
+                update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, seat_number)
                 return jsonify({'success': True, 'message': 'message'})
 
         if existing_booking:
             return jsonify({'success': False, 'message': 'ადგილი დაკავებულია'})
         elif existing_booking is None:
-            existing_booking_old.gender = gender
-            existing_booking_old.flname = flname
-            existing_booking_old.phone = phone
-            existing_booking_old.pasport = pasport
-            existing_booking_old.payment = payment
-            existing_booking_old.destination = destination
-            existing_booking_old.comment = comment
-            existing_booking_old.position = old_seat_number
-            db.session.commit()
+ 
+            update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, old_seat_number)
             return jsonify({'success': True, 'message': 'message'})
-        
+
+
+
+
+
+
+
 
 @app.route('/booking_del', methods=['POST'])
 @login_required

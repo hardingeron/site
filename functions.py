@@ -6,13 +6,13 @@ from sqlalchemy import func, desc
 from datetime import datetime, timedelta
 import json
 
-
+from flask import jsonify
 
 from PIL import Image
 from PIL.ExifTags import TAGS
 from sqlalchemy import func
 from models import Purcell, Booking, Storage, Forms
-
+import re
 
 
 
@@ -380,6 +380,61 @@ def clean_old_files(upload_folder):
                 os.remove(file_path)
 
 
+
+#===========================================================================================================================================================
+#-------------------------- ДЛЯ ОБРАБОТЧИКА />----> конец <----< ---------------------------------------------------------------
+#===========================================================================================================================================================
+
+
+#===========================================================================================================================================================
+#-------------------------- ДЛЯ ОБРАБОТЧИКА /booking 
+#===========================================================================================================================================================
+
+# Функция для обработки оплаты
+def process_payment(payment, pay, pay_method):
+    payment = re.sub(r'[^0-9]', '', payment)
+    if payment == "":
+        payment = 0
+    if pay_method is not None:
+        payment = f"{pay}{payment}{pay_method}"
+    else:
+        payment = f"-{payment}"
+    return payment
+
+# Функция для сохранения данных в базу данных
+def save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination):
+    booking = Booking(
+        flname=flname,
+        gender=gender,
+        phone=phone,
+        pasport=pasport,
+        comment=comment,
+        payment=payment,
+        data=selected_date,
+        position=seat_number,
+        fwc=fwc,
+        destination=destination
+    )
+    db.session.add(booking)
+    db.session.commit()
+
+
+# Функция для обновления данных бронирования
+def update_booking(db, booking, gender, flname, phone, pasport, payment, destination, comment, seat_number):
+    booking.gender = gender
+    booking.flname = flname
+    booking.phone = phone
+    booking.pasport = pasport
+    booking.payment = payment
+    booking.destination = destination
+    booking.comment = comment
+    booking.position = seat_number
+    db.session.commit()
+
+
+# Функция для получения существующего бронирования
+def get_existing_booking(reis, selected_date, seat_number):
+    return Booking.query.filter_by(fwc=reis, data=selected_date, position=seat_number).first()
 
 #===========================================================================================================================================================
 #-------------------------- ДЛЯ ОБРАБОТЧИКА />----> конец <----< ---------------------------------------------------------------

@@ -178,6 +178,11 @@ def get_reservation_data(selected_date, reis, bus):
     male_count = 0
     female_count = 0
     came_count = 0
+    sum_gel_p = 0
+    sum_gel_pc = 0
+    sum_rub_p = 0
+    sum_rub_pc = 0
+
 
     for person in data:
         if person.gender == 'male':
@@ -199,8 +204,10 @@ def get_reservation_data(selected_date, reis, bus):
             
             if payment_value.endswith('GEL'):
                 sum_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
+                sum_gel_p += 1
             elif payment_value.endswith('RUB'):
                 sum_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
+                sum_rub_p += 1
             elif payment_value.endswith('USD'):
                 sum_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
             elif payment_value.endswith('EUR'):
@@ -211,8 +218,10 @@ def get_reservation_data(selected_date, reis, bus):
             
             if payment_value.endswith('GEL'):
                 sum_card_gel += float(payment_value[:-3])  # Убираем "GEL" и преобразуем в число
+                sum_gel_pc += 1
             elif payment_value.endswith('RUB'):
                 sum_card_rub += float(payment_value[:-3])  # Убираем "RUB" и преобразуем в число
+                sum_rub_pc += 1
             elif payment_value.endswith('USD'):
                 sum_card_usd += float(payment_value[:-3])  # Убираем "USD" и преобразуем в число
             elif payment_value.endswith('EUR'):
@@ -251,7 +260,11 @@ def get_reservation_data(selected_date, reis, bus):
         'male_count': male_count,
         'female_count': female_count,
         'came_count': came_count,
-        'came_of_count_free': came_of_count_free
+        'came_of_count_free': came_of_count_free,
+        'sum_gel_p': sum_gel_p,
+        'sum_gel_pc': sum_gel_pc,
+        'sum_rub_p': sum_rub_p,
+        'sum_rub_pc': sum_rub_pc
     }
 
 

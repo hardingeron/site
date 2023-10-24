@@ -265,16 +265,20 @@ body {
 .modal-blanks-content,
 .modal-add-content {
   background-color: #444654;
-  margin: 5% auto;
+  margin: 0; /* Убрать внешние отступы */
   padding: 20px;
   border: none;
   border-radius: 20px;
   width: 400px;
   text-align: center;
+  position: absolute; /* Абсолютное позиционирование */
+  top: 50%; /* Разместить блок по вертикали на 50% высоты экрана */
+  left: 50%; /* Разместить блок по горизонтали на 50% ширины экрана */
+  transform: translate(-50%, -50%); /* Центрировать относительно самого блока */
   display: flex;
-  flex-direction: column; /* Расположение элементов в столбце сверху вниз */
-  align-items: center; /* Выравнивание по центру по горизонтали */
-  justify-content: flex-start; /* Выравнивание контента сверху */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .close {

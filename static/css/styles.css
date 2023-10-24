@@ -238,11 +238,11 @@ body {
 .el label, .el2 label {
     width: 150px;
     height: 20px;
-    color: #8e8ea0;
+    color: #d2d2d2;
     display: block;
     margin-top: 10px;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 25px;
 }
 
 .menu_button {
@@ -354,20 +354,25 @@ body {
 .modal-add-select button:hover {
   background-color: #1a1a1a;
 }
+
 .modal-reservation-content,
 .modal-blanks-content,
 .modal-add-content {
   background-color: #444654;
-  margin: 15% auto;
+  margin: 0; /* Убрать внешние отступы */
   padding: 20px;
   border: none;
   border-radius: 20px;
   width: 400px;
   text-align: center;
+  position: absolute; /* Абсолютное позиционирование */
+  top: 50%; /* Разместить блок по вертикали на 50% высоты экрана */
+  left: 50%; /* Разместить блок по горизонтали на 50% ширины экрана */
+  transform: translate(-50%, -50%); /* Центрировать относительно самого блока */
   display: flex;
-  flex-direction: column; /* Расположение элементов в столбце сверху вниз */
-  align-items: center; /* Выравнивание по центру по горизонтали */
-  justify-content: flex-start; /* Выравнивание контента сверху */
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .close {

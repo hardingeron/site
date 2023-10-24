@@ -302,7 +302,6 @@
       <div id="error-message"></div>
     </div>
   </div>
-  
 
   <div id="myModalStatistic" class="modal_statistic">
     <div class="modal_statistic-content">
@@ -310,7 +309,10 @@
           <span class="close-statistic">&times;</span>
           <div class="diagram_box_block">
               <div class="diagram_block">
-                  <canvas id="myChart"></canvas>
+                  <canvas id="myChart1"></canvas>
+              </div>
+              <div class="diagram_block_four">
+                <canvas id="myChart2"></canvas>
               </div>
               <div class="diagram_block_two">
                   <canvas id="combinedChart"></canvas>
@@ -318,6 +320,28 @@
               <div class="diagram_block_three">
                   <canvas id="cameChart"></canvas>
               </div>
+          </div>
+          <div class="statistic_p">
+            <table>
+              <tr>
+                <th>ლარში გადაიხადა</th>
+                <td>{{ sum_gel_p }}</td>
+              </tr>
+              <tr>
+                <th>ლარში ბარათით გადაიხადა</th>
+                <td>{{ sum_gel_pc }}</td>
+              </tr>
+            </table>
+            <table>
+              <tr>
+                <th>რუბლში გადაიხადა</th>
+                <td>{{ sum_rub_p }}</td>
+              </tr>
+              <tr>
+                <th> რუბლში	ბარათით გადაიხადა</th>
+                <td>{{ sum_rub_pc }}</td>
+              </tr>
+            </table>
           </div>
       </div>
   </div>
@@ -616,38 +640,108 @@ ticketButton.addEventListener('click', async () => {
 
 </script>
 
+
+
+
 <script>
   var sum_rub = parseFloat(document.querySelector('#sum_rub').textContent);
   var sum_gel = parseFloat(document.querySelector('#sum_gel').textContent);
   var sum_usd = parseFloat(document.querySelector('#sum_usd').textContent);
   var sum_eur = parseFloat(document.querySelector('#sum_eur').textContent);
 
+  var ctx1 = document.getElementById('myChart1').getContext('2d');
+
+  var options = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+          legend: {
+              labels: {
+                  color: '#d2d2d2' // Задайте желаемый цвет текста
+              }
+          }
+      },
+      scales: {
+          x: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста названия столбцов
+              }
+          },
+          y: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста значений столбцов
+              }
+          }
+      }
+  };
+
+  var data1 = {
+      labels: ['₽', '₾', '$', '€'],
+      datasets: [{
+          label: 'ნაღდი',
+          data: [sum_rub, sum_gel, sum_usd, sum_eur],
+          backgroundColor: ['#e3f707', '#00c2fc', '#fc6900', '#fc004c']
+      }]
+  };
+
+  var myChart1 = new Chart(ctx1, {
+      type: 'bar', // Тип диаграммы изменен на 'bar'
+      data: data1,
+      options: options
+  });
+</script>
+
+
+<script>
   var sum_card_gel = parseFloat(document.querySelector('#sum_card_gel').textContent);
   var sum_card_rub = parseFloat(document.querySelector('#sum_card_rub').textContent);
   var sum_card_usd = parseFloat(document.querySelector('#sum_card_usd').textContent);
   var sum_card_eur = parseFloat(document.querySelector('#sum_card_eur').textContent);
 
-  var ctx = document.getElementById('myChart').getContext('2d');
-  
-  var data = {
-      labels: ['რუბლი', 'ლარი', 'დოლარი', 'ევრო', '(RUB)', '(GEL)', '(USD)', '(EUR)'],
-      datasets: [{
-          data: [sum_rub, sum_gel, sum_usd, sum_eur, sum_card_rub, sum_card_gel, sum_card_usd, sum_card_eur],
-          backgroundColor: ['#e3f707', '#00c2fc', '#fc6900', '#fc004c', '#505706', '#01495e', '#6e2e01', '#4CAF50']
-      }]
-  };
+  var ctx2 = document.getElementById('myChart2').getContext('2d');
 
   var options = {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      plugins: {
+          legend: {
+              labels: {
+                  color: '#d2d2d2' // Задайте желаемый цвет текста
+              }
+          }
+      },
+      scales: {
+          x: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста названия столбцов
+              }
+          },
+          y: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста значений столбцов
+              }
+          }
+      }
   };
 
-  var myChart = new Chart(ctx, {
-      type: 'pie',
-      data: data,
+  var data2 = {
+      labels: ['₾', '₽', '$', '€'],
+      datasets: [{
+          label: 'ბარათით',
+          data: [sum_card_gel, sum_card_rub, sum_card_usd, sum_card_eur],
+          backgroundColor: ['#00c2fc', '#e3f707', '#fc6900', '#fc004c']
+      }]
+  };
+
+  var myChart2 = new Chart(ctx2, {
+      type: 'bar', // Тип диаграммы изменен на 'bar'
+      data: data2,
       options: options
   });
+
 </script>
+
+
 
 
 <script>
@@ -660,6 +754,7 @@ ticketButton.addEventListener('click', async () => {
   var data = {
       labels: ['მამაკაცი', 'ქალბატონი', 'ცარიელი'],
       datasets: [{
+          label: 'ადგილები',
           data: [male_count, female_count, number_of_free_records],
           backgroundColor: ['#1E90FF', '#FF1493', '#696969']
       }]
@@ -667,11 +762,31 @@ ticketButton.addEventListener('click', async () => {
 
   var options = {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      plugins: {
+          legend: {
+              labels: {
+                  color: '#d2d2d2' // Задайте желаемый цвет текста
+              }
+          }
+      },
+      scales: {
+          x: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста названия столбцов
+              }
+          },
+          y: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста значений столбцов
+              }
+          }
+      }
   };
 
+
   var combinedChart = new Chart(ctx, {
-      type: 'pie',
+      type: 'bar', // Тип диаграммы изменен на 'bar'
       data: data,
       options: options
   });
@@ -681,12 +796,13 @@ ticketButton.addEventListener('click', async () => {
 <script>
   var came_count = parseInt(document.querySelector('#came_count').textContent);
   var came_of_count_free = parseInt(document.querySelector('#came_of_count_free').textContent);
-
+  
   var ctx = document.getElementById('cameChart').getContext('2d');
 
   var data = {
-      labels: ['მოვიდა', 'არ მოვიდა', 'ადგილების რაოდენობა 55'],
+      labels: ['მოვიდა', 'არ მოვიდა'],
       datasets: [{
+          label: 'რაოდენობა',
           data: [came_count, came_of_count_free],
           backgroundColor: ['#1E90FF', '#FF1493']
       }]
@@ -694,11 +810,31 @@ ticketButton.addEventListener('click', async () => {
 
   var options = {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      plugins: {
+          legend: {
+              labels: {
+                  color: '#d2d2d2' // Задайте желаемый цвет текста
+              }
+          }
+      },
+      scales: {
+          x: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста названия столбцов
+              }
+          },
+          y: {
+              ticks: {
+                  color: '#d2d2d2' // Цвет текста значений столбцов
+              }
+          }
+      }
   };
 
+
   var cameChart = new Chart(ctx, {
-      type: 'pie',
+      type: 'bar', // Тип диаграммы изменен на 'bar'
       data: data,
       options: options
   });

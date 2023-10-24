@@ -354,7 +354,6 @@ def find():
     storage = Storage.query.filter_by(trecing=trecing).first()
     if storage:
         location = storage.shelf  # Местоположение посылки
-        print(trecing, location, info)
         asyncio.run(send_location_message(trecing, location, info))  # асинхронный вызов функции
         if info:
             db.session.delete(storage)
@@ -589,7 +588,6 @@ def generate_ticket():
             Booking.position == s_n
         ).first()
 
-        print(booking)
         if booking:
             booking.action = 'yes'
             db.session.commit()  # Сохранение изменений в базе данных
@@ -603,7 +601,7 @@ def generate_ticket():
 
             apply_styles_to_cell(sheet, 'W8', booking.destination)
 
-            apply_styles_to_cell(sheet, 'A11', booking.position)
+            apply_styles_to_cell(sheet, 'A12', booking.position)
 
 
             sheet['A15'] = '11 : 00'
@@ -721,8 +719,7 @@ def blanks():
         data_dict[currency][payment_status] += price
 
     # Теперь у вас есть словарь, в котором данные разделены по валюте и статусу оплаты.
-    # Вы можете обращаться к данным по следующему синтаксису:
-    # data_dict['валюта']['статус оплаты']
+
 
     gel_paid = data_dict['GEL']['paid']
     gel_card = data_dict['GEL']['card']
@@ -832,7 +829,6 @@ def add_to_the_list():
     except Exception as e:
         # В случае ошибки верните сообщение об ошибке
         response = {"error": str(e)}
-        print(response, 'wwwwwww')
         return jsonify(response), 500
 
 
@@ -845,7 +841,6 @@ def edit_the_list():
         return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 400
 
     data = request.get_json()
-    print(data)
     date = data['date']
     where_from = data['where_from']
     number = int(data['item_id'])
@@ -889,7 +884,6 @@ def delete_from_list():
         # Верните успешный ответ
         return jsonify({'success': True, 'message': 'ნომერი წარმატებით წაიშალა'})
     except Exception as e:
-        print(e)
         return jsonify({'success': False, 'message': str(e)})
 
 

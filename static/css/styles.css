@@ -14,12 +14,13 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url("../images/2801-.jpg");
-  background-size: cover;
+  background-image: url("../images/2.jpeg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
   opacity: 0.9;
   z-index: -1;
-}
- */
+} */
 
 
 

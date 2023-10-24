@@ -1,5 +1,19 @@
+
+.bg-image_l {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../images/2.jpeg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  z-index: -1;
+}
+
 body {
-  background: #353745;
+  background: #26282f;
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;

@@ -78,11 +78,7 @@ class Booking(db.Model):
     action = db.Column(db.String(20))
 
 
-class Messages(db.Model):
-    message_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.String(20), nullable=False)
-    content = db.Column(db.Text)
-    timestamp = db.Column(db.TIMESTAMP, server_default='CURRENT_TIMESTAMP')
+
 
 
 
@@ -103,3 +99,4 @@ class Forms(db.Model):
     payment_status = db.Column(db.String(20))
     currency = db.Column(db.String(5))
     where_from = db.Column(db.String(30))
+    added_to_the_manifest = db.Column(db.String(10), default='no')

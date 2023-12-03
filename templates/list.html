@@ -15,12 +15,15 @@
     <!-- Кнопка для открытия модального окна "payment" -->
     <div class="blocks">
         <div class="total_weight_block">
-            <h2>საერთო წონა - {{ total_weight }}კგ</h2>
+            <h2>საერთო წონა{{ total_weight }}კგ</h2>
             <button id="openPaymentModal">სტატისტიკა</button>
         </div>
         <div class="filter_block">
             <input type="text" id="filterInput" placeholder="ფილტრის ველი">
             <button onclick="filterData()">ძიება</button>
+        </div>
+        <div class="manifest_block">
+            <button onclick="manifestDownload()">მანიფესტის გადმოწერა</button>
         </div>
     </div>
     
@@ -223,7 +226,7 @@
 
 <div class="blanks_block" data-item="{{ item.number }}" data-weights="{{ item.weights}}">
     <div class="number_block" data-item="{{ item.number }}">
-        <label>
+        <label class="{% if item.added_to_the_manifest == 'yes' %}yellow-text{% else %}black-text{% endif %}">
             {% if city_param == 'Москва' %}
                 {{ item.number }}
             {% else %}
@@ -465,6 +468,8 @@ function validateAndHighlightField(fieldName) {
 // Проверить, что обязательные поля не пусты
 var isValid = true;
 
+isValid = validateAndHighlightField("input[name='passport']") && isValid;
+isValid = validateAndHighlightField("input[name='sender_fl']") && isValid;
 isValid = validateAndHighlightField("input[name='recipient_fl']") && isValid;
 isValid = validateAndHighlightField("input[name='recipient_phone']") && isValid;
 isValid = validateAndHighlightField("input[name='weights']") && isValid;
@@ -1059,5 +1064,40 @@ function filterData() {
 </script>
 
 
+<script>
+    function manifestDownload() {
+        // Получаем строку запроса из текущего URL
+        var queryString = window.location.search;
+
+        // Создаем объект URLSearchParams из строки запроса
+        var urlParams = new URLSearchParams(queryString);
+
+        // Извлекаем значения параметров из URL
+        var date = urlParams.get('date');
+        var where_from = urlParams.get('where_from');
+
+        // Показываем всплывающее окно с подтверждением
+        var userConfirmed = confirm("თქვენ მართლა გსურთ მანიფესტის გადმოწერა? თუ არ იცით რას აკეთეთ გთხოვთ გააუქმოთ!!!");
+
+        // Если пользователь подтвердил, отправляем запрос на сервер Flask
+        if (userConfirmed) {
+            var downloadUrl = `/download_manifest?date=${date}&where_from=${where_from}`;
+
+            // Создаем временную ссылку для скачивания файла
+            var a = document.createElement('a');
+            a.href = downloadUrl;
+
+            // Задаем имя файла
+            a.download = 'manifest.xlsx';
+
+            // Добавляем элемент в DOM и эмулируем клик для скачивания файла
+            document.body.appendChild(a);
+            a.click();
+
+            // Удаляем элемент из DOM
+            document.body.removeChild(a);
+        }
+    }
+</script>
 
 {% endblock %}

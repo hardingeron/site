@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from flask_login import login_required, login_user, logout_user, current_user
 import os 
-from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Messages, Forms
+from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Forms
 from config import secret_key
 from sqlalchemy import func, desc
 
@@ -29,11 +29,11 @@ import json
 
 
 
-
+ 
 import qrcode
 
 
-from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking
+from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking, manifest_filter
 
 
 app = Flask(__name__)
@@ -887,6 +887,67 @@ def delete_from_list():
         return jsonify({'success': False, 'message': str(e)})
 
 
+
+
+
+@app.route('/download_manifest', methods=['GET'])
+def download_manifest():
+    date = request.args.get('date')
+    where_from = request.args.get('where_from')
+
+    # Фильтруем записи в таблице Forms
+    filtered_forms = Forms.query.filter(
+        Forms.date == date,
+        Forms.where_from == where_from,
+        Forms.added_to_the_manifest == 'no'
+    ).all()
+    print(filtered_forms)
+
+    # Загрузка существующего Excel-файла
+    try:
+        wb = load_workbook('Sample-Form.xlsx')  # Замените 'Sample-Form.xlsx' на имя вашего существующего файла
+        ws = wb.active
+    except FileNotFoundError:
+        # Обработайте ситуацию, когда файл не найден
+        return "Error: Sample-Form.xlsx not found"
+
+    # Обработка данных и запись в Excel
+    row_num = ws.max_row + 1  # начинаем с новой строки
+
+    for form in filtered_forms:
+        weights = [float(weight) for weight in form.weights.split()]
+        count = 0
+        price = form.price
+        for weight in weights:
+            count += 1
+
+            # Добавляем данные в соответствующие столбцы
+            ws.cell(row=row_num, column=1, value=form.sender_fio.split()[0])  # Имя отправителя
+            ws.cell(row=row_num, column=2, value=form.sender_fio.split()[-1])  # Фамилия отправителя
+            ws.cell(row=row_num, column=3, value='Russian Federation')
+            ws.cell(row=row_num, column=4, value='S.P.B')
+            ws.cell(row=row_num, column=5, value=form.recipient_fio.split()[0])  # Имя получателя
+            ws.cell(row=row_num, column=6, value=form.recipient_fio.split()[-1])  # Фамилия получателя
+            ws.cell(row=row_num, column=7, value=form.passport)
+            ws.cell(row=row_num, column=8, value='Georgia')
+            ws.cell(row=row_num, column=9, value=f'{form.city}    [{form.number}/{count}]')
+            ws.cell(row=row_num, column=10, value=form.city)
+            ws.cell(row=row_num, column=11, value=form.recipient_phone)
+            ws.cell(row=row_num, column=12, value=price)
+            ws.cell(row=row_num, column=13, value='RUB')
+            ws.cell(row=row_num, column=14, value=weight)  # Значение веса
+            price=0
+
+            row_num += 1  # Переходим к следующей строке
+        form.added_to_the_manifest = 'yes'
+        db.session.commit()
+
+    # Сохраняем изменения в файле
+    manifest_filename = 'manifest.xlsx'  # Имя нового файла
+    wb.save(manifest_filename)
+
+    # Возврат файла для скачивания
+    return send_file(manifest_filename, as_attachment=True)
 
 
 #-------------------------------------------------------------------------------------------------#

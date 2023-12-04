@@ -1024,10 +1024,15 @@ def download_manifest():
         price = random.choice(price_chance)
         vl = 'USD'
         s_n = random_names()
-
+        purc_count = len(weights)
+        
+        
         for weight in weights:
-            count += 1
-
+            if purc_count != 1:
+                count += 1
+                number = f'{form.city}    [0{form.number}/{count}]'
+            else:
+                number = f'{form.city}    [0{form.number}]'
             # Добавляем данные в соответствующие столбцы
             ws.cell(row=row_num, column=1, value=s_n.split()[0])  # Имя отправителя
             ws.cell(row=row_num, column=2, value=s_n.split()[-1])  # Фамилия отправителя
@@ -1037,7 +1042,7 @@ def download_manifest():
             ws.cell(row=row_num, column=6, value=form.recipient_fio.split()[-1])  # Фамилия получателя
             ws.cell(row=row_num, column=7, value=form.passport)
             ws.cell(row=row_num, column=8, value='Georgia')
-            ws.cell(row=row_num, column=9, value=f'{form.city}    [0{form.number}/{count}]')
+            ws.cell(row=row_num, column=9, value=number)
             ws.cell(row=row_num, column=10, value=form.city)
             ws.cell(row=row_num, column=11, value=form.recipient_phone)
             ws.cell(row=row_num, column=12, value=price)

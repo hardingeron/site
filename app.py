@@ -27,7 +27,7 @@ from decimal import Decimal
 
 import json
 
-
+import random
 
  
 import qrcode
@@ -889,6 +889,108 @@ def delete_from_list():
 
 
 
+def random_names():
+    names = [
+    "ALEXANDER IVANOV",
+    "EKATERINA PETROVA",
+    "DMITRY SMIRNOV",
+    "ANNA FEDOROVA",
+    "SERGEI KOZLOV",
+    "MARIA NOVIKOVA",
+    "IVAN SOKOLOV",
+    "ANASTASIA KUZNETSOVA",
+    "ARTEM POPOV",
+    "OLGA MOROZOVA",
+    "VLADIMIR KUZMIN",
+    "IRINA PAVLOVA",
+    "NIKOLAI ZAKHAROV",
+    "YULIA SEMENOVA",
+    "PAVEL KONDRATOV",
+    "SVETLANA SMIRNOVA",
+    "ANDREI FEDOROV",
+    "ELENA VASILIEVA",
+    "ANDREY LEBEDEV",
+    "TATIANA KUZNETSOVA",
+    "ALEXEY MEDVEDEV",
+    "NATALIA YAKOVLEVA",
+    "VIKTORIA PROKOPIEVA",
+    "MIKHAIL SOKOLOV",
+    "ANGELINA KONOVALENKO",
+    "RUSLAN VORONIN",
+    "YANA PETROVA",
+    "IGOR KARPOV",
+    "VALERIA STEPANOVA",
+    "ANTONINA MALININA",
+    "KONSTANTIN ZAITSEV",
+    "MARINA ROMANOVA",
+    "PAVEL SERGEYEV",
+    "OLGA KIRILLOVA",
+    "ILYA KUZNETSOV",
+    "KSENIA MOROZOVA",
+    "DENIS POPOV",
+    "VICTORIA KOVALENKO",
+    "YURY ANTONOV",
+    "JULIA KOROLEVA",
+    "ALEXANDRA SIDOROVA",
+    "MAXIM KUZMIN",
+    "LARISA PAVLOVA",
+    "SERGEY GORSHKOV",
+    "ANNA KONONOVA",
+    "ALEKSEI FOMIN",
+    "EKATERINA KOROLEVA",
+    "ARSENII VOLKOV",
+    "IRINA ZAKHAROVA",
+    "ALEKSANDR GORBUNOV",
+    "ALEXANDRA KUZNETSOVA",
+    "ANDREI MOROZOV",
+    "VICTORIA SEMENOVA",
+    "MAXIM FEDOROV",
+    "OLGA PETROV",
+    "KIRILL KONDRATOV",
+    "YULIA ROMANOVA",
+    "DENIS KOVALENKO",
+    "SVETLANA ZAKHAROVA",
+    "ANTONINA SIDOROVA",
+    "DMITRY LEBEDEV",
+    "EKATERINA SERGEYEVA",
+    "ILYA KIRILLOV",
+    "MARIA GORBUNOVA",
+    "IGOR MALININ",
+    "ANNA KUZMINA",
+    "ARTEM ZAITSEV",
+    "ELENA KONOVA",
+    "NIKOLAI GORSHKOV",
+    "VALERIA PAVLOVA",
+    "SERGEY PROKOPIEV",
+    "ANGELINA MEDVEDEVA",
+    "VLADIMIR ANTONOV",
+    "TATIANA KOROLEVA",
+    "ANDREY VORONIN",
+    "LARISA YAKOVLEVA",
+    "PAVEL KARPOV",
+    "NATALIA KIRKOROVA",
+    "MIKHAIL ZAITSEV",
+    "KSENIA SOKOLOVA",
+    "YURY KUZNETSOV",
+    "MARINA KUZMINA",
+    "ALEKSANDR FOMIN",
+    "ELENA VORONOVA",
+    "ALEXEI KIRILLOV",
+    "VALERIYA KUZNETSOVA",
+    "VIKTOR KOROLEV",
+    "ANNA SMIRNOVA",
+    "ANDREY SOKOLOV",
+    "OLGA GORBUNOVA",
+    "ALEKSANDRA ROMANOVA",
+    "DMITRIY KUZMIN",
+    "EKATERINA ZAKHAROVA",
+    "MAXIM KARPOV",
+    "YANA KONONOVA",
+    "VLADIMIR LEBEDEV",
+    "MARIYA KIRKOROVA",
+    ]
+    return random.choice(names)
+
 
 @app.route('/download_manifest', methods=['GET'])
 def download_manifest():
@@ -915,28 +1017,32 @@ def download_manifest():
     row_num = ws.max_row + 1  # начинаем с новой строки
 
     for form in filtered_forms:
+
         weights = [float(weight) for weight in form.weights.split()]
+        price_chance = [15, 20, 25, 10]
         count = 0
-        price = form.price
+        price = random.choice(price_chance)
+        vl = 'USD'
+        s_n = random_names()
+
         for weight in weights:
             count += 1
 
             # Добавляем данные в соответствующие столбцы
-            ws.cell(row=row_num, column=1, value=form.sender_fio.split()[0])  # Имя отправителя
-            ws.cell(row=row_num, column=2, value=form.sender_fio.split()[-1])  # Фамилия отправителя
+            ws.cell(row=row_num, column=1, value=s_n.split()[0])  # Имя отправителя
+            ws.cell(row=row_num, column=2, value=s_n.split()[-1])  # Фамилия отправителя
             ws.cell(row=row_num, column=3, value='Russian Federation')
             ws.cell(row=row_num, column=4, value='S.P.B')
             ws.cell(row=row_num, column=5, value=form.recipient_fio.split()[0])  # Имя получателя
             ws.cell(row=row_num, column=6, value=form.recipient_fio.split()[-1])  # Фамилия получателя
             ws.cell(row=row_num, column=7, value=form.passport)
             ws.cell(row=row_num, column=8, value='Georgia')
-            ws.cell(row=row_num, column=9, value=f'{form.city}    [{form.number}/{count}]')
+            ws.cell(row=row_num, column=9, value=f'{form.city}    [0{form.number}/{count}]')
             ws.cell(row=row_num, column=10, value=form.city)
             ws.cell(row=row_num, column=11, value=form.recipient_phone)
             ws.cell(row=row_num, column=12, value=price)
-            ws.cell(row=row_num, column=13, value='RUB')
+            ws.cell(row=row_num, column=13, value=vl)
             ws.cell(row=row_num, column=14, value=weight)  # Значение веса
-            price=0
 
             row_num += 1  # Переходим к следующей строке
         form.added_to_the_manifest = 'yes'

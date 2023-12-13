@@ -30,8 +30,8 @@ async def start_handler(message: types.Message):
 
 
 
-async def send_location_message(trecing, location, info):
-    message_text = f"📦თრექინგი    [{trecing}]\n\n🏢დევს              [{location}]\n\n💬კომენტარი  [{info}]"
+async def send_location_message(trecing, location, info, date):
+    message_text = f"------------------------------------------------------------\n|  თრექინგი  |    [{trecing}]\n------------------------------------------------------------\n|  თარო          |    [{location}]\n------------------------------------------------------------\n|  ნომერი      |     [{info}]\n------------------------------------------------------------\n|  თარიღი     |     [{date}]\n------------------------------------------------------------"
     keyboard = types.InlineKeyboardMarkup()
     delete_button = types.InlineKeyboardButton(text="წაშლა", callback_data=f"delete_{trecing}")
     keyboard.add(delete_button)

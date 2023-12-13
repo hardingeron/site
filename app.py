@@ -354,7 +354,7 @@ def find():
     storage = Storage.query.filter_by(trecing=trecing).first()
     if storage:
         location = storage.shelf  # Местоположение посылки
-        asyncio.run(send_location_message(trecing, location, info))  # асинхронный вызов функции
+        asyncio.run(send_location_message(trecing, location, info, storage.date))  # асинхронный вызов функции
         if info:
             db.session.delete(storage)
             db.session.commit()

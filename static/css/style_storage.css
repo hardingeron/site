@@ -161,12 +161,15 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное сме
 
 /* цвета для INPUT=TEXT */
 .storage_add input,
+.storage_add textarea,
 .storage_find input,
 .add_user_bot input {
   background-color: #40414f;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   color: #8e8ea0;
 }
+
+
 
 /* одинаковые стили для INPUT=TEXT */
 .storage_add input,
@@ -177,10 +180,16 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); Горизонтальное сме
   border-radius: 10px;
   padding: 10px;
   font-size: 20px;
-  margin-top: 10px;
+/*  0---------------------------------0-------------------0--------------------0---------------------------------0------------*/
 }
 
-
+.storage_add textarea {
+  width: 314px;
+  height: 43px;
+  border-radius: 10px;
+  resize: none; /* Запрещает изменение размеров */
+  margin-bottom: 10px;
+}
 
 /* одинаковые стили для LABEL */
 .storage_add label,

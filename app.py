@@ -198,7 +198,6 @@ def download():
 # ------------------------------               /add                 ------------------------------#
 
 
-
 @app.route('/add', methods=['POST', 'GET'])
 @login_required
 def add():
@@ -325,21 +324,27 @@ def storage():
 @app.route('/save', methods=['POST'])
 @login_required
 def save():
-    shelf = request.form.get('shelf')
-    trecing = request.form.get('trecing')
-
-    if not validate_input(shelf, trecing):
-
-        return jsonify({'success': False, 'message': 'დამატება ვერ მოხერხდა: შეავსეთ მოცემული ველები!'})
-    
-    trecing = format_trecing(trecing)
-    date = datetime.now().date()
-
     try:
-        last_shelf = save_record(shelf, trecing, date, db)
+        shelf = request.form.get('shelf')
+        trecing = request.form.get('trecing')
+
+        trecing_list = trecing.split()
+
+        if not validate_input(shelf, trecing):
+            return jsonify({'success': False, 'message': 'დამატება ვერ მოხერხდა: შეავსეთ მოცემული ველები!'})
+        
+        date = datetime.now().date()
+        last_shelf = None  # Переменная для отслеживания последнего значения
+        for record in trecing_list:
+            formatted_trecing = format_trecing(record)
+            print(formatted_trecing)
+
+            try:
+                last_shelf = save_record(shelf, formatted_trecing, date, db)
+            except SQLAlchemyError as e:
+                return jsonify({'success': False, 'message': 'დაიკარგა მონაცემთა ბაზასთან კავშირი!'})
+
         return jsonify({'last': last_shelf})
-    except SQLAlchemyError as e:
-        return jsonify({'success': False, 'message': 'დაიკარგა მონაცემთა ბაზასთან კავშირი!'})
     except Exception as e:
         return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
 
@@ -1059,6 +1064,33 @@ def download_manifest():
 
     # Возврат файла для скачивания
     return send_file(manifest_filename, as_attachment=True)
+
+
+
+
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /expertise           ------------------------------#
+
+
+@app.route('/expertise')
+@login_required
+def expertise():
+    return render_template('expertise.html')
+
+
+
+
+
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               end /expertise           ------------------------------#
+
+
+
+
+
+
+
+
 
 
 #-------------------------------------------------------------------------------------------------#

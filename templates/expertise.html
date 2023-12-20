@@ -1,55 +1,230 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ექსპერტიზა</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
+{% extends 'base.html' %}
 
-        header {
-            text-align: center;
-            padding: 10px;
-            background-color: #333;
-            color: #fff;
-        }
+{% block title %}
+    {{ super() }}
+    ექსპერტიზა
+{% endblock %}
 
-        section {
-            margin: 20px 0;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_all.css') }}">
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
-        footer {
-            text-align: center;
-            padding: 10px;
-            background-color: #333;
-            color: #fff;
-        }
-    </style>
-</head>
-<body>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-    <header>
-        <h1>ექსპერეტიზის გვერდი</h1>
-    </header>
+<div class="buttons">
+    <button type="button" class="btn select_date">
+        თარიღის არჩევა
+    </button>
+    <button type="button" class="btn not_viewed">
+        სანახავების სია
+    </button>
+    <button type="button" class="btn viewed">
+        ნახულების სია
+    </button>
+    <button type="button" class="btn list_of_completed">
+        დასრულებულების სია
+    </button>
+</div>
 
-    <section>
-        <p>სიების შექმნა </p>
-        <p>სიების რედაქტირება ჯემალი აღარ შემაწუხებს!!!!</p>
-        <P>status	recipient	weight	Number	tracking	comment	date</P>
-    </section>
+<div class="xml_block">
+    <input type="file" id="xmlFile" accept=".xml" required>
+    <button onclick="uploadFile()">Upload</button>
+</div>
 
-    <footer>
-        <p>&copy; 2023 მუშაობა მიმდინარეობს.</p>
-    </footer>
+<div class="add_form">
+    <div class="form-group">
+        <label for="Number">Number:</label>
+        <input type="text" class="form-control" id="Number" placeholder="Number">
+    </div>
+    <div class="form-group">
+        <label for="tracking">Tracking:</label>
+        <input type="text" class="form-control" id="tracking" placeholder="Tracking">
+    </div>
+    <div class="form-group">
+        <label for="comment">Comment:</label>
+        <textarea class="form-control" id="comment" placeholder="Comment" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="date">Date:</label>
+        <input type="date" class="form-control" id="date">
+    </div>
 
-</body>
-</html>
+    <!-- Кнопка для добавления записи -->
+    <button type="button" class="btn btn-primary" id="addRecordBtn">დამატება</button>
+</div>
+
+
+<h1>Expertise Records for the Latest Date</h1>
+
+
+
+{% if records %}
+    <table border="1" id="recordsTable">
+        <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Recipient</th>
+            <th>Weight</th>
+            <th>Number</th>
+            <th>Tracking</th>
+            <th>Comment</th>
+            <th>Date</th>
+            <th>Action</th>
+        </tr>
+        {% for record in records %}
+            <tr id="row-{{ record.id }}">
+                <td>{{ record.id }}</td>
+                <td>{{ record.status }}</td>
+                <td>{{ record.recipient }}</td>
+                <td>{{ record.weight }}</td>
+                <td>{{ record.Number }}</td>
+                <td>{{ record.tracking }}</td>
+                <td>{{ record.comment }}</td>
+                <td>{{ record.date }}</td>
+                <td><button class="deleteBtn" data-record-id="{{ record.id }}">Delete</button></td>
+            </tr>
+        {% endfor %}
+    </table>
+    
+{% else %}
+<table border="1" id="recordsTable">
+    <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Recipient</th>
+        <th>Weight</th>
+        <th>Number</th>
+        <th>Tracking</th>
+        <th>Comment</th>
+        <th>Date</th>
+        <th>Action</th>
+    </tr>
+</table>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+<!-- добавление новой записи -->
+<script>
+    $("#addRecordBtn").click(function() {
+        // Получаем данные из полей ввода
+        var Number = $("#Number").val();
+        var tracking = $("#tracking").val();
+        var comment = $("#comment").val();
+        var date = $("#date").val();
+
+        // Создаем объект данных для отправки на сервер
+        var data = {
+            Number: Number,
+            tracking: tracking,
+            comment: comment,
+            date: date
+        };
+
+        // Отправляем данные на сервер с использованием AJAX
+        $.ajax({
+            type: "POST",
+            url: "/expertise_add_record",
+            contentType: "application/json;charset=UTF-8",
+            data: JSON.stringify(data),
+            success: function(response) {
+                // Выводим сообщение об успешном добавлении записи
+                showMessage('ამანათი წარმატებით დაემატა', true);
+
+                // Создаем уникальный ID для строки
+                var rowId = 'row-' + response.id;
+
+                // Создаем HTML-код для новой записи
+                var newRow = '<tr id="' + rowId + '">' +
+                    '<td>' + response.id + '</td>' +
+                    '<td>' + response.status + '</td>' +
+                    '<td>' + response.recipient + '</td>' +
+                    '<td>' + response.weight + '</td>' +
+                    '<td>' + response.Number + '</td>' +
+                    '<td>' + response.tracking + '</td>' +
+                    '<td>' + response.comment + '</td>' +
+                    '<td>' + response.date + '</td>' +
+                    '<td><button class="deleteBtn" data-record-id="' + response.id + '">Delete</button></td>' +
+                    '</tr>';
+
+                // Добавляем новую запись к таблице без перезагрузки страницы
+                $("#recordsTable").append(newRow);
+            },
+            error: function(error) {
+                // Выводим сообщение об ошибке
+                showMessage('ამანათი ვერ დამუშავდა!', false);
+                console.log(error);
+            }
+        });
+    });
+</script>
+
+
+
+<!-- удаление записи -->
+<script>
+    $(document).ready(function() {
+        // Добавляем обработчик событий для кнопок удаления
+        $("#recordsTable").on("click", ".deleteBtn", function() {
+            // Получаем ID записи из атрибута data-record-id
+            var recordId = $(this).data("record-id");
+
+            // Отправляем запрос на удаление с использованием AJAX
+            $.ajax({
+                type: "POST",
+                url: "/expertise_deleted",
+                contentType: "application/json;charset=UTF-8",
+                data: JSON.stringify({ id: recordId }),
+                success: function(response) {
+                    // Удаляем строку из таблицы без перезагрузки страницы
+                    $("#row-" + recordId).remove();
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+
+
+
+<!-- загрузка xml файла -->
+<script>
+    // Добавление функции uploadFile
+    function uploadFile() {
+        var input = document.getElementById('xmlFile');
+        var file = input.files[0];
+
+        var formData = new FormData();
+        formData.append('xmlFile', file);
+
+        $.ajax({
+            url: "{{ url_for('rs_xml') }}",
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                // Обработка успешного ответа от сервера
+                showMessage(response.message, response.success);
+
+                // Очистка поля с файлом
+                input.value = '';
+            },
+            error: function(error) {
+                // Обработка ошибки
+                showMessage('Error communicating with the server', false);
+            }
+        });
+    }
+</script>
+
+{% endblock %}

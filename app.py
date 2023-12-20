@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
 from flask_login import login_required, login_user, logout_user, current_user
 import os 
-from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Forms
+from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Forms, Expertise
 from config import secret_key
 from sqlalchemy import func, desc
 
@@ -33,7 +33,7 @@ import random
 import qrcode
 
 
-from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking, manifest_filter
+from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking, manifest_filter, xml_convertor, allowed_file
 
 
 app = Flask(__name__)
@@ -1075,9 +1075,123 @@ def download_manifest():
 @app.route('/expertise')
 @login_required
 def expertise():
-    return render_template('expertise.html')
+    # Получаем самую свежую дату из столбца "date"
+    latest_date = db.session.query(db.func.max(Expertise.date)).scalar()
+
+    # Получаем все записи с самой свежей датой
+    expertise_records = Expertise.query.filter_by(date=latest_date).all()
+
+    return render_template('expertise.html', records=expertise_records)
 
 
+
+
+@app.route('/expertise_add_record', methods=['POST'])
+def expertise_add_record():
+    try:
+        # Получаем данные из POST-запроса
+        data = request.get_json()
+        tracking=data['tracking']
+
+
+        # Загрузка данных из JSON-файла
+        with open('expertise_data.json', 'r', encoding='utf-8') as json_file:
+            expertise_data = json.load(json_file)
+        # Получение записи по ключу data['tracking']
+        tracking_key = data['tracking']
+        if tracking_key in expertise_data:
+            record_data = expertise_data[tracking_key]
+            # Дальнейшее использование record_data
+            print(f"Найдена запись для ключа {tracking_key}: {record_data}")
+        else:
+            print(f"Запись для ключа {tracking_key} не найдена в JSON-файле.")
+            return jsonify({'error': 'ამანათი არ არსებობს!'}), 404  # Или другой HTTP-статус по вашему выбору
+
+        # Создаем новую запись
+        new_record = Expertise(
+            Number=data['Number'],
+            tracking=data['tracking'],
+            comment=data['comment'],
+            date=data['date'],
+            status=record_data[1],
+            weight=record_data[7],
+            recipient=record_data[5]
+        )
+
+        # Добавляем запись в базу данных
+        db.session.add(new_record)
+        db.session.commit()
+
+        # Возвращаем данные о новой записи
+        return jsonify({
+            'id': new_record.id,
+            'status': new_record.status,  # Замените на фактическое свойство из вашей модели
+            'recipient': new_record.recipient,
+            'weight': new_record.weight,
+            'Number': new_record.Number,
+            'tracking': new_record.tracking,
+            'comment': new_record.comment,
+            'date': new_record.date.strftime('%Y-%m-%d')  # Преобразуйте дату в строку, если нужно
+        }), 200
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': 'Error adding record'}), 500
+
+    
+
+@app.route('/expertise_deleted', methods=['POST'])
+def expertise_deleted():
+    try:
+        # Получаем данные из POST-запроса
+        data = request.get_json()
+
+        # Получаем ID записи, которую нужно удалить
+        record_id = data.get('id')
+
+        # Проверяем, что ID был передан
+        if record_id is not None:
+            # Находим запись в базе данных по ID
+            record_to_delete = Expertise.query.get(record_id)
+
+            # Проверяем, что запись существует
+            if record_to_delete:
+                # Удаляем запись из базы данных
+                db.session.delete(record_to_delete)
+                db.session.commit()
+
+                return jsonify({'message': 'Record deleted successfully'}), 200
+            else:
+                return jsonify({'error': 'Record not found'}), 404
+        else:
+            return jsonify({'error': 'ID not provided'}), 400
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': 'Error deleting record'}), 500
+
+
+
+
+
+@app.route("/rs_xml", methods=["POST"])
+def rs_xml():
+    if "xmlFile" in request.files:
+        xml_file = request.files["xmlFile"]
+
+        # Проверка, что файл имеет разрешенное расширение (xml)
+        if xml_file and allowed_file(xml_file.filename):
+            # Сохранение XML-файла с именем Export.xml в корневую папку
+            xml_file.save("Export.xml")
+
+            # Вызов функции xml_convertor после успешной загрузки файла
+            xml_convertor()
+
+            # Возвращение JSON-ответа
+            return jsonify({'success': True, 'message': 'ბაზა წარმატებით განახლდა'})
+
+    # В случае ошибки
+    return jsonify({'success': False, 'message': 'ფაილის ფორმატი არასწორია!'})
 
 
 

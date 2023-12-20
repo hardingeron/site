@@ -63,6 +63,16 @@ class Storage(db.Model):
     date = db.Column(db.Date, default=datetime.now().date())
 
 
+class Expertise(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(20), default='not completed', nullable=False)
+    recipient = db.Column(db.String(50), nullable=False)
+    weight = db.Column(db.String(10), nullable=False)
+    Number = db.Column(db.String(10), nullable=False)
+    tracking = db.Column(db.String(20), nullable=False)
+    comment = db.Column(db.String(50), nullable=True)
+    date = db.Column(db.Date, nullable=False)
+
 class Booking(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     data = db.Column(db.Date)

@@ -48,21 +48,22 @@
     <button onclick="uploadFile()">Upload</button>
 </div>
 
+
 <div class="add_form">
     <div class="form-group">
-        <label for="Number">Number:</label>
+        <label for="Number">ამანათის ნომერი:</label>
         <input type="text" class="form-control" id="Number" placeholder="Number">
     </div>
     <div class="form-group">
-        <label for="tracking">Tracking:</label>
+        <label for="tracking">თრექინგი</label>
         <input type="text" class="form-control" id="tracking" placeholder="Tracking">
     </div>
     <div class="form-group">
-        <label for="comment">Comment:</label>
-        <textarea class="form-control" id="comment" placeholder="Comment" rows="3"></textarea>
+        <label for="comment">კოპმენტარი</label>
+        <input class="form-control" id="comment" placeholder="Comment" rows="3"></input>
     </div>
     <div class="form-group">
-        <label for="date">Date:</label>
+        <label for="date">თარიღი</label>
         <input type="date" class="form-control" id="date" value="{{ date }}" readonly>
     </div>
     
@@ -73,9 +74,9 @@
 
 
 
-
 <div class="table_block">
     <h1>საექსპერტო სიის ჩანაწერები</h1>
+
     {% if records %}
         <table border="1" id="recordsTable" class="table_headers">
             <tr>

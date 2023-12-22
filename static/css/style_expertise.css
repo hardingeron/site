@@ -85,3 +85,55 @@ h1 {
 
 
 
+.add_form {
+    display: flex; /* Используем flexbox */
+    justify-content: space-between; /* Распределяем элементы равномерно по горизонтали */
+    align-items: center; /* Выравниваем элементы по центру по вертикали (по желанию) */
+    width: 1200px;
+    background-color: #444654;
+    border-radius: 10px;
+
+    /* Добавляем следующие свойства для центрирования по горизонтали */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Пример стилей для дочерних элементов (замените на ваши собственные стили) */
+.add_form label,
+.add_form input {
+    margin: 5px; /* Добавьте отступы, чтобы элементы не слипались слишком близко друг к другу */
+}
+
+
+.form-group {
+    display: flex; /* Используем flexbox */
+    flex-direction: column; /* Располагаем элементы в колонну */
+}
+
+
+.add_form label {
+    width: 150px;
+    height: 20px;
+    text-align: center;
+}
+
+.add_form input {
+    width: 150px;
+    height: 30px;
+    border: none;
+    background-color: #40414f;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    color: #8e8ea0;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.add_form button {
+    background-color: #333333;
+    border: none;
+    cursor: pointer;
+    color: #8e8ea0;
+    width: 100px;
+    height: 40px;
+    border-radius: 10px;
+}

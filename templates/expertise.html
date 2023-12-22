@@ -6,15 +6,32 @@
 {% endblock %}
 
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_all.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_expertise.css') }}">
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 
+<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
+<!-- jQuery UI Core -->
+<!-- <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> -->
+
+<!-- jQuery UI CSS -->
+<!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<!-- Flatpickr JS и его зависимости (moment.js для поддержки формата даты) -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
+
+
+
+
 <div class="buttons">
-    <button type="button" class="btn select_date">
-        თარიღის არჩევა
-    </button>
+    <input type="text" class="select_date">
+
+
     <button type="button" class="btn not_viewed">
         სანახავების სია
     </button>
@@ -46,20 +63,49 @@
     </div>
     <div class="form-group">
         <label for="date">Date:</label>
-        <input type="date" class="form-control" id="date">
+        <input type="date" class="form-control" id="date" value="{{ date }}" readonly>
     </div>
+    
 
     <!-- Кнопка для добавления записи -->
     <button type="button" class="btn btn-primary" id="addRecordBtn">დამატება</button>
 </div>
 
 
-<h1>Expertise Records for the Latest Date</h1>
 
 
-
-{% if records %}
-    <table border="1" id="recordsTable">
+<div class="table_block">
+    <h1>საექსპერტო სიის ჩანაწერები</h1>
+    {% if records %}
+        <table border="1" id="recordsTable" class="table_headers">
+            <tr>
+                <th>ID</th>
+                <th>სტატუსი</th>
+                <th>მიმღები</th>
+                <th>წონა</th>
+                <th>ნომერი</th>
+                <th>თრექინგი</th>
+                <th>კომენტარი</th>
+                <th>თარიღი</th>
+                <th>მოქმედება</th>
+            </tr>
+            {% for record in records %}
+                <tr id="row-{{ record.id }}" class="table_values">
+                    <td>{{ record.id }}</td>
+                    <td class="status_color {{ record.status }}">{{ record.status }}</td>
+                    <td>{{ record.recipient }}</td>
+                    <td>{{ record.weight }}</td>
+                    <td>{{ record.Number }}</td>
+                    <td>{{ record.tracking }}</td>
+                    <td>{{ record.comment }}</td>
+                    <td>{{ record.date }}</td>
+                    <td><button class="deleteBtn" data-record-id="{{ record.id }}">წაშლა</button></td>
+                </tr>
+            {% endfor %}
+        </table>
+        
+    {% else %}
+    <table border="1" id="recordsTable" class="table_headers">
         <tr>
             <th>ID</th>
             <th>Status</th>
@@ -71,37 +117,9 @@
             <th>Date</th>
             <th>Action</th>
         </tr>
-        {% for record in records %}
-            <tr id="row-{{ record.id }}">
-                <td>{{ record.id }}</td>
-                <td>{{ record.status }}</td>
-                <td>{{ record.recipient }}</td>
-                <td>{{ record.weight }}</td>
-                <td>{{ record.Number }}</td>
-                <td>{{ record.tracking }}</td>
-                <td>{{ record.comment }}</td>
-                <td>{{ record.date }}</td>
-                <td><button class="deleteBtn" data-record-id="{{ record.id }}">Delete</button></td>
-            </tr>
-        {% endfor %}
     </table>
-    
-{% else %}
-<table border="1" id="recordsTable">
-    <tr>
-        <th>ID</th>
-        <th>Status</th>
-        <th>Recipient</th>
-        <th>Weight</th>
-        <th>Number</th>
-        <th>Tracking</th>
-        <th>Comment</th>
-        <th>Date</th>
-        <th>Action</th>
-    </tr>
-</table>
-{% endif %}
-
+    {% endif %}
+</div>
 
 
 
@@ -142,18 +160,29 @@
                 var rowId = 'row-' + response.id;
 
                 // Создаем HTML-код для новой записи
-                var newRow = '<tr id="' + rowId + '">' +
+                var statusColorClass = '';
+
+                // Определение класса цвета в зависимости от значения статуса
+                if (response.status === 'დაუბეგრავი') {
+                    statusColorClass = 'დაუბეგრავი';
+                } else if (response.status === 'დაბეგვრადი') {
+                    statusColorClass = 'დაბეგვრადი';
+                } else if (response.status === 'გაურკვეველი') {
+                    statusColorClass = 'გაურკვეველი';
+                }
+
+                // Создание строки таблицы с добавлением класса цвета
+                var newRow = '<tr id="' + rowId + '" class="table_values">' +
                     '<td>' + response.id + '</td>' +
-                    '<td>' + response.status + '</td>' +
+                    '<td class="status_color ' + statusColorClass + '">' + response.status + '</td>' +
                     '<td>' + response.recipient + '</td>' +
                     '<td>' + response.weight + '</td>' +
                     '<td>' + response.Number + '</td>' +
                     '<td>' + response.tracking + '</td>' +
                     '<td>' + response.comment + '</td>' +
                     '<td>' + response.date + '</td>' +
-                    '<td><button class="deleteBtn" data-record-id="' + response.id + '">Delete</button></td>' +
+                    '<td><button class="deleteBtn" data-record-id="' + response.id + '">წაშლა</button></td>' +
                     '</tr>';
-
                 // Добавляем новую запись к таблице без перезагрузки страницы
                 $("#recordsTable").append(newRow);
             },
@@ -202,9 +231,11 @@
     function uploadFile() {
         var input = document.getElementById('xmlFile');
         var file = input.files[0];
+        var dateValue = document.getElementById('date').value; // Получение значения даты
 
         var formData = new FormData();
         formData.append('xmlFile', file);
+        formData.append('date', dateValue); // Добавление значения даты в formData
 
         $.ajax({
             url: "{{ url_for('rs_xml') }}",
@@ -218,6 +249,11 @@
 
                 // Очистка поля с файлом
                 input.value = '';
+
+                // Перезагрузка страницы после успешного выполнения
+                if (response.success) {
+                    window.location.reload();
+                }
             },
             error: function(error) {
                 // Обработка ошибки
@@ -226,5 +262,20 @@
         });
     }
 </script>
+
+<!-- выбор даты -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        flatpickr(".select_date", {
+            dateFormat: "Y-m-d",
+            locale: "ru",
+            confirmDate: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                window.location.href = "/expertise?selected_date=" + dateStr;
+            }
+        });
+    });
+</script>
+
 
 {% endblock %}

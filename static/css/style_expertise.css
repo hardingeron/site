@@ -1,0 +1,87 @@
+.table_block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+}
+
+
+h1 {
+    color: #d2d2d2;
+}
+#recordsTable {
+    width: 80%;
+    /* border-collapse: collapse; */
+    margin-bottom: 20px;
+}
+#recordsTable.table_headers {
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.501);
+}
+
+.table_headers th, .table_values td {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 8px;
+    width: 5%;
+}
+
+.table_headers th {
+    background-color: #343641;
+    font-size: 16px;
+    color: #d2d2d2;
+}
+
+.table_values td {
+    background-color: #51515e;
+    font-size: 14px;
+    color: #d2d2d2;
+
+}
+
+.deleteBtn {
+    cursor: pointer;
+    color: white;
+    background-color: #dc3545;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.deleteBtn:hover {
+    background-color: #bd2130;
+}
+
+
+.table_headers tr:hover td,
+.table_values tr:hover td {
+    background-color: #222222; /* Цвет подсветки при наведении на строку */
+}
+
+.table_headers th,
+.table_values td {
+    transition: background-color 0.3s ease; /* Плавное изменение цвета фона */
+}
+
+
+/* Стили для статуса "დაუბეგრავი" (синий цвет) */
+.status_color.დაუბეგრავი {
+    color: blue;
+    font-weight: bold;
+}
+
+/* Стили для статуса "დაბეგვრადი" (красный цвет) */
+.status_color.დაბეგვრადი {
+    color: red;
+    font-weight: bold;
+}
+
+/* Стили для статуса "გაურკვეველი" (жёлтый цвет) */
+.status_color.გაურკვეველი {
+    color: yellow;
+    font-weight: bold;
+}
+
+
+
+

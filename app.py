@@ -5,7 +5,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 import os 
 from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Forms, Expertise
 from config import secret_key
-from sqlalchemy import func, desc
+from sqlalchemy import func, desc, update
 
 from flask import send_file
 from openpyxl.styles import Alignment, Border, Font, Side
@@ -1075,13 +1075,20 @@ def download_manifest():
 @app.route('/expertise')
 @login_required
 def expertise():
+
+    selected_date = request.args.get('selected_date', None)
+    if selected_date:
+        latest_date = selected_date
+    else:
     # Получаем самую свежую дату из столбца "date"
-    latest_date = db.session.query(db.func.max(Expertise.date)).scalar()
+        latest_date = db.session.query(db.func.max(Expertise.date)).scalar()
+
+
 
     # Получаем все записи с самой свежей датой
     expertise_records = Expertise.query.filter_by(date=latest_date).all()
-
-    return render_template('expertise.html', records=expertise_records)
+ 
+    return render_template('expertise.html', records=expertise_records, date=latest_date)
 
 
 
@@ -1173,25 +1180,52 @@ def expertise_deleted():
 
 
 
+from flask import jsonify
 
 @app.route("/rs_xml", methods=["POST"])
 def rs_xml():
-    if "xmlFile" in request.files:
-        xml_file = request.files["xmlFile"]
+    try:
+        if "xmlFile" in request.files:
+            xml_file = request.files["xmlFile"]
+            date_value = request.form.get('date')
 
-        # Проверка, что файл имеет разрешенное расширение (xml)
-        if xml_file and allowed_file(xml_file.filename):
-            # Сохранение XML-файла с именем Export.xml в корневую папку
-            xml_file.save("Export.xml")
+            # Проверка, что файл имеет разрешенное расширение (xml)
+            if xml_file and allowed_file(xml_file.filename):
+                # Сохранение XML-файла с именем Export.xml в корневую папку
+                xml_file.save("Export.xml")
 
-            # Вызов функции xml_convertor после успешной загрузки файла
-            xml_convertor()
+                # Вызов функции xml_convertor после успешной загрузки файла
+                xml_convertor()
 
-            # Возвращение JSON-ответа
-            return jsonify({'success': True, 'message': 'ბაზა წარმატებით განახლდა'})
+                # Чтение данных из JSON-файла
+                with open('expertise_data.json', 'r', encoding='utf-8') as json_file:
+                    expertise_data = json.load(json_file)
 
-    # В случае ошибки
-    return jsonify({'success': False, 'message': 'ფაილის ფორმატი არასწორია!'})
+                # Создаем список для значений tracking, которые будем обновлять
+                tracking_values = list(expertise_data.keys())
+
+                # Обновляем записи в базе данных
+                for tracking_key, values in expertise_data.items():
+                    update_stmt = (
+                        update(Expertise)
+                        .where(Expertise.tracking == tracking_key)
+                        .values(status=values[1])
+                    )
+                    db.session.execute(update_stmt)
+
+                # Сохраняем изменения в базе данных только один раз в конце
+                db.session.commit()
+
+                # Возвращение JSON-ответа
+                return jsonify({'success': True, 'message': 'ბაზა წარმატებით განახლდა'})
+
+        # В случае ошибки
+        return jsonify({'success': False, 'message': 'ფაილის ფორმატი არასწორია!'})
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': 'Error processing file'}), 500
+
 
 
 

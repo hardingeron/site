@@ -29,29 +29,32 @@
 
 
 <div class="buttons">
-    <input type="text" class="select_date">
+    <div class="buttons_set">
+        <input type="text" class="select_date">
 
 
-    <button type="button" class="btn not_viewed">
-        სანახავების სია
-    </button>
-    <button type="button" class="btn viewed">
-        ნახულების სია
-    </button>
-    <button type="button" class="btn list_of_completed">
-        დასრულებულების სია
-    </button>
+        <button type="button" class="btn not_viewed">
+            სანახავების სია
+        </button>
+        <button type="button" class="btn viewed">
+            ნახულების სია
+        </button>
+        <button type="button" class="btn list_of_completed">
+            დასრულებულების სია
+        </button>
+    </div>
 </div>
 
-<div class="xml_block">
-    <input type="file" id="xmlFile" accept=".xml" required>
-    <button onclick="uploadFile()">Upload</button>
+<div class="ss">
+    <div class="xml_block">
+        <input type="file" id="xmlFile" accept=".xml" required>
+        <button onclick="uploadFile()">განახლება</button>
+    </div>
 </div>
-
 
 <div class="add_form">
     <div class="form-group">
-        <label for="Number">ამანათის ნომერი:</label>
+        <label for="Number">ამანათის ნომერი</label>
         <input type="text" class="form-control" id="Number" placeholder="Number">
     </div>
     <div class="form-group">
@@ -69,7 +72,10 @@
     
 
     <!-- Кнопка для добавления записи -->
-    <button type="button" class="btn btn-primary" id="addRecordBtn">დამატება</button>
+    <div class="form-group">
+        <label></label>
+        <button type="button" class="btn btn-primary" id="addRecordBtn">დამატება</button>
+    </div>
 </div>
 
 

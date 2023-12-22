@@ -20,7 +20,7 @@ h1 {
 }
 
 .table_headers th, .table_values td {
-    border: 1px solid #dddddd;
+    border: 2px solid #343641;
     text-align: center;
     padding: 8px;
     width: 5%;
@@ -87,9 +87,9 @@ h1 {
 
 .add_form {
     display: flex; /* Используем flexbox */
-    justify-content: space-between; /* Распределяем элементы равномерно по горизонтали */
+    justify-content: center; /* Распределяем элементы равномерно по горизонтали */
     align-items: center; /* Выравниваем элементы по центру по вертикали (по желанию) */
-    width: 1200px;
+    width: 950px;
     background-color: #444654;
     border-radius: 10px;
 
@@ -100,8 +100,10 @@ h1 {
 
 /* Пример стилей для дочерних элементов (замените на ваши собственные стили) */
 .add_form label,
-.add_form input {
+.add_form input,
+.add_form button {
     margin: 5px; /* Добавьте отступы, чтобы элементы не слипались слишком близко друг к другу */
+    margin-left: 15px;
 }
 
 
@@ -115,6 +117,7 @@ h1 {
     width: 150px;
     height: 20px;
     text-align: center;
+    color: #8e8ea0;;
 }
 
 .add_form input {
@@ -136,4 +139,61 @@ h1 {
     width: 100px;
     height: 40px;
     border-radius: 10px;
+}
+
+
+
+
+.ss {
+    background-color: #444654;
+    width: 400px;
+    display: flex;
+    justify-content: space-between; /* Равномерно распределяем элементы по горизонтали */
+    margin: 20px auto; /* Устанавливаем автоматичесные отступы слева и справа для центрирования */
+    border-radius: 10px;
+    color: #8e8ea0;
+}
+
+.xml_block {
+    display: flex;
+    flex-direction: row; /* Изменяем направление расположения на горизонтальное */
+    align-items: center;
+    justify-content: space-between; /* Равномерно распределяем элементы по горизонтали */
+    margin: 20px auto; /* Устанавливаем автоматичесные отступы слева и справа для центрирования */
+    width: 300px;
+    /* background-color: #444654; */
+}
+.xml_block input[type="file"] {
+    margin-right: 10px; /* Добавим отступ между полем выбора файла и кнопкой */
+}
+
+.xml_block button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: #8e8ea0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    background-color: #333333;
+}
+
+#file-upload-button {
+    background-color: #333333;
+}
+.xml_block button:hover {
+    background-color: #45a049;
+}
+
+.xml_block input[type="file"]::-webkit-file-upload-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.xml_block input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: #45a049;
 }

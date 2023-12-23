@@ -24,6 +24,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
 
@@ -31,27 +32,22 @@
 <div class="buttons">
     <div class="buttons_set">
         <input type="text" class="select_date">
-
-
-        <button type="button" class="btn not_viewed">
-            სანახავების სია
-        </button>
-        <button type="button" class="btn viewed">
-            ნახულების სია
-        </button>
-        <button type="button" class="btn list_of_completed">
-            დასრულებულების სია
-        </button>
     </div>
 </div>
 
-<div class="ss">
-    <div class="xml_block">
-        <input type="file" id="xmlFile" accept=".xml" required>
-        <button onclick="uploadFile()">განახლება</button>
+<div class="sheet1">
+    <div class="trecing_check_block">
+        <input type="text" placeholder="trecing" id="trecing_checker"></input>
+        <button onclick="checkTrecing()">შემოწმება</button>
+    </div>
+
+    <div class="ss">
+        <div class="xml_block">
+            <input type="file" id="xmlFile" accept=".xml" required>
+            <button onclick="uploadFile()">განახლება</button>
+        </div>
     </div>
 </div>
-
 <div class="add_form">
     <div class="form-group">
         <label for="Number">ამანათის ნომერი</label>
@@ -283,6 +279,104 @@
         });
     });
 </script>
+
+
+
+
+<!-- проваерка статуса посылки -->
+<script>
+    function checkTrecing() {
+        var trecingInput = document.getElementById('trecing_checker');
+        var trecingValue = trecingInput.value;
+
+        // Проверяем, что поле ввода не пустое
+        if (trecingValue.trim() === '') {
+            return;
+        }
+
+        // Используем fetch для отправки данных на сервер
+        fetch('/trecing_checker', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'trecing_value=' + encodeURIComponent(trecingValue),
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Выводим результат в SweetAlert2
+            Swal.fire({
+                text: data.result,
+                icon: getIconByResult(data.result),
+                timer: 2000, // 2 секунды
+                showConfirmButton: true, // Показываем кнопку
+                confirmButtonText: 'OK', // Текст кнопки
+                confirmButtonColor: getButtonColor(data.result), // Цвет кнопки
+                position: isMobile() ? 'top-start' : 'center', // Позиция в зависимости от устройства
+                toast: isMobile(), // Используем в режиме toast для мобильных устройств
+                customClass: {
+                    container: 'mobile-toast-container', // Добавляем класс для стилизации
+                    popup: 'mobile-toast-popup' // Добавляем класс для стилизации
+                }
+            });
+
+            // Очищаем поле ввода
+            trecingInput.value = '';
+            
+            // Возвращаем фокус на поле ввода
+            trecingInput.focus();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Функция для обработки события нажатия клавиши Enter
+    function handleKeyPress(event) {
+        if (event.key === 'Enter') {
+            checkTrecing();
+        }
+    }
+
+    // Привязываем функцию handleKeyPress к событию нажатия клавиши
+    document.getElementById('trecing_checker').addEventListener('keypress', handleKeyPress);
+
+    // Функция для определения цвета иконки в зависимости от результата
+    function getIconByResult(result) {
+        switch (result) {
+            case 'დაუბეგრავი!':
+            case 'დაბეგვრადი დასრულებული!':
+                return 'success'; // Зелёная иконка
+            case 'დაბეგვრადი! არ არის მზად!':
+                return 'error'; // Красная иконка
+            case 'ყვითელი!':
+                return 'warning'; // Жёлтая иконка
+            default:
+                return 'info'; // Синяя иконка
+        }
+    }
+
+    // Функция для определения цвета кнопки в зависимости от результата
+    function getButtonColor(result) {
+        switch (result) {
+            case 'დაუბეგრავი!':
+            case 'დაბეგვრადი დასრულებული!':
+                return '#5cb85c'; // Зелёная кнопка
+            case 'დაბეგვრადი! არ არის მზად!':
+                return '#d9534f'; // Красная кнопка
+            case 'ყვითელი!':
+                return '#f0ad4e'; // Жёлтая кнопка
+            default:
+                return '#5bc0de'; // Синяя кнопка
+        }
+    }
+
+    // Функция для определения, является ли устройство мобильным
+    function isMobile() {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    }
+</script>
+
 
 
 {% endblock %}

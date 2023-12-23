@@ -337,7 +337,6 @@ def save():
         last_shelf = None  # Переменная для отслеживания последнего значения
         for record in trecing_list:
             formatted_trecing = format_trecing(record)
-            print(formatted_trecing)
 
             try:
                 last_shelf = save_record(shelf, formatted_trecing, date, db)
@@ -1008,7 +1007,6 @@ def download_manifest():
         Forms.where_from == where_from,
         Forms.added_to_the_manifest == 'no'
     ).all()
-    print(filtered_forms)
 
     # Загрузка существующего Excel-файла
     try:
@@ -1094,6 +1092,7 @@ def expertise():
 
 
 @app.route('/expertise_add_record', methods=['POST'])
+@login_required
 def expertise_add_record():
     try:
         # Получаем данные из POST-запроса
@@ -1109,9 +1108,7 @@ def expertise_add_record():
         if tracking_key in expertise_data:
             record_data = expertise_data[tracking_key]
             # Дальнейшее использование record_data
-            print(f"Найдена запись для ключа {tracking_key}: {record_data}")
         else:
-            print(f"Запись для ключа {tracking_key} не найдена в JSON-файле.")
             return jsonify({'error': 'ამანათი არ არსებობს!'}), 404  # Или другой HTTP-статус по вашему выбору
 
         # Создаем новую запись
@@ -1142,12 +1139,12 @@ def expertise_add_record():
         }), 200
 
     except Exception as e:
-        print(str(e))
         return jsonify({'error': 'Error adding record'}), 500
 
     
 
 @app.route('/expertise_deleted', methods=['POST'])
+@login_required
 def expertise_deleted():
     try:
         # Получаем данные из POST-запроса
@@ -1174,7 +1171,6 @@ def expertise_deleted():
             return jsonify({'error': 'ID not provided'}), 400
 
     except Exception as e:
-        print(str(e))
         return jsonify({'error': 'Error deleting record'}), 500
 
 
@@ -1183,6 +1179,7 @@ def expertise_deleted():
 from flask import jsonify
 
 @app.route("/rs_xml", methods=["POST"])
+@login_required
 def rs_xml():
     try:
         if "xmlFile" in request.files:
@@ -1223,10 +1220,49 @@ def rs_xml():
         return jsonify({'success': False, 'message': 'ფაილის ფორმატი არასწორია!'})
 
     except Exception as e:
-        print(str(e))
         return jsonify({'error': 'Error processing file'}), 500
 
 
+
+def status_checker(trecing):
+    if len(trecing) < 2:
+        return 'არასწორი მონაცემების ფორმატი'
+
+    status_type = trecing[0]
+    status_detail = trecing[1]
+
+    if status_type == 'გასატანი' and status_detail == 'დაუბეგრავი':
+        return 'დაუბეგრავი!'
+    elif status_type == 'გასატანი' and status_detail == 'დაბეგვრადი':
+        return 'დაბეგვრადი დასრულებული!'
+    elif status_type == 'დასადეკლარირებელი' and status_detail == 'დაბეგვრადი':
+        return 'დაბეგვრადი! არ არის მზად!'
+    elif status_detail == 'გაურკვეველი':
+        return 'ყვითელი!'
+    else:
+        return 'ამოუცნობიუ სტატუსი'
+
+
+@app.route('/trecing_checker', methods=['POST'])
+def trecing_checker():
+    try:
+        # Получаем данные из запроса
+        trecing_value = request.form.get('trecing_value')
+
+        # Читаем содержимое файла expertise_data.json
+        with open('expertise_data.json', 'r', encoding='utf-8') as json_file:
+            expertise_data = json.load(json_file)
+
+        # Проверяем наличие ключа в объекте
+        if trecing_value in expertise_data:
+            result = expertise_data[trecing_value]
+            information = status_checker(result)
+            return jsonify({'success': True, 'result': information})
+        else:
+            return jsonify({'success': False, 'message': 'Запись не найдена.'})
+
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
 
 
 #-------------------------------------------------------------------------------------------------#

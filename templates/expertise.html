@@ -151,21 +151,22 @@
 
         // Отправляем данные на сервер с использованием AJAX
         $.ajax({
-            type: "POST",
-            url: "/expertise_add_record",
-            contentType: "application/json;charset=UTF-8",
-            data: JSON.stringify(data),
-            success: function(response) {
-                // Выводим сообщение об успешном добавлении записи
-                showMessage('ამანათი წარმატებით დაემატა', true);
+        type: "POST",
+        url: "/expertise_add_record",
+        contentType: "application/json;charset=UTF-8",
+        data: JSON.stringify(data),
+        success: function(records) {
+            // Выводим сообщение об успешном добавлении записей
+            showMessage('ამანათი წარმატებით დაემატა', true);
 
+
+            // Создаем строки для каждой записи
+            records.forEach(function(response) {
                 // Создаем уникальный ID для строки
                 var rowId = 'row-' + response.id;
 
-                // Создаем HTML-код для новой записи
-                var statusColorClass = '';
-
                 // Определение класса цвета в зависимости от значения статуса
+                var statusColorClass = '';
                 if (response.status === 'დაუბეგრავი') {
                     statusColorClass = 'დაუბეგრავი';
                 } else if (response.status === 'დაბეგვრადი') {
@@ -186,15 +187,17 @@
                     '<td>' + response.date + '</td>' +
                     '<td><button class="deleteBtn" data-record-id="' + response.id + '">წაშლა</button></td>' +
                     '</tr>';
-                // Добавляем новую запись к таблице без перезагрузки страницы
+                // Добавляем новую запись к таблице
                 $("#recordsTable").append(newRow);
-            },
-            error: function(error) {
-                // Выводим сообщение об ошибке
-                showMessage('ამანათი ვერ დამუშავდა!', false);
-                console.log(error);
-            }
-        });
+            });
+        },
+        error: function(error) {
+            // Выводим сообщение об ошибке
+            showMessage('ამანათი ვერ დამუშავდა!', false);
+            console.log(error);
+        }
+    });
+
     });
 </script>
 

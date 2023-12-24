@@ -1097,12 +1097,12 @@ def expertise_add_record():
     try:
         # Получаем данные из POST-запроса
         data = request.get_json()
-        tracking=data['tracking']
-
+        tracking = data['tracking']
 
         # Загрузка данных из JSON-файла
         with open('expertise_data.json', 'r', encoding='utf-8') as json_file:
             expertise_data = json.load(json_file)
+
         # Получение записи по ключу data['tracking']
         tracking_key = data['tracking']
         if tracking_key in expertise_data:
@@ -1126,21 +1126,68 @@ def expertise_add_record():
         db.session.add(new_record)
         db.session.commit()
 
-        # Возвращаем данные о новой записи
-        return jsonify({
+        expertise_list = [{
             'id': new_record.id,
-            'status': new_record.status,  # Замените на фактическое свойство из вашей модели
+            'status': new_record.status,
             'recipient': new_record.recipient,
             'weight': new_record.weight,
             'Number': new_record.Number,
             'tracking': new_record.tracking,
             'comment': new_record.comment,
-            'date': new_record.date.strftime('%Y-%m-%d')  # Преобразуйте дату в строку, если нужно
-        }), 200
+            'date': new_record.date.strftime('%Y-%m-%d')
+        }]
+
+
+        
+        # expertise_list.append()
+        # Ищем дубликаты в JSON-файле
+        duplicates = find_duplicates_in_json('expertise_data.json', data['tracking'])
+        
+        id_trecing = int(new_record.id)
+
+        # Добавляем дубликаты в базу данных
+        for duplicate_key in duplicates:
+            id_trecing += 1
+            dup_data = expertise_data[duplicate_key]
+            duplicate_record = Expertise(
+                Number=data['Number'],
+                tracking=duplicate_key,
+                comment='თანაგზავნილი',
+                date=data['date'],
+                status=dup_data[1],
+                weight=dup_data[7],
+                recipient=dup_data[5]
+            )
+            db.session.add(duplicate_record)
+
+            n = {
+            'id': id_trecing,
+            'status': dup_data[1],
+            'recipient': dup_data[5],
+            'weight': dup_data[7],
+            'Number': data['Number'],
+            'tracking': duplicate_key,
+            'comment': 'თანაგზავნილი',
+            'date': new_record.date.strftime('%Y-%m-%d')
+            }
+            expertise_list.append(n)
+
+        db.session.commit()
+        # Возвращаем данные о новой записи
+        return jsonify(expertise_list), 200
 
     except Exception as e:
         return jsonify({'error': 'Error adding record'}), 500
 
+
+def find_duplicates_in_json(json_file_path, tracking):
+    with open(json_file_path, 'r', encoding='utf-8') as json_file:
+        expertise_data = json.load(json_file)
+
+    # Ищем дубликаты
+    duplicates = [key for key, value in expertise_data.items()
+                  if key != tracking and value[3] == expertise_data[tracking][3] and value[5] == expertise_data[tracking][5]]
+    return duplicates
     
 
 @app.route('/expertise_deleted', methods=['POST'])

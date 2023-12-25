@@ -26,11 +26,10 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://unpkg.com/@zxing/library@0.18.1/dist/umd/index.min.js"></script>
-<button id="scanButton">Сканировать штрихкод</button>
-<div id="your-scanner-div"></div>
-<input type="text" id="resultInput" placeholder="Результат сканирования" readonly>
-
+<script src="https://rawgit.com/andrastoth/WebCodeCamJS/master/js/webcodecamjquery.js"></script>
+<button id="startButton">Запустить сканер</button>
+<div id="cameraContainer"></div>
+<div id="result"></div>
 
 
 <div class="buttons">
@@ -385,55 +384,19 @@
 </script>
 
 <script>
-    document.getElementById('scanButton').addEventListener('click', function() {
-        const resultInput = document.getElementById('resultInput');
-        const scannerContainer = document.getElementById('your-scanner-div');
+    $(document).ready(function () {
+        var decoder = $("canvas").WebCodeCamJQuery();
 
-        const codeReader = new ZXing.BrowserQRCodeReader();
-        codeReader
-            .getVideoInputDevices()
-            .then(videoInputDevices => {
-                const cameraSelect = document.createElement('select');
-                videoInputDevices.forEach(function(device, index) {
-                    const option = document.createElement('option');
-                    option.value = device.deviceId;
-                    option.text = device.label || `Камера ${index + 1}`;
-                    cameraSelect.add(option);
-                });
+        decoder.buildSelectMenu("#cameraSelection", "environment|back");
 
-                const selectedCameraId = prompt('Выберите камеру (введите ID):', videoInputDevices[0].deviceId);
-                if (!selectedCameraId) {
-                    // Пользователь отменил выбор камеры
-                    return;
-                }
+        $("#startButton").on("click", function () {
+            decoder.play();
+        });
 
-                const constraints = {
-                    video: { deviceId: selectedCameraId }
-                };
-
-                codeReader
-                    .decodeFromConstraints(constraints, 'video', (result, error) => {
-                        if (result) {
-                            console.log('Штрих-код распознан:', result.text);
-
-                            // Установка результата сканирования в поле ввода
-                            resultInput.value = result.text;
-
-                            // Ваш код обработки результата штрих-кода
-                        }
-
-                        if (error) {
-                            console.error(error);
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                    });
-            })
-            .catch(err => {
-                console.error(err);
-            });
+        decoder.play();
+        decoder.stop();
     });
 </script>
+
 
 {% endblock %}

@@ -389,47 +389,47 @@
 
 <!-- Скрипт для инициализации и запуска сканирования -->
 <script>
-    document.getElementById('scanButton').addEventListener('click', function() {
+    document.getElementById('scanButton').addEventListener('click', async function() {
         const video = document.getElementById('video');
         const resultInput = document.getElementById('resultInput');
 
-        // Инициализация библиотеки Instascan
-        const scanner = new Instascan.Scanner({ video: video, mirror: false });
+        try {
+            // Получение списка доступных камер
+            const cameras = await Instascan.Camera.getCameras();
+            console.log('Доступные камеры:', cameras);
 
-        // Обработчик для события сканирования
-        scanner.addListener('scan', function(content) {
-            console.log('Штрих-код распознан:', content);
+            // Выбор задней камеры (может потребоваться указать другой индекс)
+            const backCamera = cameras.find(camera => camera.name.includes('back'));
 
-            // Установка результата сканирования в поле ввода
-            resultInput.value = content;
+            if (backCamera) {
+                console.log('Выбрана камера:', backCamera);
 
-            // Ваш код обработки результата штрих-кода
-        });
+                // Инициализация библиотеки Instascan
+                const scanner = new Instascan.Scanner({ video: video, mirror: false });
 
-        // Обработчик для события ошибки
-        scanner.addListener('error', function(err) {
-            console.error('Ошибка сканирования:', err);
-        });
+                // Обработчик для события сканирования
+                scanner.addListener('scan', function(content) {
+                    console.log('Штрих-код распознан:', content);
 
-        // Получение списка доступных камер
-        Instascan.Camera.getCameras()
-            .then(function(cameras) {
-                console.log('Доступные камеры:', cameras);
+                    // Установка результата сканирования в поле ввода
+                    resultInput.value = content;
 
-                // Выбор задней камеры (может потребоваться указать другой индекс)
-                const backCamera = cameras.find(camera => camera.name.includes('back'));
+                    // Ваш код обработки результата штрих-кода
+                });
 
-                if (backCamera) {
-                    console.log('Выбрана камера:', backCamera);
-                    // Запуск сканирования для выбранной задней камеры
-                    scanner.start(backCamera);
-                } else {
-                    console.error('Задняя камера не найдена.');
-                }
-            })
-            .catch(function(err) {
-                console.error('Ошибка получения камер:', err);
-            });
+                // Обработчик для события ошибки
+                scanner.addListener('error', function(err) {
+                    console.error('Ошибка сканирования:', err);
+                });
+
+                // Запуск сканирования для выбранной задней камеры
+                scanner.start(backCamera);
+            } else {
+                console.error('Задняя камера не найдена.');
+            }
+        } catch (err) {
+            console.error('Ошибка получения камер:', err);
+        }
     });
 </script>
 {% endblock %}

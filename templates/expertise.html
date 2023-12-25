@@ -391,52 +391,58 @@
     document.getElementById('scanButton').addEventListener('click', async function() {
         const video = document.getElementById('video');
         const resultInput = document.getElementById('resultInput');
+        const cameras = await Instascan.Camera.getCameras();
 
-        try {
-            // Получение списка доступных камер
-            const cameras = await Instascan.Camera.getCameras();
-            alert('Доступные камеры: ' + JSON.stringify(cameras));
-
-            if (cameras.length === 0) {
-                alert('Нет доступных камер.');
-                return;
-            }
-
-            // Выбор задней камеры (может потребоваться указать другой индекс)
-            const backCamera = cameras.find(camera => camera.name.includes('back'));
-
-            if (backCamera) {
-                alert('Выбрана камера: ' + JSON.stringify(backCamera));
-
-                // Инициализация библиотеки Instascan
-                const scanner = new Instascan.Scanner({ video: video, mirror: false });
-
-                // Обработчик для события сканирования
-                scanner.addListener('scan', function(content) {
-                    alert('Штрих-код распознан: ' + content);
-
-                    // Установка результата сканирования в поле ввода
-                    resultInput.value = content;
-
-                    // Ваш код обработки результата штрих-кода
-                });
-
-                // Обработчик для события ошибки
-                scanner.addListener('error', function(err) {
-                    alert('Ошибка сканирования: ' + err);
-
-                    // Остановить сканер в случае ошибки
-                    scanner.stop();
-                });
-
-                // Запуск сканирования для выбранной задней камеры
-                scanner.start(backCamera);
-            } else {
-                alert('Задняя камера не найдена.');
-            }
-        } catch (err) {
-            alert('Ошибка получения камер: ' + err);
+        if (cameras.length === 0) {
+            alert('Нет доступных камер.');
+            return;
         }
+
+        // Добавим выпадающий список для выбора камеры
+        const cameraSelect = document.createElement('select');
+        cameraSelect.id = 'cameraSelect';
+
+        // Добавим опции для каждой камеры
+        cameras.forEach(function(camera, index) {
+            const option = document.createElement('option');
+            option.value = index;
+            option.text = camera.name || `Камера ${index + 1}`;
+            cameraSelect.add(option);
+        });
+
+        // Всплывающее окно для выбора камеры
+        const selectedCameraIndex = prompt('Выберите камеру (введите номер):', '0');
+
+        if (selectedCameraIndex === null) {
+            // Пользователь отменил выбор камеры
+            return;
+        }
+
+        const selectedCamera = cameras[selectedCameraIndex];
+
+        // Инициализация библиотеки Instascan
+        const scanner = new Instascan.Scanner({ video: video, mirror: false });
+
+        // Обработчик для события сканирования
+        scanner.addListener('scan', function(content) {
+            alert('Штрих-код распознан: ' + content);
+
+            // Установка результата сканирования в поле ввода
+            resultInput.value = content;
+
+            // Ваш код обработки результата штрих-кода
+        });
+
+        // Обработчик для события ошибки
+        scanner.addListener('error', function(err) {
+            alert('Ошибка сканирования: ' + err);
+
+            // Остановить сканер в случае ошибки
+            scanner.stop();
+        });
+
+        // Запуск сканирования для выбранной камеры
+        scanner.start(selectedCamera);
     });
 </script>
 {% endblock %}

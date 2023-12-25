@@ -26,8 +26,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
+<button id="scanButton">Сканировать штрихкод</button>
+<script src="https://rawgit.com/serratus/quaggaJS/master/dist/quagga.min.js"></script>
 
 <div class="buttons">
     <div class="buttons_set">
@@ -379,7 +379,28 @@
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     }
 </script>
-
+<script>
+    document.getElementById('scanButton').addEventListener('click', function() {
+        // Инициируйте сканирование здесь, используя QuaggaJS или другую библиотеку
+        // Пример использования QuaggaJS:
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#your-scanner-div'), // замените 'your-scanner-div' на ваш див
+            },
+            decoder: {
+                readers: ["code_128_reader"]
+            }
+        }, function(err) {
+            if (err) {
+                console.error(err);
+                return;
+            }
+            Quagga.start();
+        });
+    });
+</script>
 
 
 {% endblock %}

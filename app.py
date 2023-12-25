@@ -1312,6 +1312,16 @@ def trecing_checker():
         return jsonify({'success': False, 'message': str(e)})
 
 
+
+@app.route('/process_barcode', methods=['POST'])
+def process_barcode():
+    barcode_data = request.form['barcodeData']
+    print(barcode_data)
+    
+    # Далее обработайте barcode_data как вам нужно
+    
+    return f'Штрихкод: {barcode_data}'
+
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               end /expertise           ------------------------------#
 

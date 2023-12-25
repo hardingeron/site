@@ -389,9 +389,11 @@
 
 <script>
     document.getElementById('scanButton').addEventListener('click', async function() {
-        const video = document.getElementById('your-scanner-div');
+        alert('Щелкнули на кнопке сканирования');
+        const video = document.getElementById('video');
         const resultInput = document.getElementById('resultInput');
         const cameras = await Instascan.Camera.getCameras();
+        alert('Доступные камеры: ' + JSON.stringify(cameras));
 
         if (cameras.length === 0) {
             alert('Нет доступных камер.');
@@ -420,6 +422,8 @@
 
         const selectedCamera = cameras[selectedCameraIndex];
 
+        alert('Инициализация сканера и камеры завершена. Выбранная камера: ' + JSON.stringify(selectedCamera));
+
         // Инициализация библиотеки Instascan
         const scanner = new Instascan.Scanner({ video: video, mirror: false });
 
@@ -445,18 +449,10 @@
             scanner.stop();
         });
 
-        // Обработчик для события начала сканирования
-        scanner.addListener('start', function() {
-            alert('Сканирование началось');
-        });
-
-        // Обработчик для события остановки сканирования
-        scanner.addListener('stop', function() {
-            alert('Сканирование остановлено');
-        });
-
         // Запуск сканирования для выбранной камеры
         scanner.start(selectedCamera);
+
+        alert('Начало сканирования...');
     });
 </script>
 {% endblock %}

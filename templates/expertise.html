@@ -29,10 +29,10 @@
 
 <script src="https://cdn.rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 
-
-<!-- Код HTML для кнопки и видео -->
+<!-- Код HTML для кнопки, видео и поля ввода -->
 <button id="scanButton">Сканировать штрих-код</button>
 <video id="video" style="width: 100%; height: auto;"></video>
+<input type="text" id="resultInput" placeholder="Результат сканирования" readonly>
 
 <div class="buttons">
     <div class="buttons_set">
@@ -391,6 +391,7 @@
 <script>
     document.getElementById('scanButton').addEventListener('click', function() {
         const video = document.getElementById('video');
+        const resultInput = document.getElementById('resultInput');
 
         // Инициализация библиотеки Instascan
         const scanner = new Instascan.Scanner({ video: video });
@@ -398,6 +399,10 @@
         // Обработчик для события сканирования
         scanner.addListener('scan', function(content) {
             console.log(content);
+
+            // Установка результата сканирования в поле ввода
+            resultInput.value = content;
+
             // Ваш код обработки результата штрих-кода
         });
 

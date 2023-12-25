@@ -26,13 +26,12 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-<script src="https://cdn.rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
-
-<!-- Код HTML для кнопки, видео и поля ввода -->
-<button id="scanButton">Сканировать штрих-код</button>
-<video id="video" style="width: 100%; height: auto;"></video>
+<script src="https://rawgit.com/serratus/quaggaJS/master/dist/quagga.min.js"></script>
+<button id="scanButton">Сканировать штрихкод</button>
+<div id="your-scanner-div"></div>
 <input type="text" id="resultInput" placeholder="Результат сканирования" readonly>
+
+
 
 <div class="buttons">
     <div class="buttons_set">
@@ -385,74 +384,97 @@
     }
 </script>
 
-
-
 <script>
-    document.getElementById('scanButton').addEventListener('click', async function() {
-        alert('Щелкнули на кнопке сканирования');
-        const video = document.getElementById('video');
+    document.getElementById('scanButton').addEventListener('click', function() {
+        const video = document.createElement('video');
         const resultInput = document.getElementById('resultInput');
-        const cameras = await Instascan.Camera.getCameras();
-        alert('Доступные камеры: ' + JSON.stringify(cameras));
 
-        if (cameras.length === 0) {
-            alert('Нет доступных камер.');
-            return;
-        }
+        const scannerContainer = document.getElementById('your-scanner-div');
+        scannerContainer.innerHTML = '';
+        scannerContainer.appendChild(video);
 
-        // Добавим выпадающий список для выбора камеры
-        const cameraSelect = document.createElement('select');
-        cameraSelect.id = 'cameraSelect';
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: video,
+                constraints: {
+                    width: 640,
+                    height: 480,
+                    facingMode: "environment"
+                }
+            },
+            decoder: {
+                readers: ["code_128_reader"]
+            }
+        }, function(err) {
+            if (err) {
+                console.error(err);
+                return;
+            }
 
-        // Добавим опции для каждой камеры
-        cameras.forEach(function(camera, index) {
-            const option = document.createElement('option');
-            option.value = index;
-            option.text = camera.name || `Камера ${index + 1}`;
-            cameraSelect.add(option);
+            Quagga.start();
+
+            // Получение списка доступных камер
+            Quagga.CameraAccess.enumerateDevices()
+                .then(function(devices) {
+                    const cameraSelect = document.createElement('select');
+                    devices.forEach(function(device, index) {
+                        if (device.kind === 'videoinput') {
+                            const option = document.createElement('option');
+                            option.value = device.deviceId;
+                            option.text = device.label || `Камера ${index + 1}`;
+                            cameraSelect.add(option);
+                        }
+                    });
+
+                    const selectedCameraId = prompt('Выберите камеру (введите ID):', devices[0].deviceId);
+                    if (!selectedCameraId) {
+                        // Пользователь отменил выбор камеры
+                        Quagga.stop();
+                        return;
+                    }
+
+                    Quagga.stop();
+
+                    // Инициализация сканера с выбранной камерой
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: video,
+                            constraints: {
+                                width: 640,
+                                height: 480,
+                                deviceId: selectedCameraId
+                            }
+                        },
+                        decoder: {
+                            readers: ["code_128_reader"]
+                        }
+                    }, function(err) {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+
+                        Quagga.start();
+
+                        // Обработчик для события сканирования
+                        Quagga.onDetected(function(result) {
+                            const code = result.codeResult.code;
+                            console.log('Штрих-код распознан:', code);
+
+                            // Установка результата сканирования в поле ввода
+                            resultInput.value = code;
+
+                            // Ваш код обработки результата штрих-кода
+                        });
+                    });
+                });
         });
-
-        // Всплывающее окно для выбора камеры
-        const selectedCameraIndex = prompt('Выберите камеру (введите номер):', '0');
-
-        if (selectedCameraIndex === null) {
-            // Пользователь отменил выбор камеры
-            return;
-        }
-
-        const selectedCamera = cameras[selectedCameraIndex];
-
-        alert('Инициализация сканера и камеры завершена. Выбранная камера: ' + JSON.stringify(selectedCamera));
-
-        // Инициализация библиотеки Instascan
-        const scanner = new Instascan.Scanner({ video: video, mirror: false });
-
-        // Обработчик для события сканирования
-        scanner.addListener('scan', function(content) {
-            alert('Штрих-код распознан: ' + content);
-
-            // Установка результата сканирования в поле ввода
-            resultInput.value = content;
-
-            alert('Штрих-код распознан и добавлен в поле ввода. Содержимое: ' + content);
-
-            // Ваш код обработки результата штрих-кода
-        });
-
-        // Обработчик для события ошибки
-        scanner.addListener('error', function(err) {
-            alert('Ошибка сканирования: ' + err);
-
-            console.error('Произошла ошибка при сканировании: ' + JSON.stringify(err));
-
-            // Остановить сканер в случае ошибки
-            scanner.stop();
-        });
-
-        // Запуск сканирования для выбранной камеры
-        scanner.start(selectedCamera);
-
-        alert('Начало сканирования...');
     });
 </script>
+
+
 {% endblock %}

@@ -395,10 +395,10 @@
         try {
             // Получение списка доступных камер
             const cameras = await Instascan.Camera.getCameras();
-            console.log('Доступные камеры:', cameras);
+            alert('Доступные камеры: ' + JSON.stringify(cameras));
 
             if (cameras.length === 0) {
-                console.error('Нет доступных камер.');
+                alert('Нет доступных камер.');
                 return;
             }
 
@@ -406,14 +406,14 @@
             const backCamera = cameras.find(camera => camera.name.includes('back'));
 
             if (backCamera) {
-                console.log('Выбрана камера:', backCamera);
+                alert('Выбрана камера: ' + JSON.stringify(backCamera));
 
                 // Инициализация библиотеки Instascan
                 const scanner = new Instascan.Scanner({ video: video, mirror: false });
 
                 // Обработчик для события сканирования
                 scanner.addListener('scan', function(content) {
-                    console.log('Штрих-код распознан:', content);
+                    alert('Штрих-код распознан: ' + content);
 
                     // Установка результата сканирования в поле ввода
                     resultInput.value = content;
@@ -423,7 +423,7 @@
 
                 // Обработчик для события ошибки
                 scanner.addListener('error', function(err) {
-                    console.error('Ошибка сканирования:', err);
+                    alert('Ошибка сканирования: ' + err);
 
                     // Остановить сканер в случае ошибки
                     scanner.stop();
@@ -432,10 +432,10 @@
                 // Запуск сканирования для выбранной задней камеры
                 scanner.start(backCamera);
             } else {
-                console.error('Задняя камера не найдена.');
+                alert('Задняя камера не найдена.');
             }
         } catch (err) {
-            console.error('Ошибка получения камер:', err);
+            alert('Ошибка получения камер: ' + err);
         }
     });
 </script>

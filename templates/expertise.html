@@ -386,31 +386,33 @@
 <script>
     document.getElementById('scanButton').addEventListener('click', function() {
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-                Quagga.init({
-                    inputStream: {
-                        name: "Live",
-                        type: "LiveStream",
-                        target: document.querySelector('#your-scanner-div'),
-                        constraints: {
-                            width: 640,
-                            height: 480,
-                            facingMode: "environment"
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    Quagga.init({
+                        inputStream: {
+                            name: "Live",
+                            type: "LiveStream",
+                            target: document.querySelector('#your-scanner-div'),
+                            constraints: {
+                                width: 640,
+                                height: 480,
+                                facingMode: "environment"
+                            }
+                        },
+                        decoder: {
+                            readers: ["code_128_reader"]
                         }
-                    },
-                    decoder: {
-                        readers: ["code_128_reader"]
-                    }
-                }, function(err) {
-                    if (err) {
-                        console.error(err);
-                        return;
-                    }
-                    Quagga.start();
+                    }, function(err) {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+                        Quagga.start();
+                    });
+                })
+                .catch(function(err) {
+                    console.error(err.name + ": " + err.message);
                 });
-            }).catch(function(err) {
-                console.error(err);
-            });
         } else {
             console.error('getUserMedia не поддерживается в вашем браузере');
         }

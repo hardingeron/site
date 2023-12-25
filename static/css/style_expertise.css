@@ -237,3 +237,9 @@ h1 {
 
 
 
+
+#your-scanner-div {
+    width: 100%;
+    height: auto;
+    border: 1px solid #ccc; /* Добавим рамку для видимости контейнера */
+}

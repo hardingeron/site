@@ -27,12 +27,12 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
+<script src="https://cdn.rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 
 
-<button id="scanButton">Сканировать штрихкод</button>
-    <div id="your-scanner-div"></div>
-    <script src="https://rawgit.com/serratus/quaggaJS/master/dist/quagga.min.js"></script>
-
+<!-- Код HTML для кнопки и видео -->
+<button id="scanButton">Сканировать штрих-код</button>
+<video id="video" style="width: 100%; height: auto;"></video>
 
 <div class="buttons">
     <div class="buttons_set">
@@ -386,43 +386,35 @@
 </script>
 
 
+
+<!-- Скрипт для инициализации и запуска сканирования -->
 <script>
     document.getElementById('scanButton').addEventListener('click', function() {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(function(stream) {
-                    Quagga.init({
-                        inputStream: {
-                            name: "Live",
-                            type: "LiveStream",
-                            target: document.querySelector('#your-scanner-div'),
-                            constraints: {
-                                width: 640,
-                                height: 480,
-                                facingMode: "environment"
-                            },
-                            targetFormat: 'RGBA' // Добавьте эту строку
-                        },
-                        decoder: {
-                            readers: ["code_128_reader"],
-                            locate: false // Добавьте эту строку
-                        }
-                    }, function(err) {
-                        if (err) {
-                            console.error(err);
-                            return;
-                        }
-                        Quagga.start();
-});
-                })
-                .catch(function(err) {
-                    console.error(err.name + ": " + err.message);
-                });
-        } else {
-            console.error('getUserMedia не поддерживается в вашем браузере');
-        }
+        const video = document.getElementById('video');
+
+        // Инициализация библиотеки Instascan
+        const scanner = new Instascan.Scanner({ video: video });
+
+        // Обработчик для события сканирования
+        scanner.addListener('scan', function(content) {
+            console.log(content);
+            // Ваш код обработки результата штрих-кода
+        });
+
+        // Получение списка доступных камер
+        Instascan.Camera.getCameras()
+            .then(function(cameras) {
+                if (cameras.length > 0) {
+                    // Запуск сканирования для первой доступной камеры
+                    scanner.start(cameras[0]);
+                } else {
+                    console.error('No cameras found.');
+                }
+            })
+            .catch(function(err) {
+                console.error(err);
+            });
     });
 </script>
-
 
 {% endblock %}

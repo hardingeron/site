@@ -404,11 +404,12 @@
         // Получение списка доступных камер
         Instascan.Camera.getCameras()
             .then(function(cameras) {
-                if (cameras.length > 0) {
-                    // Запуск сканирования для первой доступной камеры
-                    scanner.start(cameras[0]);
+                const backCameras = cameras.filter(camera => camera.facing === 'environment');
+                if (backCameras.length > 0) {
+                    // Запуск сканирования для первой доступной задней камеры
+                    scanner.start(backCameras[0]);
                 } else {
-                    console.error('No cameras found.');
+                    console.error('No back cameras found.');
                 }
             })
             .catch(function(err) {

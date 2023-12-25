@@ -394,11 +394,11 @@
         const resultInput = document.getElementById('resultInput');
 
         // Инициализация библиотеки Instascan
-        const scanner = new Instascan.Scanner({ video: video });
+        const scanner = new Instascan.Scanner({ video: video, mirror: false });
 
         // Обработчик для события сканирования
         scanner.addListener('scan', function(content) {
-            console.log(content);
+            console.log('Штрих-код распознан:', content);
 
             // Установка результата сканирования в поле ввода
             resultInput.value = content;
@@ -406,21 +406,29 @@
             // Ваш код обработки результата штрих-кода
         });
 
+        // Обработчик для события ошибки
+        scanner.addListener('error', function(err) {
+            console.error('Ошибка сканирования:', err);
+        });
+
         // Получение списка доступных камер
         Instascan.Camera.getCameras()
             .then(function(cameras) {
+                console.log('Доступные камеры:', cameras);
+
                 // Выбор задней камеры (может потребоваться указать другой индекс)
                 const backCamera = cameras.find(camera => camera.name.includes('back'));
 
                 if (backCamera) {
+                    console.log('Выбрана камера:', backCamera);
                     // Запуск сканирования для выбранной задней камеры
                     scanner.start(backCamera);
                 } else {
-                    console.error('No back camera found.');
+                    console.error('Задняя камера не найдена.');
                 }
             })
             .catch(function(err) {
-                console.error(err);
+                console.error('Ошибка получения камер:', err);
             });
     });
 </script>

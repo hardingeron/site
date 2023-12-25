@@ -26,7 +26,7 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://rawgit.com/serratus/quaggaJS/master/dist/quagga.min.js"></script>
+<script src="https://unpkg.com/@zxing/library@0.18.1/dist/umd/index.min.js"></script>
 <button id="scanButton">Сканировать штрихкод</button>
 <div id="your-scanner-div"></div>
 <input type="text" id="resultInput" placeholder="Результат сканирования" readonly>
@@ -386,95 +386,54 @@
 
 <script>
     document.getElementById('scanButton').addEventListener('click', function() {
-        const video = document.createElement('video');
         const resultInput = document.getElementById('resultInput');
-
         const scannerContainer = document.getElementById('your-scanner-div');
-        scannerContainer.innerHTML = '';
-        scannerContainer.appendChild(video);
 
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: video,
-                constraints: {
-                    width: 640,
-                    height: 480,
-                    facingMode: "environment"
+        const codeReader = new ZXing.BrowserQRCodeReader();
+        codeReader
+            .getVideoInputDevices()
+            .then(videoInputDevices => {
+                const cameraSelect = document.createElement('select');
+                videoInputDevices.forEach(function(device, index) {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || `Камера ${index + 1}`;
+                    cameraSelect.add(option);
+                });
+
+                const selectedCameraId = prompt('Выберите камеру (введите ID):', videoInputDevices[0].deviceId);
+                if (!selectedCameraId) {
+                    // Пользователь отменил выбор камеры
+                    return;
                 }
-            },
-            decoder: {
-                readers: ["code_128_reader"]
-            }
-        }, function(err) {
-            if (err) {
-                console.error(err);
-                return;
-            }
 
-            Quagga.start();
+                const constraints = {
+                    video: { deviceId: selectedCameraId }
+                };
 
-            // Получение списка доступных камер
-            Quagga.CameraAccess.enumerateDevices()
-                .then(function(devices) {
-                    const cameraSelect = document.createElement('select');
-                    devices.forEach(function(device, index) {
-                        if (device.kind === 'videoinput') {
-                            const option = document.createElement('option');
-                            option.value = device.deviceId;
-                            option.text = device.label || `Камера ${index + 1}`;
-                            cameraSelect.add(option);
-                        }
-                    });
-
-                    const selectedCameraId = prompt('Выберите камеру (введите ID):', devices[0].deviceId);
-                    if (!selectedCameraId) {
-                        // Пользователь отменил выбор камеры
-                        Quagga.stop();
-                        return;
-                    }
-
-                    Quagga.stop();
-
-                    // Инициализация сканера с выбранной камерой
-                    Quagga.init({
-                        inputStream: {
-                            name: "Live",
-                            type: "LiveStream",
-                            target: video,
-                            constraints: {
-                                width: 640,
-                                height: 480,
-                                deviceId: selectedCameraId
-                            }
-                        },
-                        decoder: {
-                            readers: ["code_128_reader"]
-                        }
-                    }, function(err) {
-                        if (err) {
-                            console.error(err);
-                            return;
-                        }
-
-                        Quagga.start();
-
-                        // Обработчик для события сканирования
-                        Quagga.onDetected(function(result) {
-                            const code = result.codeResult.code;
-                            console.log('Штрих-код распознан:', code);
+                codeReader
+                    .decodeFromConstraints(constraints, 'video', (result, error) => {
+                        if (result) {
+                            console.log('Штрих-код распознан:', result.text);
 
                             // Установка результата сканирования в поле ввода
-                            resultInput.value = code;
+                            resultInput.value = result.text;
 
                             // Ваш код обработки результата штрих-кода
-                        });
+                        }
+
+                        if (error) {
+                            console.error(error);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
                     });
-                });
-        });
+            })
+            .catch(err => {
+                console.error(err);
+            });
     });
 </script>
-
 
 {% endblock %}

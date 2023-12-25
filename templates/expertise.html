@@ -387,7 +387,6 @@
 
 
 
-<!-- Скрипт для инициализации и запуска сканирования -->
 <script>
     document.getElementById('scanButton').addEventListener('click', async function() {
         const video = document.getElementById('video');
@@ -397,6 +396,11 @@
             // Получение списка доступных камер
             const cameras = await Instascan.Camera.getCameras();
             console.log('Доступные камеры:', cameras);
+
+            if (cameras.length === 0) {
+                console.error('Нет доступных камер.');
+                return;
+            }
 
             // Выбор задней камеры (может потребоваться указать другой индекс)
             const backCamera = cameras.find(camera => camera.name.includes('back'));
@@ -420,6 +424,9 @@
                 // Обработчик для события ошибки
                 scanner.addListener('error', function(err) {
                     console.error('Ошибка сканирования:', err);
+
+                    // Остановить сканер в случае ошибки
+                    scanner.stop();
                 });
 
                 // Запуск сканирования для выбранной задней камеры

@@ -400,10 +400,12 @@
                                 width: 640,
                                 height: 480,
                                 facingMode: "environment"
-                            }
+                            },
+                            targetFormat: 'RGBA' // Добавьте эту строку
                         },
                         decoder: {
-                            readers: ["code_128_reader"]
+                            readers: ["code_128_reader"],
+                            locate: false // Добавьте эту строку
                         }
                     }, function(err) {
                         if (err) {
@@ -411,7 +413,7 @@
                             return;
                         }
                         Quagga.start();
-                    });
+});
                 })
                 .catch(function(err) {
                     console.error(err.name + ": " + err.message);

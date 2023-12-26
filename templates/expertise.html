@@ -26,10 +26,8 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/confirmDate/confirmDate.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script src="https://rawgit.com/andrastoth/WebCodeCamJS/master/js/webcodecamjquery.js"></script>
-<button id="startButton">Запустить сканер</button>
-<div id="cameraContainer"></div>
-<div id="result"></div>
+
+
 
 
 <div class="buttons">
@@ -126,9 +124,9 @@
     </table>
     {% endif %}
 </div>
-
-
-
+<div class="excel_convert">
+    <button id="downloadExcel">ექსპორტი</button>
+</div>
 
 
 
@@ -383,20 +381,44 @@
     }
 </script>
 
+
 <script>
-    $(document).ready(function () {
-        var decoder = $("canvas").WebCodeCamJQuery();
+    document.getElementById('downloadExcel').addEventListener('click', function() {
+        // Получение значения даты, предположим, что у вас есть элемент input с id 'date'
+        var dateValue = document.getElementById('date').value;
 
-        decoder.buildSelectMenu("#cameraSelection", "environment|back");
+        // Создание объекта FormData для отправки данных на сервер
+        var formData = new FormData();
+        formData.append('date', dateValue);
 
-        $("#startButton").on("click", function () {
-            decoder.play();
+        // Отправка POST-запроса на сервер для создания и скачивания файла Excel
+        fetch('/expertise_export', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.blob();  // Получаем бинарные данные
+        })
+        .then(blob => {
+            // Создаем ссылку для скачивания
+            var url = window.URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = `expertise-${dateValue}.xlsx`;  // Имя файла для скачивания
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
         });
-
-        decoder.play();
-        decoder.stop();
     });
 </script>
+
 
 
 {% endblock %}

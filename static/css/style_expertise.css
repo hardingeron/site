@@ -235,5 +235,20 @@ h1 {
 }
 
 
+.excel_convert {
+    margin: 20px auto; /* Устанавливаем автоматические отступы слева и справа для центрирования */
+    text-align: center;
+}
 
+.excel_convert button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
+.excel_convert button:hover {
+    background-color: #45a049;
+}

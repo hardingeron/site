@@ -33,7 +33,7 @@ import random
 import qrcode
 
 
-from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking, manifest_filter, xml_convertor, allowed_file
+from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking, manifest_filter, xml_convertor, allowed_file, trecing_redactor
 
 
 app = Flask(__name__)
@@ -1097,14 +1097,15 @@ def expertise_add_record():
     try:
         # Получаем данные из POST-запроса
         data = request.get_json()
-        tracking = data['tracking']
+        # tracking = data['tracking']
+        tracking = trecing_redactor(data['tracking'])
 
         # Загрузка данных из JSON-файла
         with open('expertise_data.json', 'r', encoding='utf-8') as json_file:
             expertise_data = json.load(json_file)
 
         # Получение записи по ключу data['tracking']
-        tracking_key = data['tracking']
+        tracking_key = tracking
         if tracking_key in expertise_data:
             record_data = expertise_data[tracking_key]
             # Дальнейшее использование record_data
@@ -1114,7 +1115,7 @@ def expertise_add_record():
         # Создаем новую запись
         new_record = Expertise(
             Number=data['Number'],
-            tracking=data['tracking'],
+            tracking=tracking,
             comment=data['comment'],
             date=data['date'],
             status=record_data[1],
@@ -1141,7 +1142,7 @@ def expertise_add_record():
         
         # expertise_list.append()
         # Ищем дубликаты в JSON-файле
-        duplicates = find_duplicates_in_json('expertise_data.json', data['tracking'])
+        duplicates = find_duplicates_in_json('expertise_data.json', tracking)
         
         id_trecing = int(new_record.id)
 
@@ -1294,7 +1295,8 @@ def status_checker(trecing):
 def trecing_checker():
     try:
         # Получаем данные из запроса
-        trecing_value = request.form.get('trecing_value')
+        trecing_value = trecing_redactor(request.form.get('trecing_value', ''))
+
 
         # Читаем содержимое файла expertise_data.json
         with open('expertise_data.json', 'r', encoding='utf-8') as json_file:
@@ -1312,16 +1314,49 @@ def trecing_checker():
         return jsonify({'success': False, 'message': str(e)})
 
 
+@app.route('/expertise_export', methods=['POST'])
+def expertise_export():
+    date = request.form.get('date')
 
-@app.route('/process_barcode', methods=['POST'])
-def process_barcode():
-    barcode_data = request.form['barcodeData']
-    print(barcode_data)
-    
-    # Далее обработайте barcode_data как вам нужно
-    
-    return f'Штрихкод: {barcode_data}'
+    # Получите данные из базы данных, отфильтрованные по дате
+    expertise_data = Expertise.query.filter_by(date=date).all()
 
+    workbook = load_workbook('expertise.xlsx')
+    sheet = workbook.active
+
+    start_row = 2  # Starting from the second row as the first row has headers
+    col_letters = ['C', 'D', 'E', 'F', 'G', 'H']
+
+    # Устанавливаем стиль шрифта по умолчанию с размером 10
+    font = Font(size=10)
+    alignment = Alignment(horizontal='center', vertical='center')
+    thin_border = Border(left=Side(style='thin'), right=Side(style='thin'), top=Side(style='thin'), bottom=Side(style='thin'))
+
+    for row_idx, data in enumerate(expertise_data, start=start_row):
+        for col_idx, col_letter in enumerate(col_letters):
+            cell = sheet[f'{col_letter}{row_idx}']
+            if col_letter == 'D':
+                cell.value = data.recipient
+            elif col_letter == 'E':
+                cell.value = data.weight
+            elif col_letter == 'F':
+                cell.value = data.Number
+            elif col_letter == 'G':
+                cell.value = data.tracking
+            elif col_letter == 'H':
+                cell.value = data.comment
+            # Don't write anything to cell C, just apply formatting
+            elif col_letter == 'C':
+                pass
+            cell.font = font  # Применяем стиль шрифта к ячейке
+            cell.alignment = alignment  # Центрируем содержимое ячейки
+            cell.border = thin_border  # Добавляем границы
+
+    new_filename = 'expertise-list.xlsx'
+    workbook.save(new_filename)
+    workbook.close()
+
+    return send_file(new_filename, as_attachment=True)
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               end /expertise           ------------------------------#
 

@@ -252,3 +252,62 @@ h1 {
 .excel_convert button:hover {
     background-color: #45a049;
 }
+
+
+.date_block {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    padding: 10px;
+    align-items: center;
+    margin: 20px auto;
+    width: 600px;
+    background-color: #444654;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.501);
+}
+
+.date_block li {
+    margin-right: 10px;  /* Расстояние между элементами, можете изменить по своему усмотрению */
+}
+
+
+.selected_date_block {
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 400px;
+    margin-left: 20px;
+    background-color: #333333;
+    padding: 5px;
+    border-radius: 10px;
+}
+
+.selected_date_block ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.selected_date_block ul li {
+    margin-right: 10px;
+    color: white;
+}
+
+.selected_date_block ul li a:visited {
+    color: white;
+}
+
+/* Стили для полосы прокрутки */
+.selected_date_block::-webkit-scrollbar {
+    width: 2px;
+}
+
+.selected_date_block::-webkit-scrollbar-thumb {
+    background-color: #404040; /* Цвет полосы прокрутки */
+    border-radius: 8px;
+}
+
+.selected_date_block::-webkit-scrollbar-track {
+    background-color: #1f1f1f; /* Цвет фона полосы прокрутки */
+}

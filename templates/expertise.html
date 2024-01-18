@@ -29,10 +29,18 @@
 
 
 
-
-<div class="buttons">
-    <div class="buttons_set">
-        <input type="text" class="select_date">
+<div class="date_block">
+    <div class="buttons">
+        <div class="buttons_set">
+            <input type="text" class="select_date">
+        </div>
+    </div>
+    <div class="selected_date_block">
+        <ul>
+            {% for record in unique_dates_list %}
+                <li><a href="{{ url_for('expertise', selected_date=record) }}">{{ record }}</a></li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 

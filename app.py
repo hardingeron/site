@@ -1081,12 +1081,12 @@ def expertise():
     # Получаем самую свежую дату из столбца "date"
         latest_date = db.session.query(db.func.max(Expertise.date)).scalar()
 
-
-
     # Получаем все записи с самой свежей датой
     expertise_records = Expertise.query.filter_by(date=latest_date).all()
- 
-    return render_template('expertise.html', records=expertise_records, date=latest_date)
+    unique_dates = db.session.query(func.distinct(Expertise.date)).order_by(desc(Expertise.date)).all()
+    unique_dates_list = [date[0].strftime('%Y-%m-%d') for date in unique_dates]
+    print(unique_dates_list)
+    return render_template('expertise.html', records=expertise_records, date=latest_date, unique_dates_list=unique_dates_list)
 
 
 

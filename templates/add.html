@@ -251,6 +251,20 @@
                 showConfirmButton: false,
                 timer: 5000
             });
+            // Очистка полей, радиокнопок и загруженного файла
+            document.querySelector(".sender_block input[name='sender']").value = '';
+            document.querySelector(".sender_block input[name='sender_phone']").value = '';
+            document.querySelector(".recipient_first_last_name input[name='recipient']").value = '';
+            document.querySelector(".recipient_phone_block input[name='recipient_phone']").value = '';
+            document.querySelector(".description_block textarea[name='inventory']").value = '';
+            document.querySelector(".weight_block input[name='weight']").value = '';
+            document.querySelector(".responsibility_block input[name='responsibility']").value = '';
+            document.querySelector(".passport_block input[name='passport']").value = '';
+            document.querySelector(".price input[name='cost']").value = '';
+            document.querySelector(".city select[name='city']").value = '';
+            document.querySelector(".pay_block input[name='payment']:checked").checked = false;
+            document.querySelector(".payment_currency input[name='payment_currency']:checked").checked = false;
+            document.getElementById("photo").value = ''; // Очистка загруженного файла
         } else {
             Swal.fire({
                 icon: 'error',

@@ -1,0 +1,378 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    დამატება
+    {% endblock %}
+
+{% block content %}
+    <div class="bg-image"></div>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_add.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+
+    <div class="add">
+        <div class="add_block">
+            <div class="head">
+                <h2>დამატება</h2>
+            </div>
+            <input type="text" id="dateInput" name="date" hidden>
+
+            <div class="sender_block">
+                <div class="sender_name_block">
+                    <label>გამზავნი</label>
+                    <input type="text" name="sender" required value="" data-error="sender">
+                </div>
+                <div class="sender_phone_block">
+                    <label>გამგზავნის ტელ</label>
+                    <input type="text" name="sender_phone" required value="" data-error="sender_phone" oninput="formatPhoneNumber(this)">                    
+                </div>
+            </div>
+            <div class="recipient_block">
+                <div class="recipient_name_block">
+                    <label>მიმღები</label>
+                    <input type="text" name="recipient"  required value="" data-error="recipient">
+                </div>
+                <div class="recipient_phone block">
+                    <label>მიმღების ტელ</label>
+                    <input type="text" name="recipient_phone" required value="+7" data-error="recipient_phone" oninput="formatRecipientPhone(this)">
+                </div>
+            </div>
+            <div class="description_block">
+                <label>აღწერა</label>
+                <textarea name="inventory" required data-error="inventory"></textarea>
+            </div>
+            <div class="information_one_block">
+                <div class="weight_block">
+                    <label>წონა</label>
+                    <input type="text" name="weight" required value="" data-error="weight" oninput="formatWeightInput(this)">
+
+                </div>
+                <div class="responsibility_block">
+                    <label>ღირებულება</label>
+                    <input type="text" name="responsibility" value="" data-error="responsibility">
+                </div>
+                <div class="passport_block">
+                    <label>პასპორტი</label>
+                    <input type="text" name="passport" value="" data-error="passport">
+                </div>
+            </div>
+
+            <div class="information_two_block">
+                <div class="price">
+                    <label>ფასი</label>
+                    <input type="text" name="cost" required value="" data-error="cost">
+                </div>
+                <div class="city">
+                    <label>ქალაქი</label>
+                    <select id="city-select" name="city">
+                        <option value="Moscow">Moscow</option>
+                        <option value="S.P.B">S.P.B</option>
+                    </select>
+                </div>
+                <div class="photo_block">
+                    <label>ფოტო</label>
+                    <input type="file" id="photo" required name="photo" class="fandm" data-error="photo">
+                </div>
+            </div>
+
+            <div class="pay">
+                <div class="payment_block">
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="paid" required data-error="payment">
+                        <span class="radio-custom">
+                            <img src="/static/images/cash.png" alt="Картинка">
+                        </span>
+                    </label>
+
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="card">
+                        <span class="radio-custom">
+                            <img src="/static/images/card.png" alt="Картинка">
+                        </span>
+                    </label>
+
+                    <label class="radio-label">
+                        <input type="radio" name="payment" value="not_paid">
+                        <span class="radio-custom">
+                            <img src="/static/images/np.png" alt="Картинка">
+                        </span>
+                    </label>
+                </div>
+                
+                <div class="payment_block_two">
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="GEL" required data-error="payment_currency">
+                        <span class="radio-custom">
+                            <img src="/static/images/gel.png" alt="Картинка">
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="RUB">
+                        <span class="radio-custom">
+                            <img src="/static/images/rub.png" alt="Картинка">
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="EUR">
+                        <span class="radio-custom">
+                            <img src="/static/images/eur.png" alt="Картинка">
+                        </span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="payment_currency" value="USD">
+                        <span class="radio-custom">
+                            <img src="/static/images/usd.png" alt="Картинка">
+                        </span>
+                    </label>
+                </div>
+
+        </div>
+            <div class="button_block">
+                <button id="saveButton" type="button">დასრულება</button>
+            </div>
+
+    </div>
+
+    {% for cat, msg in get_flashed_messages(True) %}
+    <div class='flash {{cat}}'>{{msg}}</div>
+    {% endfor %}
+
+    
+
+
+
+<!--  -->
+<script>
+    // Получение параметра URL 'date'
+    const urlParams = new URLSearchParams(window.location.search);
+    const dateParam = urlParams.get('date');
+
+    // Установка значения в input с id 'dateInput'
+    document.getElementById('dateInput').value = dateParam;
+</script>
+
+<!--  -->
+
+
+
+
+
+<script>
+    document.getElementById('saveButton').addEventListener('click', function() {
+        // Создаем объект данных (FormData)
+        const formData = new FormData();
+    
+        // Собираем данные из полей
+        const date = document.querySelector('input[name="date"]').value;
+        const sender = document.querySelector('input[name="sender"]');
+        const senderValue = sender.value;
+        const senderPhone = document.querySelector('input[name="sender_phone"]');
+        const senderPhoneValue = senderPhone.value;
+        const recipient = document.querySelector('input[name="recipient"]');
+        const recipientValue = recipient.value;
+        const recipientPhone = document.querySelector('input[name="recipient_phone"]');
+        const recipientPhoneValue = recipientPhone.value;
+        const inventory = document.querySelector('textarea[name="inventory"]');
+        const inventoryValue = inventory.value;
+        const weight = document.querySelector('input[name="weight"]');
+        const weightValue = weight.value;
+        const responsibility = document.querySelector('input[name="responsibility"]');
+        const responsibilityValue = responsibility.value;
+        const passport = document.querySelector('input[name="passport"]');
+        const passportValue = passport.value;
+        const cost = document.querySelector('input[name="cost"]');
+        const costValue = cost.value;
+        const city = document.querySelector('select[name="city"]');
+        const cityValue = city.value;
+        const payment = document.querySelector('input[name="payment"]:checked');
+        const paymentValue = payment ? payment.value : '';
+        const paymentCurrency = document.querySelector('input[name="payment_currency"]:checked');
+        const paymentCurrencyValue = paymentCurrency ? paymentCurrency.value : '';
+    
+        // Проверка каждого поля на заполнение
+        const requiredFields = [
+            { field: sender, value: senderValue, error: 'sender' },
+            { field: senderPhone, value: senderPhoneValue, error: 'sender_phone' },
+            { field: recipient, value: recipientValue, error: 'recipient' },
+            { field: recipientPhone, value: recipientPhoneValue, error: 'recipient_phone' },
+            { field: inventory, value: inventoryValue, error: 'inventory' },
+            { field: weight, value: weightValue, error: 'weight' },
+            { field: responsibility, value: responsibilityValue, error: 'responsibility' },
+            { field: passport, value: passportValue, error: 'passport' },
+            { field: cost, value: costValue, error: 'cost' },
+            { field: city, value: cityValue, error: 'city' },
+            { field: payment, value: paymentValue, error: 'payment' },
+            { field: paymentCurrency, value: paymentCurrencyValue, error: 'payment_currency' },
+        ];
+    
+        let isValid = true;
+    
+        for (const { field, value, error } of requiredFields) {
+            if (value === "") {
+                // Если поле пустое, устанавливаем флаг недопустимости
+                isValid = false;
+                // Изменяем цвет границы поля, если поле существует
+                if (field) {
+                    field.style.border = '1px solid red';
+                }
+                // Здесь вы можете предпринять дополнительные действия в случае ошибки, например, показать сообщение об ошибке
+                showMessage(`შეავსეთ მითითებული ველები!`, false);
+    
+                // Вернуть цвет границы к исходному состоянию через 2 секунды
+                setTimeout(() => {
+                    if (field) {
+                        field.style.border = 'none'; // Замените #ccc на цвет по умолчанию, если он отличается
+                    }
+                }, 2000); // 2000 миллисекунд = 2 секунды
+            }
+        }
+    
+        if (isValid) {
+            // Оставшаяся часть вашего кода для отправки данных
+            formData.append('date', date);
+            formData.append('sender', senderValue);
+            formData.append('sender_phone', senderPhoneValue);
+            formData.append('recipient', recipientValue);
+            formData.append('recipient_phone', recipientPhoneValue);
+            formData.append('inventory', inventoryValue);
+            formData.append('weight', weightValue);
+            formData.append('responsibility', responsibilityValue);
+            formData.append('passport', passportValue);
+            formData.append('cost', costValue);
+            formData.append('city', cityValue);
+            formData.append('payment', paymentValue);
+            formData.append('payment_currency', paymentCurrencyValue);
+    
+            // Получение файла (фото)
+            const photoInput = document.getElementById('photo');
+            const photoFile = photoInput.files[0];
+    
+            if (!photoFile) {
+                alert('Выберите фото');
+                return; // Останавливаем выполнение функции
+            }
+    
+            formData.append('photo', photoFile);
+    
+            // Отправляем данные на сервер с использованием AJAX
+            fetch('/saving_a_parcel', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Проверка флага success
+                if (data.success) {
+                    // Очистить поля ввода и показать сообщение об успешном сохранении
+                    showMessage(data.message, true);
+
+                    // Очистить поля ввода
+                    document.querySelector('input[name="sender"]').value = '';
+                    document.querySelector('input[name="sender_phone"]').value = '';
+                    document.querySelector('input[name="recipient"]').value = '';
+                    document.querySelector('input[name="recipient_phone"]').value = '';
+                    document.querySelector('textarea[name="inventory"]').value = '';
+                    document.querySelector('input[name="weight"]').value = '';
+                    document.querySelector('input[name="responsibility"]').value = '';
+                    document.querySelector('input[name="passport"]').value = '';
+                    document.querySelector('input[name="cost"]').value = '';
+
+                    // Очистить файловое поле (фото)
+                    const photoInput = document.getElementById('photo');
+                    photoInput.value = ''; // Очистить поле ввода файла
+
+                    // Сбросить выбранные радиокнопки
+                    const radioButtons = document.querySelectorAll('.payment_block input[type="radio"]');
+                    radioButtons.forEach(radio => {
+                        radio.checked = false;
+                    });
+
+                    // Сбросить выбранные радиокнопки payment_currency
+                    const paymentCurrencyButtons = document.querySelectorAll('input[name="payment_currency"]');
+                    paymentCurrencyButtons.forEach(button => {
+                        button.checked = false;
+                    });
+                } else {
+                    // Показать сообщение об ошибке
+                    showMessage(data.message, false);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        }
+    });
+    </script>
+
+
+
+<!-- форматирование поле ввода для веса/weight -->
+<script>
+    function formatWeightInput(input) {
+        // Получаем текущее значение
+        let value = input.value;
+        
+        // Заменяем запятые на точки
+        value = value.replace(/,/g, '.');
+        
+        // Удаляем все символы, кроме цифр и точек
+        value = value.replace(/[^0-9.]/g, '');
+        
+        // Устанавливаем отформатированное значение обратно в инпут
+        input.value = value;
+    }
+</script>
+
+
+<!-- форматирование поля для ввода телефонав отправителя/sender_phone -->
+<script>
+function formatPhoneNumber(input) {
+    // Получаем текущее значение
+    let value = input.value;
+
+    // Удаляем все символы, кроме цифр
+    value = value.replace(/\D/g, '');
+
+    // Ограничиваем максимальную длину в 9 цифр
+    value = value.substring(0, 9);
+
+    // Применяем форматирование
+    let formattedValue = '';
+    for (let i = 0; i < value.length; i++) {
+        formattedValue += value[i];
+        if (i === 2 || i === 4 || i === 6) {
+            formattedValue += ' ';
+        }
+    }
+
+    // Устанавливаем отформатированное значение обратно в инпут
+    input.value = formattedValue;
+}
+</script>
+
+
+<script>
+function formatRecipientPhone(input) {
+    let value = input.value;
+
+    // Удаляем все символы, кроме цифр
+    value = value.replace(/\D/g, '');
+
+    // Добавляем символ "+" в начало, если его нет
+    if (value[0] !== '+') {
+        value = '+' + value;
+    }
+
+    // Ограничиваем максимальную длину в 12 символов (включая символ "+")
+    value = value.substring(0, 12);
+
+    // Устанавливаем очищенное значение обратно в инпут
+    input.value = value;
+}
+</script>
+
+
+    </body>
+
+{% endblock %}

@@ -1,77 +1,140 @@
-/* блк с контентом для добавления посылок */
-.add {
-  width: 550px;
-  height: 630px;
-  background: #444654;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
-  padding: 10px;
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+
+
+.add_block {
+  width: 570px;
+  height: 800px;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #444654;
+  border-radius: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+h2 {
+  color: #d2d2d2; /* Цвет текста */
+  font-family: 'Arial', sans-serif; /* Шрифт */
+  font-size: 32px; /* Размер шрифта */
+  text-align: center; /* Выравнивание текста по центру */
+  text-transform: uppercase; /* Преобразование текста в верхний регистр */
+  width: 700px;
 }
 
 
 
-.head {
-  text-align: center;
-  margin-top: 10px;
-}
-
-.head h2 {
-  font-size: 25px;
-  color: #d2d2d2;
-}
-
-.flight_and_img,
 .sender_block,
-.recipient_block{
-  width: 550px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 35px;
-}
-
+.recipient_block,
 .information_one_block,
-.information_two_block  {
-  width: 550px;
-  height: 40px;
+.information_two_block,
+.pay
+{
   display: flex;
+  height: 75px;
+  margin-bottom: 5px; /* Отступ снизу */
+ 
+}
+
+.description_block {
+  display: flex;
+ 
+  height: 150px;
+  margin-bottom: 20px; /* Отступ снизу */
+}
+
+
+
+.sender_block a,
+.recipient_block a,
+.information_one_block a,
+.information_two_block a,
+
+.description_block a,
+.pay a {
+  font-weight: bold;
+  width: 100px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 35px;
+  font-size: 16px;
+  color: #d2d2d2;
+  font-family: 'Arial', sans-serif; /* Шрифт */
+  text-align: right;
 }
 
-.flight_and_img > *:not(:last-child),
+
+
+
 .sender_block > *:not(:last-child),
-.recipient_block > *:not(:last-child) {
-  margin-right: 50px;
+.recipient_block > *:not(:last-child),
+.description_block > *:not(:last-child){
+  margin-right: 15px;
+}
+
+.pay > *:not(:last-child) {
+  margin-right: 30px;
+}
+
+.information_one_block > *:not(:last-child),
+.information_two_block > *:not(:last-child) {
+  margin-right: 33px;
+}
+
+.sender_first_last_name,
+.sender_phone_block,
+.recipient_first_last_name,
+.recipient_phone_block,
+.Payment_method,
+.payment_currency {
+
+  flex-direction: column;
+  align-items: center; /* Центрирование по горизонтали */
+
+}
+
+.description {
+  flex-direction: column;
+  align-items: center; /* Центрирование по горизонтали */
+  width: 490px;
 }
 
 
-
-
-.flight_block label,
-.photo_block label,
-.sender_block label,
-.sender_phone_block label,
-.recipient_name_block label,
-.recipient_phone label,
-.description_block label {
-  width: 200px;
-  line-height: 20px;
+.weight_block,
+.responsibility_block,
+.passport_block,
+.price,
+.city,
+.photo_block {
+  flex-direction: column;
+  align-items: center; /* Центрирование по горизонтали */
+  width: 140px;
 }
 
-.description_block label {
-  width: 450px;
-}
 
-.information_one_block label,
-.information_two_block label {
-  width: 110px;
-  line-height: 20px;
+.sender_block input,
+.recipient_block input {
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 16px;
+  margin-top: 2px;
+  width: 230px;
+  height: 20px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
 }
 
 
@@ -79,263 +142,152 @@
 
 .information_one_block input,
 .information_two_block input {
-  width: 80px;
-  height: 20px;
-  font-weight: bold;
-  padding: 5px 10px;
-  font-size: 14px;
   outline: none;
-}
-
-.information_one_block > *:not(:last-child),
-.information_two_block > *:not(:last-child) {
-  margin-right: 60px;
-}
-
-.fandm {
-  width: 180px;
-  height: 25px;
-  border: 1px solid #8e8ea0;
-  color: #d2d2d2;
-  border-radius: 5px;
-  padding: 5px 10px;
-  font-size: 14px;
-  background-color: #40414f;
-  border-radius: 0 0 10px 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-
-
-.fandm {
-  appearance: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  background: transparent;
-  color: transparent;
-}
-
-.sender_block input,
-.recipient_block input {
-  width: 170px;
-  height: 20px;
-  padding: 5px 10px;
-  font-size: 14px;
-  outline: none;
-}
-
-.description_block textarea {
-  width: 420px;
-  height: 60px;
-  border: none;
-  border-radius: 5px;
-  border-radius: 0 0 10px 10px;
-  padding: 10px;
-  font-size: 14px;
-  resize: none;
-  outline: none;
-  transition: background-color 0.2s, color 0.2s;
-  margin-bottom: 20px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-
-.description_block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 0 0 10px 10px;
-  width: 550px;
-}
-
-.city select {
-  width: 90%;
-  height: 30px;
+  width: 130px;
   border: none;
   border-radius: 5px;
   padding: 5px;
-  font-size: 14px;
-  outline: none;
-  transition: background-color 0.2s, color 0.2s;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  border-radius: 0 0 10px 10px;
+  font-size: 16px;
+  margin-top: 2px;
+  height: 20px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
 }
 
 
 
 
 
+textarea[name="inventory"] {
+  width: 485px;
+  height: 100px;
+  resize: none; /* Запрет изменения размеров */
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 16px;
+  margin-top: 2px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+textarea[name="inventory"]:focus {
+  border-color: #2ecc71;
+  box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+}
+
+.recipient_block label,
+.sender_block label,
+.description_block label,
+.information_one_block label,
+.information_two_block label{
+  display: block;
+  text-align: center;
+  font-size: 14px; /* Пример размера шрифта - настройте по вашему усмотрению */
+  margin-bottom: 5px; /* Пример отступа снизу - настройте по вашему усмотрению */
+  font-weight: bold;
+
+  margin: 0 auto;
+  background-color: #444654;
+  color: #d2d2d2;
+  border: none;
+  margin-bottom: 5px;
+  position: relative;
+
+}
 
 
+
+#city-select {
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  height: 30px;
+  font-size: 16px;
+  margin-top: 2px;
+  width: 140px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+
+.Payment_method,
+.payment_currency {
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  width: 228px;
+  height: 75px;
+  border-radius: 10px;
+  text-align: center;
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+
+}
+
+
+.radio_block input {
+  display: none;
+}
+
+.radio_block label {
+  cursor: pointer;
+  display: inline-block; /* Добавлено для правильного позиционирования */
+}
+
+/* Стилизация изображений вместо радио-кнопок */
+.radio_block label img {
+  width: 30px;
+  height: 30px;
+  display: block; /* Изменено на блочное отображение */
+}
+
+/* Стилизация меток при выборе */
+.radio_block input:checked + label {
+  background-color: #f80000a4;
+  border-radius: 10px;
+}
 
 
 .button_block {
-  text-align: center;
   margin-top: 20px;
 }
 
 #saveButton {
-  background-color: #333333;
-  color: #d2d2d2;
-  border: none;
+  background-color: #4CAF50;
+  color: white;
   padding: 10px 20px;
-  cursor: pointer;
   font-size: 16px;
+  border: none;
   border-radius: 5px;
-  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 #saveButton:hover {
-  background-color: #1a1a1a;
+  background-color: #45a049;
 }
 
-
-
-
-
-
-.add label:not(.payment_block label, .payment_block_two label) {
-  background-color: #343641;
+.Payment_method label,
+.payment_currency label {
   color: #d2d2d2;
-  text-align: center;
-  border-radius: 10px 10px 0 0;
-  font-weight: bold;
-  font-size: 15px;
-  display: block;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.9);
-  height: 25px;
+  height: 30px;
 }
 
-.add input[type='text'],
-.description_block textarea,
-.city select {
-  background-color: #40414f;
-  color: #d2d2d2;
-  font-weight: bold;
-  border-radius: 0 0 10px 10px;
-  border: none;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-
-.add input[type='text']:hover,
-.description_block textarea:hover {
-  background-color: #343641;
+.radio_block {
+  height: 50px;
 
 }
-
-
-
-input[type='text'].invalid {
-  color: rgb(255, 0, 0); /* Установите цвет текста на красном фоне */
-}
-
-
-
-
-
-/*  */
-/* Стиль для подсветки незаполненных полей */
-
-
-.invalid-field {
-  border: 2px solid red;
-}/*  */
-
-.pay {
-  display: flex;
-  width: 550px;
-}
-
-.pay > *:not(:last-child) {
-  margin-right: -30px;
-}
-
-.payment_block,
-.payment_block_two {
-  display: flex; /* Элементы будут располагаться в ряду по горизонтали */
-  align-items: center; /* Выравнивание элементов по центру по вертикали */
-  justify-content: center; /* Центрирование элементов по горизонтали */
-  margin: 0 auto; /* Горизонтальное центрирование */
-  width: 210px;
-  height: 32px;
-  border: 1px solid white;
-  border-radius: 10px;
-}
-
-
-.payment_block > *:not(:last-child),
-.payment_block_two > *:not(:last-child) {
-  margin-right: 25px; /* Расстояние в 20 пикселей между элементами, кроме последнего */
-}
-
-/* 
-.payment_block label,
-.payment_block_two label {
-  width: 30px;
-  height:  30px;
-} */
-
-
-
-
-
-
-
-
-/* Скрыть оригинальные радиокнопки */
-.radio-label input[type="radio"] {
-  opacity: 0;
-  position: absolute;
-}
-
-/* Создать стилизованные заменители для радиокнопок */
-.radio-label {
-  display: inline-block;
-  position: relative;
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-.radio-custom {
-  display: inline-block;
-  
-  background-color: #444654;
-  border: none;
-  border-radius: 10px;
-}
-
-
-.radio-custom img {
-  width: 25px;
-  height: 25px;
-}
-
-
-
-.radio-label-text {
-  font-size: 30px; /* Размер описания радио кнопки */
-}
-
-/* При наведении добавить эффекты */
-.radio-label:hover .radio-custom {
-  background-color: #ddd;
-  color: #000000;
-}
-
-/* При выборе радиокнопки изменять стили заменителя */
-.radio-label input[type="radio"]:checked + .radio-custom {
-  background-color: #ffffff;
-  padding: 1px;
-  border-color: #007bff;
-  color: rgb(0, 0, 0);
-}
-
-
-
-.fandm:valid {
-  border: 2px solid #007BFF; /* Измените стили границы, когда файл выбран */
-  background-color: #007bff;
-}
-

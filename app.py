@@ -213,20 +213,22 @@ def add():
 
 @app.route('/saving_a_parcel', methods=['POST'])
 def saving_a_parcel():
-    date = request.form.get('date')
-    last_record = get_last_record(date, db)
-    new_record = generate_new_number(date, last_record)
+    data = request.form.to_dict()
+    print(data)
+    last_record = get_last_record(db)
+
+    new_record = generate_new_number(data, last_record, db)
     cost = calculate_cost(request.form.get('payment'), request.form.get('cost'), request.form.get('payment_currency'))
     
     try:
-        handle_image(request.files['photo'], new_record, date, app)
+        handle_image(request.files['photo'], new_record, data['currentDateTime'], app)
     except Exception as e:
         # Обработка ошибки и возврат сообщения об ошибке
         response_data = {'success': False, 'message': f'დაფიქსირდა შეცდომა ფოტოს შენახვისას: {str(e)}'}
         return jsonify(response_data)
     
     try:
-        add_record(new_record, request.form, cost, db, current_user.role)
+        add_record(new_record, data, cost, db, current_user.role)
     except Exception as e:
         # Обработка ошибки при сохранении записи и возврат сообщения об ошибке
         response_data = {'success': False, 'message': f'Ошибка при сохранении записи: {str(e)}'}
@@ -237,6 +239,19 @@ def saving_a_parcel():
         'message': f'ამანათი წარმატებიით დაემატა! № {new_record}'
     }
     return jsonify(response_data)
+
+# @app.route('/saving_a_parcel', methods=['POST'])
+# def saving_a_parcel():
+#     data = request.form.to_dict()
+#     current_date_time = data.get("currentDateTime")
+#     print(current_date_time)
+#     print(data)
+#     formatted_date = current_date_time.strftime('%d.%m.%Y %H:%M:%S')
+#     print('aaaaaaaaaaaa', formatted_date)
+
+#     # Ваши действия с данными и текущей датой и временем
+
+#     return "Данные успешно получены и обработаны"
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /change              ------------------------------#

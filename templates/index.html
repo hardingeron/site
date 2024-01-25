@@ -19,7 +19,7 @@
             </div>
 
             <div class="el">
-                <a href="#" onclick="openAddModal()">
+                <a href="/add" >
                     <img src="/static/images/add.webp" alt="Изображение">
                 </a>
                 <label>დამატება</label>
@@ -280,63 +280,6 @@ function redirectToPage() {
 
 
 <!--  -->
-
-
-<script>
-// Функция открытия второго модального окна
-function openAddModal() {
-    const modal = document.getElementById('ModalAdd');
-    modal.style.display = 'block';
-
-    // Инициализация календаря с использованием flatpickr
-    const datepicker = flatpickr("#datepickerAdd", {
-        dateFormat: "Y-m-d", // Формат даты
-        locale: "ru", // Установка русского языка
-    });
-
-    // Добавляем обработчик события на клавишу "Esc"
-    window.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            closeAddModal();
-        }
-    });
-
-    // Добавляем обработчик события на клик вне модального окна
-    modal.addEventListener('click', function (event) {
-        if (event.target === modal) {
-            closeAddModal();
-        }
-    });
-}
-
-// Функция закрытия второго модального окна
-function closeAddModal() {
-    const modal = document.getElementById('ModalAdd');
-    modal.style.display = 'none';
-}
-
-function redirectAddPage() {
-    const selectedDate = document.getElementById('datepickerAdd').value;
-    console.log('Selected Date:', selectedDate);
-
-    if (selectedDate) {
-        // Преобразование даты в формат "год-месяц-день"
-        const formattedDate = formatDate(selectedDate);
-
-        // Перенаправление пользователя на страницу `/add` с выбранной датой
-        window.location.href = '/add?date=' + formattedDate;
-    }
-}
-
-// Функция форматирования даты в "год-месяц-день"
-function formatDate(selectedDate) {
-    const dateObject = new Date(selectedDate);
-    const year = dateObject.getFullYear();
-    const month = (dateObject.getMonth() + 1).toString().padStart(2, '0');
-    const day = dateObject.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-}
-</script>
 
 
 <!--  -->

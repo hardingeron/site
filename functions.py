@@ -21,21 +21,52 @@ import xml.etree.ElementTree as ET
 #===========================================================================================================================================================
 
 # Функция для получения последней записи в базе данных
-def get_last_record(selected_date, db): 
-    last_record = db.session.query(Purcell).filter(Purcell.flight == selected_date).order_by(Purcell.number.desc()).first()
+# def get_last_record(db): 
+#     last_record = db.session.query(Purcell).order_by(Purcell.id.desc()).first()
+#     print(last_record)
+#     if last_record:
+#         number = int(last_record.number) + 1
+#         print(number, 'awwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww')
+#     else:
+#         number = 1
+#     return number
+
+# Функция для получения последней записи в базе данных
+def get_last_record(db): 
+    last_record = db.session.query(Purcell).order_by(Purcell.id.desc()).first()
+    print(last_record)
     if last_record:
-        number = last_record.number
+        number = int(last_record.number) + 1
+        # Проверяем, если номер посылки больше или равен 5, то устанавливаем его в 1
+        if number >= 1000:
+            number = 1
     else:
-        number = 1
+        number = 1 
     return number
 
-def generate_new_number(date, number):
+from datetime import datetime
+
+def generate_new_number(data, last_record, db):
+    current_date = datetime.utcnow().date()
+    
+    # Преобразуем дату в строку в формате YYYY-MM-DD
+    current_date_str = current_date.strftime('%Y-%m-%d')
+    
     while True:
-        existing_record = Purcell.query.filter_by(number=int(number), flight=date).first()
+        existing_record = db.session.query(Purcell).filter_by(number=int(last_record), date=current_date_str).first()
+        
+        # Если запись не существует, прерываем цикл
         if existing_record is None:
             break
-        number += 1
-    return number
+        
+        # Иначе увеличиваем номер
+        last_record += 1
+        
+        # Проверяем, если номер посылки больше или равен 5, то устанавливаем его в 1
+        if last_record >= 1000:
+            last_record = 1
+    
+    return last_record
 
 
 # Функция для расчета стоимости
@@ -49,27 +80,26 @@ def calculate_cost(payment_type, cost_amount, currency):
     return cost
 
 # Функция для добавления записи в базу данных
-def add_record(last, form_data, cost, db, user_role):
-    date = form_data['date']
-    
+def add_record(last, data, cost, db, user_role):
+    data['currentDateTime'] = data['currentDateTime'].replace(":", ".")
     try:
+        print(user_role)
         add = Purcell(
-            sender=form_data['sender'].upper(),
-            sender_phone=form_data['sender_phone'],
-            recipient=form_data['recipient'].upper(),
-            recipient_phone=form_data['recipient_phone'],
-            inventory=form_data['inventory'].replace('\n', ' ').replace('\r', ' '),
+            sender=data['sender'].upper(),
+            sender_phone=data['sender_phone'],
+            recipient=data['recipient'].upper(),
+            recipient_phone=data['recipient_phone'],
+            inventory=data['inventory'].replace('\n', ' ').replace('\r', ' '),
             cost=cost,
-            passport=form_data['passport'],
-            weight=form_data['weight'].upper(),
-            responsibility=form_data['responsibility'].upper(),
+            passport=data['passport'],
+            weight=data['weight'].upper(),
+            responsibility=data['responsibility'].upper(),
             number=last,
-            city=form_data['city'],
-            flight=date,
-            image=f"static/purcells/{last}-{date}.jpeg",
+            city=data['city'],
+            flight=data['currentDateTime'],
+            image=f"static/purcells/{last}-{data['currentDateTime']}.jpeg",
             where_from=user_role
         )
-        
         # Добавляем запись в сессию и фиксируем изменения в базе данных
         db.session.add(add)
         db.session.commit()
@@ -81,8 +111,10 @@ def add_record(last, form_data, cost, db, user_role):
 
 
 # Функция для обработки изображения
-def handle_image(file, number, flight, app):
-    filename = f"{number}-{flight}.jpeg"
+def handle_image(file, number, date, app):
+    date = date.replace(":", ".")
+    filename = f"{number}-{date}.jpeg"
+    print(filename)
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     # Сохраняем загруженное изображение
     file.save(image_path)
@@ -367,7 +399,7 @@ def delete_old_data(db):
     date_threshold = today - delta
 
     # Попытка удаления старых данных из базы данных
-    old_data = Purcell.query.filter(Purcell.flight < date_threshold).delete()
+    old_data = Purcell.query.filter(Purcell.date < date_threshold).delete()
     db.session.commit()
 
 

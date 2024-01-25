@@ -96,7 +96,7 @@ def add_record(last, data, cost, db, user_role):
             responsibility=data['responsibility'].upper(),
             number=last,
             city=data['city'],
-            flight=data['currentDateTime'],
+            flight='25.01.2024 22:20:09',
             image=f"static/purcells/{last}-{data['currentDateTime']}.jpeg",
             where_from=user_role
         )

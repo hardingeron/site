@@ -135,6 +135,31 @@ def all():
 
 
 
+
+@app.route('/removing_from_the_list', methods=['POST'])
+@login_required
+def remove_from_list():
+    access = ['admin', 'Tbilisi']
+    # Проверка прав доступа
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 403
+    
+    # Получаем значение data.id из запроса
+    data_id = request.json.get('id')
+
+    # Ищем запись в таблице Purcell по переданному id
+    purcell_entry = Purcell.query.get(data_id)
+
+    if purcell_entry:
+        # Если запись найдена, удаляем ее
+        db.session.delete(purcell_entry)
+        db.session.commit()
+        return jsonify({'success': True}), 200
+    else:
+        # Если запись не найдена, возвращаем сообщение об ошибке
+        return jsonify({'success': False, 'message': f'Запись с id {data_id} не найдена'}), 404
+
+
 @app.route('/download', methods=['POST'])
 @login_required
 def download():

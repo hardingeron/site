@@ -51,8 +51,9 @@
         </thead>
         <tbody>
             {% for data in all_data %}
-            <tr class="{% if data.departure_status == '+' %}red-background{% else %}inherit-background{% endif %}">
+            <tr class="{% if data.departure_status == '+' %}red-background{% else %}inherit-background{% endif %}" data-id="{{ data.id }}">
                 <td class="description">
+                    <img src="/static/images/delete.png" class="icon" onclick="removeFromList('{{ data.id }}')">
                     <img src="/static/images/edit.png" class="icon" onclick="window.location.href='/change?id={{ data.id }}'">
                     <img src="/static/images/photo.png" class="icon" onclick="openImageModal('{{ data.image }}', '{{ data.inventory }}')">
                 </td>
@@ -231,6 +232,46 @@
     }
     </script>
 
+
+
+<!-- დასამუშავებელია ეს კოდი !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<script>
+    function removeFromList(id) {
+        // Показываем всплывающее окно для подтверждения удаления
+        if (confirm('ნამდვილად გსურთ სიიდან ამოშლა?')) {
+            // Если пользователь нажал "OK", отправляем POST-запрос на сервер
+            fetch('/removing_from_the_list', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id: id }), // Отправляем значение data.id в формате JSON
+            })
+            .then(response => {
+                if (response.ok) {
+
+                    // Обработка успешного ответа от сервера
+                    showMessage('ჩანაწერი წაშლილია', true);
+                    document.querySelector(`tr[data-id='${id}']`).style.display = 'none';
+
+                } else if (response.status === 404) {
+                    // Если запись не найдена на сервере
+                    showMessage('ჩანაწერი ვერ მოიძებნა', false);
+                } else {
+                    // Обработка других ошибок
+                    showMessage('თქვენ არ გაქვთ წვდომა', false);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при отправке запроса:', error);
+                showMessage('გაურკვეველი შეცდომა', false);
+            });
+        } else {
+            // Если пользователь нажал "Отмена", отменяем удаление
+            console.log('Удаление отменено');
+        }
+    }
+</script>
 
 {% endblock %}
     

@@ -258,3 +258,13 @@
 .red-background {
   background-color: #271f1f;
 }
+
+.red-background:hover {
+  background-color: #3f464b;
+} 
+
+
+
+.inherit-background:hover {
+  background-color: #3f464b;
+}

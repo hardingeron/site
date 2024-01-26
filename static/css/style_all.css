@@ -81,6 +81,8 @@
     background-color: #ffffff;
  }
   
+
+
 .table-row:hover {
   background-color: #6e8587;
   color: #fff;
@@ -250,4 +252,9 @@
 
 .download-container button.btn-download:active {
   background-color: #21618c;
+}
+
+
+.red-background {
+  background-color: #271f1f;
 }

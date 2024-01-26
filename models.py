@@ -25,7 +25,7 @@ class Purcell(db.Model):
     inventory = db.Column(db.String(200), nullable=True)
     cost = db.Column(db.String(50), nullable=True)
     passport = db.Column(db.String(50), nullable=True)
-    weight =  db.Column(db.String(50), nullable=True)
+    weight = db.Column(db.String(50), nullable=True)
     responsibility = db.Column(db.String(50), nullable=True)
     number = db.Column(db.String(50), nullable=True)
     city = db.Column(db.String(50), nullable=True)
@@ -33,7 +33,8 @@ class Purcell(db.Model):
     flight = db.Column(db.String(50), nullable=True)
     image = db.Column(db.String(100))
     where_from = db.Column(db.String(20), nullable=True)
-    
+    departure_status = db.Column(db.String(10), nullable=True)
+
 
 
 

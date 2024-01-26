@@ -130,7 +130,6 @@ def all():
     last_10_flights = list(set(row.flight for row in all_data))[:10]
 
     # Получаем список всех элементов меню
-
     # Отображаем шаблон страницы 'all.html' с данными
     return render_template('all.html', all_data=all_data, last_10_flights=last_10_flights)
 

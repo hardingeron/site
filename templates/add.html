@@ -127,6 +127,11 @@
                         </label>
                     </div>
                 </div>
+                <div class="departure_status_block">
+                    <label for="myCheckbox">გატანება</label>
+                    <input type="checkbox" id="departureStatus" name="departureStatus" value="value">
+    
+                </div>
             </div>
             <div class="button_block">
                 <button id="saveButton" type="button">დასრულება</button>
@@ -216,6 +221,10 @@
     // Получите текущую дату и время
     var currentDate = new Date();
 
+    // получения информации об отправке на следующем рейсе
+    var departureStatus = document.getElementById("departureStatus").checked;
+    formData.append("departureStatus", departureStatus ? "selected" : "not selected");
+
     // Функция для добавления ведущего нуля к числам, если они меньше 10
     function addLeadingZero(number) {
         return number < 10 ? "0" + number : number;
@@ -265,6 +274,8 @@
             document.querySelector(".pay_block input[name='payment']:checked").checked = false;
             document.querySelector(".payment_currency input[name='payment_currency']:checked").checked = false;
             document.getElementById("photo").value = ''; // Очистка загруженного файла
+            document.getElementById("departureStatus").checked = false;
+
         } else {
             Swal.fire({
                 icon: 'error',

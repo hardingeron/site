@@ -82,8 +82,12 @@ def calculate_cost(payment_type, cost_amount, currency):
 # Функция для добавления записи в базу данных
 def add_record(last, data, cost, db, user_role):
     data['currentDateTime'] = data['currentDateTime'].replace(":", ".")
+    if data['departureStatus'] == 'selected':
+        check_box = '+'
+    else:
+        check_box = '-'
+
     try:
-        print(user_role)
         add = Purcell(
             sender=data['sender'].upper(),
             sender_phone=data['sender_phone'],
@@ -98,7 +102,8 @@ def add_record(last, data, cost, db, user_role):
             city=data['city'],
             flight=data['currentDateTime'],
             image=f"static/purcells/{last}-{data['currentDateTime']}.jpeg",
-            where_from=user_role
+            where_from=user_role,
+            departure_status = check_box
         )
         # Добавляем запись в сессию и фиксируем изменения в базе данных
         db.session.add(add)

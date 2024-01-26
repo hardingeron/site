@@ -19,7 +19,8 @@ body {
   background-repeat: no-repeat;
   opacity: 0.9;
   z-index: -1;
-  width: 800px;
+  width: 900px;
+
 }
 
 /* Медиа-запрос для мобильных устройств */
@@ -31,6 +32,16 @@ body {
 
   }
 }
+
+/* Медиа-запрос для мобильных устройств */
+@media only screen and (max-width: 1920px) {
+  .bg-image_l {
+    width: 720px; /* Устанавливаем ширину 300px */
+    top: 15%;
+
+  }
+}
+
 
 .add_block {
   width: 570px;

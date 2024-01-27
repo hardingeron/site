@@ -10,7 +10,7 @@ body {
 
 .menu_block {
   width: 800px;
-  height: 750px;
+  height: 500px;
   background-color: #444654;
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
@@ -19,16 +19,20 @@ body {
   /* Другие стили для меню блока */
 }
 
+
 .first_line_block, .last_line_block, .last_line {
     width: 100%;
-    height: 33%;
+    height: 35%;
     text-align: center;
-    margin: auto;
+    margin-top: 50px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
+
+
+
 
 .menu_element_block {
     display: flex;
@@ -52,7 +56,7 @@ body {
 .el img, .el2 img {
     width: 150px;
     height: 150px;
-    border-radius: 50%;
+    border-radius: 10px;
 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Улучшаем тень изображений */
 }
@@ -68,7 +72,7 @@ body {
 }
 
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1000px) {
     .menu_block {
         width: 100%;
         height: 50%;
@@ -97,8 +101,8 @@ body {
     }
 
     .el, .el2 {
-        margin-right: 20px;
-        margin-bottom: 20px; /* Добавляем отступ снизу между элементами "el" */
+        margin-right: 5px;
+        margin-bottom: 5px; /* Добавляем отступ снизу между элементами "el" */
     }
 
     .el:last-child, .el2:last-child {
@@ -106,14 +110,14 @@ body {
     }
 
     .el img, .el2 img {
-        width: 100px; /* Уменьшаем размер изображения для мобильных устройств */
-        height: 100px;
+        width: 70px; /* Уменьшаем размер изображения для мобильных устройств */
+        height: 70px;
     }
 
     .el label, .el2 label {
-        width: 100px;
+        width: 80px;
         height: 10px;
-        font-size: 16px; /* Уменьшаем размер шрифта для мобильных устройств */
+        font-size: 12px; /* Уменьшаем размер шрифта для мобильных устройств */
     }
 }
 

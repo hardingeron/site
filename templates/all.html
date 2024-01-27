@@ -51,11 +51,18 @@
         </thead>
         <tbody>
             {% for data in all_data %}
-            <tr class="{% if data.departure_status == '+' %}red-background{% else %}inherit-background{% endif %}" data-id="{{ data.id }}">
+            <tr class="{% if data.departure_status == '+' %}red-background{% else %}inherit-background{% endif %}" 
+                {% if data.delivery == 'yes' %} style="color: #67fd67; background-color: transparent;" {% endif %}
+                data-id="{{ data.id }}">
                 <td class="description">
                     <img src="/static/images/delete.png" class="icon" onclick="removeFromList('{{ data.id }}')">
                     <img src="/static/images/edit.png" class="icon" onclick="window.location.href='/change?id={{ data.id }}'">
                     <img src="/static/images/photo.png" class="icon" onclick="openImageModal('{{ data.image }}', '{{ data.inventory }}')">
+                    {% if data.delivery == 'yes' %}
+                        <img src="/static/images/delivery.png" class="icon" style="display: none;">
+                    {% else %}
+                    <img id="deliveryImage_{{ data.id }}" src="/static/images/delivery.png" class="icon" onclick="updateDeliveryStatus('{{ data.id }}')">
+                    {% endif %}
                 </td>
                 <td class="number">{{ data.number }}</td>
                 <td>{{ data.sender }}</td>
@@ -249,20 +256,22 @@
             })
             .then(response => {
                 if (response.ok) {
-
-                    // Обработка успешного ответа от сервера
-                    showMessage('ჩანაწერი წაშლილია', true);
-                    document.querySelector(`tr[data-id='${id}']`).style.display = 'none';
-
+                    // Парсим ответ сервера в формате JSON
+                    return response.json();
                 } else if (response.status === 404) {
-                    // Если запись не найдена на сервере
-                    showMessage('ჩანაწერი ვერ მოიძებნა', false);
+                    return response.json();
                 } else {
-                    // Обработка других ошибок
-                    showMessage('თქვენ არ გაქვთ წვდომა', false);
+                    throw new Error('გაურკვეველი შეცდომა დაუკავშირდით ადმინისტრატორს');
+                }
+            })
+            .then(data => {
+                showMessage(data.message, data.success);
+                if (data.success && data.message === 'ჩანაწერი წაშლილია') {
+                    document.querySelector(`tr[data-id='${id}']`).style.display = 'none';
                 }
             })
             .catch(error => {
+                // Обрабатываем ошибки
                 console.error('Ошибка при отправке запроса:', error);
                 showMessage('გაურკვეველი შეცდომა', false);
             });
@@ -272,6 +281,55 @@
         }
     }
 </script>
+
+
+
+
+<script>
+    function updateDeliveryStatus(id) {
+        // Всплывающее окно с запросом подтверждения
+        if (confirm('ატანთ ამანათს მომხმარებელს?')) {
+            fetch('/delivery_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id: id })
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Парсим ответ сервера в формате JSON
+                    return response.json();
+                } else if (response.status === 404) {
+                    return response.json();
+                } else {
+                    throw new Error('გაურკვეველი შეცდომა დაუკავშირდით ადმინისტრატორს');
+                }
+            })
+            .then(data => {
+                showMessage(data.message, data.success);
+                if (data.success && data.message === 'Посылка вручена') {
+                    // Скрываем элемент <img> с помощью его идентификатора
+                    let deliveryImage = document.getElementById(`deliveryImage_${id}`);
+                    deliveryImage.style.display = 'none';
+
+                    let tableRow = document.querySelector(`tr[data-id='${id}']`);
+                    tableRow.style.color = '#67fd67';
+                    tableRow.style.backgroundColor = 'transparent';
+                }
+            })
+            .catch(error => {
+                // Обрабатываем ошибки
+                console.error('Error:', error.message);
+                showMessage('მოხდა შეცდომა: ' + error.message, false);
+            });
+        }
+    }
+</script>
+
+
+
+
 
 {% endblock %}
     

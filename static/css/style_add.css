@@ -10,7 +10,7 @@ body {
 
 .bg-image_l {
   position: fixed;
-  top: 15%;
+  top: 10%;
   left: 0;
   right: 0;
   bottom: 0;
@@ -19,7 +19,7 @@ body {
   background-repeat: no-repeat;
   opacity: 0.9;
   z-index: -1;
-  width: 900px;
+  width: 1050px;
 
 }
 
@@ -307,12 +307,14 @@ textarea[name="inventory"]:focus {
   width: 30px;
   height: 30px;
   display: block; /* Изменено на блочное отображение */
+  padding: 2px;
 }
 
 /* Стилизация меток при выборе */
 .radio_block input:checked + label {
   background-color: #f80000a4;
   border-radius: 10px;
+  padding: 5px;
 }
 
 
@@ -342,7 +344,6 @@ textarea[name="inventory"]:focus {
   height: 30px;
 }
 
-.radio_block {
-  height: 50px;
-
+.radio-label-text {
+  font-size: 30px;
 }

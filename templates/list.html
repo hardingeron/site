@@ -383,31 +383,25 @@
 
 
 <!-- Модальное окно "payment" -->
-<div id="PaymentModal" class="payment_modal">
-    <div class="payment_modal-content">
+<div id="PaymentModal" class="modal_statistic">
+    <div class="modal_statistic-content">
         <span class="close" id="closePaymentModal">&times;</span>
         <h2>სტატისტიკა</h2>
-            <div class="diagrams_position">
-                <div class="chart-container">
-                    <label>გადახდა ლარში</label>
-                    <canvas id="gelChartCanvas"></canvas>
-                </div>
-                <div class="chart-container">
-                    <label>გადახდა რუბლში</label>
-                    <canvas id="rubChartCanvas"></canvas>
-                </div>
-            </div>
+                <div class="diagram_box_block">
+                    <div class="diagram_block">
+                        <canvas id="gelChartCanvas"></canvas>
+                    </div>
+                    <div class="diagram_block_four">
+                        <canvas id="rubChartCanvas"></canvas>
+                    </div>
 
-            <div class="diagrams_position">
-                <div class="chart-container">
-                    <label>გადახდა დოლარში</label>
-                    <canvas id="usdChartCanvas"></canvas>
+                    <div class="diagram_block_two">
+                        <canvas id="usdChartCanvas"></canvas>
+                    </div>
+                    <div class="diagram_block_three">
+                        <canvas id="eurChartCanvas"></canvas>
+                    </div>
                 </div>
-                <div class="chart-container">
-                    <label>გადახდა ევროში</label>
-                    <canvas id="eurChartCanvas"></canvas>
-                </div>
-            </div>
         <!-- Здесь вы можете добавить содержимое вашего модального окна "payment" -->
     </div>
 </div>
@@ -749,105 +743,198 @@ xhr.send(JSON.stringify(newData));
 
 
 <script>
-    // Получите данные для диаграммы из переменных, которые у вас есть
-    var gelPaid = "{{ gel_paid }}";
-    var gelCard = "{{ gel_card }}";
-    var gelNotPaid = "{{ gel_not_paid }}";
+    var gelPaid = parseFloat("{{ gel_paid }}");
+    var gelCard = parseFloat("{{ gel_card }}");
+    var gelNotPaid = parseFloat("{{ gel_not_paid }}");
 
-    // Создаем круговую диаграмму
     var ctx = document.getElementById('gelChartCanvas').getContext('2d');
     
-    
+    var options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
+        }
+    };
+
+    var data = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'ლარი',
+            data: [gelPaid, gelCard, gelNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
     var gelChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
-            datasets: [{
-                data: [gelPaid, gelCard, gelNotPaid],
-                backgroundColor: ['green', 'blue', 'red']
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
+        type: 'bar', // Изменили тип диаграммы на 'bar'
+        data: data,
+        options: options
     });
 </script>
 
 
 <script>
-    // Получите данные для диаграммы RUB из переменных, которые у вас есть
-    var rubPaid = "{{ rub_paid }}";
-    var rubCard = "{{ rub_card }}";
-    var rubNotPaid = "{{ rub_not_paid }}";
+    var rubPaid = parseFloat("{{ rub_paid }}");
+    var rubCard = parseFloat("{{ rub_card }}");
+    var rubNotPaid = parseFloat("{{ rub_not_paid }}");
 
-    // Создаем круговую диаграмму для RUB
     var ctxRub = document.getElementById('rubChartCanvas').getContext('2d');
+    
+    var optionsRub = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
+        }
+    };
+
+    var dataRub = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'რუბლი',
+            data: [rubPaid, rubCard, rubNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
     var rubChart = new Chart(ctxRub, {
-        type: 'pie',
-        data: {
-            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
-            datasets: [{
-                data: [rubPaid, rubCard, rubNotPaid],
-                backgroundColor: ['green', 'blue', 'red']
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
+        type: 'bar',
+        data: dataRub,
+        options: optionsRub
     });
 </script>
 
 
-<script>
-    // Получите данные для диаграммы USD из переменных, которые у вас есть
-    var usdPaid = "{{ usd_paid }}";
-    var usdCard = "{{ usd_card }}";
-    var usdNotPaid = "{{ usd_not_paid }}";
 
-    // Создаем круговую диаграмму для USD
+<script>
+    var usdPaid = parseFloat("{{ usd_paid }}");
+    var usdCard = parseFloat("{{ usd_card }}");
+    var usdNotPaid = parseFloat("{{ usd_not_paid }}");
+
     var ctxUSD = document.getElementById('usdChartCanvas').getContext('2d');
-    var usdChart = new Chart(ctxUSD, {
-        type: 'pie',
-        data: {
-            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
-            datasets: [{
-                data: [usdPaid, usdCard, usdNotPaid],
-                backgroundColor: ['green', 'blue', 'red']
-            }]
+    
+    var optionsUSD = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
         }
+    };
+
+    var dataUSD = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'დოლარი',
+            data: [usdPaid, usdCard, usdNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
+    var usdChart = new Chart(ctxUSD, {
+        type: 'bar',
+        data: dataUSD,
+        options: optionsUSD
     });
 </script>
+
 
 
 <script>
-    // Получите данные для диаграммы EUR из переменных, которые у вас есть
-    var eurPaid = "{{ eur_paid }}";
-    var eurCard = "{{ eur_card }}";
-    var eurNotPaid = "{{ eur_not_paid }}";
+    var eurPaid = parseFloat("{{ eur_paid }}");
+    var eurCard = parseFloat("{{ eur_card }}");
+    var eurNotPaid = parseFloat("{{ eur_not_paid }}");
 
-    // Создаем круговую диаграмму для EUR
     var ctxEUR = document.getElementById('eurChartCanvas').getContext('2d');
-    var eurChart = new Chart(ctxEUR, {
-        type: 'pie',
-        data: {
-            labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
-            datasets: [{
-                data: [eurPaid, eurCard, eurNotPaid],
-                backgroundColor: ['green', 'blue', 'red']
-            }]
+    
+    var optionsEUR = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
         }
+    };
+
+    var dataEUR = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'ევრო',
+            data: [eurPaid, eurCard, eurNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
+    var eurChart = new Chart(ctxEUR, {
+        type: 'bar',
+        data: dataEUR,
+        options: optionsEUR
     });
 </script>
+
 
 
 <script>

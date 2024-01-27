@@ -34,6 +34,7 @@ class Purcell(db.Model):
     image = db.Column(db.String(100))
     where_from = db.Column(db.String(20), nullable=True)
     departure_status = db.Column(db.String(10), nullable=True)
+    delivery = db.Column(db.String(3), default='no')
 
 
 

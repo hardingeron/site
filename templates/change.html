@@ -19,10 +19,6 @@
                 </div>
 
                 <div class="flight_and_img">
-                    <div class="flight_block">
-                        <label>გაგზავნის თარიღი</label>
-                        <input type="date" name="flight" value="{{edit.flight}}" required class="fandm">
-                    </div> 
                     <div class="photo_block">
                         <label>ფოტოს ატვირთვა</label>
                         <input type="file" id="photo" name="photo" class="fandm">
@@ -55,8 +51,10 @@
                 </div>
                 
                 <div class="description_block">
-                    <label>აღწერა</label>
-                    <textarea name="inventory" required class="description">{{ edit.inventory }}</textarea>
+                    <div class="description">
+                        <label>აღწერა</label>
+                        <textarea name="inventory"  data-error="inventory"></textarea>
+                    </div>
                 </div>
 
         

@@ -142,7 +142,7 @@ def remove_from_list():
     access = ['admin', 'Tbilisi']
     # Проверка прав доступа
     if current_user.role not in access:
-        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 403
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 404
     
     # Получаем значение data.id из запроса
     data_id = request.json.get('id')
@@ -154,10 +154,36 @@ def remove_from_list():
         # Если запись найдена, удаляем ее
         db.session.delete(purcell_entry)
         db.session.commit()
-        return jsonify({'success': True}), 200
+        return jsonify({'success': True, 'message': 'ჩანაწერი წაშლილია'}), 200
     else:
         # Если запись не найдена, возвращаем сообщение об ошибке
         return jsonify({'success': False, 'message': f'Запись с id {data_id} не найдена'}), 404
+
+
+
+@app.route('/delivery_status', methods=['POST'])
+@login_required
+def update_delivery_status():
+    data_id = request.json.get('id')  # Получаем ID из запроса
+
+    # Находим запись в таблице Purcell по переданному ID
+    purcell_entry = Purcell.query.get(data_id)
+
+    if purcell_entry:
+        # Проверяем, что статус доставки еще не 'yes'
+        if purcell_entry.delivery != 'yes':
+            # Изменяем статус доставки на 'yes'
+            purcell_entry.delivery = 'yes'
+            db.session.commit()
+            return jsonify({'message': 'Посылка вручена', 'success': True}), 200
+        else:
+            # Если статус доставки уже 'yes', возвращаем ошибку 404
+            return jsonify({'message': 'Данная посылка уже вручена!', 'success': False}), 404
+    else:
+        return jsonify({'message': 'Запись не найдена'}), 404
+
+
+
 
 
 @app.route('/download', methods=['POST'])
@@ -236,6 +262,7 @@ def add():
 
 
 @app.route('/saving_a_parcel', methods=['POST'])
+@login_required
 def saving_a_parcel():
     data = request.form.to_dict()
     print(data)
@@ -263,19 +290,6 @@ def saving_a_parcel():
         'message': f'ამანათი წარმატებიით დაემატა! № {new_record}'
     }
     return jsonify(response_data)
-
-# @app.route('/saving_a_parcel', methods=['POST'])
-# def saving_a_parcel():
-#     data = request.form.to_dict()
-#     current_date_time = data.get("currentDateTime")
-#     print(current_date_time)
-#     print(data)
-#     formatted_date = current_date_time.strftime('%d.%m.%Y %H:%M:%S')
-#     print('aaaaaaaaaaaa', formatted_date)
-
-#     # Ваши действия с данными и текущей датой и временем
-
-#     return "Данные успешно получены и обработаны"
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /change              ------------------------------#

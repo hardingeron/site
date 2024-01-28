@@ -152,9 +152,13 @@ def handle_image(file, number, date, app):
 #===========================================================================================================================================================
 #-------------------------- ДЛЯ ОБРАБОТЧИКА /change
 #===========================================================================================================================================================
-def handle_uploaded_image(file, number, flight, app):
+def handle_uploaded_image(file, parcel_id, app):
     # Формирование имени файла на основе номера и рейса
-    filename = f"{number}-{flight}.jpeg"
+    purcell_entry = Purcell.query.get(parcel_id)
+    date = purcell_entry.flight
+    date = date.replace(":", ".")
+
+    filename = f"{purcell_entry.number}-{date}.jpeg"
     
     # Полный путь до места сохранения изображения
     image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -189,6 +193,31 @@ def process_image(image_path):
     
     # Сохранение обработанного изображения в формате JPEG
     image.save(image_path, 'JPEG', quality=compress_quality)
+
+
+def edit_parcel_(db, data):
+    # Находим запись по id
+    purcell_entry = Purcell.query.get(data['id'])
+
+    # Обновляем значения записи
+    purcell_entry.sender = data['sender']
+    purcell_entry.sender_phone = data['sender_phone']
+    purcell_entry.recipient = data['recipient']
+    purcell_entry.recipient_phone = data['recipient_phone']
+    purcell_entry.inventory = data['inventory']
+    purcell_entry.cost = data['cost']
+    purcell_entry.passport = data['passport']
+    purcell_entry.weight = data['weight']
+    purcell_entry.responsibility = data['responsibility']
+    purcell_entry.city = data['city']
+    purcell_entry.departure_status = data['departureStatus']
+
+    # Сохраняем изменения в базе данных
+    db.session.commit()
+
+    # Возвращаем сообщение об успешном обновлении записи
+
+
 
 #===========================================================================================================================================================
 #                                               ДЛЯ ОБРАБОТЧИКА /change >----> конец <----< 

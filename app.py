@@ -33,7 +33,7 @@ import random
 import qrcode
 
 
-from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking, manifest_filter, xml_convertor, allowed_file, trecing_redactor
+from functions import  get_last_record, calculate_cost, handle_image, handle_uploaded_image, get_reservation_data, validate_input, format_trecing, save_record, generate_new_number, add_record, get_sorted_dates, update_json_file, delete_old_data, clean_old_files, log_error, process_payment, save_booking_to_db, get_existing_booking, update_booking, manifest_filter, xml_convertor, allowed_file, trecing_redactor, edit_parcel_
 
 
 app = Flask(__name__)
@@ -135,7 +135,7 @@ def all():
 
 
 
-
+# შეცდომებზე შემოწმება
 @app.route('/removing_from_the_list', methods=['POST'])
 @login_required
 def remove_from_list():
@@ -160,7 +160,7 @@ def remove_from_list():
         return jsonify({'success': False, 'message': f'Запись с id {data_id} не найдена'}), 404
 
 
-
+# წვდომის შეზრუდვა და მესიჯების გასწორება
 @app.route('/delivery_status', methods=['POST'])
 @login_required
 def update_delivery_status():
@@ -183,6 +183,27 @@ def update_delivery_status():
         return jsonify({'message': 'Запись не найдена'}), 404
 
 
+# დასამთავრებელია პასუხების მისაღებად ასევე შეცდომების დაბლოკვა!!! და წვდომის შეზღუდვა
+@app.route('/edit_parcel', methods=['POST'])
+@login_required
+def edit_parcel():
+    # Получаем данные из формы
+    data = request.form.to_dict()
+    
+    # Получаем переданную фотографию, если она есть
+    photo = request.files.get('photo')
+
+    # Обработка фотографии, если она была передана
+    if photo and photo.filename != '':
+        handle_uploaded_image(request.files['photo'], data['id'], app)
+
+    edit_parcel_(db, data)
+
+
+    # Далее ваша логика обработки данных
+
+    # Возвращаем сообщение об успешной обработке
+    return 'Data received and processed successfully'
 
 
 
@@ -293,30 +314,6 @@ def saving_a_parcel():
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /change              ------------------------------#
-
-@app.route('/change', methods=['GET'])
-@login_required
-def change_get():
-    access = ['admin', 'Tbilisi']
-    try:
-        # Проверка прав доступа
-        if current_user.role not in access:
-            flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
-            return redirect(url_for('index'))
-
-        # Получение id записи из параметров запроса
-        id = int(request.args.get('id'))
-        myrecord = db.session.query(Purcell).filter_by(id=id).first()
-
-        # Получение списка меню и рендеринг шаблона
-        return render_template('change.html', edit=myrecord)
-    except SQLAlchemyError as e:
-        flash('Ошибка при обращении к базе данных: ' + str(e), category='error')
-        return redirect(url_for('all'))
-    except Exception as e:
-        flash('Произошла неизвестная ошибка: ' + str(e), category='error')
-        return redirect(url_for('all'))
-    
 
 @app.route('/change', methods=['POST'])
 @login_required

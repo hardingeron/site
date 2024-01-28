@@ -268,3 +268,274 @@
 .inherit-background:hover {
   background-color: #3f464b;
 }
+
+/*  */
+
+/* Стили для модального окна */
+.editModal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Контейнер для содержимого модального окна */
+
+
+/* Закрыть кнопку (крестик) */
+.editModalClose {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.editModalClose:hover,
+.editModalClose:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+
+.editModalContent {
+  width: 570px;
+  height: 800px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #444654;
+  border-radius: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+
+
+#editNumberLabel {
+  color: #d2d2d2; /* Цвет текста */
+  font-family: 'Arial', sans-serif; /* Шрифт */
+  font-size: 32px; /* Размер шрифта */
+  text-align: center; /* Выравнивание текста по центру */
+  text-transform: uppercase; /* Преобразование текста в верхний регистр */
+  width: 700px;
+  padding: 20px;
+}
+
+
+.sender_block,
+.recipient_block,
+.information_one_block,
+.information_two_block,
+.pay
+{
+  display: flex;
+  height: 75px;
+  margin-bottom: 5px; /* Отступ снизу */
+ 
+}
+
+.description_block {
+  display: flex;
+ 
+  height: 150px;
+  margin-bottom: 20px; /* Отступ снизу */
+}
+
+.sender_block > *:not(:last-child),
+.recipient_block > *:not(:last-child),
+.description_block > *:not(:last-child){
+  margin-right: 15px;
+}
+
+.pay > *:not(:last-child) {
+  margin-right: 30px;
+}
+
+.information_one_block > *:not(:last-child),
+.information_two_block > *:not(:last-child) {
+  margin-right: 33px;
+}
+
+.sender_first_last_name,
+.sender_phone_block,
+.recipient_first_last_name,
+.recipient_phone_block,
+.Payment_method,
+.payment_currency {
+
+  flex-direction: column;
+  align-items: center; /* Центрирование по горизонтали */
+
+}
+
+.editDescription {
+  flex-direction: column;
+  align-items: center; /* Центрирование по горизонтали */
+  width: 490px;
+}
+
+.weight_block,
+.responsibility_block,
+.passport_block,
+.price,
+.city,
+.photo_block {
+  flex-direction: column;
+  align-items: center; /* Центрирование по горизонтали */
+  width: 140px;
+}
+
+
+.sender_block input,
+.recipient_block input {
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 16px;
+  margin-top: 2px;
+  width: 230px;
+  height: 20px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.information_one_block input,
+.information_two_block input {
+  outline: none;
+  width: 130px;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 16px;
+  margin-top: 2px;
+  height: 20px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+textarea[name="inventory"] {
+  width: 485px;
+  height: 100px;
+  resize: none; /* Запрет изменения размеров */
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 16px;
+  margin-top: 2px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+textarea[name="inventory"]:focus {
+  border-color: #2ecc71;
+  box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
+}
+
+
+.recipient_block label,
+.sender_block label,
+.description_block label,
+.information_one_block label,
+.information_two_block label{
+  display: block;
+  text-align: center;
+  font-size: 14px; /* Пример размера шрифта - настройте по вашему усмотрению */
+  margin-bottom: 5px; /* Пример отступа снизу - настройте по вашему усмотрению */
+  font-weight: bold;
+
+  margin: 0 auto;
+  background-color: #444654;
+  color: #d2d2d2;
+  border: none;
+  margin-bottom: 5px;
+  position: relative;
+
+}
+
+
+#editCitySelect {
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  height: 30px;
+  font-size: 16px;
+  margin-top: 2px;
+  width: 140px;
+  background-color: #40414f;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+  color: #8e8ea0;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+
+#departureStatus {
+  height: 25px;
+}
+
+
+
+.departure_status_block {
+  display: flex; /* Добавляем flex-контейнер */
+  flex-direction: column; /* Устанавливаем направление по вертикали */
+  border: 1px solid #ccc;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+  width: 141px;
+  height: 75px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+
+
+/* Стилизация изображений вместо радио-кнопок */
+.label img {
+  width: 30px;
+  height: 30px;
+  display: block; /* Изменено на блочное отображение */
+  padding: 2px;
+}
+
+.button_block {
+  margin-top: 20px;
+}
+
+
+#editButton {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#saveButton:hover {
+  background-color: #45a049;
+}

@@ -91,23 +91,6 @@ h2 {
 
 
 
-.sender_block a,
-.recipient_block a,
-.information_one_block a,
-.information_two_block a,
-
-.description_block a,
-.pay a {
-  font-weight: bold;
-  width: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  color: #d2d2d2;
-  font-family: 'Arial', sans-serif; /* Шрифт */
-  text-align: right;
-}
 
 
 

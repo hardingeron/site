@@ -152,7 +152,19 @@
     </body>
 <!-- сохранение посылки в бд -->
 <script>
-    document.getElementById("saveButton").addEventListener("click", function() {
+        document.getElementById("saveButton").addEventListener("click", function() {
+        // Сохраняем ссылку на кнопку
+        const saveButton = this;
+
+        // Делаем кнопку неактивной и прозрачной
+        saveButton.disabled = true;
+        saveButton.style.opacity = '0.5';
+        
+        setTimeout(function() {
+        saveButton.disabled = false;
+        saveButton.style.opacity = '1';
+            }, 2000);
+
         // Проверка каждого поля на заполнение
         const requiredFields = [
             { input: document.querySelector(".sender_block input[name='sender']"), error: 'sender' },
@@ -284,7 +296,8 @@
     })
     .catch(error => {
         console.error("Ошибка при отправке запроса:", error);
-    });
+    })
+    
 });
 
 </script>

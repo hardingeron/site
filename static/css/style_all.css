@@ -65,6 +65,7 @@
 
 .table td.description {
     white-space: nowrap;
+    text-align: left;
 }
 
 .table td.number {

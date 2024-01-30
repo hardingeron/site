@@ -187,23 +187,27 @@ def update_delivery_status():
 @app.route('/edit_parcel', methods=['POST'])
 @login_required
 def edit_parcel():
-    # Получаем данные из формы
-    data = request.form.to_dict()
-    
-    # Получаем переданную фотографию, если она есть
-    photo = request.files.get('photo')
+    try:
+        # Получаем данные из формы
+        data = request.form.to_dict()
+        
+        # Получаем переданную фотографию, если она есть
+        photo = request.files.get('photo')
 
-    # Обработка фотографии, если она была передана
-    if photo and photo.filename != '':
-        handle_uploaded_image(request.files['photo'], data['id'], app)
+        # Обработка фотографии, если она была передана
+        if photo and photo.filename != '':
+            handle_uploaded_image(request.files['photo'], data['id'], app)
 
-    edit_parcel_(db, data)
+        edit_parcel_(db, data)
 
 
-    # Далее ваша логика обработки данных
+        # Далее ваша логика обработки данных
 
-    # Возвращаем сообщение об успешной обработке
-    return 'Data received and processed successfully'
+        # Возвращаем сообщение об успешной обработке
+        
+        return jsonify({'message': 'რედაქტირებამ წარმატებით ჩაიარა', 'success': True}), 200
+    except Exception as e:
+        return jsonify({'message': f'დაფიქსირდა შეცდომა : {e}', 'success': False}), 400
 
 
 

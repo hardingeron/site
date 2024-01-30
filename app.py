@@ -164,6 +164,11 @@ def remove_from_list():
 @app.route('/delivery_status', methods=['POST'])
 @login_required
 def update_delivery_status():
+    access = ['admin', 'Moscow', 'SPB']
+    # Проверка прав доступа
+    if current_user.role not in access:
+        return jsonify({'message': 'თქვენ არ გაქვთ წვდომა!', 'success': False}), 404
+    
     data_id = request.json.get('id')  # Получаем ID из запроса
 
     # Находим запись в таблице Purcell по переданному ID

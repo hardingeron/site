@@ -94,9 +94,11 @@
         }
     });
 
+
     // Обработчик события для кнопки "Готово"
     deliverBtn.addEventListener('click', function() {
         var purcellId = this.getAttribute('data-id');
+        var imageElement = document.querySelector('.image[data-id="' + purcellId + '"]');
 
         // Отправка AJAX-запроса на сервер Flask
         fetch('/images_list_delivery_status', {
@@ -112,7 +114,12 @@
             // Проверяем успешность операции
             if (data.success) {
                 showMessage(data.message, data.success);
-                // Можно выполнить дополнительные действия после успешной отправки данных
+                // Скрыть элемент с успешно обработанным purcellId
+                if (imageElement) {
+                    imageElement.style.display = "none";
+                }
+                // Закрыть модальное окно
+                modal.style.display = "none";
             } else {
                 showMessage(data.message, data.success);
                 console.error('Ошибка:', data.message); // Выводим сообщение об ошибке в консоль
@@ -123,6 +130,7 @@
             console.error('Ошибка:', error); // Выводим ошибку в консоль
         });
     });
+
 </script>
 
 

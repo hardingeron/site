@@ -20,6 +20,19 @@
     </form>
 </div>
 
+<div class="pictures_list_block">
+    <form id="dateForm" action="/images_list" method="post">
+        <label for="startDate">Дата от:</label>
+        <input type="date" id="startDate" name="startDate">
+
+        <label for="endDate">Дата до:</label>
+        <input type="date" id="endDate" name="endDate">
+
+        <button type="submit">Отправить</button>
+    </form>
+</div>
+
+
 <div class="modal" id="image-modal">
     <div class="modal-content">
         <span class="close">&times;</span>

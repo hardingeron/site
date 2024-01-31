@@ -494,7 +494,7 @@ textarea[name="inventory"]:focus {
 }
 
 
-#departureStatus {
+#editDepartureStatusCheckbox {
   height: 25px;
 }
 

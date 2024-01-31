@@ -204,7 +204,7 @@ def edit_parcel_(db, data):
     purcell_entry.sender_phone = data['sender_phone']
     purcell_entry.recipient = data['recipient']
     purcell_entry.recipient_phone = data['recipient_phone']
-    purcell_entry.inventory = data['inventory']
+    purcell_entry.inventory = data['inventory'].replace('\n', ' ').replace('\r', ' ')
     purcell_entry.cost = data['cost']
     purcell_entry.passport = data['passport']
     purcell_entry.weight = data['weight']

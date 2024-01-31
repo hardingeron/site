@@ -453,6 +453,23 @@ def add_user():
     return jsonify(response_data)
 
 #-------------------------------------------------------------------------------------------------#
+# ------------------------------               /images_list         ------------------------------#
+
+
+@app.route('/images_list', methods=['POST'])
+def parcell_pictures_list():
+    start_date = request.form['startDate']
+    end_date = datetime.strptime(request.form['endDate'], '%Y-%m-%d')
+    end_date += timedelta(days=1)
+
+
+    # Запрос к базе данных для выбора записей в заданном диапазоне дат
+    purcells = Purcell.query.filter(Purcell.date.between(start_date, end_date), Purcell.delivery == 'no').all()
+
+    
+    return render_template('images_list.html', purcells=purcells, start_date=start_date, end_date=end_date)
+
+#-------------------------------------------------------------------------------------------------#
 # ------------------------------               /reservation         ------------------------------#
 
 

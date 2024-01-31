@@ -122,8 +122,8 @@ def all():
     date_threshold = today - delta
 
     # Получаем данные для отображения, отсортированные по дате и номеру
-    all_data = list(reversed(Purcell.query.filter(Purcell.flight >= date_threshold)
-                     .order_by(Purcell.flight.asc(), Purcell.number.asc())
+    all_data = list(reversed(Purcell.query.filter(Purcell.date >= date_threshold)
+                     .order_by(Purcell.date.asc(), Purcell.number.asc())
                      .all()))
 
     # Получаем даты последних 10 рейсов для отображения из уже полученных данных
@@ -133,6 +133,27 @@ def all():
     # Отображаем шаблон страницы 'all.html' с данными
     return render_template('all.html', all_data=all_data, last_10_flights=last_10_flights)
 
+# @app.route('/all', methods=['POST', 'GET'])
+# @login_required
+# def all():
+#     # Получаем текущую дату
+#     today = datetime.now().date()
+
+#     # Определяем временной интервал для данных, которые будут отображены
+#     delta = timedelta(days=60)
+#     date_threshold = today - delta
+
+#     # Получаем данные для отображения, отсортированные по дате и номеру
+#     all_data = list(reversed(Purcell.query.filter(Purcell.flight >= date_threshold)
+#                      .order_by(Purcell.flight.asc(), Purcell.number.asc())
+#                      .all()))
+
+#     # Получаем даты последних 10 рейсов для отображения из уже полученных данных
+#     last_10_flights = list(set(row.flight for row in all_data))[:10]
+
+#     # Получаем список всех элементов меню
+#     # Отображаем шаблон страницы 'all.html' с данными
+#     return render_template('all.html', all_data=all_data, last_10_flights=last_10_flights)
 
 
 # შეცდომებზე შემოწმება
@@ -468,6 +489,55 @@ def parcell_pictures_list():
 
     
     return render_template('images_list.html', purcells=purcells, start_date=start_date, end_date=end_date)
+
+
+@app.route('/images_list_delivery_status', methods=['POST'])
+def images_list_delivery_status():
+    data_id = request.json.get('id')
+    purcell_entry = Purcell.query.get(data_id)
+
+    if purcell_entry:
+        if purcell_entry.delivery == 'yes':
+            return jsonify({'message': 'ამანათი უკვე გაცემული იყო!', 'success': False}), 400
+        
+        purcell_entry.delivery = 'yes'
+        db.session.commit()
+        return jsonify({'message': 'ამანათი გაცემულია', 'success': True}), 200
+    else:
+        return jsonify({'message': 'ამანათი არ მოიძებნა', 'success': False}), 400
+    
+
+
+# @app.route('/images_list_delivery_status', methods=['POST'])
+# def images_list_delivery_status():
+#     # Получение данных из запроса
+#     data_id = request.json.get('id')
+
+#     # Проверка корректности полученного data_id
+#     if not data_id:
+#         return jsonify({'message': 'Некорректный идентификатор изображения', 'success': False}), 400
+
+#     # Проверка наличия изображения в базе данных
+#     purcell_entry = Purcell.query.get(data_id)
+#     if not purcell_entry:
+#         return jsonify({'message': 'Изображение не найдено', 'success': False}), 404
+
+#     # Проверка текущего статуса доставки
+#     if purcell_entry.delivery == 'yes':
+#         return jsonify({'message': 'Изображение уже было доставлено', 'success': False}), 400
+
+#     # Обновление статуса доставки в базе данных
+#     try:
+#         purcell_entry.delivery = 'yes'
+#         db.session.commit()
+#         return jsonify({'message': 'Изображение успешно доставлено', 'success': True}), 200
+#     except Exception as e:
+#         # Обработка ошибок при обновлении статуса доставки
+#         db.session.rollback()
+#         return jsonify({'message': f'Ошибка при обновлении статуса доставки: {str(e)}', 'success': False}), 500
+    
+
+
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /reservation         ------------------------------#

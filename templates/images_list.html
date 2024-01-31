@@ -10,7 +10,7 @@
 
 <div class="images_block">
     {% for purcell in purcells %}
-        <div class="image" id="image_{{ purcell.id }}">
+        <div class="image" data-id="{{ purcell.id }}">
             <img src="{{ purcell.image }}" alt="ამანათის ფოტო">
             <table class="table_block">
                 <tr>
@@ -52,8 +52,7 @@
 
 
 
-<script>
-    // JavaScript
+  <script>
     // Получение модального окна
     var modal = document.getElementById("imagesListDeliveryStatusWindow");
 
@@ -63,10 +62,16 @@
     // Получение элемента для закрытия модального окна
     var span = document.getElementsByClassName("close")[0];
 
+    // Обработчик события для кнопки "Готово"
+    var deliverBtn = document.getElementById("deliverBtn");
+
     // Добавление обработчика событий к каждой картинке
     for (var i = 0; i < images.length; i++) {
         images[i].addEventListener('click', function() {
             modal.style.display = "block";
+            var purcellId = this.getAttribute('data-id');
+            // Передача данных в обработчик Flask
+            deliverBtn.setAttribute('data-id', purcellId);
         });
     }
 
@@ -89,10 +94,36 @@
         }
     });
 
+    // Обработчик события для кнопки "Готово"
+    deliverBtn.addEventListener('click', function() {
+        var purcellId = this.getAttribute('data-id');
+
+        // Отправка AJAX-запроса на сервер Flask
+        fetch('/images_list_delivery_status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: purcellId }) // Отправляем значение id в формате JSON
+        })
+        .then(response => response.json()) // Ожидаем JSON-ответ от сервера
+        .then(data => {
+            console.log(data); // Выводим ответ сервера в консоль
+            // Проверяем успешность операции
+            if (data.success) {
+                showMessage(data.message, data.success);
+                // Можно выполнить дополнительные действия после успешной отправки данных
+            } else {
+                showMessage(data.message, data.success);
+                console.error('Ошибка:', data.message); // Выводим сообщение об ошибке в консоль
+                // Можно выполнить дополнительные действия в случае ошибки
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка:', error); // Выводим ошибку в консоль
+        });
+    });
 </script>
-
-
-
 
 
 {% endblock %}

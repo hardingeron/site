@@ -180,7 +180,6 @@ class EditParcelView(MethodView):
 
             edit_parcel_(db, data)
 
-
             # Возвращаем сообщение об успешной обработке
             return jsonify({'message': 'რედაქტირებამ წარმატებით ჩაიარა', 'success': True}), 200
         except Exception as e:
@@ -216,71 +215,12 @@ class EditDeliveryViev(MethodView):
             return jsonify({'message': 'Запись не найдена'}), 404
 
 
-class DownloadListViev(MethodView):
-    decorators = [login_required]
-
-    def post(self):
-        flight = request.form['flight']
-        
-        # Создание нового файла Excel
-        wb = Workbook()
-        ws = wb.active
-        
-        # Запись данных в файл Excel
-        ws.append(['ნომერი', 'მიმღები', 'ტელეფონი', 'გადახდა', 'ქალაქი', 'გაცემა'])
-        
-        # Получение данных из базы данных и добавление их в файл Excel
-        data = Purcell.query.filter_by(flight=flight).all()
-        
-        for item in data:
-            ws.append([item.number, item.recipient, item.recipient_phone, item.cost, item.city, ''])
-            # ^ Здесь столбец "Выдача" перемещен в конец и оставлен пустым
-        
-        # Применение стилей к ячейкам
-        header_font = Font(bold=True)
-        header_alignment = Alignment(horizontal='center', vertical='center')
-        data_alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
-        border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'), top=Side(border_style='thin'), bottom=Side(border_style='thin'))
-        
-        # Применение стилей к заголовкам
-        for cell in ws[1]:
-            cell.font = header_font
-            cell.alignment = header_alignment
-        
-        # Применение стилей к данным
-        for row in ws.iter_rows(min_row=2):
-            for cell in row:
-                cell.alignment = data_alignment
-                cell.border = border
-        
-        # Автоматическое расширение ширины столбцов для помещения данных
-        for column in ws.columns:
-            max_length = 0
-            for cell in column:
-                value = cell.value
-                if value:
-                    cell_length = len(str(value))
-                    if cell_length > max_length:
-                        max_length = cell_length
-            adjusted_width = (max_length + 2) * 1.2
-            column_letter = column[0].column_letter
-            ws.column_dimensions[column_letter].width = adjusted_width
-        
-        # Сохранение файла Excel
-        filename = f'data.xlsx'
-        wb.save(filename)
-        
-        # Возврат файла для скачивания
-        return send_file(filename, as_attachment=True)
-
-
-
 # Регистрация классов в приложении
 app.add_url_rule('/all', view_func=AllView.as_view('all'))
 app.add_url_rule('/removing_from_the_list', view_func=RemoveFromListView.as_view('removing_from_the_list'))
 app.add_url_rule('/edit_parcel', view_func=EditParcelView.as_view('edit_parcel'))
 app.add_url_rule('/delivery_status', view_func=EditDeliveryViev.as_view('delivery_status'))
-app.add_url_rule('/download', view_func=DownloadListViev.as_view('download'))
+
 #-------------------------------------------------------------------------------------------------#
 
 # ------------------------------               /all end/            ------------------------------#
@@ -439,14 +379,14 @@ app.add_url_rule('/find', view_func=StorageFindViev.as_view('find'))
 
 @app.route('/images_list', methods=['POST'])
 def parcell_pictures_list():
-
     start_date = request.form['startDate']
     end_date = datetime.strptime(request.form['endDate'], '%Y-%m-%d')
     end_date += timedelta(days=1)
+    city = request.form.get('images_city')
 
 
     # Запрос к базе данных для выбора записей в заданном диапазоне дат
-    purcells = Purcell.query.filter(Purcell.date.between(start_date, end_date), Purcell.delivery == 'no').all()
+    purcells = Purcell.query.filter(Purcell.date.between(start_date, end_date), Purcell.delivery == 'no', Purcell.city == city).all()
 
     
     return render_template('images_list.html', purcells=purcells, start_date=start_date, end_date=end_date)
@@ -468,35 +408,6 @@ def images_list_delivery_status():
         return jsonify({'message': 'ამანათი არ მოიძებნა', 'success': False}), 400
     
 
-
-# @app.route('/images_list_delivery_status', methods=['POST'])
-# def images_list_delivery_status():
-#     # Получение данных из запроса
-#     data_id = request.json.get('id')
-
-#     # Проверка корректности полученного data_id
-#     if not data_id:
-#         return jsonify({'message': 'Некорректный идентификатор изображения', 'success': False}), 400
-
-#     # Проверка наличия изображения в базе данных
-#     purcell_entry = Purcell.query.get(data_id)
-#     if not purcell_entry:
-#         return jsonify({'message': 'Изображение не найдено', 'success': False}), 404
-
-#     # Проверка текущего статуса доставки
-#     if purcell_entry.delivery == 'yes':
-#         return jsonify({'message': 'Изображение уже было доставлено', 'success': False}), 400
-
-#     # Обновление статуса доставки в базе данных
-#     try:
-#         purcell_entry.delivery = 'yes'
-#         db.session.commit()
-#         return jsonify({'message': 'Изображение успешно доставлено', 'success': True}), 200
-#     except Exception as e:
-#         # Обработка ошибок при обновлении статуса доставки
-#         db.session.rollback()
-#         return jsonify({'message': f'Ошибка при обновлении статуса доставки: {str(e)}', 'success': False}), 500
-    
 
 
 

@@ -10,18 +10,6 @@
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 
 <div class="navigation_block">
-    <div class="download-container">
-        <form id="download-form" method="POST" action="{{ url_for('download') }}">
-            <select id="flight" name="flight" required>
-                {% for flight in last_10_flights %}
-                <option value="{{ flight }}">{{ flight }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn-download">გადმოწერა</button>
-        </form>
-    </div>
-
-
     <div class="pictures_list_block">
         <form id="dateForm" action="/images_list" method="post">
             <div class="from_block">
@@ -32,7 +20,13 @@
                 <label for="endDate">მდე:</label>
                 <input type="date" id="endDate" name="endDate">
             </div>
-            <button class="picture_list_button_block" type="submit">გადასვლა</button>
+            <div class="thr_block">
+                <select name="images_city">
+                    <option value="Moscow">Moscow</option>
+                    <option value="S.P.B">S.P.B</option>
+                </select>
+                <button class="picture_list_button_block" type="submit">გადასვლა</button>
+            </div>
         </form>
     </div>
 </div>
@@ -235,37 +229,6 @@ function openImageModal(imageUrl, description) {
     });
 }
 
-    document.getElementById("download-form").addEventListener("submit", function(event) {
-    event.preventDefault(); // Отмена отправки формы
-
-    var form = event.target;
-    var flight = form.elements.flight.value;
-
-
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "{{ url_for('download') }}", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.responseType = "blob"; // Ожидаемый тип данных - blob (файл)
-
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                // Создание ссылки для скачивания файла
-                var blob = new Blob([xhr.response], { type: "application/octet-stream" });
-                var url = URL.createObjectURL(blob);
-                var link = document.createElement("a");
-                link.href = url;
-                link.download = "data.xlsx";
-                link.click();
-                URL.revokeObjectURL(url); // Освобождение ресурсов
-            } else {
-                // Обработка ошибки
-            }
-        }
-    };
-
-    xhr.send("flight=" + encodeURIComponent(flight));
-});
 
 //-----     -----     -----     -----     -----     -----     -----     -----     -----     -----     -----     -----     -----
 
@@ -613,19 +576,24 @@ function openImageModal(imageUrl, description) {
 
 
 <script>
-    document.getElementById('dateForm').addEventListener('submit', function(event) {
-        // Получаем значения дат
-        var startDate = document.getElementById('startDate').value;
-        var endDate = document.getElementById('endDate').value;
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('dateForm').addEventListener('submit', function(event) {
+            // Получаем значения дат
+            var startDate = document.getElementById('startDate').value;
+            var endDate = document.getElementById('endDate').value;
 
-        // Проверяем, выбраны ли обе даты
-        if (!startDate || !endDate) {
-            // Отменяем отправку формы
-            event.preventDefault();
+            // Получаем значение выбранного элемента в селекте
+            var selectValue = document.querySelector('.thr_block select').value;
 
-            // Выводим оповещение пользователю
-            alert('შეავსეთ თარიღები');
-        }
+            // Проверяем, выбраны ли обе даты и значение селекта
+            if (!startDate || !endDate || !selectValue) {
+                // Отменяем отправку формы
+                event.preventDefault();
+
+                // Выводим оповещение пользователю
+                alert('შეავსეთ თარიღები და აირჩიეთ ქალაქი');
+            }
+        });
     });
 </script>
 

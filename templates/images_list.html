@@ -9,128 +9,84 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_images_list.css') }}">
 
 <div class="images_block">
-    {% for purcell in purcells %}
-        <div class="image" data-id="{{ purcell.id }}">
-            <img src="{{ purcell.image }}" alt="ამანათის ფოტო">
-            <table class="table_block">
-                <tr>
-                    <td class="name">ქალაქი</td>
-                    <td class="value">{{ purcell.city }}</td>
-                </tr>
-                <tr>
-                    <td class="name">გადახდა</td>
-                    <td class="value">
-                        {% if purcell.cost.startswith('-') %}
-                            <a style="color: red;">{{ purcell.cost }}</a>
-                        {% elif purcell.cost.startswith('+') %}
-                            <a style="color: green;">{{ purcell.cost }}</a>
-                        {% else %}
-                            <a>{{ purcell.cost }}</a>
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td class="name">ნომერი</td>
-                    <td class="value">{{ purcell.number }}</td>
-                </tr>
-            </table>
-
-        </div>
-    {% endfor %}
+    {% if purcells %}
+        {% for purcell in purcells %}
+            <div class="image" data-id="{{ purcell.id }}">
+                <img src="{{ purcell.image }}" alt="ამანათის ფოტო">
+                <table class="table_block">
+                    <tr>
+                        <td class="name">ქალაქი</td>
+                        <td class="value">{{ purcell.city }}</td>
+                    </tr>
+                    <tr>
+                        <td class="name">გადახდა</td>
+                        <td class="value">
+                            {% if purcell.cost.startswith('-') %}
+                                <a style="color: red;">{{ purcell.cost }}</a>
+                            {% elif purcell.cost.startswith('+') %}
+                                <a style="color: green;">{{ purcell.cost }}</a>
+                            {% else %}
+                                <a>{{ purcell.cost }}</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="name">ნომერი</td>
+                        <td class="value">{{ purcell.number }}</td>
+                    </tr>
+                </table>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1>ამ თარიღით ჩანაწერები არ მოიძებნა</h1>
+    {% endif %}
 </div>
 
 
 
-<div id="imagesListDeliveryStatusWindow" class="window">
-    <div class="window-content">
-      <span class="close">&times;</span>
-      <button id="deliverBtn">გაცემა</button>
-    </div>
-  </div>
-  
 
 
 
-
-  <script>
-    // Получение модального окна
-    var modal = document.getElementById("imagesListDeliveryStatusWindow");
-
-    // Получение кнопки, которая открывает модальное окно
+<script>
+    // Получение кнопок, которые открывают всплывающее оповещение
     var images = document.getElementsByClassName("image");
 
-    // Получение элемента для закрытия модального окна
-    var span = document.getElementsByClassName("close")[0];
-
-    // Обработчик события для кнопки "Готово"
-    var deliverBtn = document.getElementById("deliverBtn");
-
-    // Добавление обработчика событий к каждой картинке
+    // Обработчик события для каждой картинки
     for (var i = 0; i < images.length; i++) {
         images[i].addEventListener('click', function() {
-            modal.style.display = "block";
             var purcellId = this.getAttribute('data-id');
-            // Передача данных в обработчик Flask
-            deliverBtn.setAttribute('data-id', purcellId);
-        });
-    }
 
-    // Закрытие модального окна при клике на крестик
-    span.onclick = function() {
-        modal.style.display = "none";
-    }
-
-    // Закрытие модального окна при нажатии клавиши Escape
-    window.addEventListener('keydown', function(event) {
-        if (event.key === "Escape") {
-            modal.style.display = "none";
-        }
-    });
-
-    // Закрытие модального окна при клике за его пределами
-    window.addEventListener('click', function(event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    });
-
-
-    // Обработчик события для кнопки "Готово"
-    deliverBtn.addEventListener('click', function() {
-        var purcellId = this.getAttribute('data-id');
-        var imageElement = document.querySelector('.image[data-id="' + purcellId + '"]');
-
-        // Отправка AJAX-запроса на сервер Flask
-        fetch('/images_list_delivery_status', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: purcellId }) // Отправляем значение id в формате JSON
-        })
-        .then(response => response.json()) // Ожидаем JSON-ответ от сервера
-        .then(data => {
-            console.log(data); // Выводим ответ сервера в консоль
-            // Проверяем успешность операции
-            if (data.success) {
-                showMessage(data.message, data.success);
-                // Скрыть элемент с успешно обработанным purcellId
-                if (imageElement) {
-                    imageElement.style.display = "none";
-                }
-                // Закрыть модальное окно
-                modal.style.display = "none";
-            } else {
-                showMessage(data.message, data.success);
-                console.error('Ошибка:', data.message); // Выводим сообщение об ошибке в консоль
-                // Можно выполнить дополнительные действия в случае ошибки
+            // Всплывающее оповещение о выдаче посылки
+            var confirmation = confirm("ეთანხმებით ამანათის გაცემას?");
+            if (confirmation) {
+                // Отправка данных в обработчик Flask
+                fetch('/images_list_delivery_status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: purcellId }) // Отправляем значение id в формате JSON
+                })
+                .then(response => response.json()) // Ожидаем JSON-ответ от сервера
+                .then(data => {
+                    console.log(data); // Выводим ответ сервера в консоль
+                    // Проверяем успешность операции
+                    if (data.success) {
+                        showMessage(data.message, data.success);
+                        // Скрыть элемент с успешно обработанным purcellId
+                        this.style.display = "none";
+                    } else {
+                        showMessage(data.message, data.success);
+                        console.error('Ошибка:', data.message); // Выводим сообщение об ошибке в консоль
+                        // Можно выполнить дополнительные действия в случае ошибки
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error); // Выводим ошибку в консоль
+                });
             }
-        })
-        .catch(error => {
-            console.error('Ошибка:', error); // Выводим ошибку в консоль
         });
-    });
-
+    }
 </script>
 
 

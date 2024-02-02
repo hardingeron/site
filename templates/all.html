@@ -9,32 +9,33 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_all.css') }}">
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 
-<div class="download-container">
-    <form id="download-form" method="POST" action="{{ url_for('download') }}">
-        <select id="flight" name="flight" required>
-            {% for flight in last_10_flights %}
-            <option value="{{ flight }}">{{ flight }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn-download">გადმოწერა</button>
-    </form>
+<div class="navigation_block">
+    <div class="download-container">
+        <form id="download-form" method="POST" action="{{ url_for('download') }}">
+            <select id="flight" name="flight" required>
+                {% for flight in last_10_flights %}
+                <option value="{{ flight }}">{{ flight }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-download">გადმოწერა</button>
+        </form>
+    </div>
+
+
+    <div class="pictures_list_block">
+        <form id="dateForm" action="/images_list" method="post">
+            <div class="from_block">
+                <label for="startDate">დან:</label>
+                <input type="date" id="startDate" name="startDate">
+            </div>
+            <div class="to_block">
+                <label for="endDate">მდე:</label>
+                <input type="date" id="endDate" name="endDate">
+            </div>
+            <button class="picture_list_button_block" type="submit">გადასვლა</button>
+        </form>
+    </div>
 </div>
-
-
-<div class="pictures_list_block">
-    <form id="dateForm" action="/images_list" method="post">
-        <div class="from_block">
-            <label for="startDate">დან:</label>
-            <input type="date" id="startDate" name="startDate">
-        </div>
-        <div class="to_block">
-            <label for="endDate">მდე:</label>
-            <input type="date" id="endDate" name="endDate">
-        </div>
-        <button class="picture_list_button_block" type="submit">გადასვლა</button>
-    </form>
-</div>
-
 
 <div class="modal" id="image-modal">
     <div class="modal-content">
@@ -608,6 +609,24 @@ function openImageModal(imageUrl, description) {
 
     // Добавляем обработчик события нажатия на кнопку
     document.getElementById('editButton').addEventListener('click', sendDataToServer);
+</script>
+
+
+<script>
+    document.getElementById('dateForm').addEventListener('submit', function(event) {
+        // Получаем значения дат
+        var startDate = document.getElementById('startDate').value;
+        var endDate = document.getElementById('endDate').value;
+
+        // Проверяем, выбраны ли обе даты
+        if (!startDate || !endDate) {
+            // Отменяем отправку формы
+            event.preventDefault();
+
+            // Выводим оповещение пользователю
+            alert('შეავსეთ თარიღები');
+        }
+    });
 </script>
 
 

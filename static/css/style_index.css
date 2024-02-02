@@ -75,7 +75,9 @@ body {
         height: 50%;
         border-radius: 0;
         margin-left: 20px;
+
     }
+
 
     .footer {
       font-size: 4px;
@@ -95,6 +97,7 @@ body {
 
     .first_line_block, .last_line_block {
         height: 50%;
+        margin-top: 5px;
     }
 
     .el, .el2 {

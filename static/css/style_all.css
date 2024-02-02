@@ -208,54 +208,6 @@
 
 
 
-
-/*скачивание excel*/
-.download-container {
-  max-width: 300px;
-  margin: 5% auto 0;
-  padding: 10px;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
-.download-container form {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.download-container select {
-  width: 100%;
-  padding: 10px;
-  background-color: #40414f;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-right: 10px;
-  color: #d2d2d2;
-}
-
-.download-container button.btn-download {
-  background-color: #40414f;
-  color: #d2d2d2;
-  border: none;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.download-container button.btn-download:hover {
-  background-color: #2980b9;
-}
-
-.download-container button.btn-download:active {
-  background-color: #21618c;
-}
-
-
 .red-background {
   background-color: #ffb90042;
 }
@@ -543,7 +495,7 @@ textarea[name="inventory"]:focus {
 
 
 
-.pictures_list_block {
+.pictures_list_block, .download-container {
   margin-bottom: 10px;
   margin-left: 10px;
   width: 200px;
@@ -569,14 +521,16 @@ textarea[name="inventory"]:focus {
 }
 
 .from_block input[type="date"],
-.to_block input[type="date"] {
+.to_block input[type="date"],
+.download-container select {
   border: 1px solid #ccc;
   border-radius: 5px;
   width: 100px;
   font-size: 10px;
 }
 
-.picture_list_button_block {
+.picture_list_button_block,
+.btn-download {
   background-color: #4CAF50;
   color: white;
   padding: 10px 15px;
@@ -587,6 +541,23 @@ textarea[name="inventory"]:focus {
   display: inline-block; /* Добавляем блочное свойство */
 }
 
-.picture_list_button_block:hover {
+.picture_list_button_block:hover,
+.btn-download:hover {
   background-color: #45a049;
+}
+
+.download-container {
+  display: flex;
+  flex-direction: column; /* Располагаем элементы в колонку */
+}
+
+
+.navigation_block {
+  display: flex;
+  align-items: center; /* Чтобы элементы выровнялись по центру по вертикали */
+}
+
+/* Опционально, чтобы добавить отступы между элементами */
+.navigation_block > * {
+  margin-right: 10px; /* Можете настроить величину отступов по вашему усмотрению */
 }

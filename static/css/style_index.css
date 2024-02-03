@@ -361,6 +361,10 @@ body {
 
 @media screen and (max-width: 1000px) {
   body {
+      width: 360px;
+      height: 780px;
+  }
+  body {
     margin: auto;
   }
   .bg-image_l {

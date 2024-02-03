@@ -1,12 +1,30 @@
 
 body {
-    background-color: #353745;
+    background-color: #152735;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     margin: 0;
     
 }
+
+
+.bg-image_l {
+  position: fixed;
+  top: 0;
+  left: 50%; /* Позиционируем по центру горизонтально */
+  transform: translateX(-50%); /* Центрируем по горизонтали относительно родителя */
+  right: 0;
+  bottom: 0;
+  background-image: url("../images/logo 1.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  z-index: -1;
+  width: 700px;
+
+}
+
 
 .menu_block {
   width: 800px;
@@ -15,9 +33,13 @@ body {
   border-radius: 15px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   text-align: center;
-  margin: 20px auto; /* Выровнять по центру горизонтально и добавить отступы сверху и снизу */
-  /* Другие стили для меню блока */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
+
 
 
 .first_line_block, .last_line_block, .last_line {
@@ -69,58 +91,6 @@ body {
 }
 
 
-@media screen and (max-width: 1000px) {
-    .menu_block {
-        width: 100%;
-        height: 50%;
-        border-radius: 0;
-        margin-left: 20px;
-
-    }
-
-
-    .footer {
-      font-size: 4px;
-    }
-
-    .footer h3 {
-      font-size: 6px;
-      margin-top: 0;
-    }
-
-
-    .menu_button img {
-        width: 100%;
-        height: 25%;
-        float: right;
-    }
-
-    .first_line_block, .last_line_block {
-        height: 50%;
-        margin-top: 5px;
-    }
-
-    .el, .el2 {
-        margin-right: 5px;
-        margin-bottom: 5px; /* Добавляем отступ снизу между элементами "el" */
-    }
-
-    .el:last-child, .el2:last-child {
-        margin-right: 0; /* Убираем отступ у последнего элемента "el" */
-    }
-
-    .el img, .el2 img {
-        width: 70px; /* Уменьшаем размер изображения для мобильных устройств */
-        height: 70px;
-    }
-
-    .el label, .el2 label {
-        width: 80px;
-        height: 10px;
-        font-size: 12px; /* Уменьшаем размер шрифта для мобильных устройств */
-    }
-}
-
 
 
 /*  */
@@ -136,33 +106,15 @@ body {
   padding: 20px;
   text-align: center;
   width: 100%;
-  display: flex;
-  justify-content: space-around;
-  /* Другие стили для футера */
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
 }
 
 
-.footer-block {
-  max-width: 200px;
-}
 
-.footer h3 {
-
-  margin-top: 0;
-}
-
-.footer p {
-  margin: 5px 0;
-}
-
-.footer a {
-  color: #e445ff;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  text-decoration: underline;
-}
 
 
 
@@ -401,4 +353,48 @@ body {
 
 .dates_block a:hover {
   color: red; /* Цвет текста при наведении курсора */
+}
+
+
+
+
+
+@media screen and (max-width: 1000px) {
+  body {
+    margin: auto;
+  }
+  .bg-image_l {
+    width: 900px;
+  }
+
+  .menu_block {
+    width: 800px;
+    height: 500px;
+    background-color: #444654;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+  .el img, .el2 img{
+    width: 150px;
+    height: 150px;
+  }
+
+  .el label, .el2 label {
+    width: 150px;
+    height: 20px;
+    color: #8e8ea0; /* Белый текст */
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 25zpx; /* Увеличиваем размер шрифта */
+}
+
+
+  
 }

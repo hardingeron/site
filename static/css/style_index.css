@@ -26,7 +26,19 @@ body {
 }
 
 
-
+.menu_block {
+  width: 800px;
+  height: 500px;
+  background-color: #444654;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
 
 
 
@@ -350,22 +362,22 @@ body {
 @media screen and (max-width: 1000px) {
   body {
     margin: auto;
-    width: 900px;
+    width: 600px;
   }
   .bg-image_l {
-    width: 900px;
+    width: 500px;
   }
 
   .menu_block {
-    width: 900px;
+    width: 600px;
     height: 500px;
     background-color: #444654;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
     text-align: center;
     position: absolute;
-    top: 50%;
-    left: 135%;
+    top: 70%;
+    left: 85%;
     transform: translate(-50%, -50%);
 }
 
@@ -384,10 +396,4 @@ body {
     font-size: 25px; /* Увеличиваем размер шрифта */
 }
 
-.first_line_block, .last_line_block, .last_line {
-  width: 900px;
-}
-
-
-  
 }

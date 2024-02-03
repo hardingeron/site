@@ -361,19 +361,18 @@ body {
 
 @media screen and (max-width: 1000px) {
   body {
-      width: 360px;
-      height: 780px;
-  }
-  body {
     margin: auto;
   }
   .bg-image_l {
-    width: 900px;
+    width: 400px;
   }
 
+  .el, .el2 {
+    margin-right: 1px;
+  }
   .menu_block {
     width: 800px;
-    height: 500px;
+    height: 400px;
     background-color: #444654;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
@@ -385,8 +384,8 @@ body {
 }
 
   .el img, .el2 img{
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
   }
 
   .el label, .el2 label {

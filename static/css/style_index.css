@@ -420,4 +420,21 @@ p {
   width: 88%;
 }
 
+.bg-image_l {
+  position: fixed;
+  top: 0;
+  left: 50%; /* Позиционируем по центру горизонтально */
+  transform: translateX(-50%); /* Центрируем по горизонтали относительно родителя */
+  right: 0;
+  bottom: 0;
+  background-image: url("../images/logo 1.jpg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  z-index: -1;
+  width: 350px;
+
+}
+
+
 }

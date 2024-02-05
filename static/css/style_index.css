@@ -21,7 +21,6 @@ body {
   opacity: 0.9;
   z-index: -1;
   width: 700px;
-
 }
 
 
@@ -355,20 +354,14 @@ body {
 }
 
 
+
+
 @media screen and (min-width: 360px) and (max-width: 780px) {
   .menu_block {
     width: 90%; /* Примерное значение, которое можно изменить */
     max-width: 600px; /* Примерное значение, которое можно изменить */
     height: auto; /* Автоматическая высота, чтобы контент внутри мог подстраиваться */
-    background-color: #444654;
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    text-align: center;
-    position: absolute;
     top: 40%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1;
 }
 
 .el img, .el2 img {
@@ -377,25 +370,13 @@ body {
 }
 
 .el, .el2 {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
   margin-right: 15%;
 }
 
 .el label, .el2 label {
-  
-  color: #8e8ea0;
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
   font-size: 14px;
   width: 100%;
 }
-
-
 .footer {
   background-color: #343641;
   color: #8e8ea0;
@@ -407,9 +388,13 @@ body {
   left: 0;
   right: 0;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-  height: 200px;
-
 }
+
+
+.footer {
+  height: 200px;
+}
+
 h3 {
   font-size: 11px;
   width: 90%;
@@ -421,20 +406,103 @@ p {
 }
 
 .bg-image_l {
-  position: fixed;
-  top: 0;
-  left: 50%; /* Позиционируем по центру горизонтально */
-  transform: translateX(-50%); /* Центрируем по горизонтали относительно родителя */
-  right: 0;
-  bottom: 0;
-  background-image: url("../images/logo 1.jpg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.9;
-  z-index: -1;
   width: 250px;
 
 }
 
+}
 
+@media screen and (min-width: 800px) and (max-width: 1334px) {
+  .menu_block {
+    width: 90%; /* Примерное значение, которое можно изменить */
+    height: 400px; /* Автоматическая высота, чтобы контент внутри мог подстраиваться */
+    top: 42%;
+}
+
+.el img, .el2 img {
+  width: 100px;
+  height: 100px;
+}
+
+.el, .el2 {
+  margin-right: 15%;
+}
+
+.el label, .el2 label {
+  font-size: 18px;
+  width: 100%;
+}
+
+
+.footer {
+  height: 350px;
+}
+
+h3 {
+  font-size: 18px;
+  width: 90%;
+}
+
+p {
+  font-size: 14px;
+  width: 90%;
+
+}
+
+.bg-image_l {
+  width: 500px;
+
+}
+}
+
+
+@media screen and (min-width: 1080px) and (max-width: 1920px) {
+  .menu_block {
+    width: 700px; /* Примерное значение, которое можно изменить */
+    height: 440px; /* Автоматическая высота, чтобы контент внутри мог подстраиваться */
+    top: 46%;
+}
+
+.el img, .el2 img {
+  width: 100px;
+  height: 100px;
+}
+
+.el, .el2 {
+  margin-right: 15%;
+}
+
+.el label, .el2 label {
+  font-size: 18px;
+  width: 100%;
+}
+
+
+.footer {
+  height: 300px;
+
+}
+
+.footer-block {
+
+  width: 70%;
+  align-items: center;
+  margin: 0 auto; /* Центрирует блок по горизонтали */
+}
+
+h3 {
+  font-size: 18px;
+  width: 90%;
+}
+
+p {
+  font-size: 14px;
+  width: 90%;
+
+}
+
+.bg-image_l {
+  width: 395px;
+
+}
 }

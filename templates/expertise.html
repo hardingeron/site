@@ -53,7 +53,8 @@
     <div class="ss">
         <div class="xml_block">
             <input type="file" id="xmlFile" accept=".xml" required>
-            <button onclick="uploadFile()">განახლება</button>
+            <button id="uploadButton" onclick="uploadFile()">განახლება</button>
+
         </div>
     </div>
 </div>
@@ -252,6 +253,14 @@
         var input = document.getElementById('xmlFile');
         var file = input.files[0];
         var dateValue = document.getElementById('date').value; // Получение значения даты
+        var button = document.getElementById('uploadButton'); // Получение кнопки
+
+        // Сохранение оригинального цвета кнопки
+        var originalButtonColor = button.style.backgroundColor;
+
+        // Изменение цвета кнопки на синий и запрет ее нажатия
+        button.style.backgroundColor = 'blue';
+        button.disabled = true;
 
         var formData = new FormData();
         formData.append('xmlFile', file);
@@ -278,6 +287,11 @@
             error: function(error) {
                 // Обработка ошибки
                 showMessage('Error communicating with the server', false);
+            },
+            complete: function() {
+                // Показать кнопку после завершения запроса (в том числе после ошибки)
+                button.style.backgroundColor = originalButtonColor;
+                button.disabled = false;
             }
         });
     }

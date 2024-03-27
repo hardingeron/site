@@ -1,0 +1,454 @@
+.content_list_block {
+    width: 900px;
+    background-color: #353742;
+    margin: 0 auto; /* Добавляем автоматические отступы слева и справа */
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    border: none;
+    border-radius: 20px;
+}   
+
+
+.yellow-text {
+    color: yellow;
+}
+
+.content_list_block label {
+    font-weight: bold;
+}
+.total_weight_block,
+.filter_block,
+.manifest_block {
+    display: flex;
+    flex-direction: column; /* Выставляем вертикальное направление для элементов */
+    justify-content: center; /* Выравниваем элементы по центру по вертикали */
+    align-items: center; /* Выравниваем элементы по центру по горизонтали */
+    width: 250px;
+    height: 120px;
+    margin: 0 auto; /* Добавляем автоматические отступы слева и справа */
+    background-color: #444654;
+    margin-bottom: 20px;
+    color: #8e8ea0;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+}
+.filter_block button,
+.total_weight_block button, #add, .modal-content button, .manifest_block button {
+    background-color: #333333;
+    color: #8e8ea0;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.manifest_block button {
+    margin-top: 50px;
+}
+
+
+
+.filter_block input {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+
+    width: 135px;
+    height: 30px;
+    background-color: #40414f;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+    color: #8e8ea0;;
+    text-align: center;
+    font-weight: bold;
+}
+
+
+#add {
+    margin: 0 auto 20px; /* 20px сверху, автоматически справа и слева, 0px снизу */
+    display: block; /* Это может понадобиться, если элемент ранее был встроенным (inline) */
+}
+.total_weight_block button:hover {
+    background-color: #1a1a1a;
+  }
+
+.blanks_block,
+.blanks_block_ {
+    height: 320px;
+    width: 750px;
+    margin: 0 auto; /* Устанавливаем автоматические отступы по горизонтали, что центрирует блок */
+    border-radius: 20px;
+    background-color: #444654;
+    color: #d2d2d2;
+    border: none;
+    margin-bottom: 30px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    
+    padding-left: 50px; /* Добавляем отступ слева на 25px */
+}
+
+.sender_block > *:not(:last-child),
+.recipient_block > *:not(:last-child),
+.information_block > *:not(:last-child),
+.weights_comment_block > *:not(:last-child),
+.payment_block > *:not(:last-child){
+    margin-right: 40px; /* Отступ справа 30 пикселей для всех дочерних элементов, кроме последнего */
+  }
+
+
+
+
+
+
+  .blanks_block input,
+  .blanks_block_ input {
+    background-color: #40414f;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+    color: #8e8ea0;;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.number_block,
+.number_block_ {
+    text-align: center;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+
+.sender_block,
+.recipient_block,
+.information_block,
+.weights_comment_block,
+.payment_block {
+    display: flex; /* Устанавливаем flex-контейнер */
+    align-items: center; /* Размещаем элементы по центру блока только по вертикали */
+    height: 50px;
+    margin-bottom: 5px;
+}
+
+
+
+
+.sender_block input,
+.recipient_block input,
+.weights_comment_block input {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+    margin-top: 2px;
+    width: 230px;
+    height: 20px;
+}
+
+
+.payment_value_block input {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 16px;
+    margin-top: 2px;
+    width: 135px;
+    height: 20px;
+}
+
+
+
+.passport_block input,
+.city_block input,
+.cost_block input {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    height: 20px;
+    font-size: 16px;
+    margin-top: 2px;
+    width: 135px;
+    
+}
+
+
+.city_block select {
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    height: 30px;
+    font-size: 16px;
+    margin-top: 2px;
+    width: 150px;
+    background-color: #40414f;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
+    color: #8e8ea0;;
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 2px;
+
+}
+
+.label_block {
+    width: 130px;
+    font-size: 20px;
+    text-align: right;
+    
+}
+
+
+.sender_fl_block,
+.sender_phone_block,
+.recipient_fl_block,
+.recipient_phone_block,
+.passport_block,
+.city_block,
+.cost_block,
+.weights_block,
+.comment_block,
+.payment_value_block {
+    display: flex;            /* Устанавливаем flex-контейнер */
+    flex-direction: column;   /* Располагаем элементы в столбик по вертикали */
+    align-items: center;      /* Центрируем элементы по горизонтали */
+    justify-content: center;  /* Центрируем элементы по вертикали */
+}
+
+
+.container {
+    width: 700px;
+}
+
+
+.pay_block {
+    margin-left: 50px;
+    text-align: center;
+}
+
+
+
+
+
+/* Стили для модального окна */
+.modal-edit {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    color:#8e8ea0;
+    background-color: #353745;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+
+.border_block_, .border_block {
+    border: 1px solid #ccc;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
+    width: 145px;
+    border-radius: 10px;
+    text-align: center;
+    margin-top: auto;
+    display: flex; /* Добавьте это свойство для отображения дочерних элементов в ряд */
+    justify-content: center; /* Центрирование радио кнопок по горизонтали */
+}
+
+/* Стили для радио кнопок внутри .border_block */
+.border_block input[type="radio"] {
+    margin: 0 5px; /* Расстояние между радио кнопками */
+}
+
+
+
+.modal_buttons_block {
+    margin: 0 auto;
+    max-width: 200px;
+}
+
+    /* Стили для заголовка модального окна */
+    h2 {
+        text-align: center;
+        color: #8e8ea0;
+        font-size: 20px;
+    }
+
+
+.filter_block button{
+    margin-top: 10px;
+}
+
+
+
+
+
+
+.red_blanks_block {
+    /* Ваши стили для блоков, сумма весов в которых >= 30 */
+    box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.776);
+}
+
+
+
+/* Скрыть оригинальные радиокнопки */
+.radio-label input[type="radio"] {
+    opacity: 0;
+    position: absolute;
+}
+
+/* Создать стилизованные заменители для радиокнопок */
+.radio-label {
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.radio-custom {
+    display: inline-block;
+    
+    background-color: #444654;
+    border: none;
+    border-radius: 10px;
+}
+
+
+.radio-custom img {
+    width: 28px;
+    height: 28px;
+}
+
+
+
+.radio-label-text {
+    font-size: 30px; /* Размер описания радио кнопки */
+}
+
+/* При наведении добавить эффекты */
+.radio-label:hover .radio-custom {
+    background-color: #ddd;
+    color: #000000;
+}
+
+/* При выборе радиокнопки изменять стили заменителя */
+.radio-label input[type="radio"]:checked + .radio-custom {
+    background-color: #ffffff;
+    padding: 1px;
+    border-color: #007bff;
+    color: rgb(0, 0, 0);
+}
+
+
+
+
+#scrollToTopButton {
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    bottom: 20px; /* Расстояние от нижнего края страницы */
+    right: 20px; /* Расстояние от правого края страницы */
+    cursor: pointer;
+}
+
+
+
+.blocks {
+    /* Чтобы блоки внутри .blocks выстроились в ряд */
+    display: flex;
+    /* Чтобы блоки выравнивались по горизонтали */
+    justify-content: space-between; /* Равномерное распределение между элементами */
+    /* align-items: center; */ /* Выравнивание элементов по вертикали (если нужно) */
+}
+
+
+
+
+
+/* Стили для радио кнопок в ряд */
+.edit-modal-data input[type="radio"] {
+    display: inline-block;
+    margin-right: 10px; /* Можно настроить отступы по вашему усмотрению */
+}
+
+
+
+
+
+
+
+/* Стили для модального окна */
+.modal_statistic {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    color: #d2d2d2;
+  }
+  
+  .modal_statistic-content {
+    background-color: #353742;
+    margin: 1% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 850px;
+    height: 600px;
+    position: relative;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+
+
+
+/* Стили для контейнера диаграмм */
+.diagram_box_block {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    height: 400px;
+  
+    
+}
+
+
+.diagram_block, .diagram_block_two, .diagram_block_three, .diagram_block_four {
+  flex: 1;
+  margin: 0 10px;
+  padding: 20px;
+  border-radius: 10px;
+
+}
+
+
+/* Стили для canvas внутри диаграммы */
+canvas {
+    background-color: #444654;
+    border-radius: 10px;
+    box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+  }

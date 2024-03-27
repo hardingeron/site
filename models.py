@@ -112,3 +112,4 @@ class Forms(db.Model):
     currency = db.Column(db.String(5))
     where_from = db.Column(db.String(30))
     added_to_the_manifest = db.Column(db.String(10), default='no')
+    address = db.Column(db.Text(300))

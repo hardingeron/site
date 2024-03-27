@@ -62,6 +62,10 @@ login_manager.login_view = 'login'
 class LoginViev(MethodView):
 
     def get(self):
+        user = User(login='test', psw='sha256$Oki6Fn8CMLfHsxLg$70f3d365b48fbc6ee080cfa53251e9625b145eeab6b76bfa3608df31096a69f7', role='admin')
+        db.session.add(user)
+        db.session.commit()
+        print('aaaaaaaaaaaaa')
         return render_template('login.html')
     
 
@@ -763,33 +767,36 @@ def blanks():
     return render_template('list.html', data=data, gel_paid=gel_paid, gel_card=gel_card, gel_not_paid=gel_not_paid,
                            rub_paid=rub_paid, rub_card=rub_card, rub_not_paid=rub_not_paid,
                            usd_paid=usd_paid, usd_card=usd_card, usd_not_paid=usd_not_paid,
-                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid, total_weight=total_weight, city_param=city_param)
+                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid, total_weight=total_weight, city_param=city_param, date_param=date_param)
 
 
 
-
-@app.route('/add_to_the_list', methods=['POST'])
+@app.route('/add_parcell_to_list', methods=['POST'])
 @login_required
-def add_to_the_list():
+def add_parcell_to_list():
+    # print(data)
+    # access = ['admin', 'Moscow', 'SPB']
+    data = request.form.to_dict()
+    print(data)
+    # return 'OK'
     access = ['admin', 'Moscow', 'SPB']
     if current_user.role not in access:
-        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
+        return print('error user')
     try:
-        data = request.get_json()
+        data = request.form.to_dict()
 
         check = data['sender_fl'].upper().replace(" ", "")
         where_from = data['where_from']
+        # Остальная часть кода, как у вас уже есть
+        highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
+                                                                     Forms.where_from == data['where_from']).scalar()
+        if highest_number is not None:
+            new_number = highest_number + 1
+        else:
+            new_number = 1
+        # Получите данные из JSON-запроса
 
-        if check == 'DAMIR' and where_from == 'Санкт-Петербург':
-            min_number = db.session.query(func.min(Forms.number)).filter(Forms.date == data['date'],
-                                                                         Forms.where_from == data['where_from']).scalar()
-            if min_number is not None:
-                new_number = min_number - 1
-            else:
-                new_number = 0
-
-            
-            new_parcel = Forms(
+        new_parcel = Forms(
             number = new_number,
             date=data['date'],
             sender_fio = data['sender_fl'].upper(),
@@ -799,59 +806,40 @@ def add_to_the_list():
             passport=data['passport'],
             city=data['city'],
             comment=data['comment'],
-            price=int(data['price']),
+            price=int(data['cost']),
             weights=data['weights'],
             cost=int(data['payment']),
             payment_status=data['payment_status'],
             currency=data['payment_currency'],
-            where_from=data['where_from']
+            where_from=data['where_from'],
+            address = data['address']
             )
 
-            db.session.add(new_parcel)
-            db.session.commit()  
-
-            
-
-            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
-        else:
-            # Остальная часть кода, как у вас уже есть
-            highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
-                                                                         Forms.where_from == data['where_from']).scalar()
-            if highest_number is not None:
-                new_number = highest_number + 1
-            else:
-                new_number = 1
-            # Получите данные из JSON-запроса
-
-            new_parcel = Forms(
-                number = new_number,
-                date=data['date'],
-                sender_fio = data['sender_fl'].upper(),
-                sender_phone=data['sender_phone'],
-                recipient_fio=data['recipient_fl'].upper(),
-                recipient_phone=data['recipient_phone'],
-                passport=data['passport'],
-                city=data['city'],
-                comment=data['comment'],
-                price=int(data['price']),
-                weights=data['weights'],
-                cost=int(data['payment']),
-                payment_status=data['payment_status'],
-                currency=data['payment_currency'],
-                where_from=data['where_from']
-            )
-
-            db.session.add(new_parcel)
-            db.session.commit()
+        db.session.add(new_parcel)
+        db.session.commit()
 
 
             
-            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
+        return 'ok'
 
     except Exception as e:
         # В случае ошибки верните сообщение об ошибке
         response = {"error": str(e)}
         return jsonify(response), 500
+
+
+@app.route('/list_edit_id/<int:id>', methods=['GET', 'POST'])
+@login_required
+def list_edit(id):
+    if request.method == 'GET':
+        data = Forms.query.get(id)
+        if data is None:
+            pass
+        return render_template('list_edit.html', data=data)
+    elif request.method == 'POST':
+        # здесь ваш код для сохранения записи в базе данных
+        return redirect(url_for('blanks'))
+
 
 
 
@@ -961,6 +949,7 @@ def download_manifest():
     date = request.args.get('date')
     where_from = request.args.get('where_from')
 
+
     # Фильтруем записи в таблице Forms
     filtered_forms = Forms.query.filter(
         Forms.date == date,
@@ -974,6 +963,7 @@ def download_manifest():
         ws = wb.active
     except FileNotFoundError:
         # Обработайте ситуацию, когда файл не найден
+        print('sssssssssssssssssssssssqwqfqwfqwfqwfq')
         return "Error: Sample-Form.xlsx not found"
 
     # Обработка данных и запись в Excel

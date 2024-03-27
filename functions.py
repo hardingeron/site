@@ -416,9 +416,7 @@ def update_json_file(msk_dates, spb_dates):
 
     try:
         # Открытие JSON-файла для записи
-        print('ttttttttt')
         with open("static/json/dates.json", "w") as json_file:
-            print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             # Запись данных в файл в формате JSON
             json.dump(data, json_file)
     except Exception as e:

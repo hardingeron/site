@@ -1,0 +1,443 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ super() }}
+  
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
+
+<div class="list-menu">
+    <button>სტატისტიკა</button>
+    <button>ბალკების გადმოწერა</button>
+    <input type="text" placeholder="ძიება">
+    <p>საერთო წონა: {{ total_weight }}</p>
+</div>
+
+<div class="content_list_block">
+    <div class="blanks_block_">
+        <form method="POST" action="/add_parcell_to_list">
+            <input type="text" name="date" hidden value="{{ date_param }}">
+            <input type="text" name="where_from" hidden value="{{ city_param }}">
+            <div class="line">
+                <p class="description">გამგზავნი:</p>
+                <div class="content-duo">
+                    <p class="name">სახელი/გვარი</p>
+                    <input type="text" name="sender_fl">
+                </div>
+                <div class="content-duo">
+                    <p class="name">ტელეფონი</p>
+                    <input type="text" name="sender_phone">
+                </div>
+            </div>
+
+            <div class="line">
+                <p class="description">მიმღები:</p>
+                <div class="content-duo">
+                    <p class="name">სახელი/გვარი</p>
+                    <input type="text" name="recipient_fl" required>
+                </div>
+                <div class="content-duo">
+                    <p class="name">ტელეფონი</p>
+                    <input type="text" name="recipient_phone" required>
+                </div>
+            </div>
+
+            <div class="line">
+                <p class="description">ინფორმაცია:</p>
+                <div class="content-trio">
+                    <p class="name">პასპორტი</p>
+                    <input type="text" name="passport">
+                </div>
+                <div class="content-trio">
+                    <p class="name">ქალაქი</p>
+                    <select name="city" id="city">
+                        <option value="TBILISI">TBILISI</option>
+                        <option value="BATUMI">BATUMI</option>
+                        <option value="KOBULETI">KOBULETI</option>
+                        <option value="KUTAISI">KUTAISI</option>
+                        <option value="TELAVI">TELAVI</option>
+                        <option value="GORI">GORI</option>
+                        <option value="ZUGDIDI">ZUGDIDI</option>
+                        <option value="POTI">POTI</option>
+                        <option value="KHASHURI">KHASHURI</option>
+                        <option value="RUSTAVI">RUSTAVI</option>
+                        <option value="SAMTREDIA">SAMTREDIA</option>
+                        <option value="SENAKI">SENAKI</option>
+                        <option value="ZESTAPHONI">ZESTAPHONI</option>
+                        <option value="MARNEULI">MARNEULI</option>
+                        <option value="AKHALTSIKHE">AKHALTSIKHE</option>
+                        <option value="OZURGETI">OZURGETI</option>
+                        <option value="KASPI">KASPI</option>
+                        <option value="TCHIATURA">TCHIATURA</option>
+                        <option value="TSKALTUBO">TSKALTUBO</option>
+                        <option value="SAGAREJO">SAGAREJO</option>
+                        <option value="GARDABANI">GARDABANI</option>
+                        <option value="BORJOMI">BORJOMI</option>
+                        <option value="TKIBULI">TKIBULI</option>
+                        <option value="KHONI">KHONI</option>
+                        <option value="BOLNISI">BOLNISI</option>
+                        <option value="AKHALKALAKI">AKHALKALAKI</option>
+                        <option value="GURJAANI">GURJAANI</option>
+                        <option value="MTSKHETA">MTSKHETA</option>
+                        <option value="KVARELI">KVARELI</option>
+                        <option value="AKHMETA">AKHMETA</option>
+                        <option value="KARELI">KARELI</option>
+                        <option value="LANCHKHUTA">LANCHKHUTA</option>
+                        <option value="DUSHETI">DUSHETI</option>
+                        <option value="SACHKHERE">SACHKHERE</option>
+                        <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
+                        <option value="LAGODEKHI">LAGODEKHI</option>
+                        <option value="NINOTSMINDA">NINOTSMINDA</option>
+                        <option value="ABASHA">ABASHA</option>
+                        <option value="TSNORI">TSNORI</option>
+                        <option value="TERJOBA">TERJOBA</option>
+                        <option value="MARTVILI">MARTVILI</option>
+                        <option value="KHOBI">KHOBI</option>
+                        <option value="TSALENJIKHA">TSALENJIKHA</option>
+                        <option value="VANI">VANI</option>
+                        <option value="BAGDADI">BAGDADI</option>
+                        <option value="VALE">VALE</option>
+                        <option value="CHKHOROTSKU">CHKHOROTSKU</option>
+                        <option value="TETRITSQARO">TETRITSQARO</option>
+                        <option value="DMANISI">DMANISI</option>
+                        <option value="ONI">ONI</option>
+                        <option value="TSALKA">TSALKA</option>
+                        <option value="AMBROLAURI">AMBROLAURI</option>
+                        <option value="SIGNAGI">SIGNAGI</option>
+                        <option value="TSAGERI">TSAGERI</option>
+                        <option value="JVARI">JVARI</option>
+                    </select>
+                </div>
+                <div class="content-trio">
+                    <p class="name">ღირებულება</p>
+                    <input type="text" id="numericInput" oninput="sanitizeInput(this)" name="cost">
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">წონები:</p>
+                <div class="content-solo">
+                    <p class="name">წონა</p>
+                    <input type="text" name="weights" id="weightsInput" oninput="weightsInputHandler(this)" required>
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">კომენტარი:</p>
+                <div class="content-solo">
+                    <p class="name">დამატებითი ინფორმაცია</p>
+                    <input type="text" name="comment">
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">თანხა/მიტანა:</p>
+                <div class="content-duo">
+                    <p class="name">გადახდა</p>
+                    <input type="text" id="numericInput" name="payment" oninput="sanitizeInput(this)" required>
+                </div>
+                <div class="content-duo">
+                    <p class="name">მისამართი</p>
+                    <input type="text" name="address">
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">სტატუსი:</p>
+                <div class="content-duo">
+                    <p class="name">გადახდის სტატუსი</p>
+                    <div class="radio-block">
+                        <label class="radio-label">
+                            <input type="radio" name="payment_status" value="paid">
+                            <span class="radio-custom">
+                                <img src="/static/images/paid cash.png" alt="Картинка">
+                            </span>
+                        </label>
+
+                        <label class="radio-label">
+                            <input type="radio" name="payment_status" value="card">
+                            <span class="radio-custom">
+                                <img src="/static/images/paid card.png" alt="Картинка">
+                            </span>
+                        </label>
+
+                        <label class="radio-label">
+                            <input type="radio" name="payment_status" value="not_paid">
+                            <span class="radio-custom">
+                                <img src="/static/images/not paid.png" alt="Картинка">
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="content-duo">
+                    <p class="name">გადახდის მეთოდი</p>
+                    <div class="radio-block">
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="GEL">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">₾</span>
+                            </span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="RUB">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">₽</span>
+                            </span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="EUR">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">€</span>
+                            </span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="USD">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">$</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="send-data">
+                <button type="submit" id="add">დამატება</button>
+            </div>
+        </form>
+    </div>
+            
+
+
+{% for item in data %}
+<div class="blanks_block">
+    <h1 class="{{ 'blue-text' if item.added_to_the_manifest == 'yes' else 'black-text' }}" id="{{ item.id }}" onclick="openEditPage(this.id)">{{ item.number }}</h1>
+    <div class="line">
+        <p class="description">გამგზავნი:</p>
+        <div class="content-duo">
+            <p class="name">სახელი/გვარი</p>
+            <input type="text" value="{{ item.sender_fio }}">
+        </div>
+        <div class="content-duo">
+            <p class="name">ტელეფონი</p>
+            <input type="text" value="{{ item.sender_phone }}">
+        </div>
+    </div>
+
+    <div class="line">
+        <p class="description">მიმღები:</p>
+        <div class="content-duo">
+            <p class="name">სახელი/გვარი</p>
+            <input type="text" value="{{ item.recipient_fio }}">
+        </div>
+        <div class="content-duo">
+            <p class="name">ტელეფონი</p>
+            <input type="text" value="{{ item.recipient_phone }}">
+        </div>
+    </div>
+
+    <div class="line">
+        <p class="description">ინფორმაცია:</p>
+        <div class="content-trio">
+            <p class="name">პასპორტი</p>
+            <input type="text" value="{{ item.passport }}">
+        </div>
+        <div class="content-trio">
+            <p class="name">ქალაქი</p>
+            <input type="text" value="{{ item.city }}">
+        </div>
+        <div class="content-trio">
+            <p class="name">ღირებულება</p>
+            <input type="text" value="{{ item.price }}">
+        </div>
+    </div>
+
+    <div class="line">
+        <p class="description">წონები:</p>
+        <div class="content-solo">
+            <p class="name">წონა</p>
+            <input type="text" value="{{ item.weights }}">
+        </div>
+    </div>
+
+    <div class="line">
+        <p class="description">კომენტარი:</p>
+        <div class="content-solo">
+            <p class="name">დამატებითი ინფორმაცია</p>
+            <input type="text" value="{{ item.comment }}">
+        </div>
+    </div>
+
+    <div class="line">
+        <p class="description">თანხა/მიტანა:</p>
+        <div class="content-duo">
+            <p class="name">გადახდა</p>
+            <input type="text" value="{{ item.cost }}">
+        </div>
+        <div class="content-duo">
+            <p class="name">მისამართი</p>
+            <input type="text" value="{{ item.address }}">
+        </div>
+    </div>
+
+    <div class="line">
+        <p class="description">სტატუსი:</p>
+        <div class="content-duo">
+            <p class="name">გადახდის სტატუსი</p>
+            <div class="radio-block">
+                <label class="radio-label">
+                    <input type="radio" name="payment_status_{{ item.id }}" value="paid" {% if item.payment_status == 'paid' %} checked {% endif %} disabled>
+                    <span class="radio-custom">
+                        <img src="/static/images/paid cash.png" alt="Картинка">
+                    </span>
+                </label>
+
+                <label class="radio-label">
+                    <input type="radio" name="payment_status_{{ item.id }}" value="card" {% if item.payment_status == 'card' %} checked {% endif %} disabled>
+                    <span class="radio-custom">
+                        <img src="/static/images/paid card.png" alt="Картинка">
+                    </span>
+                </label>
+
+                <label class="radio-label">
+                    <input type="radio" name="payment_status_{{ item.id }}" value="not_paid" {% if item.payment_status == 'not_paid' %} checked {% endif %} disabled>
+                    <span class="radio-custom">
+                        <img src="/static/images/not paid.png" alt="Картинка">
+                    </span>
+                </label>
+            </div>
+        </div>
+        <div class="content-duo">
+            <p class="name">გადახდის მეთოდი</p>
+            <div class="radio-block">
+                <label class="radio-label">
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="GEL" {% if item.currency == 'GEL' %} checked {% endif %} disabled>
+                    <span class="radio-custom">
+                        <span class="radio-label-text">₾</span>
+                    </span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="RUB" {% if item.currency == 'RUB' %} checked {% endif %} disabled>
+                    <span class="radio-custom">
+                        <span class="radio-label-text">₽</span>
+                    </span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="EUR" {% if item.currency == 'EUR' %} checked {% endif %} disabled>
+                    <span class="radio-custom">
+                        <span class="radio-label-text">€</span>
+                    </span>
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="payment_currency_{{ item.id }}" value="USD" {% if item.currency == 'USD' %} checked {% endif %} disabled>
+                    <span class="radio-custom">
+                        <span class="radio-label-text">$</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+
+
+{% endfor %}
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>Данные о посылке</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <li>Номер посылки</li>
+            <li>Имя и фамилия отправителя</li>
+            <li>Номер телефона отправителя</li>
+        </div>
+        <div class="col-md-4">
+           <div <li>Имя и фамилия получателя</li>
+            <li>Номер телефона получателя</li>
+            <li>Паспорт получателя</li>
+        </div>
+        <div class="col-md-4">
+            <li>Город</li>
+            <li>Стоимость посылки</li>
+            <li>Вес посылки</li>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <li>Описание</li>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <li>Адрес получателя</li>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <li>Оплата</li>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function sanitizeInput(input) {
+    // Заменяем все нецифровые символы на пустую строку
+    input.value = input.value.replace(/\D/g, '');
+}
+</script>
+
+
+<script>
+    function weightsInputHandler(input) {
+        // Получаем значение из поля ввода
+        var value = input.value;
+    
+        // Заменяем запятую на точку
+        value = value.replace(',', '.');
+    
+        // Оставляем только цифры, точку и пробелы
+        value = value.replace(/[^0-9.\s]/g, '');
+    
+        // Устанавливаем очищенное значение обратно в поле ввода
+        input.value = value;
+    }
+</script>
+
+
+<script>
+    document.getElementById('add').addEventListener('click', function(event) {
+    var radios = document.getElementsByName('payment_status');
+    var isChecked = Array.from(radios).some(radio => radio.checked);
+    if (!isChecked) {
+        event.preventDefault();
+        alert('გთხოვთ აირჩიოთ გადახდის მეთოდი');
+    }
+});
+</script>
+
+<script>
+    document.getElementById('add').addEventListener('click', function(event) {
+    var radios = document.getElementsByName('payment_currency');
+    var isChecked = Array.from(radios).some(radio => radio.checked);
+    if (!isChecked) {
+        event.preventDefault();
+        alert('გთხოვთ აირჩიოთ ვალუტა');
+    }
+});
+
+</script>
+
+<script>
+    function openEditPage(id) {
+    window.location.href = "/list_edit_id/" + id;
+    }
+
+</script>
+
+{% endblock %}

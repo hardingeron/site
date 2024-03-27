@@ -7,72 +7,124 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<div class="list-menu">
+    <button id="openPaymentModal">სტატისტიკა</button>
+    <button onclick="manifestDownload()">ბალკების გადმოწერა</button>
+    <button id="openDeliveryModal">მიტანები</button>
+    <input type="text" placeholder="ძიება" id="filterInput">
+    <p>საერთო წონა: {{ total_weight }} კგ</p>
+</div>
+
+
+
+
+<div id="DeliveryModal" class="modal-delivery">
+    <div class="modal-delivery-content">
+        <span class="close" id="closeDeliveryModal">&times;</span>
+        <h1>სახლში მისატანი ამანათების სია</h1>
+        <table class="stat">
+            <tr class="stat-tr">
+                <th>ნომერი</th>
+                <th>მიმღები</th>
+                <th>ტელეფონი</th>
+                <th>მისამართი</th>
+                <th>წონები</th>
+                <th>გადახდა</th>
+            </tr>
+        {% for item in list_delivery %}
+            <tr class="stat-tr">
+                <td>{{ item.number }}</td>
+                <td>{{ item.recipient_fio }}</td>
+                <td>{{ item.recipient_phone }}</td>
+                <td>{{ item.address }}</td>
+                <td>{{ item.weights }}</td>
+                <td>{{ item.payment_status }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        
+    </div>
+</div>
+
+<!-- Модальное окно "payment" -->
+<div id="PaymentModal" class="modal_statistic">
+    <div class="modal_statistic-content">
+        <span class="close" id="closePaymentModal">&times;</span>
+        <h2 class="stat-name">სტატისტიკა</h2>
+                <div class="diagram_box_block">
+                    <div class="diagram_block">
+                        <canvas id="gelChartCanvas"></canvas>
+                    </div>
+                    <div class="diagram_block_four">
+                        <canvas id="rubChartCanvas"></canvas>
+                    </div>
+
+                    <div class="diagram_block_two">
+                        <canvas id="usdChartCanvas"></canvas>
+                    </div>
+                    <div class="diagram_block_three">
+                        <canvas id="eurChartCanvas"></canvas>
+                    </div>
+                </div>
+                <h2 class="stat-name"> შემოსავალი </h2>
+        <table class="stat">
+            <tr class="stat-tr">
+                <td>RUB</td>
+                <td>GEL</td>
+                <td>USD</td>
+                <td>EUR</td>
+            </tr>
+            <tr class="stat-tr">
+                <td>{{ rub_paid + rub_card }}</td>
+                <td>{{ gel_paid + gel_card }}</td>
+                <td>{{ usd_paid + usd_card }}</td>
+                <td>{{ eur_paid + eur_card }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
 
 
 
 <div class="content_list_block">
-
-    <!-- Кнопка для открытия модального окна "payment" -->
-    <div class="blocks">
-        <div class="total_weight_block">
-            <h2>საერთო წონა{{ total_weight }}კგ</h2>
-            <button id="openPaymentModal">სტატისტიკა</button>
-        </div>
-        <div class="filter_block">
-            <input type="text" id="filterInput" placeholder="ფილტრის ველი">
-            <button onclick="filterData()">ძიება</button>
-        </div>
-        <div class="manifest_block">
-            <button onclick="manifestDownload()">მანიფესტის გადმოწერა</button>
-        </div>
-    </div>
-    
-
-
     <div class="blanks_block_">
-        <div class="container">
-            <div class="number_block_">
-                <label>შესავსები</label>
-            </div>
-
-            <div class="sender_block">
-                <div class="label_block">
-                    <label>გამგზავნი:</label>
-                </div>
-                <div class="sender_fl_block">
-                    <label>სახელი/გვარი</label>
+        <form method="POST" action="/add_parcell_to_list">
+            <input type="text" name="date" hidden value="{{ date_param }}">
+            <input type="text" name="where_from" hidden value="{{ city_param }}">
+            <div class="line">
+                <p class="description">გამგზავნი:</p>
+                <div class="content-duo">
+                    <p class="name">სახელი/გვარი</p>
                     <input type="text" name="sender_fl">
                 </div>
-                <div class="sender_phone_block">
-                    <label>ტელეფონი</label>
+                <div class="content-duo">
+                    <p class="name">ტელეფონი</p>
                     <input type="text" name="sender_phone">
                 </div>
             </div>
 
-            <div class="recipient_block">
-                <div class="label_block">
-                    <label>მიმღები:</label>
+            <div class="line">
+                <p class="description">მიმღები:</p>
+                <div class="content-duo">
+                    <p class="name">სახელი/გვარი</p>
+                    <input type="text" name="recipient_fl" required>
                 </div>
-                <div class="recipient_fl_block">
-                    <label>სახელი/გვარი</label>
-                    <input type="text" name="recipient_fl" >
-                </div>
-                <div class="recipient_phone_block">
-                    <label>ტელეფონი</label>
-                    <input type="text" name="recipient_phone">
+                <div class="content-duo">
+                    <p class="name">ტელეფონი</p>
+                    <input type="text" name="recipient_phone" required>
                 </div>
             </div>
 
-            <div class="information_block">
-                <div class="label_block">
-                    <label>ინფორმაცია:</label>
-                </div>
-                <div class="passport_block">
-                    <label>პასპორტი</label>
+            <div class="line">
+                <p class="description">ინფორმაცია:</p>
+                <div class="content-trio">
+                    <p class="name">პასპორტი</p>
                     <input type="text" name="passport">
                 </div>
-                <div class="city_block">
-                    <label>ქალაქი</label>
+                <div class="content-trio">
+                    <p class="name">ქალაქი</p>
                     <select name="city" id="city">
                         <option value="TBILISI">TBILISI</option>
                         <option value="BATUMI">BATUMI</option>
@@ -129,42 +181,43 @@
                         <option value="SIGNAGI">SIGNAGI</option>
                         <option value="TSAGERI">TSAGERI</option>
                         <option value="JVARI">JVARI</option>
-    
-    
-                        <!-- Добавьте остальные города в том же формате -->
                     </select>
                 </div>
-                <div class="cost_block">
-                    <label>ღირებულება</label>
+                <div class="content-trio">
+                    <p class="name">ღირებულება</p>
                     <input type="text" id="numericInput" oninput="sanitizeInput(this)" name="cost">
                 </div>
             </div>
-
-            <div class="weights_comment_block">
-                <div class="label_block">
-                    <label>დეტალები:</label>
+            <div class="line">
+                <p class="description">წონები:</p>
+                <div class="content-solo">
+                    <p class="name">წონა</p>
+                    <input type="text" name="weights" id="weightsInput" oninput="weightsInputHandler(this)" required>
                 </div>
-                <div class="weights_block">
-                    <label>წონები</label>
-                    <input type="text" name="weights" id="weightsInput" oninput="weightsInputHandler(this)">
-                </div>
-                <div class="comment_block">
-                    <label>კომენტარი</label>
+            </div>
+            <div class="line">
+                <p class="description">კომენტარი:</p>
+                <div class="content-solo">
+                    <p class="name">დამატებითი ინფორმაცია</p>
                     <input type="text" name="comment">
                 </div>
             </div>
-
-            <div class="payment_block">
-                <div class="label_block">
-                    <label>გადახდა:</label>
+            <div class="line">
+                <p class="description">თანხა/მიტანა:</p>
+                <div class="content-duo">
+                    <p class="name">გადახდა</p>
+                    <input type="text" id="numericInput" name="payment" oninput="sanitizeInput(this)" required>
                 </div>
-                <div class="payment_value_block">
-                    <label>გადახდა</label>
-                    <input type="text" id="numericInput" name="payment" oninput="sanitizeInput(this)">
+                <div class="content-duo">
+                    <p class="name">მისამართი</p>
+                    <input type="text" name="address">
                 </div>
-
-
-                    <div class="border_block_">
+            </div>
+            <div class="line">
+                <p class="description">სტატუსი:</p>
+                <div class="content-duo">
+                    <p class="name">გადახდის სტატუსი</p>
+                    <div class="radio-block">
                         <label class="radio-label">
                             <input type="radio" name="payment_status" value="paid">
                             <span class="radio-custom">
@@ -186,9 +239,10 @@
                             </span>
                         </label>
                     </div>
-
-
-                    <div class="border_block_">
+                </div>
+                <div class="content-duo">
+                    <p class="name">გადახდის მეთოდი</p>
+                    <div class="radio-block">
                         <label class="radio-label">
                             <input type="radio" name="payment_currency" value="GEL">
                             <span class="radio-custom">
@@ -214,153 +268,56 @@
                             </span>
                         </label>
                     </div>
-                </div>      
+                </div>
             </div>
-        </div>
-
-    <button type="button" id="add">დამატება</button>
-
-
-{% for item in data %}
-
-
-<div class="blanks_block" data-item="{{ item.number }}" data-weights="{{ item.weights}}">
-    <div class="number_block" data-item="{{ item.number }}">
-        <label class="{% if item.added_to_the_manifest == 'yes' %}yellow-text{% else %}black-text{% endif %}">
-            {% if city_param == 'Москва' %}
-                {{ item.number }}
-            {% else %}
-                {% if item.number < 0 %}00{% else %}0{% endif %}{{ item.number }}
-            {% endif %}
-        </label>
-    </div>
-
-
-    <div class="sender_block">
-        <div class="label_block">
-            <label>გამგზავნი:</label>
-        </div>
-        <div class="sender_fl_block">
-            <label>სახელი/გვარი</label>
-            <input type="text" value="{{ item.sender_fio }}" readonly>
-        </div>
-        <div class="sender_phone_block">
-            <label>ტელეფონი</label>
-            <input type="text" value="{{ item.sender_phone }}" readonly>
-        </div>
-    </div>
-
-    <div class="recipient_block">
-        <div class="label_block">
-            <label>მიმღები:</label>
-        </div>
-        <div class="recipient_fl_block">
-            <label>სახელი/გვარი</label>
-            <input type="text" value="{{ item.recipient_fio }}" readonly>
-        </div>
-        <div class="recipient_phone_block">
-            <label>ტელეფონი</label>
-            <input type="text" value="{{ item.recipient_phone }}" readonly>
-        </div>
-    </div>
-
-    <div class="information_block">
-        <div class="label_block">
-            <label>ინფორმაცია:</label>
-        </div>
-        <div class="passport_block">
-            <label>პასპორტი</label>
-            <input type="text" value="{{ item.passport }}" readonly>
-        </div>
-        <div class="city_block">
-            <label>ქალაქი</label>
-            <input type="text" value="{{ item.city }}" readonly>
-        </div>
-        <div class="cost_block">
-            <label>ღირებულება</label>
-            <input type="text" value="{{ item.price }}" id="numericInput" oninput="sanitizeInput(this)" readonly>
-        </div>
-    </div>
-
-    <div class="weights_comment_block">
-        <div class="label_block">
-            <label>დეტალები:</label>
-        </div>
-        <div class="weights_block">
-            <label>წონები</label>
-            <input type="text" value="{{ item.weights }}" readonly id="weightsInput" oninput="weightsInputHandler(this)">
-        </div>
-        <div class="comment_block">
-            <label>კომენტარი</label>
-            <input type="text" value="{{ item.comment }}" readonly>
-        </div>
-    </div>
-
-    <div class="payment_block">
-        <div class="label_block">
-            <label>გადახდა:</label>
-        </div>
-        <div class="payment_value_block">
-            <label>გადახდა</label>
-            <input type="text" value="{{ item.cost }}" id="numericInput" oninput="sanitizeInput(this)" readonly>
-        </div>
-
-        <div class="border_block">
-                <label class="radio-label">
-                    <input type="radio" name="payment_status_{{ item.id }}" value="paid" {% if item.payment_status == 'paid' %} checked {% endif %} disabled>
-                    <span class="radio-custom">
-                        <img src="/static/images/paid cash.png" alt="Картинка">
-                    </span>
-                </label>
-
-                <label class="radio-label">
-                    <input type="radio" name="payment_status_{{ item.id }}" value="card" {% if item.payment_status == 'card' %} checked {% endif %} disabled>
-                    <span class="radio-custom">
-                        <img src="/static/images/paid card.png" alt="Картинка">
-                    </span>
-                </label>
-
-                <label class="radio-label">
-                    <input type="radio" name="payment_status_{{ item.id }}" value="not_paid" {% if item.payment_status == 'not_paid' %} checked {% endif %} disabled>
-                    <span class="radio-custom">
-                        <img src="/static/images/not paid.png" alt="Картинка">
-                    </span>
-                </label>
-        </div>
-
-        <div class="border_block_">
-                <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="GEL" {% if item.currency == 'GEL' %} checked {% endif %} disabled>
-                    <span class="radio-custom">
-                        <span class="radio-label-text">₾</span>
-                    </span>
-                </label>
-                <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="RUB" {% if item.currency == 'RUB' %} checked {% endif %} disabled>
-                    <span class="radio-custom">
-                        <span class="radio-label-text">₽</span>
-                    </span>
-                </label>
-                <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="EUR" {% if item.currency == 'EUR' %} checked {% endif %} disabled>
-                    <span class="radio-custom">
-                        <span class="radio-label-text">€</span>
-                    </span>
-                </label>
-                <label class="radio-label">
-                    <input type="radio" name="payment_currency_{{ item.id }}" value="USD" {% if item.currency == 'USD' %} checked {% endif %} disabled>
-                    <span class="radio-custom">
-                        <span class="radio-label-text">$</span>
-                    </span>
-                </label>
-        </div>
-
+            <div class="send-data">
+                <button type="submit" id="add">დამატება</button>
+            </div>
+        </form>
     </div>
 </div>
+            
 
-
-{% endfor %}
-
+<div class="container">
+    <h1 class="header text-center my-4">შეკვეთები</h1>
+    <div class="table-responsive">
+        <ul class="list-group" id="orderList">
+            {% if data %}
+                {% for item in data %}
+                <li class="list-group-item" id="{{item.id}}">
+                    <h5 class="{% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">შეკვეთა # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>ინფორმაცია მიმღებზე</h6>
+                            <p>მიმღები: <span class="bold recipient-fio"> {{ item.recipient_fio }} </span></p>
+                            <p>ტელეფონი: <span class="bold recipient-phone"> {{ item.recipient_phone }}</span></p>
+                            <p>პასპორტი: <span class="bold passport"> {{ item.passport }}</span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>ამანათის შესახებ</h6>
+                            <p>გამგზავნი: <span class="bold sender-fio">{{ item.sender_fio }}</span></p>
+                            <p>ტელეფონი: <span class="bold sender-phone">{{ item.sender_phone }}</span></p>
+                            <p>ღირებულება: <span class="bold">{{ item.price }} Рублей</span> </p> 
+                        </div>
+                        <div class="col-md-4">
+                            <h6>ტრანსპორტირება</h6>
+                            <p>მიმღების ქალაქი: <span class="bold">{{ item.city }}</span></p>
+                            <p>მისამართი: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} ----- {% endif %} </span></p>
+                            <p>ტრანსპორტირება: {% if item.payment_status=='paid' %} <span class="green">ნაღდი {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'>ბარათი {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
+                        </div>
+                        <div class="col-12">
+                            <h6>ამანათის აღწერა / დამატებითი ინფორმაცია</h6>
+                            <p>{{ item.comment }} </p>
+                            <p class="parcel-description">წონები: {{item.weights}}</p>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item">შეკვეთები არ მოიძებნა.</li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 
 
@@ -369,347 +326,74 @@
     <img src="/static/images/up.png" alt="ზემოთ" id="scrollToTopButton">
 </div>
 
-<div id="EditModal" class="modal-edit">
-    <div class="modal-content">
-        <span class="close" onclick="closeEditModal()">&times;</span>
-        <h2>მონაცემების რედაქტირება</h2>
-        <div id="edit-modal-data"></div>
-        <div class="modal_buttons_block">
-            <button onclick="saveChanges()">შენახვა</button>
-            <button onclick="deleteNumber()">წაშლა</button>
-        </div>  
-    </div>
-</div>
 
-
-<!-- Модальное окно "payment" -->
-<div id="PaymentModal" class="modal_statistic">
-    <div class="modal_statistic-content">
-        <span class="close" id="closePaymentModal">&times;</span>
-        <h2>სტატისტიკა</h2>
-                <div class="diagram_box_block">
-                    <div class="diagram_block">
-                        <canvas id="gelChartCanvas"></canvas>
-                    </div>
-                    <div class="diagram_block_four">
-                        <canvas id="rubChartCanvas"></canvas>
-                    </div>
-
-                    <div class="diagram_block_two">
-                        <canvas id="usdChartCanvas"></canvas>
-                    </div>
-                    <div class="diagram_block_three">
-                        <canvas id="eurChartCanvas"></canvas>
-                    </div>
-                </div>
-        <!-- Здесь вы можете добавить содержимое вашего модального окна "payment" -->
-    </div>
-</div>
-
-
-
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery, Popper.js, и Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
 
+
+
+
 <script>
-// Получаем значение параметра "date" из URL
-const urlParams = new URLSearchParams(window.location.search);
-const dateParam = urlParams.get('date');
-const cityParam = urlParams.get('where_from'); // Получаем значение параметра "city"
-
-// Используем значение dateParam и cityParam по вашим потребностям
-console.log('Выбранная дата:', dateParam);
-console.log('Выбранный город:', cityParam);
-
-$(document).ready(function() {
-    $("#add").click(function() {
-        // Получить значения из полей
-        var senderFl = $("input[name='sender_fl']").val();
-        var senderPhone = $("input[name='sender_phone']").val();
-        var recipientFl = $("input[name='recipient_fl']").val();
-        var recipientPhone = $("input[name='recipient_phone']").val();
-        var passport = $("input[name='passport']").val();
-        var city = $("select[name='city']").val();
-        var price = $("input[name='cost']").val();
-        var weights = $("input[name='weights']").val();
-        var comment = $("input[name='comment']").val();
-        var payment = $("input[name='payment']").val();
-        var paymentStatus = $("input[name='payment_status']:checked").val();
-        var paymentCurrency = $("input[name='payment_currency']:checked").val();
-
-
-        
-
-// Функция для проверки поля на пустоту и подсветки его красным при ошибке
-function validateAndHighlightField(fieldName) {
-    var fieldValue = $(fieldName).val();
-    if (fieldValue === "") {
-        $(fieldName).css("box-shadow", "0 0 10px red");
-        setTimeout(function() {
-            $(fieldName).css("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.596)"); // Удалить красную подсветку через 2 секунды
-        }, 2000);
-        return false;
-    } else {
-        $(fieldName).css("box-shadow", "0px 0px 10px rgba(0, 0, 0, 0.596)");
-        return true;
-    }
+    function sanitizeInput(input) {
+    // Заменяем все нецифровые символы на пустую строку
+    input.value = input.value.replace(/\D/g, '');
 }
-
-
-// Проверить, что обязательные поля не пусты
-var isValid = true;
-
-isValid = validateAndHighlightField("input[name='passport']") && isValid;
-isValid = validateAndHighlightField("input[name='recipient_fl']") && isValid;
-isValid = validateAndHighlightField("input[name='recipient_phone']") && isValid;
-isValid = validateAndHighlightField("input[name='weights']") && isValid;
-isValid = validateAndHighlightField("input[name='payment']") && isValid;
-isValid = validateAndHighlightField("input[name='cost']") && isValid;
-
-if (!isValid) {
-    showMessage('გთხოვთ შეავსოთ სავალდებულო ველები!', false);
-    return; // Остановить отправку формы
-}
-
-
-        // Создать объект formData
-        var formData = {
-            sender_fl: senderFl,
-            sender_phone: senderPhone,
-            recipient_fl: recipientFl,
-            recipient_phone: recipientPhone,
-            passport: passport,
-            city: city,
-            price: price,
-            weights: weights,
-            comment: comment,
-            payment: payment,
-            payment_status: paymentStatus,
-            payment_currency: paymentCurrency,
-            date: dateParam,
-            where_from: cityParam
-        };
-
-
-$.ajax({
-    type: "POST",
-    url: "/add_to_the_list",  // Замените на адрес вашего обработчика
-    data: JSON.stringify(formData),
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success: function(response) {
-        // Обработайте успешный ответ с сервера, если необходимо
-        console.log(response);
-
-        if (response.success) {
-            // Если сервер вернул True, перезагрузите страницу
-            window.location.reload();
-        } else {
-            // Если сервер вернул False, покажите сообщение
-            showMessage(response.message, false);
-        }
-    },
-    error: function(error) {
-        // Обработайте ошибку, если необходимо
-        console.error(error);
-    }
-});
-    });
-});
 </script>
 
 
+<script>
+    function weightsInputHandler(input) {
+        // Получаем значение из поля ввода
+        var value = input.value;
+    
+        // Заменяем запятую на точку
+        value = value.replace(',', '.');
+    
+        // Оставляем только цифры, точку и пробелы
+        value = value.replace(/[^0-9.\s]/g, '');
+    
+        // Устанавливаем очищенное значение обратно в поле ввода
+        input.value = value;
+    }
+</script>
+
 
 <script>
-// Функция для скрытия не выбранных радио кнопок при загрузке страницы
-function hideUnselectedRadios() {
-    var radioGroups = document.querySelectorAll(".border_block input[type='radio']");
-    radioGroups.forEach(function(radio) {
-        if (!radio.checked) {
-            radio.parentNode.style.display = "none";
-        }
-    });
-}
+    document.getElementById('add').addEventListener('click', function(event) {
+    var radios = document.getElementsByName('payment_status');
+    var isChecked = Array.from(radios).some(radio => radio.checked);
+    if (!isChecked) {
+        event.preventDefault();
+        alert('გთხოვთ აირჩიოთ გადახდის მეთოდი');
+    }
+});
+</script>
 
-// Вызываем функцию hideUnselectedRadios при загрузке страницы
-window.addEventListener('load', hideUnselectedRadios);
+<script>
+    document.getElementById('add').addEventListener('click', function(event) {
+    var radios = document.getElementsByName('payment_currency');
+    var isChecked = Array.from(radios).some(radio => radio.checked);
+    if (!isChecked) {
+        event.preventDefault();
+        alert('გთხოვთ აირჩიოთ ვალუტა');
+    }
+});
 
-// Остальной ваш скрипт...
+</script>
+
+<script>
+    function openEditPage(id) {
+    window.location.href = "/list_edit_id/" + id;
+    }
 </script>
 
 
 
 
-
-
-
-
-<script>
-// Открытие модального окна и копирование данных
-function openModalWithData(item) {
-    var modal = document.getElementById("EditModal");
-    var modalData = document.getElementById("edit-modal-data");
-
-    // Получаем значение атрибута data-item
-    var itemId = item.getAttribute("data-item");
-
-    // Клонируем блок данных из .blanks_block
-    var itemClone = item.cloneNode(true);
-
-    // Разрешаем радио кнопки для редактирования
-    var radioButtons = itemClone.querySelectorAll("input[type='radio']");
-    radioButtons.forEach(function(radioButton) {
-        radioButton.removeAttribute("disabled");
-        // Делаем радио кнопки видимыми
-        radioButton.parentNode.style.display = "block";
-    });
-
-    // Убираем атрибут readonly для всех полей ввода
-    var inputFields = itemClone.querySelectorAll("input");
-    inputFields.forEach(function(inputField) {
-        inputField.removeAttribute("readonly");
-    });
-
-    modalData.innerHTML = "";
-    modalData.appendChild(itemClone);
-
-    // Добавляем значение data-item как атрибут data-id для элемента modalData
-    modalData.setAttribute("data-id", itemId);
-
-    modal.style.display = "block";
-}
-
-// Закрытие модального окна
-function closeEditModal() {
-    var modal = document.getElementById("EditModal");
-    modal.style.display = "none";
-
-    
-    
-}
-
-// Обработчик события keydown для клавиши "Esc"
-window.addEventListener("keydown", function(event) {
-    if (event.key === "Escape") {
-        closeEditModal();
-    }
-});
-
-// Закрытие модального окна при клике вне окна
-window.addEventListener("click", function(event) {
-    var modal = document.getElementById("EditModal");
-    if (event.target === modal) {
-        closeEditModal();
-    }
-});
-
-// Обработчик события для открытия модального окна при клике на .number_block
-var numberBlocks = document.querySelectorAll(".number_block");
-numberBlocks.forEach(function(numberBlock) {
-    numberBlock.addEventListener("click", function() {
-        // Находим ближайший родительский элемент с классом .blanks_block
-        var blanksBlock = numberBlock.closest(".blanks_block");
-        
-        // Передаем данные из .blanks_block в функцию открытия модального окна
-        openModalWithData(blanksBlock);
-    });
-});
-
-
-
-
-
-// Функция сохранения изменений
-function saveChanges() {
-    var modalData = document.getElementById("edit-modal-data");
-    var itemId = modalData.getAttribute("data-id"); // Получаем идентификатор элемента из атрибута data-id
-
-    // Получите новые данные из модального окна
-    var newSenderFIO = modalData.querySelector('.sender_fl_block input').value;
-    var newSenderPhone = modalData.querySelector('.sender_phone_block input').value;
-    var newRecipientFIO = modalData.querySelector('.recipient_fl_block input').value;
-    var newRecipientPhone = modalData.querySelector('.recipient_phone_block input').value;
-
-    var newPassport = modalData.querySelector('.passport_block input').value;
-    var newCity = modalData.querySelector('.city_block input').value;
-    var newCost = modalData.querySelector('.cost_block input').value;
-    var newWeights = modalData.querySelector('.weights_block input').value;
-    var newComment = modalData.querySelector('.comment_block input').value;
-    var newPayment = modalData.querySelector('.payment_value_block input').value;
-    var newPaymentStatus = modalData.querySelector('.border_block input:checked').value;
-    var newCurrency = modalData.querySelector('.border_block_ input:checked').value;
-    var dateParam = urlParams.get('date');
-    var cityParam = urlParams.get('where_from');
-    
-    var numberBlock = document.querySelector('.number_block');
-    var labelText = numberBlock.querySelector('label').textContent;
-
-
-    // ... продолжайте для других полей
-
-    // Создайте объект с новыми данными
-    var newData = {
-        item_id: itemId, // Передаем идентификатор элемента
-        sender_fio: newSenderFIO,
-        sender_phone: newSenderPhone,
-        recipient_fio: newRecipientFIO,
-        recipient_phone: newRecipientPhone,
-        passport: newPassport,
-        city: newCity,
-        cost: newCost,
-        weights: newWeights,
-        comment: newComment,
-        payment: newPayment,
-        payment_status: newPaymentStatus,
-        currency: newCurrency,
-        date: dateParam,
-        where_from: cityParam,
-        // ... продолжайте для других полей
-    };
-
-    var xhr = new XMLHttpRequest();
-xhr.open("POST", "/edit-the-list", true);
-xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-            // Обработайте успешный ответ сервера
-            closeEditModal(); // Закрываем модальное окно после успешного сохранения
-            window.location.reload();
-        } else if (xhr.status === 400) {
-            // Обработка ошибки
-            var response = JSON.parse(xhr.responseText);
-            console.error('Ошибка при сохранении данных на сервере:', response.message);
-            // Отобразите сообщение об ошибке на странице
-            showMessage(response.message, false);
-        }
-    }
-};
-xhr.send(JSON.stringify(newData));
-
-}
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- Скрипты для модального окна "payment" -->
 <script>
     // Обработчик для кнопки открытия модального окна "payment"
     document.getElementById("openPaymentModal").addEventListener("click", function() {
@@ -737,8 +421,34 @@ xhr.send(JSON.stringify(newData));
         }
     });
 </script>
+<!-- 45345345345345345345345345345345345 -->
+<script>
+    // Обработчик для кнопки открытия модального окна "payment"
+    document.getElementById("openDeliveryModal").addEventListener("click", function() {
+        document.getElementById("DeliveryModal").style.display = "block";
+    });
 
+    // Обработчик для кнопки закрытия модального окна "payment"
+    document.getElementById("closeDeliveryModal").addEventListener("click", function() {
+        document.getElementById("DeliveryModal").style.display = "none";
+    });
 
+    // Обработчик для закрытия модального окна при клике вне окна
+    window.addEventListener("click", function(event) {
+        var modal = document.getElementById("DeliveryModal");
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+
+    // Обработчик для закрытия модального окна при нажатии клавиши "Esc"
+    window.addEventListener("keydown", function(event) {
+        var modal = document.getElementById("DeliveryModal");
+        if (event.key === "Escape" && modal.style.display === "block") {
+            modal.style.display = "none";
+        }
+    });
+</script>
 
 
 
@@ -935,221 +645,6 @@ xhr.send(JSON.stringify(newData));
     });
 </script>
 
-
-
-<script>
-    // Функция для отправки AJAX-запроса на сервер для удаления элемента
-    function deleteNumber() {
-    // Всплывающее окно с предупреждением
-    var confirmation = confirm("ნამდვილად გსურთ ამანათის წაშლა?");
-
-    // Если пользователь подтвердил удаление
-    if (confirmation) {
-        var modalData = document.getElementById("edit-modal-data");
-        var itemId = modalData.getAttribute("data-id"); // Получаем идентификатор элемента из атрибута data-id
-        var dateParam = urlParams.get('date');
-        var cityParam = urlParams.get('where_from');
-
-        // Создаем объект XMLHttpRequest для отправки запроса
-        var xhr = new XMLHttpRequest();
-
-        // Устанавливаем метод и URL для запроса
-        xhr.open("POST", "/deleted_from_list", true);
-
-        // Устанавливаем заголовок Content-Type для отправки данных в формате JSON
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-
-        // Создаем объект данных для отправки на сервер
-        var data = {
-            itemId: itemId,
-            dateParam: dateParam,
-            cityParam: cityParam
-        };
-
-        // Преобразуем объект данных в формат JSON
-        var jsonData = JSON.stringify(data);
-
-        // Устанавливаем обработчик события успешного завершения запроса
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                // Обработка успешного ответа от сервера
-                var response = JSON.parse(xhr.responseText);
-                if (response.success) {
-                    showMessage(response.message, response.success);
-                    // Можете выполнить какие-либо действия, например, обновить страницу
-                    location.reload();
-                } else {
-                    // Обработка ошибки, если не удалось удалить элемент
-                    showMessage(response.message, response.success);
-                }
-            }
-        };
-
-        // Отправляем запрос на сервер
-        xhr.send(jsonData);
-    }
-}
-</script>
-
-
-<script>
-    function sanitizeInput(input) {
-    // Заменяем все нецифровые символы на пустую строку
-    input.value = input.value.replace(/\D/g, '');
-}
-</script>
-
-
-
-<script>
-    function weightsInputHandler(input) {
-        // Получаем значение из поля ввода
-        var value = input.value;
-    
-        // Заменяем запятую на точку
-        value = value.replace(',', '.');
-    
-        // Оставляем только цифры, точку и пробелы
-        value = value.replace(/[^0-9.\s]/g, '');
-    
-        // Устанавливаем очищенное значение обратно в поле ввода
-        input.value = value;
-    }
-</script>
-    
-
-
-<script>
-// Получаем все элементы с классом "blanks_block"
-var blanksBlocks = document.querySelectorAll(".blanks_block");
-
-// Перебираем каждый элемент
-blanksBlocks.forEach(function(blanksBlock) {
-    // Получаем значение из атрибута "data-weights"
-    var itemWeights = blanksBlock.getAttribute("data-weights");
-
-    // Используем регулярное выражение для разделения чисел
-    var weightsArray = itemWeights.split(/\s+/).filter(Boolean); // Разделение по одному или более пробелу и удаление пустых значений
-
-    // Заменяем запятые на точки и вычисляем сумму чисел
-    var sum = 0;
-    for (var i = 0; i < weightsArray.length; i++) {
-        var weight = weightsArray[i].replace(",", ".");
-        sum += parseFloat(weight);
-    }
-
-    // Если сумма больше или равна 30, добавляем класс
-    if (sum >= 30.0) {
-        blanksBlock.classList.add("red_blanks_block");
-    }
-});
-</script>
-
-
-<script>
-    // Находим элемент фотографии
-var scrollToTopButton = document.getElementById("scrollToTopButton");
-
-// Добавляем обработчик события для клика
-scrollToTopButton.addEventListener("click", function() {
-    // Прокручиваем страницу наверх
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
-</script>
-
-
-
-
-
-
-
-<!-- фильтр -->
-<script>
-// Обработчик события keydown для поля ввода
-document.getElementById("filterInput").addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-        filterData(); // Вызываем функцию filterData() при нажатии Enter
-    }
-});
-
-function filterData() {
-    var filterValue = document.getElementById("filterInput").value.toLowerCase(); // Получаем значение из поля ввода и приводим его к нижнему регистру
-
-    // Находим все элементы с классом "blanks_block"
-    var blanksBlocks = document.querySelectorAll(".blanks_block");
-
-    // Флаг для отслеживания наличия совпадения
-    var foundMatch = false;
-
-    // Создаем регулярное выражение для поиска слова целиком
-    var regex = new RegExp("\\b" + filterValue + "\\b");
-
-    // Перебираем найденные элементы
-    for (var i = 0; i < blanksBlocks.length; i++) {
-        var item = blanksBlocks[i];
-        
-        // Получаем значения всех полей, которые хотим учитывать
-        var senderFIO = item.querySelector(".sender_fl_block input").value.toLowerCase();
-        var recipientFIO = item.querySelector(".recipient_fl_block input").value.toLowerCase();
-        var passport = item.querySelector(".passport_block input").value.toLowerCase();
-        var number = item.querySelector(".number_block label").textContent.toLowerCase(); // Для номера
-
-        // Сравниваем значения полей с введенным значением фильтра, используя регулярное выражение
-        if (
-            regex.test(senderFIO) ||
-            regex.test(recipientFIO) ||
-            regex.test(passport) ||
-            regex.test(number)
-        ) {
-            // Найдено совпадение, прокручиваем страницу к этому элементу
-            item.scrollIntoView({ behavior: "smooth" });
-            // Выделяем элемент
-            item.style.backgroundColor = "#353745";
-
-            // Устанавливаем флаг в true для остановки поиска после первого совпадения
-            foundMatch = true;
-
-            // Устанавливаем таймер для снятия выделения через 2 секунды
-            setTimeout(function(element) {
-                element.style.backgroundColor = ""; // Снимаем выделение
-            }, 2000, item);
-
-            // Выход из цикла после первого совпадения
-            break;
-        }
-    }
-
-    // Если не найдено совпадений, снимаем выделение с предыдущего совпадения (если оно было)
-    if (!foundMatch) {
-        var highlightedItems = document.querySelectorAll(".blanks_block[style='background-color: #353745;']");
-        highlightedItems.forEach(function (highlightedItem) {
-            highlightedItem.style.backgroundColor = "";
-        });
-    }
-}
-</script>
-
-
-
-<script>
-    const whereFrom = urlParams.get('where_from');
-
-
-    // Определяем аббревиатуру на основе значения "whereFrom"
-    let abbreviation = "";
-    if (whereFrom === "Санкт-Петербург") {
-        abbreviation = "С.П.Б";
-    } else if (whereFrom === "Москва") {
-        abbreviation = "МСК";
-    }
-
-    // Добавляем значение "where_from" к заголовку страницы с аббревиатурой
-    if (whereFrom) {
-        document.title = `${abbreviation}-ს ბლანკი`;
-    }
-</script>
-
-
 <script>
     function manifestDownload() {
         // Получаем строку запроса из текущего URL
@@ -1185,5 +680,93 @@ function filterData() {
         }
     }
 </script>
+
+
+
+<script>
+    // Находим элемент фотографии
+var scrollToTopButton = document.getElementById("scrollToTopButton");
+
+// Добавляем обработчик события для клика
+scrollToTopButton.addEventListener("click", function() {
+    // Прокручиваем страницу наверх
+    window.scrollTo({ top: 0, behavior: "smooth" });
+});
+</script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const filterInput = document.getElementById('filterInput');
+        const orderList = document.getElementById('orderList');
+        let items = []; // Список элементов
+        let currentIndex = -1; // Индекс текущего совпадения
+
+        // Функция для поиска следующего совпадения
+        function findNextMatch(searchText) {
+            // Перебираем элементы начиная с текущего индекса
+            for (let i = currentIndex + 1; i < items.length; i++) {
+                const item = items[i];
+                const recipientFio = item.querySelector('.recipient-fio').textContent.toLowerCase();
+                const recipientPhone = item.querySelector('.recipient-phone').textContent.toLowerCase();
+                const passport = item.querySelector('.passport').textContent.toLowerCase();
+                const senderFio = item.querySelector('.sender-fio').textContent.toLowerCase();
+                const senderPhone = item.querySelector('.sender-phone').textContent.toLowerCase();
+
+                // Если находим совпадение, устанавливаем фон и скроллим к элементу
+                if (recipientFio.includes(searchText) || recipientPhone.includes(searchText) || passport.includes(searchText) || senderFio.includes(searchText) || senderPhone.includes(searchText)) {
+                    item.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    item.style.backgroundColor = 'yellow';
+                    setTimeout(function() {
+                        item.style.backgroundColor = '';
+                    }, 2000);
+                    currentIndex = i; // Устанавливаем текущий индекс
+                    return true; // Возвращаем true, если нашли совпадение
+                }
+            }
+            return false; // Возвращаем false, если совпадение не найдено
+        }
+
+        // Обработчик события нажатия на Enter
+        filterInput.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                const searchText = filterInput.value.toLowerCase().trim();
+                // Если нет сохраненного списка элементов, сохраняем его
+                if (items.length === 0) {
+                    items = Array.from(orderList.querySelectorAll('.list-group-item'));
+                }
+                // Если есть совпадение, ищем следующее
+                if (!findNextMatch(searchText)) {
+                    // Если совпадение не найдено, возвращаемся к началу списка
+                    currentIndex = -1;
+                    findNextMatch(searchText);
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Получаем все элементы списка с классом list-group-item
+        const listItems = document.querySelectorAll('.list-group-item');
+
+        // Добавляем обработчик клика для каждого элемента списка
+        listItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                // Получаем id элемента из его атрибута id
+                const itemId = item.getAttribute('id');
+
+                // Выполняем перенаправление на нужную страницу
+                window.location.href = '/list_edit_id/' + itemId;
+            });
+        });
+    });
+</script>
+
+
+
+
+    
 
 {% endblock %}

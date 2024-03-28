@@ -828,16 +828,17 @@ def add_parcell_to_list():
         return response
 
 
-@app.route('/list_edit_id/<int:id>', methods=['GET', 'POST'])
+@app.route('/list_edit_id', methods=['GET', 'POST'])
 @login_required
-def list_edit(id):
+def list_edit():
     if request.method == 'GET':
-        data = Forms.query.get(id)
+        item_id = request.args.get('id')  # Получаем id из параметра запроса
+        data = Forms.query.get(item_id)
         if data is None:
             pass
         return render_template('list_edit.html', data=data)
     elif request.method == 'POST':
-        item_id = request.form.get('item_id')
+        item_id = request.form.get('id')
         parcel = Forms.query.get(item_id)
 
         parcel.sender_fio = request.form.get('sender_fl').upper()

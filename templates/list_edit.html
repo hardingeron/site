@@ -2,7 +2,7 @@
 
 {% block title %}
   {{ super() }}
-  
+  ბლანკის რედაქტირება
 {% endblock %}
 
 {% block content %}
@@ -35,8 +35,8 @@
 
     <h2 class="edit-list">რედაქტირება</h2>
     <div class="blanks_block_">
-        <form method="POST" action="/list_edit_id/{{ data.id}}" >
-            <input type="hidden" name="item_id" value="{{ data.id }}">
+        <form method="POST" action="/list_edit_id" >
+            <input type="hidden" name="id" value="{{ data.id }}">
             <input type="hidden" name="date" value="{{ data.date }}">
             <input type="hidden" name="where_from" value="{{ data.where_from }}">
             <div class="line">

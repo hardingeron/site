@@ -101,7 +101,7 @@
                 </div>
                 <div class="content-duo">
                     <p class="name">ტელეფონი</p>
-                    <input type="text" name="sender_phone">
+                    <input type="text" name="sender_phone" oninput="sanitizeInput(this)">
                 </div>
             </div>
 
@@ -113,7 +113,7 @@
                 </div>
                 <div class="content-duo">
                     <p class="name">ტელეფონი</p>
-                    <input type="text" name="recipient_phone" required>
+                    <input type="text" name="recipient_phone" oninput="sanitizeInput(this)" required>
                 </div>
             </div>
 
@@ -303,12 +303,12 @@
                             <h6>ტრანსპორტირება</h6>
                             <p>მიმღების ქალაქი: <span class="bold">{{ item.city }}</span></p>
                             <p>მისამართი: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} ----- {% endif %} </span></p>
-                            <p>ტრანსპორტირება: {% if item.payment_status=='paid' %} <span class="green"><img class="img-size" src="/static/images/paid cash.png" alt="Картинка"> {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'><img class="img-size" src="/static/images/paid card.png" alt="Картинка"> {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
+                            <p>საფასური: {% if item.payment_status=='paid' %} <span class="green"><img class="img-size" src="/static/images/paid cash.png" alt="Картинка"> {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'><img class="img-size" src="/static/images/paid card.png" alt="Картинка"> {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
                         </div>
                         <div class="col-12">
                             <h6>ამანათის აღწერა / დამატებითი ინფორმაცია</h6>
                             <p>{{ item.comment }} </p>
-                            <p class="parcel-description">წონები: {{item.weights}}</p>
+                            <p class="parcel-description">წონები: <span class="weights">{{item.weights}}</span></p>
                         </div>
                     </div>
                 </li>
@@ -337,12 +337,6 @@
 
 
 
-<script>
-    function sanitizeInput(input) {
-    // Заменяем все нецифровые символы на пустую строку
-    input.value = input.value.replace(/\D/g, '');
-}
-</script>
 
 
 <script>
@@ -385,70 +379,9 @@
 
 </script>
 
-<script>
-    function openEditPage(id) {
-    window.location.href = "/list_edit_id/" + id;
-    }
-</script>
 
 
 
-
-<script>
-    // Обработчик для кнопки открытия модального окна "payment"
-    document.getElementById("openPaymentModal").addEventListener("click", function() {
-        document.getElementById("PaymentModal").style.display = "block";
-    });
-
-    // Обработчик для кнопки закрытия модального окна "payment"
-    document.getElementById("closePaymentModal").addEventListener("click", function() {
-        document.getElementById("PaymentModal").style.display = "none";
-    });
-
-    // Обработчик для закрытия модального окна при клике вне окна
-    window.addEventListener("click", function(event) {
-        var modal = document.getElementById("PaymentModal");
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    });
-
-    // Обработчик для закрытия модального окна при нажатии клавиши "Esc"
-    window.addEventListener("keydown", function(event) {
-        var modal = document.getElementById("PaymentModal");
-        if (event.key === "Escape" && modal.style.display === "block") {
-            modal.style.display = "none";
-        }
-    });
-</script>
-<!-- 45345345345345345345345345345345345 -->
-<script>
-    // Обработчик для кнопки открытия модального окна "payment"
-    document.getElementById("openDeliveryModal").addEventListener("click", function() {
-        document.getElementById("DeliveryModal").style.display = "block";
-    });
-
-    // Обработчик для кнопки закрытия модального окна "payment"
-    document.getElementById("closeDeliveryModal").addEventListener("click", function() {
-        document.getElementById("DeliveryModal").style.display = "none";
-    });
-
-    // Обработчик для закрытия модального окна при клике вне окна
-    window.addEventListener("click", function(event) {
-        var modal = document.getElementById("DeliveryModal");
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    });
-
-    // Обработчик для закрытия модального окна при нажатии клавиши "Esc"
-    window.addEventListener("keydown", function(event) {
-        var modal = document.getElementById("DeliveryModal");
-        if (event.key === "Escape" && modal.style.display === "block") {
-            modal.style.display = "none";
-        }
-    });
-</script>
 
 
 
@@ -645,126 +578,22 @@
     });
 </script>
 
-<script>
-    function manifestDownload() {
-        // Получаем строку запроса из текущего URL
-        var queryString = window.location.search;
-
-        // Создаем объект URLSearchParams из строки запроса
-        var urlParams = new URLSearchParams(queryString);
-
-        // Извлекаем значения параметров из URL
-        var date = urlParams.get('date');
-        var where_from = urlParams.get('where_from');
-
-        // Показываем всплывающее окно с подтверждением
-        var userConfirmed = confirm("თქვენ მართლა გსურთ მანიფესტის გადმოწერა? თუ არ იცით რას აკეთეთ გთხოვთ გააუქმოთ!!!");
-
-        // Если пользователь подтвердил, отправляем запрос на сервер Flask
-        if (userConfirmed) {
-            var downloadUrl = `/download_manifest?date=${date}&where_from=${where_from}`;
-
-            // Создаем временную ссылку для скачивания файла
-            var a = document.createElement('a');
-            a.href = downloadUrl;
-
-            // Задаем имя файла
-            a.download = 'manifest.xlsx';
-
-            // Добавляем элемент в DOM и эмулируем клик для скачивания файла
-            document.body.appendChild(a);
-            a.click();
-
-            // Удаляем элемент из DOM
-            document.body.removeChild(a);
-        }
-    }
-</script>
-
-
-
-<script>
-    // Находим элемент фотографии
-var scrollToTopButton = document.getElementById("scrollToTopButton");
-
-// Добавляем обработчик события для клика
-scrollToTopButton.addEventListener("click", function() {
-    // Прокручиваем страницу наверх
-    window.scrollTo({ top: 0, behavior: "smooth" });
-});
-</script>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const filterInput = document.getElementById('filterInput');
-        const orderList = document.getElementById('orderList');
-        let items = []; // Список элементов
-        let currentIndex = -1; // Индекс текущего совпадения
-
-        // Функция для поиска следующего совпадения
-        function findNextMatch(searchText) {
-            // Перебираем элементы начиная с текущего индекса
-            for (let i = currentIndex + 1; i < items.length; i++) {
-                const item = items[i];
-                const recipientFio = item.querySelector('.recipient-fio').textContent.toLowerCase();
-                const recipientPhone = item.querySelector('.recipient-phone').textContent.toLowerCase();
-                const passport = item.querySelector('.passport').textContent.toLowerCase();
-                const senderFio = item.querySelector('.sender-fio').textContent.toLowerCase();
-                const senderPhone = item.querySelector('.sender-phone').textContent.toLowerCase();
-
-                // Если находим совпадение, устанавливаем фон и скроллим к элементу
-                if (recipientFio.includes(searchText) || recipientPhone.includes(searchText) || passport.includes(searchText) || senderFio.includes(searchText) || senderPhone.includes(searchText)) {
-                    item.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    item.style.backgroundColor = 'yellow';
-                    setTimeout(function() {
-                        item.style.backgroundColor = '';
-                    }, 2000);
-                    currentIndex = i; // Устанавливаем текущий индекс
-                    return true; // Возвращаем true, если нашли совпадение
-                }
-            }
-            return false; // Возвращаем false, если совпадение не найдено
-        }
-
-        // Обработчик события нажатия на Enter
-        filterInput.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                const searchText = filterInput.value.toLowerCase().trim();
-                // Если нет сохраненного списка элементов, сохраняем его
-                if (items.length === 0) {
-                    items = Array.from(orderList.querySelectorAll('.list-group-item'));
-                }
-                // Если есть совпадение, ищем следующее
-                if (!findNextMatch(searchText)) {
-                    // Если совпадение не найдено, возвращаемся к началу списка
-                    currentIndex = -1;
-                    findNextMatch(searchText);
-                }
-            }
-        });
-    });
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Получаем все элементы списка с классом list-group-item
-    const listItems = document.querySelectorAll('.list-group-item');
-
-    // Добавляем обработчик клика для каждого элемента списка
-    listItems.forEach(function(item) {
-        item.addEventListener('click', function() {
-            // Получаем id элемента из его атрибута id
-            const itemId = item.getAttribute('id');
-
-            // Выполняем перенаправление на нужную страницу с параметром id в URL
-            window.location.href = '/list_edit_id?id=' + itemId;
-        });
-    });
-});
-</script>
-
-
+<!-- очищает инпут от всего кроме чисел -->
+<script src="/static/js/digitsOnly.js"></script>
+<!-- скрипт для открытия модельного окна статистики -->
+<script src="/static/js/statisticWindow.js"></script>
+<!-- скрипт для открытия модельного окна с доставками -->
+<script src="/static/js/deliveryWindow.js"></script>
+<!-- скачивает готовый манифест -->
+<script src="/static/js/downloadManifest.js"></script>
+<!-- поднимает пользователя на самый мерх старницы -->
+<script src="/static/js/scrollToTop.js"></script>
+<!-- перенаправляет на страницу для редактирования  -->
+<script src="/static/js/redirectToEditParcel.js"></script>
+<!-- фильтр для поиска совпадении по мени, номеру телефона, по паспорту -->
+<script src="/static/js/orderListSearch.js"></script>
+<!-- выделяет красным все те записи чей вес выше 29.5кг -->
+<script src="/static/js/highlightWeights.js"></script>
 
 
     

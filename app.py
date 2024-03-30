@@ -795,7 +795,11 @@ def add_parcell_to_list():
         else:
             new_number = 1
         # Получите данные из JSON-запроса
-
+        if data['cost'] == '':
+            cost = 0
+        else:
+            cost = data['cost']
+        
         new_parcel = Forms(
             number = new_number,
             date=data['date'],
@@ -806,7 +810,7 @@ def add_parcell_to_list():
             passport=data['passport'],
             city=data['city'],
             comment=data['comment'],
-            price=int(data['cost']),
+            price=int(cost),
             weights=data['weights'],
             cost=int(data['payment']),
             payment_status=data['payment_status'],
@@ -963,14 +967,14 @@ def download_manifest():
             if purc_count != 1:
                 count += 1
                 if where_from == 'Москва':
-                    number = f'{form.city}     {form.number}/{count}]'
+                    number = f'{form.city}     {form.number}/{count}'
                 else:
-                    number = f'{form.city}    [0{form.number}/{count}]'
+                    number = f'{form.city}    0{form.number}/{count}'
             else:
                 if where_from == 'Москва':
-                    number = f'{form.city}     {form.number}]'
+                    number = f'{form.city}     {form.number}'
                 else:
-                    number = f'{form.city}    [0{form.number}]'
+                    number = f'{form.city}    0{form.number}'
             # Добавляем данные в соответствующие столбцы
             ws.cell(row=row_num, column=1, value=s_n.split()[0])  # Имя отправителя
             ws.cell(row=row_num, column=2, value=s_n.split()[-1])  # Фамилия отправителя

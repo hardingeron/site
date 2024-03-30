@@ -962,12 +962,12 @@ def download_manifest():
         for weight in weights:
             if purc_count != 1:
                 count += 1
-                if where_from == 'МОСКВА':
+                if where_from == 'Москва':
                     number = f'{form.city}     {form.number}/{count}]'
                 else:
                     number = f'{form.city}    [0{form.number}/{count}]'
             else:
-                if where_from == 'МОСКВА':
+                if where_from == 'Москва':
                     number = f'{form.city}     {form.number}]'
                 else:
                     number = f'{form.city}    [0{form.number}]'
@@ -975,7 +975,7 @@ def download_manifest():
             ws.cell(row=row_num, column=1, value=s_n.split()[0])  # Имя отправителя
             ws.cell(row=row_num, column=2, value=s_n.split()[-1])  # Фамилия отправителя
             ws.cell(row=row_num, column=3, value='Russian Federation')
-            if where_from == 'МОСКВА':
+            if where_from == 'Москва':
                 ws.cell(row=row_num, column=4, value='MOSCOW')
             else:
                 ws.cell(row=row_num, column=4, value='S.P.B')

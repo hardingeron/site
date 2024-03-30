@@ -9,9 +9,17 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+<div class="list-menu">
+    <form class='delete-form' method="POST" action="/list_delete" onsubmit="return confirm('ნამდვილად გსურთ წაშლა?');">
+        <input type="hidden" name="item_id" value="{{ data.id }}">
+        <input type="hidden" name="date" value="{{ data.date }}">
+        <input type="hidden" name="where_from" value="{{ data.where_from }}">
+        <button type="submit">ჩანაწერის წაშლა</button>
+    </form>
+</div>
+
 <style>
     .delete-form {
-        margin-top: 50px;
         text-align: center;
     }
 
@@ -166,12 +174,7 @@
         </form>
 
 
-        <form class='delete-form' method="POST" action="/list_delete" onsubmit="return confirm('ნამდვილად გსურთ წაშლა?');">
-            <input type="hidden" name="item_id" value="{{ data.id }}">
-            <input type="hidden" name="date" value="{{ data.date }}">
-            <input type="hidden" name="where_from" value="{{ data.where_from }}">
-            <button type="submit">ჩანაწერის წაშლა</button>
-        </form>
+
 
 
 

@@ -1,0 +1,601 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  {{ super() }}
+  ბლანკები
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<div class="list-menu">
+    <button id="openPaymentModal">სტატისტიკა</button>
+    <button onclick="manifestDownload()">ბალკების გადმოწერა</button>
+    <button id="openDeliveryModal">მიტანები</button>
+    <input type="text" placeholder="ძიება" id="filterInput">
+    <p class="weight-info">საერთო წონა:<span class="red"> {{ total_weight }} </span> კგ</p>
+</div>
+
+
+
+
+<div id="DeliveryModal" class="modal-delivery">
+    <div class="modal-delivery-content">
+        <span class="close" id="closeDeliveryModal">&times;</span>
+        <h1>სახლში მისატანი ამანათების სია</h1>
+        <table class="stat">
+            <tr class="stat-tr">
+                <th>ნომერი</th>
+                <th>მიმღები</th>
+                <th>ტელეფონი</th>
+                <th>მისამართი</th>
+                <th>წონები</th>
+                <th>გადახდა</th>
+            </tr>
+        {% for item in list_delivery %}
+            <tr class="stat-tr">
+                <td>{{ item.number }}</td>
+                <td>{{ item.recipient_fio }}</td>
+                <td>{{ item.recipient_phone }}</td>
+                <td>{{ item.address }}</td>
+                <td>{{ item.weights }}</td>
+                <td>{% if item.payment_status == 'not_paid' %} -{{item.cost}}{{item.currency}} {% else %}+{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        
+    </div>
+</div>
+
+<!-- Модальное окно "payment" -->
+<div id="PaymentModal" class="modal_statistic">
+    <div class="modal_statistic-content">
+        <span class="close" id="closePaymentModal">&times;</span>
+        <h2 class="stat-name">სტატისტიკა</h2>
+                <div class="diagram_box_block">
+                    <div class="diagram_block">
+                        <canvas id="gelChartCanvas"></canvas>
+                    </div>
+                    <div class="diagram_block_four">
+                        <canvas id="rubChartCanvas"></canvas>
+                    </div>
+
+                    <div class="diagram_block_two">
+                        <canvas id="usdChartCanvas"></canvas>
+                    </div>
+                    <div class="diagram_block_three">
+                        <canvas id="eurChartCanvas"></canvas>
+                    </div>
+                </div>
+                <h2 class="stat-name"> შემოსავალი </h2>
+        <table class="stat">
+            <tr class="stat-tr">
+                <td>RUB</td>
+                <td>GEL</td>
+                <td>USD</td>
+                <td>EUR</td>
+            </tr>
+            <tr class="stat-tr">
+                <td>{{ rub_paid + rub_card }}</td>
+                <td>{{ gel_paid + gel_card }}</td>
+                <td>{{ usd_paid + usd_card }}</td>
+                <td>{{ eur_paid + eur_card }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+
+<div class="content_list_block">
+    <div class="blanks_block_">
+        <form method="POST" action="/add_parcell_to_list">
+            <input type="text" name="date" hidden value="{{ date_param }}">
+            <input type="text" name="where_from" hidden value="{{ city_param }}">
+            <div class="line">
+                <p class="description">გამგზავნი:</p>
+                <div class="content-duo">
+                    <p class="name">სახელი/გვარი</p>
+                    <input type="text" name="sender_fl">
+                </div>
+                <div class="content-duo">
+                    <p class="name">ტელეფონი</p>
+                    <input type="text" name="sender_phone" oninput="sanitizeInput(this)">
+                </div>
+            </div>
+
+            <div class="line">
+                <p class="description">მიმღები:</p>
+                <div class="content-duo">
+                    <p class="name">სახელი/გვარი</p>
+                    <input type="text" name="recipient_fl" required>
+                </div>
+                <div class="content-duo">
+                    <p class="name">ტელეფონი</p>
+                    <input type="text" name="recipient_phone" oninput="sanitizeInput(this)" required>
+                </div>
+            </div>
+
+            <div class="line">
+                <p class="description">ინფორმაცია:</p>
+                <div class="content-trio">
+                    <p class="name">პასპორტი</p>
+                    <input type="text" name="passport">
+                </div>
+                <div class="content-trio">
+                    <p class="name">ქალაქი</p>
+                    <select name="city" id="city">
+                        <option value="TBILISI">TBILISI</option>
+                        <option value="BATUMI">BATUMI</option>
+                        <option value="KOBULETI">KOBULETI</option>
+                        <option value="KUTAISI">KUTAISI</option>
+                        <option value="TELAVI">TELAVI</option>
+                        <option value="GORI">GORI</option>
+                        <option value="ZUGDIDI">ZUGDIDI</option>
+                        <option value="POTI">POTI</option>
+                        <option value="KHASHURI">KHASHURI</option>
+                        <option value="RUSTAVI">RUSTAVI</option>
+                        <option value="SAMTREDIA">SAMTREDIA</option>
+                        <option value="SENAKI">SENAKI</option>
+                        <option value="ZESTAPHONI">ZESTAPHONI</option>
+                        <option value="MARNEULI">MARNEULI</option>
+                        <option value="AKHALTSIKHE">AKHALTSIKHE</option>
+                        <option value="OZURGETI">OZURGETI</option>
+                        <option value="KASPI">KASPI</option>
+                        <option value="TCHIATURA">TCHIATURA</option>
+                        <option value="TSKALTUBO">TSKALTUBO</option>
+                        <option value="SAGAREJO">SAGAREJO</option>
+                        <option value="GARDABANI">GARDABANI</option>
+                        <option value="BORJOMI">BORJOMI</option>
+                        <option value="TKIBULI">TKIBULI</option>
+                        <option value="KHONI">KHONI</option>
+                        <option value="BOLNISI">BOLNISI</option>
+                        <option value="AKHALKALAKI">AKHALKALAKI</option>
+                        <option value="GURJAANI">GURJAANI</option>
+                        <option value="MTSKHETA">MTSKHETA</option>
+                        <option value="KVARELI">KVARELI</option>
+                        <option value="AKHMETA">AKHMETA</option>
+                        <option value="KARELI">KARELI</option>
+                        <option value="LANCHKHUTA">LANCHKHUTA</option>
+                        <option value="DUSHETI">DUSHETI</option>
+                        <option value="SACHKHERE">SACHKHERE</option>
+                        <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
+                        <option value="LAGODEKHI">LAGODEKHI</option>
+                        <option value="NINOTSMINDA">NINOTSMINDA</option>
+                        <option value="ABASHA">ABASHA</option>
+                        <option value="TSNORI">TSNORI</option>
+                        <option value="TERJOBA">TERJOBA</option>
+                        <option value="MARTVILI">MARTVILI</option>
+                        <option value="KHOBI">KHOBI</option>
+                        <option value="TSALENJIKHA">TSALENJIKHA</option>
+                        <option value="VANI">VANI</option>
+                        <option value="BAGDADI">BAGDADI</option>
+                        <option value="VALE">VALE</option>
+                        <option value="CHKHOROTSKU">CHKHOROTSKU</option>
+                        <option value="TETRITSQARO">TETRITSQARO</option>
+                        <option value="DMANISI">DMANISI</option>
+                        <option value="ONI">ONI</option>
+                        <option value="TSALKA">TSALKA</option>
+                        <option value="AMBROLAURI">AMBROLAURI</option>
+                        <option value="SIGNAGI">SIGNAGI</option>
+                        <option value="TSAGERI">TSAGERI</option>
+                        <option value="JVARI">JVARI</option>
+                    </select>
+                </div>
+                <div class="content-trio">
+                    <p class="name">ღირებულება</p>
+                    <input type="text" id="numericInput" oninput="sanitizeInput(this)" name="cost">
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">წონები:</p>
+                <div class="content-solo">
+                    <p class="name">წონა</p>
+                    <input type="text" name="weights" id="weightsInput" oninput="weightsInputHandler(this)" required>
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">კომენტარი:</p>
+                <div class="content-solo">
+                    <p class="name">დამატებითი ინფორმაცია</p>
+                    <input type="text" name="comment">
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">თანხა/მიტანა:</p>
+                <div class="content-duo">
+                    <p class="name">გადახდა</p>
+                    <input type="text" id="numericInput" name="payment" oninput="sanitizeInput(this)" required>
+                </div>
+                <div class="content-duo">
+                    <p class="name">მისამართი</p>
+                    <input type="text" name="address">
+                </div>
+            </div>
+            <div class="line">
+                <p class="description">სტატუსი:</p>
+                <div class="content-duo">
+                    <p class="name">გადახდის სტატუსი</p>
+                    <div class="radio-block">
+                        <label class="radio-label">
+                            <input type="radio" name="payment_status" value="paid">
+                            <span class="radio-custom">
+                                <img src="/static/images/paid cash.png" alt="Картинка">
+                            </span>
+                        </label>
+
+                        <label class="radio-label">
+                            <input type="radio" name="payment_status" value="card">
+                            <span class="radio-custom">
+                                <img src="/static/images/paid card.png" alt="Картинка">
+                            </span>
+                        </label>
+
+                        <label class="radio-label">
+                            <input type="radio" name="payment_status" value="not_paid">
+                            <span class="radio-custom">
+                                <img src="/static/images/not paid.png" alt="Картинка">
+                            </span>
+                        </label>
+                    </div>
+                </div>
+                <div class="content-duo">
+                    <p class="name">გადახდის მეთოდი</p>
+                    <div class="radio-block">
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="GEL">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">₾</span>
+                            </span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="RUB">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">₽</span>
+                            </span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="EUR">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">€</span>
+                            </span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="payment_currency" value="USD">
+                            <span class="radio-custom">
+                                <span class="radio-label-text">$</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="send-data">
+                <button type="submit" id="add">დამატება</button>
+            </div>
+        </form>
+    </div>
+</div>
+            
+
+<div class="container">
+    <h1 class="header text-center my-4">შეკვეთები</h1>
+    <div class="table-responsive">
+        <ul class="list-group" id="orderList">
+            {% if data %}
+                {% for item in data %}
+                <li class="list-group-item" id="{{item.id}}">
+                    <h5 class="{% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">შეკვეთა # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h6>ინფორმაცია მიმღებზე</h6>
+                            <p>მიმღები: <span class="bold recipient-fio"> {{ item.recipient_fio }} </span></p>
+                            <p>ტელეფონი: <span class="bold recipient-phone"> {{ item.recipient_phone }}</span></p>
+                            <p>პასპორტი: <span class="bold passport"> {{ item.passport }}</span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <h6>ამანათის შესახებ</h6>
+                            <p>გამგზავნი: <span class="bold sender-fio">{{ item.sender_fio }}</span></p>
+                            <p>ტელეფონი: <span class="bold sender-phone">{{ item.sender_phone }}</span></p>
+                            <p>ღირებულება: <span class="bold">{{ item.price }} ₽</span> </p> 
+                        </div>
+                        <div class="col-md-4">
+                            <h6>ტრანსპორტირება</h6>
+                            <p>მიმღების ქალაქი: <span class="bold">{{ item.city }}</span></p>
+                            <p>მისამართი: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} ----- {% endif %} </span></p>
+                            <p>საფასური: {% if item.payment_status=='paid' %} <span class="green"><img class="img-size" src="/static/images/paid cash.png" alt="Картинка"> {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'><img class="img-size" src="/static/images/paid card.png" alt="Картинка"> {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
+                        </div>
+                        <div class="col-12">
+                            <h6>ამანათის აღწერა / დამატებითი ინფორმაცია</h6>
+                            <p>{{ item.comment }} </p>
+                            <p class="parcel-description">წონები: <span class="weights">{{item.weights}}</span></p>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            {% else %}
+                <li class="list-group-item">შეკვეთები არ მოიძებნა.</li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+
+
+<div class="scroll_block">
+    <!-- Вставьте вашу фотографию здесь -->
+    <img src="/static/images/up.png" alt="ზემოთ" id="scrollToTopButton">
+</div>
+
+
+<!-- jQuery, Popper.js, и Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+
+
+
+
+
+
+
+<script>
+    function weightsInputHandler(input) {
+        // Получаем значение из поля ввода
+        var value = input.value;
+    
+        // Заменяем запятую на точку
+        value = value.replace(',', '.');
+    
+        // Оставляем только цифры, точку и пробелы
+        value = value.replace(/[^0-9.\s]/g, '');
+    
+        // Устанавливаем очищенное значение обратно в поле ввода
+        input.value = value;
+    }
+</script>
+
+
+<script>
+    document.getElementById('add').addEventListener('click', function(event) {
+    var radios = document.getElementsByName('payment_status');
+    var isChecked = Array.from(radios).some(radio => radio.checked);
+    if (!isChecked) {
+        event.preventDefault();
+        alert('გთხოვთ აირჩიოთ გადახდის მეთოდი');
+    }
+});
+</script>
+
+<script>
+    document.getElementById('add').addEventListener('click', function(event) {
+    var radios = document.getElementsByName('payment_currency');
+    var isChecked = Array.from(radios).some(radio => radio.checked);
+    if (!isChecked) {
+        event.preventDefault();
+        alert('გთხოვთ აირჩიოთ ვალუტა');
+    }
+});
+
+</script>
+
+
+
+
+
+
+
+<script>
+    var gelPaid = parseFloat("{{ gel_paid }}");
+    var gelCard = parseFloat("{{ gel_card }}");
+    var gelNotPaid = parseFloat("{{ gel_not_paid }}");
+
+    var ctx = document.getElementById('gelChartCanvas').getContext('2d');
+    
+    var options = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
+        }
+    };
+
+    var data = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'ლარი',
+            data: [gelPaid, gelCard, gelNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
+    var gelChart = new Chart(ctx, {
+        type: 'bar', // Изменили тип диаграммы на 'bar'
+        data: data,
+        options: options
+    });
+</script>
+
+
+<script>
+    var rubPaid = parseFloat("{{ rub_paid }}");
+    var rubCard = parseFloat("{{ rub_card }}");
+    var rubNotPaid = parseFloat("{{ rub_not_paid }}");
+
+    var ctxRub = document.getElementById('rubChartCanvas').getContext('2d');
+    
+    var optionsRub = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
+        }
+    };
+
+    var dataRub = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'რუბლი',
+            data: [rubPaid, rubCard, rubNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
+    var rubChart = new Chart(ctxRub, {
+        type: 'bar',
+        data: dataRub,
+        options: optionsRub
+    });
+</script>
+
+
+
+<script>
+    var usdPaid = parseFloat("{{ usd_paid }}");
+    var usdCard = parseFloat("{{ usd_card }}");
+    var usdNotPaid = parseFloat("{{ usd_not_paid }}");
+
+    var ctxUSD = document.getElementById('usdChartCanvas').getContext('2d');
+    
+    var optionsUSD = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
+        }
+    };
+
+    var dataUSD = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'დოლარი',
+            data: [usdPaid, usdCard, usdNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
+    var usdChart = new Chart(ctxUSD, {
+        type: 'bar',
+        data: dataUSD,
+        options: optionsUSD
+    });
+</script>
+
+
+
+<script>
+    var eurPaid = parseFloat("{{ eur_paid }}");
+    var eurCard = parseFloat("{{ eur_card }}");
+    var eurNotPaid = parseFloat("{{ eur_not_paid }}");
+
+    var ctxEUR = document.getElementById('eurChartCanvas').getContext('2d');
+    
+    var optionsEUR = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#d2d2d2'
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            },
+            y: {
+                ticks: {
+                    color: '#d2d2d2'
+                }
+            }
+        }
+    };
+
+    var dataEUR = {
+        labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
+        datasets: [{
+            label: 'ევრო',
+            data: [eurPaid, eurCard, eurNotPaid],
+            backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
+        }]
+    };
+
+    var eurChart = new Chart(ctxEUR, {
+        type: 'bar',
+        data: dataEUR,
+        options: optionsEUR
+    });
+</script>
+
+<!-- очищает инпут от всего кроме чисел -->
+<script src="/static/js/list/digitsOnly.js"></script>
+<!-- скрипт для открытия модельного окна статистики -->
+<script src="/static/js/list/statisticWindow.js"></script>
+<!-- скрипт для открытия модельного окна с доставками -->
+<script src="/static/js/list/deliveryWindow.js"></script>
+<!-- скачивает готовый манифест -->
+<script src="/static/js/list/downloadManifest.js"></script>
+<!-- поднимает пользователя на самый мерх старницы -->
+<script src="/static/js/list/scrollToTop.js"></script>
+<!-- перенаправляет на страницу для редактирования  -->
+<script src="/static/js/list/redirectToEditParcel.js"></script>
+<!-- фильтр для поиска совпадении по мени, номеру телефона, по паспорту -->
+<script src="/static/js/list/orderListSearch.js"></script>
+<!-- выделяет красным все те записи чей вес выше 29.5кг -->
+<script src="/static/js/list/highlightWeights.js"></script>
+
+
+    
+
+{% endblock %}

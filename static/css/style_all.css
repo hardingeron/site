@@ -1,228 +1,51 @@
-/* все посылки*/
-.table-container {
-  width: 98%;
-  height: 50%;
-  max-height: 500px;
-  overflow-y: scroll;
-  overflow-x: auto;
-  margin: 0 auto;
-  border-radius: 20px;
-  font-family: Arial, sans-serif;
-  width: 100%;
-  background-color: #51515e;
-  color: #d2d2d2;
 
-  top: 1%;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.501); /* Добавление тени со всех сторон */
-  font-weight: bold;
-
+.table td, .table th {
+  white-space: nowrap; /* Не переносить контент на новую строку */
+  overflow: hidden; /* Предотвратить появление горизонтальной прокрутки */
+  text-overflow: ellipsis; /* Обрезать текст, который не помещается */
 }
-
-.table-container::-webkit-scrollbar {
-  width: 10px; /* Ширина полосы прокрутки */
-  height: 10px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-  background-color: #19191b; /* Цвет полосы прокрутки */
-  border-radius: 10px; /* Скругление углов полосы прокрутки */
-}
-
-.table-container::-webkit-scrollbar-track {
-  background-color: #2a2a2c; /* Цвет фона полосы прокрутки */
-}
-
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th {
-  padding: 5px;
-  text-align: center;
-  font-size: 18px;
-  background-color: #343641;
-  color: #d2d2d2;
-  position: sticky;
-  top: 0;
-  vertical-align: bottom;
-}
-
-
-.filnone {
-  width: 65px;
-}
-
-
-
-
-.table td {
-    padding: 1px;
-    text-align: center;
-    font-size: 14px;
-}
-
-.table td.description {
-    white-space: nowrap;
-    text-align: left;
-}
-
-.table td.number {
-    text-align: center;
-
-  }
   
-.table td.number::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: -1px;
-    height: 100%;
-    background-color: #ffffff;
- }
-  
-
-
-.table-row:hover {
-  background-color: #6e8587;
-  color: #fff;
-  cursor: pointer;
+.table-responsive {
+  max-height: 600px;
+  overflow-y: auto;
 }
 
-  
-  /* конец все посылки */
-  
-  /* фильтры */
-  #filter-number {
-    width: 25px;
-    padding: 5px;
-    background-color: #40414f;
-    border: 1px solid #000000;
-    border-radius: 4px;
-    font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    display: block;
-}
-
-#filter-sender,
-#filter-sender-phone, 
-#filter-recipient, 
-#filter-recipient-phone,
-#filter-cost,
-#filter-passport,
-#filter-weight,
-#filter-responsibility,
-#filter-city,
-#filter-flight,
-#filter-where_from {
-  width: 100px;
-  padding: 5px;
-  background-color: #40414f;
-  border: 1px solid #000000;
-  border-radius: 4px;
-  font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;
-  display: block;
+.icon {
+  width: 25px;
+  height: 25px;
 }
 
 
-
-  /* конец фильтры */
-  /* скрытие описи */
-
-  /* Стили для модального окна */
-/* Стили для модального окна */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  backdrop-filter: blur(0px);
+.red {
+  background-color: rgba(255, 200, 0, 0.386);
 }
 
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 5% auto;
-  padding: 20px;
-  width: 600px;
-  min-height: 600px;
-  max-height: 700px;
-  border-radius: 10px;
-  background: #6c6f81;
-  box-shadow: 0 0 10px 10px rgba(0, 0, 0, 0.633);
+
+.green {
+  background-color: rgba(0, 128, 0, 0.464);
 }
 
-.close {
-  color: #d2d2d2;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
+/* Добавляем максимальную высоту для изображения в модальном окне */
 #modal-image {
-  max-height: 550px;
-  max-width: 550px;
-  margin-bottom: 10px;
-  border-radius: 10px;
+  max-height: 600px;
+  width: auto; /* Сохраняем пропорции изображения */
 }
 
-#modal-description {
-  font-size: 16px;
-  font-weight: bold;
-  font-family: "Arial", sans-serif;
-  text-align: center;
+/* Убираем горизонтальный скролл в модальном окне */
+.modal-content {
+  overflow-x: hidden;
 }
 
-/* Остальные стили таблицы и иконки */
-
-/* Остальные стили таблицы и иконки */
-
-
-  .icon {
-    width: 25px;
-    height: 25px;
-    margin-right: 5px;
+/* Изменяем ширину модального окна на мобильных устройствах */
+@media (max-width: 576px) {
+  .modal-dialog {
+      max-width: 90%;
   }
-  
-  .icon:hover {
-    cursor: pointer;
-  }
-
-
-
-.red-background {
-  background-color: #ffb90042;
 }
 
-.red-background:hover {
-  background-color: #3f464b;
-} 
 
-
-
-.inherit-background:hover {
-  background-color: #3f464b;
-}
-
-/*  */
+/* 000000000000000000000000 */
 
 /* Стили для модального окна */
 .editModal {
@@ -259,7 +82,6 @@
 
 .editModalContent {
   width: 570px;
-  height: 800px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -292,15 +114,12 @@
 .pay
 {
   display: flex;
-  height: 75px;
   margin-bottom: 5px; /* Отступ снизу */
  
 }
 
 .description_block {
-  display: flex;
- 
-  height: 150px;
+  display: flex;  
   margin-bottom: 20px; /* Отступ снизу */
 }
 
@@ -357,7 +176,6 @@
   font-size: 16px;
   margin-top: 2px;
   width: 230px;
-  height: 20px;
   background-color: #40414f;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
   color: #8e8ea0;
@@ -375,7 +193,6 @@
   padding: 5px;
   font-size: 16px;
   margin-top: 2px;
-  height: 20px;
   background-color: #40414f;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
   color: #8e8ea0;
@@ -433,7 +250,6 @@ textarea[name="inventory"]:focus {
   border: none;
   border-radius: 5px;
   padding: 5px;
-  height: 30px;
   font-size: 16px;
   margin-top: 2px;
   width: 140px;
@@ -458,7 +274,6 @@ textarea[name="inventory"]:focus {
   border: 1px solid #ccc;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
   width: 141px;
-  height: 75px;
   border-radius: 10px;
   text-align: center;
 }
@@ -468,7 +283,6 @@ textarea[name="inventory"]:focus {
 /* Стилизация изображений вместо радио-кнопок */
 .label img {
   width: 30px;
-  height: 30px;
   display: block; /* Изменено на блочное отображение */
   padding: 2px;
 }
@@ -491,82 +305,4 @@ textarea[name="inventory"]:focus {
 
 #saveButton:hover {
   background-color: #45a049;
-}
-
-
-
-.pictures_list_block {
-  margin-bottom: 10px;
-  margin-left: 10px;
-  width: 200px;
-  height: 100px;
-  text-align: center;
-  background-color: #353742;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  border-radius: 20px;
-  padding: 10px;
-}
-
-.from_block,
-.to_block,
-.thr_block {
-  margin-bottom: 10px;
-}
-
-.from_block label,
-.to_block label {
-
-  font-weight: bold;
-  margin-bottom: 1px;
-  color: #d2d2d2;
-}
-
-.from_block input[type="date"],
-.to_block input[type="date"] {
-  background-color: #40414f;
-  color: #d2d2d2;
-  border: 1px solid #000000;
-  border-radius: 5px;
-  width: 100px;
-  font-size: 10px;
-  height: 20px;
-}
-
-.thr_block select {
-  height: 30px;
-  background-color: #40414f;
-  color: #d2d2d2;
-  border: 1px solid #000000;
-  border-radius: 5px;
-}
-
-.picture_list_button_block {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 10px;
-  display: inline-block; /* Добавляем блочное свойство */
-}
-
-.picture_list_button_block:hover {
-  background-color: #45a049;
-}
-
-
-
-
-
-
-
-.navigation_block {
-  display: flex;
-  align-items: center; /* Чтобы элементы выровнялись по центру по вертикали */
-}
-
-/* Опционально, чтобы добавить отступы между элементами */
-.navigation_block > * {
-  margin-right: 10px; /* Можете настроить величину отступов по вашему усмотрению */
 }

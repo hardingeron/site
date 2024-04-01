@@ -306,3 +306,14 @@ textarea[name="inventory"]:focus {
 #saveButton:hover {
   background-color: #45a049;
 }
+
+
+.list-detals th input {
+  font-size: 10px;
+}
+
+td {
+
+  font-size: 16px;
+  font-weight:400;
+}

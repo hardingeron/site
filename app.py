@@ -777,11 +777,6 @@ def blanks():
 @app.route('/add_parcell_to_list', methods=['POST'])
 @login_required
 def add_parcell_to_list():
-    # print(data)
-    # access = ['admin', 'Moscow', 'SPB']
-    data = request.form.to_dict()
-    print(data)
-    # return 'OK'
     access = ['admin', 'Moscow', 'SPB']
     if current_user.role not in access:
         return 'error user'
@@ -799,6 +794,9 @@ def add_parcell_to_list():
             cost = 0
         else:
             cost = data['cost']
+
+        if data['passport'] == '':
+            passport = '---'
         
         new_parcel = Forms(
             number = new_number,
@@ -807,7 +805,7 @@ def add_parcell_to_list():
             sender_phone=data['sender_phone'],
             recipient_fio=data['recipient_fl'].upper(),
             recipient_phone=data['recipient_phone'],
-            passport=data['passport'],
+            passport= passport,
             city=data['city'],
             comment=data['comment'],
             price=int(cost),
@@ -853,7 +851,6 @@ def list_edit():
         parcel.city = request.form.get('city')
         parcel.comment = request.form.get('comment')
         parcel.price = int(request.form.get('cost'))
-        print(type(int(request.form.get('cost'))))
         parcel.weights = request.form.get('weights')
         parcel.cost = int(request.form.get('payment'))
         parcel.payment_status = request.form.get('payment_status')

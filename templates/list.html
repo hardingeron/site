@@ -331,7 +331,7 @@
                         <div class="col-md-4">
                             <h6>ტრანსპორტირება</h6>
                             <p>მიმღების ქალაქი: <span class="bold">{{ item.city }}</span></p>
-                            <p>მისამართი: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} ----- {% endif %} </span></p>
+                            <p>მისამართი: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} --- {% endif %} </span></p>
                             <p>საფასური: {% if item.payment_status=='paid' %} <span class="green"><img class="img-size" src="/static/images/paid cash.png" alt="Картинка"> {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'><img class="img-size" src="/static/images/paid card.png" alt="Картинка"> {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
                         </div>
                         <div class="col-12">

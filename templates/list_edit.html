@@ -123,7 +123,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="address">მისამართი</label>
-                                <input type="text" class="form-control" name="address" value="{{ data.address }}">
+                                <input type="text" class="form-control" name="address" value="{% if data.address == 'None' %}{% else %}{{data.address}}{% endif %}">
                             </div>
                         </div>
                     </div>

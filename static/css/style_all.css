@@ -1,4 +1,5 @@
 
+
 .table td, .table th {
   white-space: nowrap; /* Не переносить контент на новую строку */
   overflow: hidden; /* Предотвратить появление горизонтальной прокрутки */
@@ -321,3 +322,5 @@ td {
 .cost_block {
   font-weight: bold;
 }
+
+

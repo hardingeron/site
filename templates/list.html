@@ -9,16 +9,37 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+
 <div class="container text-center">
     <div class="list-menu d-flex justify-content-center align-items-center">
-        <button class="btn btn-primary mr-2 text-nowrap" id="openPaymentModal">სტატისტიკა</button>
-        <button class="btn btn-primary mr-2 text-nowrap" onclick="manifestDownload()">მანიფესტის გამოწერა</button>
-        <button class="btn btn-primary mr-2 text-nowrap" id="openDeliveryModal">მიტანები</button>
-        <input type="text" class="form-control mr-2" placeholder="ძიება" id="filterInput">
-        <p class="weight-info mb-0 text-nowrap">საერთო წონა: <span class="red">{{ total_weight }} </span> კგ</p>
+
+        <img class="icon" src="/static/images/translation.png" alt="language" id="toggleLanguageButton">
+
+        <button data-lang="ge" class="btn btn-primary mr-2 text-nowrap" id="openPaymentModalGe">სტატისტიკა</button>
+        <button data-lang="ru" class="btn btn-primary mr-2 text-nowrap hidden" id="openPaymentModalRu">Статистика</button>
+
+        <button data-lang="ge" class="btn btn-primary mr-2 text-nowrap" onclick="manifestDownload()">მანიფესტის გამოწერა</button>
+        <button data-lang="ru" class="btn btn-primary mr-2 text-nowrap hidden" onclick="manifestDownload()">Скачать манифест</button>
+
+        <button data-lang="ge" class="btn btn-primary mr-2 text-nowrap" id="openDeliveryModalGe">მიტანები</button>
+        <button data-lang="ru" class="btn btn-primary mr-2 text-nowrap hidden" id="openDeliveryModalRu">Доставки</button>
+
+        
+
+        <input data-lang="ge" type="text" class="form-control mr-2" placeholder="ძიება" id="filterInput">
+        <input data-lang="ru" type="text" class="form-control mr-2 hidden" placeholder="Поиск" id="filterInput">
+
+        <p data-lang="ge" class="weight-info mb-0 text-nowrap">საერთო წონა: <span class="red">{{ total_weight }} </span> კგ</p>
+        <p data-lang="ru" class="weight-info mb-0 text-nowrap hidden">Общий вес: <span class="red">{{ total_weight }} </span> Кг</p>
+
     </div>
 </div>
-
 
 
 
@@ -27,15 +48,22 @@
 <div id="DeliveryModal" class="modal-delivery">
     <div class="modal-delivery-content">
         <span class="close" id="closeDeliveryModal">&times;</span>
-        <h1>სახლში მისატანი ამანათების სია</h1>
+        <h1 data-lang="ge">სახლში მისატანი ამანათების სია</h1>
+        <h1 data-lang="ru" class="hidden">Список доставок на дом</h1>
         <table class="stat">
             <tr class="stat-tr">
-                <th>ნომერი</th>
-                <th>მიმღები</th>
-                <th>ტელეფონი</th>
-                <th>მისამართი</th>
-                <th>წონები</th>
-                <th>გადახდა</th>
+                <th data-lang="ge">ნომერი</th>
+                <th data-lang="ru" class="hidden">Номер</th>
+                <th data-lang="ge">მიმღები</th>
+                <th data-lang="ru" class="hidden">Получатель</th>
+                <th data-lang="ge">ტელეფონი</th>
+                <th data-lang="ru" class="hidden">Телефон</th>
+                <th data-lang="ge">მისამართი</th>
+                <th data-lang="ru" class="hidden">Адрес</th>
+                <th data-lang="ge">წონები</th>
+                <th data-lang="ru" class="hidden">Веса</th>
+                <th data-lang="ge">გადახდა</th>
+                <th data-lang="ru" class="hidden">Оплата</th>
             </tr>
         {% for item in list_delivery %}
             <tr class="stat-tr">
@@ -52,11 +80,14 @@
     </div>
 </div>
 
+
+
 <!-- Модальное окно "payment" -->
 <div id="PaymentModal" class="modal_statistic">
     <div class="modal_statistic-content">
         <span class="close" id="closePaymentModal">&times;</span>
-        <h2 class="stat-name">სტატისტიკა</h2>
+        <h2 data-lang="ge" class="stat-name">სტატისტიკა</h2>
+        <h2 data-lang="ru" class="stat-name hidden">Статистика</h2>
                 <div class="diagram_box_block">
                     <div class="diagram_block">
                         <canvas id="gelChartCanvas"></canvas>
@@ -72,7 +103,8 @@
                         <canvas id="eurChartCanvas"></canvas>
                     </div>
                 </div>
-                <h2 class="stat-name"> შემოსავალი </h2>
+                <h2 data-lang="ge" class="stat-name">საერთო შემოსავალი ბართი + ნაღდი</h2>
+                <h2 data-lang="ru" class="stat-name hidden">Общая прибыль карта + наличка</h2>
         <table class="stat">
             <tr class="stat-tr">
                 <td>RUB</td>
@@ -100,13 +132,15 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="sender_fl">გამგზავნი:</label>
+                        <label data-lang="ge" for="sender_fl">გამგზავნი:</label>
+                        <label data-lang="ru" class="hidden" for="sender_fl">Отправитель:</label>
                         <input type="text" class="form-control" name="sender_fl" id="sender_fl">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="sender_phone">ტელეფონი</label>
+                        <label data-lang="ge" for="sender_phone">ტელეფონი:</label>
+                        <label data-lang="ru" class="hidden" for="sender_phone">Телефон:</label>
                         <input type="text" class="form-control" name="sender_phone" id="sender_phone" oninput="sanitizeInput(this)">
                     </div>
                 </div>
@@ -115,13 +149,15 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="recipient_fl">მიმღები:</label>
+                        <label data-lang="ge" for="recipient_fl">მიმღები:</label>
+                        <label data-lang="ru" class="hidden" for="recipient_fl">Получатель:</label>
                         <input type="text" class="form-control" name="recipient_fl" id="recipient_fl" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="recipient_phone">ტელეფონი</label>
+                        <label data-lang="ge" for="recipient_phone">ტელეფონი:</label>
+                        <label data-lang="ru" class="hidden" for="recipient_phone">Телефон:</label>
                         <input type="text" class="form-control" name="recipient_phone" id="recipient_phone" oninput="sanitizeInput(this)" required>
                     </div>
                 </div>
@@ -130,13 +166,15 @@
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="passport">პასპორტი</label>
+                        <label data-lang="ge" for="passport">პასპორტი:</label>
+                        <label data-lang="ru" class="hidden" for="passport">Паспорт:</label>
                         <input type="text" class="form-control" name="passport" id="passport">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="city">ქალაქი</label>
+                        <label data-lang="ge" for="city">ქალაქი:</label>
+                        <label data-lang="ru" class="hidden" for="city">Город:</label>
                         <select class="form-control" name="city" id="city">
                             <option value="TBILISI">TBILISI</option>
                             <option value="BATUMI">BATUMI</option>
@@ -198,7 +236,8 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="cost">ღირებულება</label>
+                        <label data-lang="ge" for="cost">ღირებულება:</label>
+                        <label data-lang="ru" class="hidden" for="cost">Стоимость:</label>
                         <input type="text" class="form-control" id="cost" oninput="sanitizeInput(this)" name="cost">
                     </div>
                 </div>
@@ -207,7 +246,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="weights">წონები:</label>
+                        <label data-lang="ge" for="weights">წონები:</label>
+                        <label data-lang="ru" class="hidden" for="weights">Веса:</label>
                         <input type="text" class="form-control" name="weights" id="weights" oninput="weightsInputHandler(this)" required>
                     </div>
                 </div>
@@ -216,7 +256,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="comment">კომენტარი:</label>
+                        <label data-lang="ge" for="comment">კომენტარი:</label>
+                        <label data-lang="ru" class="hidden" for="comment">Комментарий:</label>
                         <input type="text" class="form-control" name="comment" id="comment">
                     </div>
                 </div>
@@ -225,13 +266,15 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="payment">თანხა/მიტანა:</label>
+                        <label data-lang="ge" for="payment">თანხა/მიტანა:</label>
+                        <label data-lang="ru" class="hidden" for="payment">Оплата/Доставка:</label>
                         <input type="text" class="form-control" id="payment" name="payment" oninput="sanitizeInput(this)" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="address">მისამართი</label>
+                        <label data-lang="ge" for="address">მისამართი:</label>
+                        <label data-lang="ge" class="hidden" for="address">Адрес:</label>
                         <input type="text" class="form-control" name="address" id="address">
                     </div>
                 </div>
@@ -240,7 +283,8 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="payment_status">სტატუსი:</label>
+                        <label data-lang="ge" for="payment_status">სტატუსი:</label>
+                        <label data-lang="ru" class="hidden" for="payment_status">Статус:</label>
                         <div class="radio-block">
                             <label class="radio-label">
                                 <input type="radio" name="payment_status" value="paid">
@@ -267,7 +311,8 @@
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="payment_currency">გადახდის მეთოდი</label>
+                        <label data-lang="ge" for="payment_currency">გადახდის მეთოდი:</label>
+                        <label data-lang="ru" class="hidden" for="payment_currency">Метод оплаты:</label>
                         <div class="radio-block">
                             <label class="radio-label">
                                 <input type="radio" name="payment_currency" value="GEL">
@@ -299,7 +344,8 @@
             </div>
 
             <div class="send-data">
-                <button type="submit" id="add" class="btn btn-primary">დამატება</button>
+                <button data-lang="ge" type="submit" id="add" class="btn btn-primary">დამატება</button>
+                <button data-lang="ru" type="submit" id="add" class="btn btn-primary hidden">Добавить</button>
             </div>
         </form>
     </div>
@@ -308,36 +354,54 @@
             
 
 <div class="container">
-    <h1 class="header text-center my-4">შეკვეთები</h1>
+    <h1 data-lang="ge" class="header text-center my-4">შეკვეთები</h1>
+    <h1 data-lang="ru" class="header text-center my-4 hidden">Заказы</h1>
     <div class="table-responsive">
         <ul class="list-group" id="orderList">
             {% if data %}
                 {% for item in data %}
                 <li class="list-group-item" id="{{item.id}}">
-                    <h5 class="{% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">შეკვეთა # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
+                    <h5 data-lang="ge" class="{% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">შეკვეთა # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
+                    <h5 data-lang="ru" class="hidden {% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">Заказ # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
+
                     <div class="row">
                         <div class="col-md-4">
-                            <h6>ინფორმაცია მიმღებზე</h6>
-                            <p>მიმღები: <span class="bold recipient-fio"> {{ item.recipient_fio }} </span></p>
-                            <p>ტელეფონი: <span class="bold recipient-phone"> {{ item.recipient_phone }}</span></p>
-                            <p>პასპორტი: <span class="bold passport"> {{ item.passport }}</span></p>
+                            <h6 data-lang="ge" >ინფორმაცია მიმღებზე</h6>
+                            <h6 data-lang="ru" class="hidden" >Информация о получателе</h6>
+                            <p data-lang="ge" >მიმღები: <span class="bold recipient-fio"> {{ item.recipient_fio }} </span></p>
+                            <p data-lang="ru" class="hidden" >Получатель: <span class="bold recipient-fio"> {{ item.recipient_fio }} </span></p>
+                            <p data-lang="ge" >ტელეფონი: <span class="bold recipient-phone"> {{ item.recipient_phone }}</span></p>
+                            <p data-lang="ru" class="hidden" >Телефон: <span class="bold recipient-phone"> {{ item.recipient_phone }}</span></p>
+                            <p data-lang="ge" >პასპორტი: <span class="bold passport"> {{ item.passport }}</span></p>
+                            <p data-lang="ru" class="hidden" >Паспорт: <span class="bold passport"> {{ item.passport }}</span></p>
                         </div>
                         <div class="col-md-4">
-                            <h6>ამანათის შესახებ</h6>
-                            <p>გამგზავნი: <span class="bold sender-fio">{{ item.sender_fio }}</span></p>
-                            <p>ტელეფონი: <span class="bold sender-phone">{{ item.sender_phone }}</span></p>
-                            <p>ღირებულება: <span class="bold">{{ item.price }} ₽</span> </p> 
+                            <h6 data-lang="ge">ამანათის შესახებ</h6>
+                            <h6 data-lang="ru" class="hidden">О посылке</h6>
+                            <p data-lang="ge">გამგზავნი: <span class="bold sender-fio">{{ item.sender_fio }}</span></p>
+                            <p data-lang="ru" class="hidden" >Отправитель: <span class="bold sender-fio">{{ item.sender_fio }}</span></p>
+                            <p data-lang="ge">ტელეფონი: <span class="bold sender-phone">{{ item.sender_phone }}</span></p>
+                            <p data-lang="ru" class="hidden" >Телефон: <span class="bold sender-phone">{{ item.sender_phone }}</span></p>
+                            <p data-lang="ge">ღირებულება: <span class="bold">{{ item.price }} ₽</span> </p> 
+                            <p data-lang="ru" class="hidden" >Стоимость: <span class="bold">{{ item.price }} ₽</span> </p> 
                         </div>
                         <div class="col-md-4">
-                            <h6>ტრანსპორტირება</h6>
-                            <p>მიმღების ქალაქი: <span class="bold">{{ item.city }}</span></p>
-                            <p>მისამართი: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} --- {% endif %} </span></p>
-                            <p>საფასური: {% if item.payment_status=='paid' %} <span class="green"><img class="img-size" src="/static/images/paid cash.png" alt="Картинка"> {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'><img class="img-size" src="/static/images/paid card.png" alt="Картинка"> {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
+                            <h6 data-lang="ge" >ტრანსპორტირება</h6>
+                            <h6 data-lang="ru" class="hidden" >Транспортировка</h6>
+                            <p data-lang="ge" >მიმღების ქალაქი: <span class="bold">{{ item.city }}</span></p>
+                            <p data-lang="ru" class="hidden" >Город получателя: <span class="bold">{{ item.city }}</span></p>
+                            <p data-lang="ge" >მისამართი: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} --- {% endif %} </span></p>
+                            <p data-lang="ru" class="hidden" >Адрес: <span class="bold"> {% if item.address %} {{ item.address }} {% else %} --- {% endif %} </span></p>
+                            <p data-lang="ge" >საფასური: {% if item.payment_status=='paid' %} <span class="green"><img class="img-size" src="/static/images/paid cash.png" alt="Картинка"> {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'><img class="img-size" src="/static/images/paid card.png" alt="Картинка"> {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
+                            <p data-lang="ru" class="hidden" >Стоимость: {% if item.payment_status=='paid' %} <span class="green"><img class="img-size" src="/static/images/paid cash.png" alt="Картинка"> {{ item.cost }} {{ item.currency }}</span> {% elif item.payment_status=='card'%} <span class='green'><img class="img-size" src="/static/images/paid card.png" alt="Картинка"> {{item.cost}} {{ item.currency }}</span>{%else%}<span class='red'>-{{item.cost}} {{ item.currency }}</span>{% endif %}</p>
                         </div>
                         <div class="col-12">
-                            <h6>ამანათის აღწერა / დამატებითი ინფორმაცია</h6>
+                            <h6 data-lang="ge" >ამანათის აღწერა / დამატებითი ინფორმაცია</h6>
+                            <h6 data-lang="ru" class="hidden">Описание посылки / Дополнительная информация</h6>
                             <p>{{ item.comment }} </p>
-                            <p class="parcel-description">წონები: <span class="weights">{{item.weights}}</span></p>
+                            <p data-lang="ge" class="parcel-description">წონები: <span class="weights">{{item.weights}}</span></p>
+                            <p data-lang="ru" class="parcel-description hidden">Веса: <span class="weights">{{item.weights}}</span></p>
+
                         </div>
                     </div>
                 </li>
@@ -432,7 +496,7 @@
     var data = {
         labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
         datasets: [{
-            label: 'ლარი',
+            label: 'GEL',
             data: [gelPaid, gelCard, gelNotPaid],
             backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
         }]
@@ -480,7 +544,7 @@
     var dataRub = {
         labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
         datasets: [{
-            label: 'რუბლი',
+            label: 'RUB',
             data: [rubPaid, rubCard, rubNotPaid],
             backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
         }]
@@ -529,7 +593,7 @@
     var dataUSD = {
         labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
         datasets: [{
-            label: 'დოლარი',
+            label: 'USD',
             data: [usdPaid, usdCard, usdNotPaid],
             backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
         }]
@@ -578,7 +642,7 @@
     var dataEUR = {
         labels: ['ნაღდი', 'ბარათით', 'გადასახდელი'],
         datasets: [{
-            label: 'ევრო',
+            label: 'EUR',
             data: [eurPaid, eurCard, eurNotPaid],
             backgroundColor: ['#e3f707', '#00c2fc', '#fc004c']
         }]
@@ -613,6 +677,23 @@
 <script src="/static/js/list/highlightWeights.js"></script>
 
 
-    
 
+<script>
+    function toggleLanguage() {
+        var russianElements = document.querySelectorAll('[data-lang="ru"]');
+        var englishElements = document.querySelectorAll('[data-lang="ge"]');
+        
+        russianElements.forEach(function(element) {
+            element.classList.toggle('hidden');
+        });
+        
+        englishElements.forEach(function(element) {
+            element.classList.toggle('hidden');
+        });
+    }
+
+    document.getElementById('toggleLanguageButton').addEventListener('click', toggleLanguage);
+</script>
+
+    
 {% endblock %}

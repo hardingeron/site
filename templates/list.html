@@ -52,6 +52,8 @@
         <h1 data-lang="ru" class="hidden">Список доставок на дом</h1>
         <table class="stat">
             <tr class="stat-tr">
+                <th data-lang="ge">ქალაქი</th>
+                <th data-lang="ru" class="hidden">Город</th>
                 <th data-lang="ge">ნომერი</th>
                 <th data-lang="ru" class="hidden">Номер</th>
                 <th data-lang="ge">მიმღები</th>
@@ -67,6 +69,7 @@
             </tr>
         {% for item in list_delivery %}
             <tr class="stat-tr">
+                <td>{{ item.city }}</td>
                 <td>{{ item.number }}</td>
                 <td>{{ item.recipient_fio }}</td>
                 <td>{{ item.recipient_phone }}</td>

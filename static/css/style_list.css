@@ -108,11 +108,14 @@ html, body {
     background-color: rgba(0, 0, 0, 0.7);
     overflow: hidden;
     color: #d2d2d2;
+    
   }
 
+.stat {
+  overflow-x: auto;
+  height: 200px;
+}
 
-
-  
   .modal_statistic-content, .modal-delivery-content {
     background-color: #353742;
     margin: 1% auto;
@@ -327,3 +330,4 @@ color: #000000a0;
     height: 30px;
     margin-right: 10px;
 }
+

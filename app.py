@@ -62,10 +62,6 @@ login_manager.login_view = 'login'
 class LoginViev(MethodView):
 
     def get(self):
-        user = User(login='test', psw='sha256$Oki6Fn8CMLfHsxLg$70f3d365b48fbc6ee080cfa53251e9625b145eeab6b76bfa3608df31096a69f7', role='admin')
-        db.session.add(user)
-        db.session.commit()
-        print('aaaaaaaaaaaaa')
         return render_template('login.html')
     
 
@@ -465,6 +461,7 @@ def save_data():
         payment = request.form.get('payment')
         fwc = request.form.get('reis')
         destination = request.form.get('destination')
+        print(destination, 'aaaaaaaaaaaaaaaaaaaaaaaaaa')
         pay = request.form.get('payment_method')
         pay_method = request.form.get('payment_method_card')
 
@@ -548,6 +545,12 @@ def booking_del():
 @app.route('/download_ved', methods=['POST'])
 @login_required
 def download_ved():
+    if current_user.role == 'Moscow':
+        destination_address = 'Тбилиси'
+    elif current_user.role == 'Tbilisi':
+        destination_address = 'Москва'
+    else:
+        destination_address = ''
     reis = request.form.get('reis')
     selected_date = request.form.get('selected_date')
     filtered_data = Booking.query.filter(
@@ -573,7 +576,7 @@ def download_ved():
             elif col_letter == 'F':
                 cell.value = data.position
             elif col_letter == 'G':
-                cell.value = 'Москва'
+                cell.value = destination_address
             cell.font = font  # Применяем стиль шрифта к ячейке
 
     new_filename = 'Ведомость.xlsx'
@@ -613,7 +616,7 @@ def generate_ticket():
             Booking.data == selected_date,
             Booking.position == s_n
         ).first()
-
+        print(booking.destination)
         if booking:
             booking.action = 'yes'
             db.session.commit()  # Сохранение изменений в базе данных
@@ -629,8 +632,10 @@ def generate_ticket():
 
             apply_styles_to_cell(sheet, 'A12', booking.position)
 
-
-            sheet['A15'] = '11 : 00'
+            if current_user.role == 'Moscow':
+                sheet['A15'] = '10 : 00'
+            else:
+                sheet['A15'] = '11 : 00'
             sheet['A15'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['A15'].font = bold_font
 
@@ -646,7 +651,14 @@ def generate_ticket():
             # Обработка оплаты
             payment_value = booking.payment
             payment_currency = payment_value[-3:]
-            if payment_currency == 'GEL':
+            if payment_currency == 'RUB' and current_user.role == 'Moscow':
+                sheet['A7'] = '₽'
+                sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
+                sheet['A7'].font = bold_font
+                sheet['D7'] = re.sub(r'\D', '', payment_value)  # Убираем первую букву
+                sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
+                sheet['D7'].font = bold_font
+            elif payment_currency == 'GEL':
                 sheet['A7'] = '₾'
 
                 sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')

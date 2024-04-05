@@ -324,3 +324,13 @@ td {
 }
 
 
+.navigation_block {
+  font-size: 14px;
+  border-radius: 10px;
+}
+
+.navigation_block input, .navigation_block select, .navigation_block button {
+  font-size: 12px;
+}
+
+

@@ -543,6 +543,7 @@ def booking_del():
 
 
 
+
 @app.route('/download_ved', methods=['POST'])
 @login_required
 def download_ved():

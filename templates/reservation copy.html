@@ -235,17 +235,12 @@
           <label>პასპორტი</label>
           <input type="text" name="pasport"  ><br>
         </div>
-        <div class="date_of_birth_block">
-          <label>თარიღი</label>
-          <input type="text" name="date_of_birth" ><br>
-        </div>
-      </div>
-      <div class="solo-content">
         <div class="comment_block">
           <label>კომენტარი</label>
           <input type="text" name="comment"  ><br>
-        </div>    
-      </div>  
+        </div>
+      </div>
+      
       <div class="pay_dest_block">
         <div class="pay_block">
           <label>გადახდა</label>
@@ -379,8 +374,6 @@ seats.forEach(seat => {
     modalForm['comment'].value = seatData ? seatData.comment : '';
     modalForm['payment'].value = seatData ? seatData.payment : '';
     modalForm['destination'].value = seatData ? seatData.destination : '';
-    modalForm['date_of_birth'].value = seatData ? seatData.date_of_birth : '';
-
 
     const seatNumberInput = modalForm.querySelector('[name="s_n"]');
     seatNumberInput.value = selectedSeatNumber;
@@ -502,7 +495,6 @@ editButton.addEventListener('click', () => {
 
   const selectedPaymentMethodCard = modalForm.querySelector('[name="payment_method_card"]:checked');
   const paymentMethodCard = selectedPaymentMethodCard ? selectedPaymentMethodCard.value : '';
-  const date_of_birth = modalForm.querySelector('[name="date_of_birth"]').value;
 
   const formData = new FormData();
   formData.append('seat_number', selectedSeatNumber);
@@ -513,7 +505,6 @@ editButton.addEventListener('click', () => {
   formData.append('comment', comment);
   formData.append('payment', payment);
   formData.append('destination', destination);
-  formData.append('date_of_birth', date_of_birth);
 
   // Добавляем старое место в FormData, если оно не пустое
   if (oldSeatNumber !== '') {

@@ -6,7 +6,7 @@ import os
 from models import Purcell, db, User, login_manager, Menu, Storage, Booking, Forms, Expertise
 from config import secret_key
 from sqlalchemy import func, desc, update
-from flask.views import View, MethodView
+from flask.views import View
 from flask import send_file
 from openpyxl.styles import Alignment, Border, Font, Side
 from openpyxl import Workbook, load_workbook
@@ -59,15 +59,10 @@ login_manager.login_view = 'login'
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /login               ------------------------------#
    
-class LoginViev(MethodView):
 
-    def get(self):
-        return render_template('login.html')
-    
-
-
-    def post(self):
-
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if request.method == 'POST':
         # Получение данных из формы
         login_input = request.form.get('login')
         password = request.form.get('psw')
@@ -83,266 +78,352 @@ class LoginViev(MethodView):
         else:
             # Если логин или пароль неверные, выводим сообщение об ошибке
             flash('მომხმარებები არ მოიძებნა ან პაროლი არ ემთხვევა', category='error')
-        return render_template('login.html')
+
+    # Отображение страницы входа
+    return render_template('login.html')
 
 
-app.add_url_rule('/login', view_func=LoginViev.as_view('login'))
+
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /index               ------------------------------#
    
-class IndexViev(MethodView):
-    decorators = [login_required]
 
-    def get(self):
-        try:
-            # Получаем и сортируем даты
-            msk_dates, spb_dates = get_sorted_dates(db)
-            # Обновляем JSON-файл с датами
-            update_json_file(msk_dates, spb_dates)
-            # Удаляем устаревшие данные
-            delete_old_data(db)
-            # Очищаем старые файлы
-            clean_old_files(app.config['UPLOAD_FOLDER'])
-        except Exception as e:
-            # Если произошла ошибка, логируем её
-            log_error(e)
-        
-        # Возвращаем HTML-шаблон с данными для отображения на странице
-        return render_template('index.html', msk_dates=msk_dates, spb_dates=spb_dates)  
+@app.route('/', methods=['POST', 'GET'])
+@login_required
+def index():
+    try:
+        # Получаем и сортируем даты
+        msk_dates, spb_dates = get_sorted_dates(db)
+        # Обновляем JSON-файл с датами
+        update_json_file(msk_dates, spb_dates)
+        # Удаляем устаревшие данные
+        delete_old_data(db)
+        # Очищаем старые файлы
+        clean_old_files(app.config['UPLOAD_FOLDER'])
+    except Exception as e:
+        # Если произошла ошибка, логируем её
+        log_error(e)
+    
+    # Возвращаем HTML-шаблон с данными для отображения на странице
+    return render_template('index.html', msk_dates=msk_dates, spb_dates=spb_dates)  
 
-
-# Регистрация классов в приложении
-app.add_url_rule('/', view_func=IndexViev.as_view('index'))
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /all                 ------------------------------#
 
-class AllView(MethodView):
-    decorators = [login_required]
+@app.route('/all', methods=['POST', 'GET'])
+@login_required
+def all():
+    # Получаем текущую дату
+    today = datetime.now().date()
 
-    def get(self):
-        # Получаем текущую дату
-        today = datetime.now().date()
-        delta = timedelta(days=60)
-        date_threshold = today - delta
+    # Определяем временной интервал для данных, которые будут отображены
+    delta = timedelta(days=60)
+    date_threshold = today - delta
 
-        # Получаем данные для отображения, отсортированные по дате и номеру
-        all_data = list(reversed(Purcell.query.filter(Purcell.date >= date_threshold)
-                         .order_by(Purcell.date.asc(), Purcell.number.asc())
-                         .all()))
+    # Получаем данные для отображения, отсортированные по дате и номеру
+    all_data = list(reversed(Purcell.query.filter(Purcell.date >= date_threshold)
+                     .order_by(Purcell.date.asc(), Purcell.number.asc())
+                     .all()))
 
-        # Получаем даты последних 10 рейсов для отображения из уже полученных данных
-        last_10_flights = list(set(row.flight for row in all_data))[:10]
+    # Получаем даты последних 10 рейсов для отображения из уже полученных данных
+    last_10_flights = list(set(row.flight for row in all_data))[:10]
 
-        # Отображаем шаблон страницы 'all.html' с данными
-        return render_template('all.html', all_data=all_data, last_10_flights=last_10_flights)
+    # Получаем список всех элементов меню
+    # Отображаем шаблон страницы 'all.html' с данными
+    return render_template('all.html', all_data=all_data, last_10_flights=last_10_flights)
+
+# შეცდომებზე შემოწმება
+@app.route('/removing_from_the_list', methods=['POST'])
+@login_required
+def remove_from_list():
+    access = ['admin', 'Tbilisi']
+    # Проверка прав доступа
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 404
+    
+    # Получаем значение data.id из запроса
+    data_id = request.json.get('id')
+
+    # Ищем запись в таблице Purcell по переданному id
+    purcell_entry = Purcell.query.get(data_id)
+
+    if purcell_entry:
+        # Если запись найдена, удаляем ее
+        db.session.delete(purcell_entry)
+        db.session.commit()
+        return jsonify({'success': True, 'message': 'ჩანაწერი წაშლილია'}), 200
+    else:
+        # Если запись не найдена, возвращаем сообщение об ошибке
+        return jsonify({'success': False, 'message': f'Запись с id {data_id} не найдена'}), 404
 
 
-class RemoveFromListView(MethodView):
-    decorators = [login_required]
+# წვდომის შეზრუდვა და მესიჯების გასწორება
+@app.route('/delivery_status', methods=['POST'])
+@login_required
+def update_delivery_status():
+    access = ['admin', 'Moscow', 'SPB']
+    # Проверка прав доступа
+    if current_user.role not in access:
+        return jsonify({'message': 'თქვენ არ გაქვთ წვდომა!', 'success': False}), 404
+    
+    data_id = request.json.get('id')  # Получаем ID из запроса
 
-    def post(self):
-        access = ['admin', 'Tbilisi']
-        # Проверка прав доступа
-        if current_user.role not in access:
-            return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 404
-        
-        # Получаем значение data.id из запроса
-        data_id = request.json.get('id')
+    # Находим запись в таблице Purcell по переданному ID
+    purcell_entry = Purcell.query.get(data_id)
 
-        # Ищем запись в таблице Purcell по переданному id
-        purcell_entry = Purcell.query.get(data_id)
-
-        if purcell_entry:
-            # Если запись найдена, удаляем ее
-            db.session.delete(purcell_entry)
+    if purcell_entry:
+        # Проверяем, что статус доставки еще не 'yes'
+        if purcell_entry.delivery != 'yes':
+            # Изменяем статус доставки на 'yes'
+            purcell_entry.delivery = 'yes'
             db.session.commit()
-            return jsonify({'success': True, 'message': 'ჩანაწერი წაშლილია'}), 200
+            return jsonify({'message': 'Посылка вручена', 'success': True}), 200
         else:
-            # Если запись не найдена, возвращаем сообщение об ошибке
-            return jsonify({'success': False, 'message': f'Запись с id {data_id} не найдена'}), 404
+            # Если статус доставки уже 'yes', возвращаем ошибку 404
+            return jsonify({'message': 'Данная посылка уже вручена!', 'success': False}), 404
+    else:
+        return jsonify({'message': 'Запись не найдена'}), 404
+
+
+# დასამთავრებელია პასუხების მისაღებად ასევე შეცდომების დაბლოკვა!!! და წვდომის შეზღუდვა
+@app.route('/edit_parcel', methods=['POST'])
+@login_required
+def edit_parcel():
+    try:
+        # Получаем данные из формы
+        data = request.form.to_dict()
         
+        # Получаем переданную фотографию, если она есть
+        photo = request.files.get('photo')
 
-class EditParcelView(MethodView):
-    decorators = [login_required]
+        # Обработка фотографии, если она была передана
+        if photo and photo.filename != '':
+            handle_uploaded_image(request.files['photo'], data['id'], app)
 
-    def post(self):
-        try:
-            # Получаем данные из формы
-            data = request.form.to_dict()
-
-            # Получаем переданную фотографию, если она есть
-            photo = request.files.get('photo')
-
-            # Обработка фотографии, если она была передана
-            if photo and photo.filename != '':
-                handle_uploaded_image(request.files['photo'], data['id'], app)
-
-            edit_parcel_(db, data)
-
-            # Возвращаем сообщение об успешной обработке
-            return jsonify({'message': 'რედაქტირებამ წარმატებით ჩაიარა', 'success': True}), 200
-        except Exception as e:
-            return jsonify({'message': f'დაფიქსირდა შეცდომა : {e}', 'success': False}), 400
+        edit_parcel_(db, data)
 
 
+        # Далее ваша логика обработки данных
 
-class EditDeliveryViev(MethodView):
-    decorators = [login_required]
-
-    def post(self):
-        access = ['admin', 'Moscow', 'SPB']
-        # Проверка прав доступа
-        if current_user.role not in access:
-            return jsonify({'message': 'თქვენ არ გაქვთ წვდომა!', 'success': False}), 404
+        # Возвращаем сообщение об успешной обработке
         
-        data_id = request.json.get('id')  # Получаем ID из запроса
-
-        # Находим запись в таблице Purcell по переданному ID
-        purcell_entry = Purcell.query.get(data_id)
-
-        if purcell_entry:
-            # Проверяем, что статус доставки еще не 'yes'
-            if purcell_entry.delivery != 'yes':
-                # Изменяем статус доставки на 'yes'
-                purcell_entry.delivery = 'yes'
-                db.session.commit()
-                return jsonify({'message': 'Посылка вручена', 'success': True}), 200
-            else:
-                # Если статус доставки уже 'yes', возвращаем ошибку 404
-                return jsonify({'message': 'Данная посылка уже вручена!', 'success': False}), 404
-        else:
-            return jsonify({'message': 'Запись не найдена'}), 404
+        return jsonify({'message': 'რედაქტირებამ წარმატებით ჩაიარა', 'success': True}), 200
+    except Exception as e:
+        return jsonify({'message': f'დაფიქსირდა შეცდომა : {e}', 'success': False}), 400
 
 
-# Регистрация классов в приложении
-app.add_url_rule('/all', view_func=AllView.as_view('all'))
-app.add_url_rule('/removing_from_the_list', view_func=RemoveFromListView.as_view('removing_from_the_list'))
-app.add_url_rule('/edit_parcel', view_func=EditParcelView.as_view('edit_parcel'))
-app.add_url_rule('/delivery_status', view_func=EditDeliveryViev.as_view('delivery_status'))
 
-#-------------------------------------------------------------------------------------------------#
+@app.route('/download', methods=['POST'])
+@login_required
+def download():
+    flight = request.form['flight']
+    
+    # Создание нового файла Excel
+    wb = Workbook()
+    ws = wb.active
+    
+    # Запись данных в файл Excel
+    ws.append(['ნომერი', 'მიმღები', 'ტელეფონი', 'გადახდა', 'ქალაქი', 'გაცემა'])
+    
+    # Получение данных из базы данных и добавление их в файл Excel
+    data = Purcell.query.filter_by(flight=flight).all()
+    
+    for item in data:
+        ws.append([item.number, item.recipient, item.recipient_phone, item.cost, item.city, ''])
+        # ^ Здесь столбец "Выдача" перемещен в конец и оставлен пустым
+    
+    # Применение стилей к ячейкам
+    header_font = Font(bold=True)
+    header_alignment = Alignment(horizontal='center', vertical='center')
+    data_alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    border = Border(left=Side(border_style='thin'), right=Side(border_style='thin'), top=Side(border_style='thin'), bottom=Side(border_style='thin'))
+    
+    # Применение стилей к заголовкам
+    for cell in ws[1]:
+        cell.font = header_font
+        cell.alignment = header_alignment
+    
+    # Применение стилей к данным
+    for row in ws.iter_rows(min_row=2):
+        for cell in row:
+            cell.alignment = data_alignment
+            cell.border = border
+    
+    # Автоматическое расширение ширины столбцов для помещения данных
+    for column in ws.columns:
+        max_length = 0
+        for cell in column:
+            value = cell.value
+            if value:
+                cell_length = len(str(value))
+                if cell_length > max_length:
+                    max_length = cell_length
+        adjusted_width = (max_length + 2) * 1.2
+        column_letter = column[0].column_letter
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Сохранение файла Excel
+    filename = f'data.xlsx'
+    wb.save(filename)
+    
+    # Возврат файла для скачивания
+    return send_file(filename, as_attachment=True)
 
-# ------------------------------               /all end/            ------------------------------#
 
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /add                 ------------------------------#
 
-class AddParcel(MethodView):
-    decorators = [login_required]
 
-    def get(self):
-        access = ['admin', 'Tbilisi', 'Batumi']
-        if current_user.role not in access:
+@app.route('/add', methods=['POST', 'GET'])
+@login_required
+def add():
+
+    access = ['admin', 'Tbilisi', 'Batumi']
+    if current_user.role not in access:
             flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
             return redirect(url_for('index'))
     
-        return render_template('add.html')
+    return render_template('add.html')
 
 
 
-class SaveParcel(MethodView):
-    decorators = [login_required]
+@app.route('/saving_a_parcel', methods=['POST'])
+@login_required
+def saving_a_parcel():
+    data = request.form.to_dict()
+    print(data)
+    last_record = get_last_record(db)
 
-    def post(self):
-        data = request.form.to_dict()
-        last_record = get_last_record(db)
-
-        new_record = generate_new_number(data, last_record, db)
-        cost = calculate_cost(request.form.get('payment'), request.form.get('cost'), request.form.get('payment_currency'))
-        
-        try:
-            handle_image(request.files['photo'], new_record, data['currentDateTime'], app)
-        except Exception as e:
-            # Обработка ошибки и возврат сообщения об ошибке
-            response_data = {'success': False, 'message': f'დაფიქსირდა შეცდომა ფოტოს შენახვისას: {str(e)}'}
-            return jsonify(response_data)
-        
-        try:
-            add_record(new_record, data, cost, db, current_user.role)
-        except Exception as e:
-            # Обработка ошибки при сохранении записи и возврат сообщения об ошибке
-            response_data = {'success': False, 'message': f'Ошибка при сохранении записи: {str(e)}'}
-            return jsonify(response_data)
-        
-        response_data = {
-            'success': True,
-            'message': f'ამანათი წარმატებიით დაემატა! № {new_record}'
-        }
+    new_record = generate_new_number(data, last_record, db)
+    cost = calculate_cost(request.form.get('payment'), request.form.get('cost'), request.form.get('payment_currency'))
+    
+    try:
+        handle_image(request.files['photo'], new_record, data['currentDateTime'], app)
+    except Exception as e:
+        # Обработка ошибки и возврат сообщения об ошибке
+        response_data = {'success': False, 'message': f'დაფიქსირდა შეცდომა ფოტოს შენახვისას: {str(e)}'}
         return jsonify(response_data)
+    
+    try:
+        add_record(new_record, data, cost, db, current_user.role)
+    except Exception as e:
+        # Обработка ошибки при сохранении записи и возврат сообщения об ошибке
+        response_data = {'success': False, 'message': f'Ошибка при сохранении записи: {str(e)}'}
+        return jsonify(response_data)
+    
+    response_data = {
+        'success': True,
+        'message': f'ამანათი წარმატებიით დაემატა! № {new_record}'
+    }
+    return jsonify(response_data)
 
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /change              ------------------------------#
 
+@app.route('/change', methods=['POST'])
+@login_required
+def change_post():
+    access = ["admin", 'Tbilisi']
+    try:
+        # Проверка прав доступа
+        if current_user.role not in access:
+            flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+            return redirect(url_for('index'))
 
+        # Получение id записи из формы
+        id = int(request.form['id'])
+        myrecord = db.session.query(Purcell).filter_by(id=id).first()
 
-# Регистрация классов в приложении
-app.add_url_rule('/add', view_func=AddParcel.as_view('add'))
-app.add_url_rule('/saving_a_parcel', view_func=SaveParcel.as_view('saving_a_parcel'))
+        # Обновление полей записи
+        for field in ['sender', 'sender_phone', 'recipient', 'recipient_phone', 'inventory',
+                      'cost', 'passport', 'weight', 'responsibility', 'number', 'city', 'flight']:
+            setattr(myrecord, field, request.form[field])
+
+        # Обработка загруженного изображения
+        if 'photo' in request.files and request.files['photo'].filename != '':
+            handle_uploaded_image(request.files['photo'], request.form['number'], request.form['flight'], app)
+
+        # Сохранение обновленной записи в базе данных
+        db.session.commit()
+        return redirect(url_for('all'))
+
+    except ValueError:
+        flash('ჩაწერეთ კორექტული მონაცემები!', category='error')
+        return redirect(url_for('all'))
+    except SQLAlchemyError as e:
+        flash('შეცდომა მოხდა მოანცემთა ბაზიდან ამოკითხვისას: ' + str(e), category='error')
+        return redirect(url_for('all'))
+    except Exception as e:
+        flash('ამოუცნობი შეცდომა: ' + str(e), category='error')
+        return redirect(url_for('all'))
+
 
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /storage             ------------------------------#
 
 
-class StorageViev(MethodView):
-    decorators = [login_required]
+@app.route('/storage', methods=['POST', 'GET'])
+@login_required
+def storage():
 
-    def get(self):
-        access = ['admin', 'Tbilisi']
-        if current_user.role not in access:
-            flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+    access = ['admin', 'Tbilisi']
 
-            return redirect(url_for('index'))
+    if current_user.role not in access:
+        flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+
+        return redirect(url_for('index'))
     
-        return render_template('storage.html')
+    return render_template('storage.html')
 
 
-class StorageSaveViev(MethodView):
-    decorators = [login_required]
+@app.route('/save', methods=['POST'])
+@login_required
+def save():
+    try:
+        shelf = request.form.get('shelf')
+        trecing = request.form.get('trecing')
 
-    def post(self):
-        try:
-            shelf = request.form.get('shelf')
-            trecing = request.form.get('trecing')
+        trecing_list = trecing.split()
 
-            trecing_list = trecing.split()
-
-            if not validate_input(shelf, trecing):
-                return jsonify({'success': False, 'message': 'დამატება ვერ მოხერხდა: შეავსეთ მოცემული ველები!'})
-            
-            date = datetime.now().date()
-            last_shelf = None  # Переменная для отслеживания последнего значения
-            for record in trecing_list:
-                formatted_trecing = format_trecing(record)
-
-                try:
-                    last_shelf = save_record(shelf, formatted_trecing, date, db)
-                except SQLAlchemyError as e:
-                    return jsonify({'success': False, 'message': 'დაიკარგა მონაცემთა ბაზასთან კავშირი!'})
-
-            return jsonify({'last': last_shelf})
-        except Exception as e:
-            return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
-
-
-class StorageFindViev(MethodView):
-    decorators = [login_required]
-
-    def post(self):
-        trecing = request.form['trecing']
-        info = request.form['info']
-        # Выполняем поиск посылки в базе данных
-        storage = Storage.query.filter_by(trecing=trecing).first()
-        if storage:
-            location = storage.shelf  # Местоположение посылки
-            asyncio.run(send_location_message(trecing, location, info, storage.date))  # асинхронный вызов функции
-            if info:
-                db.session.delete(storage)
-                db.session.commit()
-        else:
-            location = "ამანათი არ მოიძებნა"
+        if not validate_input(shelf, trecing):
+            return jsonify({'success': False, 'message': 'დამატება ვერ მოხერხდა: შეავსეთ მოცემული ველები!'})
         
-        # Возвращаем данные в формате JSON
-        return jsonify({'shelf': location})    
+        date = datetime.now().date()
+        last_shelf = None  # Переменная для отслеживания последнего значения
+        for record in trecing_list:
+            formatted_trecing = format_trecing(record)
+
+            try:
+                last_shelf = save_record(shelf, formatted_trecing, date, db)
+            except SQLAlchemyError as e:
+                return jsonify({'success': False, 'message': 'დაიკარგა მონაცემთა ბაზასთან კავშირი!'})
+
+        return jsonify({'last': last_shelf})
+    except Exception as e:
+        return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
+
+
+
+@app.route('/find', methods=['POST'])
+@login_required
+def find():
+    trecing = request.form['trecing']
+    info = request.form['info']
+    # Выполняем поиск посылки в базе данных
+    storage = Storage.query.filter_by(trecing=trecing).first()
+    if storage:
+        location = storage.shelf  # Местоположение посылки
+        asyncio.run(send_location_message(trecing, location, info, storage.date))  # асинхронный вызов функции
+        if info:
+            db.session.delete(storage)
+            db.session.commit()
+    else:
+        location = "ამანათი არ მოიძებნა"
+    
+    # Возвращаем данные в формате JSON
+    return jsonify({'shelf': location})
 
 
 @app.route('/user_add', methods=['POST'])
@@ -369,24 +450,20 @@ def add_user():
 
     return jsonify(response_data)
 
-
-app.add_url_rule('/storage', view_func=StorageViev.as_view('storage'))
-app.add_url_rule('/save', view_func=StorageSaveViev.as_view('save'))
-app.add_url_rule('/find', view_func=StorageFindViev.as_view('find'))
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /images_list         ------------------------------#
 
 
 @app.route('/images_list', methods=['POST'])
 def parcell_pictures_list():
+
     start_date = request.form['startDate']
     end_date = datetime.strptime(request.form['endDate'], '%Y-%m-%d')
     end_date += timedelta(days=1)
-    city = request.form.get('images_city')
 
 
     # Запрос к базе данных для выбора записей в заданном диапазоне дат
-    purcells = Purcell.query.filter(Purcell.date.between(start_date, end_date), Purcell.delivery == 'no', Purcell.city == city).all()
+    purcells = Purcell.query.filter(Purcell.date.between(start_date, end_date), Purcell.delivery == 'no').all()
 
     
     return render_template('images_list.html', purcells=purcells, start_date=start_date, end_date=end_date)
@@ -408,6 +485,35 @@ def images_list_delivery_status():
         return jsonify({'message': 'ამანათი არ მოიძებნა', 'success': False}), 400
     
 
+
+# @app.route('/images_list_delivery_status', methods=['POST'])
+# def images_list_delivery_status():
+#     # Получение данных из запроса
+#     data_id = request.json.get('id')
+
+#     # Проверка корректности полученного data_id
+#     if not data_id:
+#         return jsonify({'message': 'Некорректный идентификатор изображения', 'success': False}), 400
+
+#     # Проверка наличия изображения в базе данных
+#     purcell_entry = Purcell.query.get(data_id)
+#     if not purcell_entry:
+#         return jsonify({'message': 'Изображение не найдено', 'success': False}), 404
+
+#     # Проверка текущего статуса доставки
+#     if purcell_entry.delivery == 'yes':
+#         return jsonify({'message': 'Изображение уже было доставлено', 'success': False}), 400
+
+#     # Обновление статуса доставки в базе данных
+#     try:
+#         purcell_entry.delivery = 'yes'
+#         db.session.commit()
+#         return jsonify({'message': 'Изображение успешно доставлено', 'success': True}), 200
+#     except Exception as e:
+#         # Обработка ошибок при обновлении статуса доставки
+#         db.session.rollback()
+#         return jsonify({'message': f'Ошибка при обновлении статуса доставки: {str(e)}', 'success': False}), 500
+    
 
 
 
@@ -450,7 +556,6 @@ def reservation_big():
 @login_required
 def save_data():
     if request.method == 'POST':
-        print(request.form.get('date_of_birth'))
         # Получаем данные из запроса
         selected_date = request.form.get('selected_date')
         seat_number = request.form.get('seat_number')
@@ -464,7 +569,7 @@ def save_data():
         destination = request.form.get('destination')
         pay = request.form.get('payment_method')
         pay_method = request.form.get('payment_method_card')
-        date_of_birth = request.form.get('date_of_birth')
+
         # Обработка оплаты
         payment = process_payment(payment, pay, pay_method)
         
@@ -474,7 +579,7 @@ def save_data():
             return jsonify({'success': False, 'message': 'ამ სახელსა და გვარზე ადგილი უკვე დაჯავშნილია!!!!'}), 400
         else:
             # Сохранение данных в базе данных
-            save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination, date_of_birth)
+            save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination)
 
             return jsonify({"message": "Данные успешно сохранены"})
 
@@ -484,7 +589,6 @@ def save_data():
 @login_required
 def edit_booking():
     if request.method == 'POST':
-        print('aaaaaaaaaaaaaaaaa', request.form.get('date_of_birth'))
         seat_number = request.form.get('seat_number')
         old_seat_number = request.form.get('old_seat_number')  # Получаем старое место
         gender = request.form.get('gender')
@@ -498,7 +602,7 @@ def edit_booking():
         selected_date = request.form.get('selected_date')
         pay = request.form.get('payment_method')
         pay_method = request.form.get('payment_method_card')
-        date_of_birth = request.form.get('date_of_birth')
+
         payment = process_payment(payment, pay, pay_method)
         
         existing_booking = get_existing_booking(reis, selected_date, old_seat_number)
@@ -506,7 +610,7 @@ def edit_booking():
         
         if seat_number == old_seat_number:
             if existing_booking_old:
-                update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, seat_number, date_of_birth)
+                update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, seat_number)
                 return jsonify({'success': True, 'message': 'message'})
 
         if existing_booking:
@@ -543,16 +647,9 @@ def booking_del():
 
 
 
-
 @app.route('/download_ved', methods=['POST'])
 @login_required
 def download_ved():
-    if current_user.role == 'Moscow':
-        destination_address = 'Тбилиси'
-    elif current_user.role == 'Tbilisi':
-        destination_address = 'Москва'
-    else:
-        destination_address = ''
     reis = request.form.get('reis')
     selected_date = request.form.get('selected_date')
     filtered_data = Booking.query.filter(
@@ -564,23 +661,21 @@ def download_ved():
     sheet = workbook.active
 
     start_row = 7
-    col_letters = ['B', 'D', 'E', 'F', 'G']
+    col_letters = ['D', 'E', 'F', 'G']
 
     # Устанавливаем стиль шрифта по умолчанию с размером 10
     font = Font(size=10)
     for row_idx, data in enumerate(filtered_data, start=start_row):
         for col_idx, col_letter in enumerate(col_letters):
             cell = sheet[f'{col_letter}{row_idx}']
-            if col_letter == 'B':
-                cell.value = data.date_of_birth
-            elif col_letter == 'D':
+            if col_letter == 'D':
                 cell.value = data.pasport
             elif col_letter == 'E':
                 cell.value = data.flname
             elif col_letter == 'F':
                 cell.value = data.position
             elif col_letter == 'G':
-                cell.value = destination_address
+                cell.value = 'Москва'
             cell.font = font  # Применяем стиль шрифта к ячейке
 
     new_filename = 'Ведомость.xlsx'
@@ -620,7 +715,7 @@ def generate_ticket():
             Booking.data == selected_date,
             Booking.position == s_n
         ).first()
-        print(booking.destination)
+
         if booking:
             booking.action = 'yes'
             db.session.commit()  # Сохранение изменений в базе данных
@@ -636,10 +731,8 @@ def generate_ticket():
 
             apply_styles_to_cell(sheet, 'A12', booking.position)
 
-            if current_user.role == 'Moscow':
-                sheet['A15'] = '10 : 00'
-            else:
-                sheet['A15'] = '11 : 00'
+
+            sheet['A15'] = '11 : 00'
             sheet['A15'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['A15'].font = bold_font
 
@@ -655,14 +748,7 @@ def generate_ticket():
             # Обработка оплаты
             payment_value = booking.payment
             payment_currency = payment_value[-3:]
-            if payment_currency == 'RUB' and current_user.role == 'Moscow':
-                sheet['A7'] = '₽'
-                sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
-                sheet['A7'].font = bold_font
-                sheet['D7'] = re.sub(r'\D', '', payment_value)  # Убираем первую букву
-                sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
-                sheet['D7'].font = bold_font
-            elif payment_currency == 'GEL':
+            if payment_currency == 'GEL':
                 sheet['A7'] = '₾'
 
                 sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
@@ -736,7 +822,6 @@ def blanks():
 
 
     data = Forms.query.filter_by(date=date_param, where_from=city_param).order_by(desc(Forms.number)).all()
-    list_delivery = [data for data in data if data.address]
 
     data_dict = {
         'GEL': {'paid': 0, 'card': 0, 'not_paid': 0},
@@ -784,154 +869,253 @@ def blanks():
     return render_template('list.html', data=data, gel_paid=gel_paid, gel_card=gel_card, gel_not_paid=gel_not_paid,
                            rub_paid=rub_paid, rub_card=rub_card, rub_not_paid=rub_not_paid,
                            usd_paid=usd_paid, usd_card=usd_card, usd_not_paid=usd_not_paid,
-                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid,
-                           total_weight=total_weight, city_param=city_param, date_param=date_param,
-                           list_delivery=list_delivery)
+                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid, total_weight=total_weight, city_param=city_param)
 
 
 
-@app.route('/add_parcell_to_list', methods=['POST'])
+
+@app.route('/add_to_the_list', methods=['POST'])
 @login_required
-def add_parcell_to_list():
+def add_to_the_list():
     access = ['admin', 'Moscow', 'SPB']
     if current_user.role not in access:
-        return 'error user'
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
     try:
-        data = request.form.to_dict()
+        data = request.get_json()
 
-        highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
-                                                                     Forms.where_from == data['where_from']).scalar()
-        if highest_number is not None:
-            new_number = highest_number + 1
-        else:
-            new_number = 1
-        # Получите данные из JSON-запроса
-        if data['cost'] == '':
-            cost = 0
-        else:
-            cost = data['cost']
+        check = data['sender_fl'].upper().replace(" ", "")
+        where_from = data['where_from']
 
-        if data['passport'] == '':
-            passport = '---'
-        else:
-            passport = data['passport']
-        new_parcel = Forms(
+        if check == 'DAMIR' and where_from == 'Санкт-Петербург':
+            min_number = db.session.query(func.min(Forms.number)).filter(Forms.date == data['date'],
+                                                                         Forms.where_from == data['where_from']).scalar()
+            if min_number is not None:
+                new_number = min_number - 1
+            else:
+                new_number = 0
+
+            
+            new_parcel = Forms(
             number = new_number,
             date=data['date'],
             sender_fio = data['sender_fl'].upper(),
             sender_phone=data['sender_phone'],
             recipient_fio=data['recipient_fl'].upper(),
             recipient_phone=data['recipient_phone'],
-            passport= passport,
+            passport=data['passport'],
             city=data['city'],
             comment=data['comment'],
-            price=int(cost),
+            price=int(data['price']),
             weights=data['weights'],
             cost=int(data['payment']),
             payment_status=data['payment_status'],
             currency=data['payment_currency'],
-            where_from=data['where_from'],
-            address = data['address']
+            where_from=data['where_from']
             )
 
-        db.session.add(new_parcel)
-        db.session.commit()
+            db.session.add(new_parcel)
+            db.session.commit()  
+
+            
+
+            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
+        else:
+            # Остальная часть кода, как у вас уже есть
+            highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
+                                                                         Forms.where_from == data['where_from']).scalar()
+            if highest_number is not None:
+                new_number = highest_number + 1
+            else:
+                new_number = 1
+            # Получите данные из JSON-запроса
+
+            new_parcel = Forms(
+                number = new_number,
+                date=data['date'],
+                sender_fio = data['sender_fl'].upper(),
+                sender_phone=data['sender_phone'],
+                recipient_fio=data['recipient_fl'].upper(),
+                recipient_phone=data['recipient_phone'],
+                passport=data['passport'],
+                city=data['city'],
+                comment=data['comment'],
+                price=int(data['price']),
+                weights=data['weights'],
+                cost=int(data['payment']),
+                payment_status=data['payment_status'],
+                currency=data['payment_currency'],
+                where_from=data['where_from']
+            )
+
+            db.session.add(new_parcel)
+            db.session.commit()
 
 
             
-        return redirect(url_for('blanks', date=request.form['date'], where_from=request.form['where_from']))
+            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
 
     except Exception as e:
         # В случае ошибки верните сообщение об ошибке
         response = {"error": str(e)}
-        return response
+        return jsonify(response), 500
 
 
-@app.route('/list_edit_id', methods=['GET', 'POST'])
+
+@app.route('/edit-the-list', methods=['POST'])
 @login_required
-def list_edit():
-    if request.method == 'GET':
-        item_id = request.args.get('id')  # Получаем id из параметра запроса
-        data = Forms.query.get(item_id)
-        if data is None:
-            pass
-        return render_template('list_edit.html', data=data)
-    elif request.method == 'POST':
-        item_id = request.form.get('id')
-        parcel = Forms.query.get(item_id)
+def edit_the_list():
+    access = ['admin', 'Moscow', 'SPB']
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 400
 
-        parcel.sender_fio = request.form.get('sender_fl').upper()
-        parcel.sender_phone = request.form.get('sender_phone')
-        parcel.recipient_fio = request.form.get('recipient_fl').upper()
-        parcel.recipient_phone = request.form.get('recipient_phone')
-        parcel.passport = request.form.get('passport')
-        parcel.city = request.form.get('city')
-        parcel.comment = request.form.get('comment')
-        parcel.price = int(request.form.get('cost'))
-        parcel.weights = request.form.get('weights')
-        parcel.cost = int(request.form.get('payment'))
-        parcel.payment_status = request.form.get('payment_status')
-        parcel.currency = request.form.get('payment_currency')
-        parcel.address = request.form.get('address')
+    data = request.get_json()
+    date = data['date']
+    where_from = data['where_from']
+    number = int(data['item_id'])
+
+    filtered_form = Forms.query.filter_by(date=date, where_from=where_from, number=number).first()
+    if filtered_form:
+       filtered_form.sender_fio = data['sender_fio'].upper()
+       filtered_form.sender_phone = data['sender_phone']
+       filtered_form.recipient_fio = data['recipient_fio'].upper()
+       filtered_form.recipient_phone = data['recipient_phone']
+       filtered_form.passport = data['passport']
+       filtered_form.city = data['city']
+       filtered_form.comment = data['comment']
+       filtered_form.price = int(data['cost'])
+       filtered_form.weights = data['weights']
+       filtered_form.cost = int(data['payment'])
+       filtered_form.payment_status = data['payment_status']
+       filtered_form.currency = data['currency']
+       db.session.commit()
+
+    return jsonify({'message': 'Данные успешно отредактированы'})
+
+@app.route('/deleted_from_list', methods=['POST'])
+@login_required
+def delete_from_list():
+
+    access = ['admin', 'Tbilisi', 'Moscow', 'SPB']
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
+
+    try:
+        data = request.get_json()
+        itemId = data.get('itemId')
+        dateParam = data.get('dateParam')
+        cityParam = data.get('cityParam')
+        data = Forms.query.filter_by(date=dateParam, where_from=cityParam, number=itemId).first()
+        db.session.delete(data)
         db.session.commit()
-        return redirect(url_for('blanks', date=request.form.get('date'), where_from=request.form.get('where_from')))
+        # Выполните удаление элемента по данным itemId, dateParam и cityParam
+
+        # Верните успешный ответ
+        return jsonify({'success': True, 'message': 'ნომერი წარმატებით წაიშალა'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
 
 
-@app.route('/list_delete', methods=['POST'])
-@login_required
-def list_delete():
-    if request.method == 'POST':
-        item_id = request.form.get('item_id')
-        parcel = Forms.query.get(item_id)
-        if parcel:  # Проверяем, существует ли запись с таким ID
-            db.session.delete(parcel)  # Удаляем запись из сессии
-            db.session.commit()         # Применяем изменения в базе данных
-            return redirect(url_for('blanks', date=request.form.get('date'), where_from=request.form.get('where_from')))
-        # Здесь добавьте код для удаления записи из базы данных по item_id
-        return redirect(url_for('blanks', date=request.form.get('date'), where_from=request.form.get('where_from')))
 
 
 def random_names():
     names = [
-    "ALEXANDER IVANOV", "EKATERINA PETROVA", "DMITRY SMIRNOV", "ANNA FEDOROVA", "SERGEI KOZLOV",
-    "MARIA NOVIKOVA", "IVAN SOKOLOV", "ANASTASIA KUZNETSOVA", "ARTEM POPOV", "OLGA MOROZOVA",
-    "VLADIMIR KUZMIN", "IRINA PAVLOVA", "NIKOLAI ZAKHAROV", "YULIA SEMENOVA", "PAVEL KONDRATOV",
-    "SVETLANA SMIRNOVA", "ANDREI FEDOROV", "ELENA VASILIEVA", "ANDREY LEBEDEV", "TATIANA KUZNETSOVA",
-    "ALEXEY MEDVEDEV", "NATALIA YAKOVLEVA", "VIKTORIA PROKOPIEVA", "MIKHAIL SOKOLOV", "ANGELINA KONOVALENKO",
-    "RUSLAN VORONIN", "YANA PETROVA", "IGOR KARPOV", "VALERIA STEPANOVA", "ANTONINA MALININA", "KONSTANTIN ZAITSEV",
-    "MARINA ROMANOVA", "PAVEL SERGEYEV", "OLGA KIRILLOVA", "ILYA KUZNETSOV", "KSENIA MOROZOVA", "DENIS POPOV",
-    "VICTORIA KOVALENKO", "YURY ANTONOV", "JULIA KOROLEVA", "ALEXANDRA SIDOROVA", "MAXIM KUZMIN", "LARISA PAVLOVA",
-    "SERGEY GORSHKOV", "ANNA KONONOVA", "ALEKSEI FOMIN", "EKATERINA KOROLEVA", "ARSENII VOLKOV", "IRINA ZAKHAROVA",
-    "ALEKSANDR GORBUNOV", "ALEXANDRA KUZNETSOVA", "ANDREI MOROZOV", "VICTORIA SEMENOVA", "MAXIM FEDOROV",
-    "OLGA PETROV", "KIRILL KONDRATOV", "YULIA ROMANOVA", "DENIS KOVALENKO", "SVETLANA ZAKHAROVA",
-    "ANTONINA SIDOROVA", "DMITRY LEBEDEV", "EKATERINA SERGEYEVA", "ILYA KIRILLOV", "MARIA GORBUNOVA",
-    "IGOR MALININ", "ANNA KUZMINA", "ARTEM ZAITSEV", "ELENA KONOVA", "NIKOLAI GORSHKOV", "VALERIA PAVLOVA",
-    "SERGEY PROKOPIEV", "ANGELINA MEDVEDEVA", "VLADIMIR ANTONOV", "TATIANA KOROLEVA", "ANDREY VORONIN",
-    "LARISA YAKOVLEVA", "PAVEL KARPOV", "NATALIA KIRKOROVA", "MIKHAIL ZAITSEV", "KSENIA SOKOLOVA",
-    "YURY KUZNETSOV", "MARINA KUZMINA", "ALEKSANDR FOMIN", "ELENA VORONOVA", "ALEXEI KIRILLOV",
-    "VALERIYA KUZNETSOVA", "VIKTOR KOROLEV", "ANNA SMIRNOVA", "ANDREY SOKOLOV", "OLGA GORBUNOVA",
-    "ALEKSANDRA ROMANOVA", "DMITRIY KUZMIN", "EKATERINA ZAKHAROVA", "MAXIM KARPOV", "YANA KONONOVA",
-    "VLADIMIR LEBEDEV", "MARIYA KIRKOROVA", "ANDREY PETUKHOV", "DARIA SMOLYAKOVA", "ALEXEY KONDRATENKO", 
-    "SVETLANA IVANOVA", "IGOR SEMYONOV", "MARINA LUKINA", "ANDREI SOKOLOVSKY", "EKATERINA KAZAKOVA",
-    "VLADIMIR PETROVICH", "ANNA DUBROVSKAYA", "DMITRY STEPANOV", "ELENA FEDOTOVA", "ALEXANDER ROMANOV",
-    "OLGA GAVRILOVA", "MAXIM TARASOV", "YULIA KORNEEVA", "NIKOLAI SHIROKOV", "MARIA TIMOFEEVA",
-    "PAVEL VASILIEV", "EKATERINA KOSHKINA", "DMITRIY MOROZOV", "NATALIA KOVALEVSKAYA", "ANDREY KOZLOV",
-    "SVETLANA EGOROVA", "SERGEY BORISOV", "ANASTASIA EGOROVA", "ALEXANDER BELIAKOV", "EKATERINA LEBEDEVA",
-    "DMITRY KUZMIN", "ANNA ZAKHAROVA", "YURY LARIN", "TATIANA FROLOVA", "ANDREY LUKIN", "ELENA ZAITSEVA",
-    "ALEXEY SMIRNOV", "MARINA PAVLOVA", "ANTON KISELEV", "IRINA KARPOVA", "DMITRIY TITOV", "EKATERINA ZAITSEVA",
-    "VLADIMIR LEBEDIN", "OLGA KUZNETSOVA", "NIKOLAI BELIAEV", "ANASTASIA SMIRNOVA", "IGOR ZHDANOV",
-    "MARIA BELYAEVA", "ANDREY KURAEV", "EKATERINA ORLOVA", "ALEXANDER PAVLOV", "ANNA KUZMINA", "VLADIMIR RODIN",
-    "SVETLANA YAKOVLEVA", "DMITRY DMITRIEV", "YULIA GRIGORIEVA", "VLADIMIR NIKOLAEV", "TATIANA PETROVA",
-    "MAXIM KUZNETSOV", "EKATERINA NOVIKOVA", "ANDREI ZUBKOV", "NATALIA MOROZOVA", "SERGEY BORISOV",
-    "ALEXANDRA SOKOLOVA", "DMITRY PETROV", "ELENA KONSTANTINOVA", "VLADIMIR GAVRILOV", "ANNA SMIRNOVA",
-    "NIKOLAI KISELEV", "MARIA KOMAROVA", "ANDREY TIMOFEEV", "OLGA SMIRNOVA", "VLADIMIR VORONOV",
-    "IRINA IVANOVA", "DMITRY EGOROV", "EKATERINA KAZANTSEVA", "ANDREY ZHDANOV", "MARIA SEMENOVA",
-    "MAXIM EGOROV", "YULIA KISELEVA", "ALEXANDER KUZNETSOV", "ANASTASIA GAVRILOVA",
-    "VLADIMIR KISELEV", "EKATERINA PAVLOVA", "DMITRY BORISOV", "MARIA ZHDANOVA", "ANDREY KUZNETSOV",
-    "EKATERINA SERGEEVA", "SERGEY PAVLOV", "TATIANA SHIROKOVA", "ALEXANDER FROLOV", "ANNA PETROVA",
-    "NIKOLAI EGOROV", "MARIA KOVALEVSKAYA", "ANDREY ZINOVIEV", "ELENA LUKINA", "DMITRY ZHUKOV",
-    "SVETLANA KULIKOVA", "VLADIMIR ZAKHAROV", "IRINA ZHDANOVA", "ANDREI KUZNETSOV", "EKATERINA PONOMAREVA",
-    "DMITRY SOKOLOV", "MARIA SHIROKOVA",
+    "ALEXANDER IVANOV",
+    "EKATERINA PETROVA",
+    "DMITRY SMIRNOV",
+    "ANNA FEDOROVA",
+    "SERGEI KOZLOV",
+    "MARIA NOVIKOVA",
+    "IVAN SOKOLOV",
+    "ANASTASIA KUZNETSOVA",
+    "ARTEM POPOV",
+    "OLGA MOROZOVA",
+    "VLADIMIR KUZMIN",
+    "IRINA PAVLOVA",
+    "NIKOLAI ZAKHAROV",
+    "YULIA SEMENOVA",
+    "PAVEL KONDRATOV",
+    "SVETLANA SMIRNOVA",
+    "ANDREI FEDOROV",
+    "ELENA VASILIEVA",
+    "ANDREY LEBEDEV",
+    "TATIANA KUZNETSOVA",
+    "ALEXEY MEDVEDEV",
+    "NATALIA YAKOVLEVA",
+    "VIKTORIA PROKOPIEVA",
+    "MIKHAIL SOKOLOV",
+    "ANGELINA KONOVALENKO",
+    "RUSLAN VORONIN",
+    "YANA PETROVA",
+    "IGOR KARPOV",
+    "VALERIA STEPANOVA",
+    "ANTONINA MALININA",
+    "KONSTANTIN ZAITSEV",
+    "MARINA ROMANOVA",
+    "PAVEL SERGEYEV",
+    "OLGA KIRILLOVA",
+    "ILYA KUZNETSOV",
+    "KSENIA MOROZOVA",
+    "DENIS POPOV",
+    "VICTORIA KOVALENKO",
+    "YURY ANTONOV",
+    "JULIA KOROLEVA",
+    "ALEXANDRA SIDOROVA",
+    "MAXIM KUZMIN",
+    "LARISA PAVLOVA",
+    "SERGEY GORSHKOV",
+    "ANNA KONONOVA",
+    "ALEKSEI FOMIN",
+    "EKATERINA KOROLEVA",
+    "ARSENII VOLKOV",
+    "IRINA ZAKHAROVA",
+    "ALEKSANDR GORBUNOV",
+    "ALEXANDRA KUZNETSOVA",
+    "ANDREI MOROZOV",
+    "VICTORIA SEMENOVA",
+    "MAXIM FEDOROV",
+    "OLGA PETROV",
+    "KIRILL KONDRATOV",
+    "YULIA ROMANOVA",
+    "DENIS KOVALENKO",
+    "SVETLANA ZAKHAROVA",
+    "ANTONINA SIDOROVA",
+    "DMITRY LEBEDEV",
+    "EKATERINA SERGEYEVA",
+    "ILYA KIRILLOV",
+    "MARIA GORBUNOVA",
+    "IGOR MALININ",
+    "ANNA KUZMINA",
+    "ARTEM ZAITSEV",
+    "ELENA KONOVA",
+    "NIKOLAI GORSHKOV",
+    "VALERIA PAVLOVA",
+    "SERGEY PROKOPIEV",
+    "ANGELINA MEDVEDEVA",
+    "VLADIMIR ANTONOV",
+    "TATIANA KOROLEVA",
+    "ANDREY VORONIN",
+    "LARISA YAKOVLEVA",
+    "PAVEL KARPOV",
+    "NATALIA KIRKOROVA",
+    "MIKHAIL ZAITSEV",
+    "KSENIA SOKOLOVA",
+    "YURY KUZNETSOV",
+    "MARINA KUZMINA",
+    "ALEKSANDR FOMIN",
+    "ELENA VORONOVA",
+    "ALEXEI KIRILLOV",
+    "VALERIYA KUZNETSOVA",
+    "VIKTOR KOROLEV",
+    "ANNA SMIRNOVA",
+    "ANDREY SOKOLOV",
+    "OLGA GORBUNOVA",
+    "ALEKSANDRA ROMANOVA",
+    "DMITRIY KUZMIN",
+    "EKATERINA ZAKHAROVA",
+    "MAXIM KARPOV",
+    "YANA KONONOVA",
+    "VLADIMIR LEBEDEV",
+    "MARIYA KIRKOROVA",
     ]
     return random.choice(names)
 
@@ -940,7 +1124,6 @@ def random_names():
 def download_manifest():
     date = request.args.get('date')
     where_from = request.args.get('where_from')
-
 
     # Фильтруем записи в таблице Forms
     filtered_forms = Forms.query.filter(
@@ -967,36 +1150,21 @@ def download_manifest():
         count = 0
         price = random.choice(price_chance)
         vl = 'USD'
-        if form.sender_fio:
-            if form.sender_fio == 'DAMIR':
-                s_n = random_names()
-            else:
-                s_n = form.sender_fio
-        else:
-            s_n = random_names()
+        s_n = random_names()
         purc_count = len(weights)
         
         
         for weight in weights:
             if purc_count != 1:
                 count += 1
-                if where_from == 'Москва':
-                    number = f'{form.city}     {form.number}/{count}'
-                else:
-                    number = f'{form.city}    0{form.number}/{count}'
+                number = f'{form.city}    [0{form.number}/{count}]'
             else:
-                if where_from == 'Москва':
-                    number = f'{form.city}     {form.number}'
-                else:
-                    number = f'{form.city}    0{form.number}'
+                number = f'{form.city}    [0{form.number}]'
             # Добавляем данные в соответствующие столбцы
             ws.cell(row=row_num, column=1, value=s_n.split()[0])  # Имя отправителя
             ws.cell(row=row_num, column=2, value=s_n.split()[-1])  # Фамилия отправителя
             ws.cell(row=row_num, column=3, value='Russian Federation')
-            if where_from == 'Москва':
-                ws.cell(row=row_num, column=4, value='MOSCOW')
-            else:
-                ws.cell(row=row_num, column=4, value='S.P.B')
+            ws.cell(row=row_num, column=4, value='S.P.B')
             ws.cell(row=row_num, column=5, value=form.recipient_fio.split()[0])  # Имя получателя
             ws.cell(row=row_num, column=6, value=form.recipient_fio.split()[-1])  # Фамилия получателя
             ws.cell(row=row_num, column=7, value=form.passport)

@@ -305,7 +305,8 @@ def get_reservation_data(selected_date, reis, bus):
             'comment': booking.comment,
             'destination': booking.destination,
             'reis': booking.data,
-            'action': booking.action
+            'action': booking.action,
+            'date_of_birth': booking.date_of_birth
 
         }
 
@@ -481,7 +482,7 @@ def process_payment(payment, pay, pay_method):
     return payment
 
 # Функция для сохранения данных в базу данных
-def save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination):
+def save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination, date_of_birth):
     booking = Booking(
         flname=flname,
         gender=gender,
@@ -492,14 +493,15 @@ def save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pa
         data=selected_date,
         position=seat_number,
         fwc=fwc,
-        destination=destination
+        destination=destination,
+        date_of_birth=date_of_birth
     )
     db.session.add(booking)
     db.session.commit()
 
 
 # Функция для обновления данных бронирования
-def update_booking(db, booking, gender, flname, phone, pasport, payment, destination, comment, seat_number):
+def update_booking(db, booking, gender, flname, phone, pasport, payment, destination, comment, seat_number, date_of_birth):
     booking.gender = gender
     booking.flname = flname
     booking.phone = phone
@@ -508,6 +510,7 @@ def update_booking(db, booking, gender, flname, phone, pasport, payment, destina
     booking.destination = destination
     booking.comment = comment
     booking.position = seat_number
+    booking.date_of_birth = date_of_birth
     db.session.commit()
 
 

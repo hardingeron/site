@@ -513,7 +513,7 @@ def edit_booking():
             return jsonify({'success': False, 'message': 'ადგილი დაკავებულია'})
         elif existing_booking is None:
  
-            update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, old_seat_number)
+            update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, old_seat_number, date_of_birth)
             return jsonify({'success': True, 'message': 'message'})
 
 
@@ -813,6 +813,8 @@ def add_parcell_to_list():
 
         if data['passport'] == '':
             passport = '---'
+        else:
+            passport = data['passport']
         
         new_parcel = Forms(
             number = new_number,

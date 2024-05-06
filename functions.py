@@ -430,7 +430,7 @@ def delete_old_data(db):
     today = datetime.now().date()
 
     # Определение временного порога (90 дней назад)
-    delta = timedelta(days=90)
+    delta = timedelta(days=180)
     date_threshold = today - delta
 
     # Попытка удаления старых данных из базы данных
@@ -456,7 +456,7 @@ def clean_old_files(upload_folder):
             days_since_modification = (today - file_modification_time).days
 
             # Проверка расширения и старости файла, если он старше 90 дней и имеет указанные расширения, удалить его
-            if file_extension in [".jpeg", ".jpg", ".png"] and days_since_modification > 90:
+            if file_extension in [".jpeg", ".jpg", ".png"] and days_since_modification > 150:
                 os.remove(file_path)
 
 

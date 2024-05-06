@@ -82,7 +82,7 @@ class LoginViev(MethodView):
             return redirect(url_for('index'))
         else:
             # Если логин или пароль неверные, выводим сообщение об ошибке
-            flash('მომხმარებები არ მოიძებნა ან პაროლი არ ემთხვევა', category='error')
+            flash('მომხმარებელი არ მოიძებნა ან პაროლი არ ემთხვევა', category='error')
         return render_template('login.html')
 
 

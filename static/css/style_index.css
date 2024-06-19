@@ -1,249 +1,342 @@
-
 body {
-    background-color: #152735;
-    display: flex;
-    flex-direction: column;
-    margin: 0;
-    
+  background-color: #f3f8fa; /* Более светлый и нейтральный фон */
+  display: flex;
+  flex-direction: column; /* Для расположения футера внизу */
+  justify-content: space-between; /* Равное распределение пространства между элементами */
+  align-items: center;
+  min-height: 100vh; /* Минимальная высота экрана */
+  margin: 0;
+  font-family: 'Roboto', sans-serif; /* Современный шрифт */
 }
 
-
-.bg-image_l {
-  position: fixed;
-  top: 0;
-  left: 50%; /* Позиционируем по центру горизонтально */
-  transform: translateX(-50%); /* Центрируем по горизонтали относительно родителя */
-  right: 0;
-  bottom: 0;
-  background-image: url("../images/logo 1.jpg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.9;
-  z-index: -1;
-  width: 700px;
-}
-
-
-.menu_block {
-  width: 800px;
-  height: 500px;
-  background-color: #444654;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-  text-align: center;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1;
-}
-
-
-
-.first_line_block, .last_line_block, .last_line {
-    width: 100%;
-    height: 35%;
-    text-align: center;
-    margin-top: 50px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-
-
-
-.menu_element_block {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.el, .el2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin-right: 50px; /* Уменьшаем отступ между элементами "el" */
-}
-
-.el:last-child, .el2:last-child {
-    margin-right: 0; /* Убираем отступ у последнего элемента "el" */
-}
-
-.el img, .el2 img {
-    width: 150px;
-    height: 150px;
-}
-
-.el label, .el2 label {
-    width: 150px;
-    height: 20px;
-    color: #8e8ea0; /* Белый текст */
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 18px; /* Увеличиваем размер шрифта */
-}
-
-
-
-
-/*  */
-
-.main-content {
-  flex-grow: 1;
-}
-
-
-.footer {
-  background-color: #343641;
-  color: #8e8ea0;
-  padding: 20px;
-  text-align: center;
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-}
-
-
-
-
-
-
-
-
-
-
-/* Стили для модального окна */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.7);
-}
-
-.modal-content {
-  background-color: #fff;
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 40%;
-  text-align: center;
-}
-
-.close {
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 10px;
-  cursor: pointer;
-}
-
-/* Дополнительные стили могут быть добавлены по вашему усмотрению */
-
-
-
-
-
-
-.modal-reservation,
-.modal-blanks-select,
-.modal-add-select {
-  display: none;
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.7);
-  color: #d2d2d2;
-}
-.modal-reservation input,
-.modal-reservation select,
-.modal-blanks-select input,
-.modal-blanks-select select,
-.modal-add-select input,
-.modal-add-select select {
-  background-color: #40414f;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  font-size: 16px;
-  width: 230px;
-  height: 30px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
-  color: #8e8ea0;;
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.modal-reservation button,
-.modal-blanks-select button,
-.modal-add-select button {
-  background-color: #333333;
-  color: #8e8ea0;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 5px;
-  font-weight: bold;
-}
-.modal-reservation-content label,
-.modal-blanks-content label {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.modal-reservation button:hover,
-.modal-blanks-select button:hover,
-.modal-add-select button:hover {
-  background-color: #1a1a1a;
-}
-.modal-reservation-content,
-.modal-blanks-content,
-.modal-add-content {
-  background-color: #444654;
-  margin: 0; /* Убрать внешние отступы */
-  padding: 20px;
-  border: none;
-  border-radius: 20px;
-  width: 400px;
-  text-align: center;
-  position: absolute; /* Абсолютное позиционирование */
-  top: 50%; /* Разместить блок по вертикали на 50% высоты экрана */
-  left: 50%; /* Разместить блок по горизонтали на 50% ширины экрана */
-  transform: translate(-50%, -50%); /* Центрировать относительно самого блока */
+.menu-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  flex: 1; /* Позволяет контейнеру растягиваться */
+  padding-top: 30px;
+}
+
+.hexagon-row {
+  display: flex;
+  justify-content: center;
+}
+
+.hexagon {
+  width: 150px;
+  height: 175px; /* Высота для вертикального выравнивания */
+  background-color: #4fc3f7; /* Основной цвет шестиугольника */
+  position: relative;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s, background-color 0.3s;
+  margin: 10px; /* Увеличенные отступы для разделения */
+  z-index: 1; /* Убедитесь, что шестиугольник сверху */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+}
+
+.hexagon::before,
+.hexagon::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  clip-path: inherit; /* Унаследовать форму шестиугольника */
+  transition: transform 0.3s, background-color 0.3s;
+  z-index: -1; /* Убедитесь, что они позади шестиугольника */
+}
+
+.hexagon::before {
+  background-color: #039be5; /* Темный цвет для внутренней тени */
+  transform: scale(1.1); /* Немного больше шестиугольника */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Добавление тени для глубины */
+  border-radius: 10px; /* Легкое скругление углов для стиля */
+}
+
+.hexagon::after {
+  background-color: #0288d1; /* Еще более темный цвет для внешней тени */
+  transform: scale(1.2); /* Больше, чем шестиугольник и первая граница */
+  border-radius: 10px; /* Легкое скругление углов для стиля */
+}
+
+.hexagon:hover {
+  background-color: #29b6f6; /* Цвет при наведении */
+  transform: scale(1.05); /* Немного увеличить при наведении */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличение тени при наведении */
+}
+
+.hexagon:hover .content i,
+.hexagon:hover .content p {
+  color: #ff9800; /* Оранжевый цвет текста и иконки при наведении */
+}
+
+.hexagon .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff; /* Белый цвет для текста */
+  z-index: 1;
+  text-align: center;
+  transform: translateY(-10px); /* Поднятие текста немного */
+}
+
+.hexagon .content i {
+  font-size: 2rem; /* Увеличение размера иконки */
+  margin-bottom: 10px; /* Увеличение промежутка между иконкой и текстом */
+}
+
+.hexagon-row:not(:last-child) {
+  margin-bottom: -30px; /* Регулировка промежутка между рядами */
+}
+
+a {
+  text-decoration: none; /* Удаление подчеркивания ссылок */
+  transition: color 0.3s; /* Плавный переход цвета */
+}
+
+a:hover {
+  color: #29b6f6; /* Цвет при наведении на ссылку */
+}
+
+.menu-container p {
+  font-weight: bold;
+  margin: 0; /* Удаление отступов вокруг текста */
+}
+/* ----------------------------------------------------------- */
+/* Стили для футера */
+/* Стили для футера */
+.footer {
+  background-color: #01579b; /* Темно-синий цвет футера */
+  padding: 40px 20px; /* Увеличение отступов */
+  width: 100%;
+  color: #ffffff; /* Белый цвет текста */
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap; /* Для адаптивности */
+  flex-shrink: 0; /* Запрещает сжиматься */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+}
+
+.footer-block {
+  max-width: 300px; /* Максимальная ширина блока */
+  margin: 10px; /* Отступы для разделения блоков */
+  text-align: center; /* Центрирование текста */
+}
+
+.footer-block h3 {
+  margin-top: 0; /* Удаление верхнего отступа у заголовка */
+  font-size: 1.1rem; /* Уменьшение размера заголовка */
+  border-bottom: 2px solid #ffffff; /* Подчеркивание заголовка */
+  padding-bottom: 5px; /* Отступ под заголовком */
+  white-space: nowrap; /* Запрещает перенос текста на новую строку */
+}
+
+.footer-block p {
+  margin: 10px 0; /* Отступы между абзацами */
+}
+
+.footer a {
+  color: #ffeb3b; /* Желтый цвет ссылок */
+  text-decoration: underline; /* Подчеркивание ссылок */
+}
+
+.footer a:hover {
+  text-decoration: none; /* Удаление подчеркивания при наведении */
+}
+
+.footer .company {
+  text-align: center;
+  width: 100%;
+  margin-top: 20px; /* Отступ сверху для компании */
+  font-size: 1rem; /* Размер текста для компании */
+}
+/* Стили для модального окна */
+
+
+/* Общие стили для модальных окон */
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  margin: 5% auto; /* Центрирование по вертикали и горизонтали */
+  text-align: center;
 }
 
 .close {
   position: absolute;
-  right: 0;
-  top: 0;
-  padding: 10px;
+  top: 10px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: #888888;
   cursor: pointer;
 }
 
+.close:hover,
+.close:focus {
+  color: #ff0000;
+}
 
+/* Стили для модального окна выбора даты */
+.modal-blanks-select {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-blanks-content {
+  padding: 20px;
+}
+
+.modal-blanks-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-blanks-content input[type="date"],
+.modal-blanks-content select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-blanks-content input[type="date"]:focus,
+.modal-blanks-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-blanks-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+.modal-blanks-content button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+/* Стили для модального окна бронирования */
+.modal-reservation {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-reservation-content {
+  padding: 20px;
+}
+
+.modal-reservation-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-reservation-content input[type="date"],
+.modal-reservation-content select {
+  width: 90%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-reservation-content input[type="date"]:focus,
+.modal-reservation-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-reservation-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.modal-reservation-content button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
+/* Стили для поля выбора даты */
+
+/* Контейнер для горизонтального размещения */
+.date-city-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px; /* Расстояние между элементами */
+}
+
+#datepicker {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#datepicker:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Для браузеров, которые не поддерживают стандартный стиль поля даты */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: #007bff;
+  border-radius: 4px;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-color: #0056b3;
+}
 
 
 .flash.success {
@@ -284,225 +377,109 @@ body {
 }
 
 
+/* Медиа-запрос для планшетов */
+@media (max-width: 1024px) {
+  .hexagon {
+    width: 120px;
+    height: 140px;
+  }
+
+  .hexagon p {
+    font-size: 10px;
+  }
+}
+
+/* Медиа-запрос для мобильных телефонов */
+@media (max-width: 768px) {
+  .hexagon {
+    width: 100px;
+    height: 120px;
+  }
+}
+
+/* Медиа-запрос для очень маленьких экранов */
+@media (max-width: 480px) {
+  .hexagon {
+    width: 70px;
+    height: 90px;
+  }
+
+}
 
 
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.hexagon.pulsate {
+  animation: pulse 2s infinite;
+}
+
+
+
+
+/* даты для выбора из списка */
+
+/* Контейнер для списка дат */
 .dates_block {
   display: flex;
-  flex-direction: row; /* Расположение элементов в ряд по горизонтали */
+  justify-content: space-between;
+  gap: 20px; /* Расстояние между блоками */
 }
 
-
-
-
-.dates_block > *:not(:last-child) {
-  margin-right: 30px;
+/* Блок для города */
+.spb_dates_block, .msk_dates_block {
+  flex: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  overflow-y: auto; /* Включение прокрутки */
+  max-height: 300px; /* Максимальная высота блока */
 }
 
-.msk_list_block,
-.spb_list_block {
-  height: 150px; /* Установите максимальную высоту блока в 50 пикселей */
-  width: 180px;
-  overflow-y: auto; /* Добавьте вертикальную прокрутку при необходимости */
-  border: solid 1px;
-  border-top-left-radius: 20px; /* Закругляем левый верхний угол */
-  border-bottom-left-radius: 20px; /* Закругляем левый нижний угол */
-  border-top-right-radius: 0; /* Убираем закругление с правого верхнего угла */
-  border-bottom-right-radius: 0; /* Убираем закругление с правого нижнего угла */
+.spb_dates_block label, .msk_dates_block label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* Отступ снизу для метки */
 }
 
-/* Изменяем стиль полосы прокрутки */
-.msk_list_block::-webkit-scrollbar,
-.spb_list_block::-webkit-scrollbar {
-  width: 5px; /* Ширина элемента прокрутки */
-  background: rgba(0, 0, 0, 0.2); /* Задаем прозрачный цвет фона */
-  
+/* Стили для списка */
+.spb_list_block ul, .msk_list_block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-/* Изменяем стиль ползунка полосы прокрутки */
-.msk_list_block::-webkit-scrollbar-thumb,
-.spb_list_block::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.5); /* Задаем более прозрачный цвет ползунка */
-  border-radius: 5px; /* Закругляем углы ползунка */
-  
-  
+.spb_list_block li, .msk_list_block li {
+  margin-bottom: 8px; /* Отступ снизу для элементов списка */
 }
 
-/* Изменяем стиль трека полосы прокрутки */
-.msk_list_block::-webkit-scrollbar-track,
-.spb_list_block::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1); /* Задаем прозрачный цвет трека */
-  
+.spb_list_block li a, .msk_list_block li a {
+  display: block;
+  padding: 10px;
+  background-color: #f1f1f1;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
 }
 
-
-.dates_block label {
-  font-size: 20px;
+.spb_list_block li a:hover, .msk_list_block li a:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
 }
 
-
-
-.dates_block a:link, .dates_block a:visited {
-  color: white; /* Цвет текста для невыбранной и посещенной ссылки */
-  text-decoration: none; /* Убираем подчеркивание */
-}
-
-
-
-
-.dates_block a:hover {
-  color: red; /* Цвет текста при наведении курсора */
-}
-
-
-
-
-@media screen and (min-width: 360px) and (max-width: 780px) {
-  .menu_block {
-    width: 90%; /* Примерное значение, которое можно изменить */
-    max-width: 600px; /* Примерное значение, которое можно изменить */
-    height: auto; /* Автоматическая высота, чтобы контент внутри мог подстраиваться */
-    top: 40%;
-}
-
-.el img, .el2 img {
-  width: 50px;
-  height: 50px;
-}
-
-.el, .el2 {
-  margin-right: 15%;
-}
-
-.el label, .el2 label {
-  font-size: 14px;
-  width: 100%;
-}
-.footer {
-  background-color: #343641;
-  color: #8e8ea0;
-  padding: 20px;
-  text-align: center;
-  width: 100%;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-}
-
-
-.footer {
-  height: 200px;
-}
-
-h3 {
-  font-size: 11px;
-  width: 90%;
-}
-
-p {
-  font-size: 8px;
-  width: 88%;
-}
-
-.bg-image_l {
-  width: 250px;
-
-}
-
-}
-
-@media screen and (min-width: 800px) and (max-width: 1334px) {
-  .menu_block {
-    width: 90%; /* Примерное значение, которое можно изменить */
-    height: 400px; /* Автоматическая высота, чтобы контент внутри мог подстраиваться */
-    top: 42%;
-}
-
-.el img, .el2 img {
-  width: 100px;
-  height: 100px;
-}
-
-.el, .el2 {
-  margin-right: 15%;
-}
-
-.el label, .el2 label {
-  font-size: 18px;
-  width: 100%;
-}
-
-
-.footer {
-  height: 350px;
-}
-
-h3 {
-  font-size: 18px;
-  width: 90%;
-}
-
-p {
-  font-size: 14px;
-  width: 90%;
-
-}
-
-.bg-image_l {
-  width: 500px;
-
-}
-}
-
-
-@media screen and (min-width: 1080px) and (max-width: 1920px) {
-  .menu_block {
-    width: 700px; /* Примерное значение, которое можно изменить */
-    height: 440px; /* Автоматическая высота, чтобы контент внутри мог подстраиваться */
-    top: 46%;
-}
-
-.el img, .el2 img {
-  width: 100px;
-  height: 100px;
-}
-
-.el, .el2 {
-  margin-right: 15%;
-}
-
-.el label, .el2 label {
-  font-size: 18px;
-  width: 100%;
-}
-
-
-.footer {
-  height: 300px;
-
-}
-
-.footer-block {
-
-  width: 70%;
-  align-items: center;
-  margin: 0 auto; /* Центрирует блок по горизонтали */
-}
-
-h3 {
-  font-size: 18px;
-  width: 90%;
-}
-
-p {
-  font-size: 14px;
-  width: 90%;
-
-}
-
-.bg-image_l {
-  width: 395px;
-
-}
+/* Стили для прокрутки */
+.spb_list_block, .msk_list_block {
+  max-height: 200px; /* Максимальная высота прокручиваемого блока */
+  overflow-y: auto; /* Включение прокрутки */
 }

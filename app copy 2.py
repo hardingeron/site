@@ -13,7 +13,7 @@ from openpyxl import Workbook, load_workbook
 from sqlalchemy import or_
 import asyncio
 import openpyxl
-import threading
+
 from bot import send_location_message
 import asyncio
 
@@ -82,7 +82,7 @@ class LoginViev(MethodView):
             return redirect(url_for('index'))
         else:
             # Если логин или пароль неверные, выводим сообщение об ошибке
-            flash('მომხმარებელი არ მოიძებნა ან პაროლი არ ემთხვევა', category='error')
+            flash('მომხმარებები არ მოიძებნა ან პაროლი არ ემთხვევა', category='error')
         return render_template('login.html')
 
 
@@ -324,7 +324,7 @@ class StorageSaveViev(MethodView):
             return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
 
 
-class StorageFindView(MethodView):
+class StorageFindViev(MethodView):
     decorators = [login_required]
 
     def post(self):
@@ -334,7 +334,7 @@ class StorageFindView(MethodView):
         storage = Storage.query.filter_by(trecing=trecing).first()
         if storage:
             location = storage.shelf  # Местоположение посылки
-            asyncio.run_coroutine_threadsafe(send_location_message(trecing, location, info, storage.date), loop)
+            asyncio.run(send_location_message(trecing, location, info, storage.date))  # асинхронный вызов функции
             if info:
                 db.session.delete(storage)
                 db.session.commit()
@@ -342,18 +342,7 @@ class StorageFindView(MethodView):
             location = "ამანათი არ მოიძებნა"
         
         # Возвращаем данные в формате JSON
-        return jsonify({'shelf': location})
-
-app.add_url_rule('/find', view_func=StorageFindView.as_view('find'))
-
-def start_loop(loop):
-    asyncio.set_event_loop(loop)
-    loop.run_forever()
-
-loop = asyncio.new_event_loop()
-t = threading.Thread(target=start_loop, args=(loop,))
-t.start()
-
+        return jsonify({'shelf': location})    
 
 
 @app.route('/user_add', methods=['POST'])
@@ -383,6 +372,7 @@ def add_user():
 
 app.add_url_rule('/storage', view_func=StorageViev.as_view('storage'))
 app.add_url_rule('/save', view_func=StorageSaveViev.as_view('save'))
+app.add_url_rule('/find', view_func=StorageFindViev.as_view('find'))
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /images_list         ------------------------------#
 
@@ -460,7 +450,6 @@ def reservation_big():
 @login_required
 def save_data():
     if request.method == 'POST':
-        print(request.form.get('date_of_birth'))
         # Получаем данные из запроса
         selected_date = request.form.get('selected_date')
         seat_number = request.form.get('seat_number')
@@ -474,7 +463,7 @@ def save_data():
         destination = request.form.get('destination')
         pay = request.form.get('payment_method')
         pay_method = request.form.get('payment_method_card')
-        date_of_birth = request.form.get('date_of_birth')
+
         # Обработка оплаты
         payment = process_payment(payment, pay, pay_method)
         
@@ -484,7 +473,7 @@ def save_data():
             return jsonify({'success': False, 'message': 'ამ სახელსა და გვარზე ადგილი უკვე დაჯავშნილია!!!!'}), 400
         else:
             # Сохранение данных в базе данных
-            save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination, date_of_birth)
+            save_booking_to_db(db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination)
 
             return jsonify({"message": "Данные успешно сохранены"})
 
@@ -494,7 +483,6 @@ def save_data():
 @login_required
 def edit_booking():
     if request.method == 'POST':
-        print('aaaaaaaaaaaaaaaaa', request.form.get('date_of_birth'))
         seat_number = request.form.get('seat_number')
         old_seat_number = request.form.get('old_seat_number')  # Получаем старое место
         gender = request.form.get('gender')
@@ -508,7 +496,7 @@ def edit_booking():
         selected_date = request.form.get('selected_date')
         pay = request.form.get('payment_method')
         pay_method = request.form.get('payment_method_card')
-        date_of_birth = request.form.get('date_of_birth')
+
         payment = process_payment(payment, pay, pay_method)
         
         existing_booking = get_existing_booking(reis, selected_date, old_seat_number)
@@ -516,14 +504,14 @@ def edit_booking():
         
         if seat_number == old_seat_number:
             if existing_booking_old:
-                update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, seat_number, date_of_birth)
+                update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, seat_number)
                 return jsonify({'success': True, 'message': 'message'})
 
         if existing_booking:
             return jsonify({'success': False, 'message': 'ადგილი დაკავებულია'})
         elif existing_booking is None:
  
-            update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, old_seat_number, date_of_birth)
+            update_booking(db, existing_booking_old, gender, flname, phone, pasport, payment, destination, comment, old_seat_number)
             return jsonify({'success': True, 'message': 'message'})
 
 
@@ -553,16 +541,9 @@ def booking_del():
 
 
 
-
 @app.route('/download_ved', methods=['POST'])
 @login_required
 def download_ved():
-    if current_user.role == 'Moscow':
-        destination_address = 'Тбилиси'
-    elif current_user.role == 'Tbilisi':
-        destination_address = 'Москва'
-    else:
-        destination_address = ''
     reis = request.form.get('reis')
     selected_date = request.form.get('selected_date')
     filtered_data = Booking.query.filter(
@@ -574,23 +555,21 @@ def download_ved():
     sheet = workbook.active
 
     start_row = 7
-    col_letters = ['B', 'D', 'E', 'F', 'G']
+    col_letters = ['D', 'E', 'F', 'G']
 
     # Устанавливаем стиль шрифта по умолчанию с размером 10
     font = Font(size=10)
     for row_idx, data in enumerate(filtered_data, start=start_row):
         for col_idx, col_letter in enumerate(col_letters):
             cell = sheet[f'{col_letter}{row_idx}']
-            if col_letter == 'B':
-                cell.value = data.date_of_birth
-            elif col_letter == 'D':
+            if col_letter == 'D':
                 cell.value = data.pasport
             elif col_letter == 'E':
                 cell.value = data.flname
             elif col_letter == 'F':
                 cell.value = data.position
             elif col_letter == 'G':
-                cell.value = destination_address
+                cell.value = 'Москва'
             cell.font = font  # Применяем стиль шрифта к ячейке
 
     new_filename = 'Ведомость.xlsx'
@@ -630,7 +609,7 @@ def generate_ticket():
             Booking.data == selected_date,
             Booking.position == s_n
         ).first()
-        print(booking.destination)
+
         if booking:
             booking.action = 'yes'
             db.session.commit()  # Сохранение изменений в базе данных
@@ -646,10 +625,8 @@ def generate_ticket():
 
             apply_styles_to_cell(sheet, 'A12', booking.position)
 
-            if current_user.role == 'Moscow':
-                sheet['A15'] = '10 : 00'
-            else:
-                sheet['A15'] = '11 : 00'
+
+            sheet['A15'] = '11 : 00'
             sheet['A15'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['A15'].font = bold_font
 
@@ -665,14 +642,7 @@ def generate_ticket():
             # Обработка оплаты
             payment_value = booking.payment
             payment_currency = payment_value[-3:]
-            if payment_currency == 'RUB' and current_user.role == 'Moscow':
-                sheet['A7'] = '₽'
-                sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
-                sheet['A7'].font = bold_font
-                sheet['D7'] = re.sub(r'\D', '', payment_value)  # Убираем первую букву
-                sheet['D7'].alignment = Alignment(horizontal='center', vertical='center')
-                sheet['D7'].font = bold_font
-            elif payment_currency == 'GEL':
+            if payment_currency == 'GEL':
                 sheet['A7'] = '₾'
 
                 sheet['A7'].alignment = Alignment(horizontal='center', vertical='center')
@@ -746,7 +716,6 @@ def blanks():
 
 
     data = Forms.query.filter_by(date=date_param, where_from=city_param).order_by(desc(Forms.number)).all()
-    list_delivery = [data for data in data if data.address]
 
     data_dict = {
         'GEL': {'paid': 0, 'card': 0, 'not_paid': 0},
@@ -794,112 +763,152 @@ def blanks():
     return render_template('list.html', data=data, gel_paid=gel_paid, gel_card=gel_card, gel_not_paid=gel_not_paid,
                            rub_paid=rub_paid, rub_card=rub_card, rub_not_paid=rub_not_paid,
                            usd_paid=usd_paid, usd_card=usd_card, usd_not_paid=usd_not_paid,
-                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid,
-                           total_weight=total_weight, city_param=city_param, date_param=date_param,
-                           list_delivery=list_delivery)
+                           eur_paid=eur_paid, eur_card=eur_card, eur_not_paid=eur_not_paid, total_weight=total_weight, city_param=city_param)
 
 
 
-@app.route('/add_parcell_to_list', methods=['POST'])
+
+@app.route('/add_to_the_list', methods=['POST'])
 @login_required
-def add_parcell_to_list():
+def add_to_the_list():
     access = ['admin', 'Moscow', 'SPB']
     if current_user.role not in access:
-        return 'error user'
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
     try:
-        data = request.form.to_dict()
+        data = request.get_json()
 
-        highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
-                                                                     Forms.where_from == data['where_from']).scalar()
-        if highest_number is not None:
-            new_number = highest_number + 1
-        else:
-            new_number = 1
-        # Получите данные из JSON-запроса
-        if data['cost'] == '':
-            cost = 0
-        else:
-            cost = data['cost']
+        check = data['sender_fl'].upper().replace(" ", "")
+        where_from = data['where_from']
 
-        if data['passport'] == '':
-            passport = '---'
-        else:
-            passport = data['passport']
-        
-        new_parcel = Forms(
+        if check == 'DAMIR' and where_from == 'Санкт-Петербург':
+            min_number = db.session.query(func.min(Forms.number)).filter(Forms.date == data['date'],
+                                                                         Forms.where_from == data['where_from']).scalar()
+            if min_number is not None:
+                new_number = min_number - 1
+            else:
+                new_number = 0
+
+            
+            new_parcel = Forms(
             number = new_number,
             date=data['date'],
             sender_fio = data['sender_fl'].upper(),
             sender_phone=data['sender_phone'],
             recipient_fio=data['recipient_fl'].upper(),
             recipient_phone=data['recipient_phone'],
-            passport= passport,
+            passport=data['passport'],
             city=data['city'],
             comment=data['comment'],
-            price=int(cost),
+            price=int(data['price']),
             weights=data['weights'],
             cost=int(data['payment']),
             payment_status=data['payment_status'],
             currency=data['payment_currency'],
-            where_from=data['where_from'],
-            address = data['address']
+            where_from=data['where_from']
             )
 
-        db.session.add(new_parcel)
-        db.session.commit()
+            db.session.add(new_parcel)
+            db.session.commit()  
+
+            
+
+            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
+        else:
+            # Остальная часть кода, как у вас уже есть
+            highest_number = db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
+                                                                         Forms.where_from == data['where_from']).scalar()
+            if highest_number is not None:
+                new_number = highest_number + 1
+            else:
+                new_number = 1
+            # Получите данные из JSON-запроса
+
+            new_parcel = Forms(
+                number = new_number,
+                date=data['date'],
+                sender_fio = data['sender_fl'].upper(),
+                sender_phone=data['sender_phone'],
+                recipient_fio=data['recipient_fl'].upper(),
+                recipient_phone=data['recipient_phone'],
+                passport=data['passport'],
+                city=data['city'],
+                comment=data['comment'],
+                price=int(data['price']),
+                weights=data['weights'],
+                cost=int(data['payment']),
+                payment_status=data['payment_status'],
+                currency=data['payment_currency'],
+                where_from=data['where_from']
+            )
+
+            db.session.add(new_parcel)
+            db.session.commit()
 
 
             
-        return redirect(url_for('blanks', date=request.form['date'], where_from=request.form['where_from']))
+            return jsonify({'success': True, 'message': 'ამანათი დაემატა'}), 200
 
     except Exception as e:
         # В случае ошибки верните сообщение об ошибке
         response = {"error": str(e)}
-        return response
+        return jsonify(response), 500
 
 
-@app.route('/list_edit_id', methods=['GET', 'POST'])
+
+@app.route('/edit-the-list', methods=['POST'])
 @login_required
-def list_edit():
-    if request.method == 'GET':
-        item_id = request.args.get('id')  # Получаем id из параметра запроса
-        data = Forms.query.get(item_id)
-        if data is None:
-            pass
-        return render_template('list_edit.html', data=data)
-    elif request.method == 'POST':
-        item_id = request.form.get('id')
-        parcel = Forms.query.get(item_id)
+def edit_the_list():
+    access = ['admin', 'Moscow', 'SPB']
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'}), 400
 
-        parcel.sender_fio = request.form.get('sender_fl').upper()
-        parcel.sender_phone = request.form.get('sender_phone')
-        parcel.recipient_fio = request.form.get('recipient_fl').upper()
-        parcel.recipient_phone = request.form.get('recipient_phone')
-        parcel.passport = request.form.get('passport')
-        parcel.city = request.form.get('city')
-        parcel.comment = request.form.get('comment')
-        parcel.price = int(request.form.get('cost'))
-        parcel.weights = request.form.get('weights')
-        parcel.cost = int(request.form.get('payment'))
-        parcel.payment_status = request.form.get('payment_status')
-        parcel.currency = request.form.get('payment_currency')
-        parcel.address = request.form.get('address')
+    data = request.get_json()
+    date = data['date']
+    where_from = data['where_from']
+    number = int(data['item_id'])
+
+    filtered_form = Forms.query.filter_by(date=date, where_from=where_from, number=number).first()
+    if filtered_form:
+       filtered_form.sender_fio = data['sender_fio'].upper()
+       filtered_form.sender_phone = data['sender_phone']
+       filtered_form.recipient_fio = data['recipient_fio'].upper()
+       filtered_form.recipient_phone = data['recipient_phone']
+       filtered_form.passport = data['passport']
+       filtered_form.city = data['city']
+       filtered_form.comment = data['comment']
+       filtered_form.price = int(data['cost'])
+       filtered_form.weights = data['weights']
+       filtered_form.cost = int(data['payment'])
+       filtered_form.payment_status = data['payment_status']
+       filtered_form.currency = data['currency']
+       db.session.commit()
+
+    return jsonify({'message': 'Данные успешно отредактированы'})
+
+@app.route('/deleted_from_list', methods=['POST'])
+@login_required
+def delete_from_list():
+
+    access = ['admin', 'Tbilisi', 'Moscow', 'SPB']
+    if current_user.role not in access:
+        return jsonify({'success': False, 'message': 'თქვენ არ გაქვთ წვდომა'})
+
+    try:
+        data = request.get_json()
+        itemId = data.get('itemId')
+        dateParam = data.get('dateParam')
+        cityParam = data.get('cityParam')
+        data = Forms.query.filter_by(date=dateParam, where_from=cityParam, number=itemId).first()
+        db.session.delete(data)
         db.session.commit()
-        return redirect(url_for('blanks', date=request.form.get('date'), where_from=request.form.get('where_from')))
+        # Выполните удаление элемента по данным itemId, dateParam и cityParam
+
+        # Верните успешный ответ
+        return jsonify({'success': True, 'message': 'ნომერი წარმატებით წაიშალა'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)})
 
 
-@app.route('/list_delete', methods=['POST'])
-@login_required
-def list_delete():
-    if request.method == 'POST':
-        item_id = request.form.get('item_id')
-        parcel = Forms.query.get(item_id)
-        if parcel:  # Проверяем, существует ли запись с таким ID
-            db.session.delete(parcel)  # Удаляем запись из сессии
-            db.session.commit()         # Применяем изменения в базе данных
-            return redirect(url_for('blanks', date=request.form.get('date'), where_from=request.form.get('where_from')))
-        # Здесь добавьте код для удаления записи из базы данных по item_id
-        return redirect(url_for('blanks', date=request.form.get('date'), where_from=request.form.get('where_from')))
 
 
 def random_names():
@@ -952,7 +961,6 @@ def download_manifest():
     date = request.args.get('date')
     where_from = request.args.get('where_from')
 
-
     # Фильтруем записи в таблице Forms
     filtered_forms = Forms.query.filter(
         Forms.date == date,
@@ -978,36 +986,21 @@ def download_manifest():
         count = 0
         price = random.choice(price_chance)
         vl = 'USD'
-        if form.sender_fio:
-            if form.sender_fio == 'DAMIR':
-                s_n = random_names()
-            else:
-                s_n = form.sender_fio
-        else:
-            s_n = random_names()
+        s_n = random_names()
         purc_count = len(weights)
         
         
         for weight in weights:
             if purc_count != 1:
                 count += 1
-                if where_from == 'Москва':
-                    number = f'{form.city}     {form.number}/{count}'
-                else:
-                    number = f'{form.city}    0{form.number}/{count}'
+                number = f'{form.city}    [0{form.number}/{count}]'
             else:
-                if where_from == 'Москва':
-                    number = f'{form.city}     {form.number}'
-                else:
-                    number = f'{form.city}    0{form.number}'
+                number = f'{form.city}    [0{form.number}]'
             # Добавляем данные в соответствующие столбцы
             ws.cell(row=row_num, column=1, value=s_n.split()[0])  # Имя отправителя
             ws.cell(row=row_num, column=2, value=s_n.split()[-1])  # Фамилия отправителя
             ws.cell(row=row_num, column=3, value='Russian Federation')
-            if where_from == 'Москва':
-                ws.cell(row=row_num, column=4, value='MOSCOW')
-            else:
-                ws.cell(row=row_num, column=4, value='S.P.B')
+            ws.cell(row=row_num, column=4, value='S.P.B')
             ws.cell(row=row_num, column=5, value=form.recipient_fio.split()[0])  # Имя получателя
             ws.cell(row=row_num, column=6, value=form.recipient_fio.split()[-1])  # Фамилия получателя
             ws.cell(row=row_num, column=7, value=form.passport)

@@ -4,90 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_index.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <title>მთავარი მენიუ</title>
     <div class="bg-image_l"></div>
 </head>
 <body>
 
 
-<div class="menu_block">
-    <div class="first_line_block">
-        <div class="menu_element_block">
-            <div class="el">
-                <a href="/expertise">
-                <img src="/static/images/expertise.png" alt="Изображение"></a>
-                <label>ექსპერტიზა</label>
-            </div>
-
-            <div class="el">
-                <a href="/add" >
-                    <img src="/static/images/add.png" alt="Изображение">
-                </a>
-                <label>დამატება</label>
-            </div>
-
-            <div class="el">
-                <a href="/storage">
-                <img src="/static/images/storage.png" alt="Изображение"></a>
-                <label>საწყობი</label>
-            </div>
+    <div class="menu-container">
+        <div class="hexagon-row">
+            <a href="/expertise">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-journal-check"></i>
+                        <p>ექსპერტიზა</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/add">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <p>დამატება</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/storage">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-box-fill"></i>
+                        <p>საწყობი</p>
+                    </div>
+                </div>
+            </a>
         </div>
+        <div class="hexagon-row">
+            <a href="#" onclick="openReservationModal()">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <p>ჯავშანი</p>
+                    </div>
+                </div>
+            </a>
+            <a href="#" onclick="openModal()">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                        <p>ბლანკები</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/all">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-list-check"></i>
+                        <p>სია</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/logout">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <p>გასვლა</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
 
-    </div>
-    <div class="last_line_block">
-        <div class="menu_element_block">
-                <div class="el2">
-                    <a href="#" onclick="openReservationModal()">
-                        <img src="/static/images/booking.webp" alt="Изображение">
-                    </a>
-                    <label>ჯავშანი</label>
-                </div>
-                <div class="el2">
-                    <a href="#" onclick="openModal()">
-                        <img src="/static/images/blanks.png" alt="Изображение"></a>
-                    <label>ბლანკები</label>
-                </div>
-                <div class="el2">
-                    <a href="/all" >
-                        <img src="/static/images/all.png" alt="Изображение">
-                    </a>
-                    <label>სია</label>
-                </div>
-                <div class="el2">
-                    <a href="/logout">
-                    <img src="/static/images/exit.webp" alt="Изображение"></a>
-                    <label>გასვლა</label>
-                </div>
-        </div>  
-    </div>
-</div>
 
 
 {% for cat, msg in get_flashed_messages(True) %}
 <div class='flash {{cat}}'>{{msg}}</div>
 {% endfor %}
-<script>
-// Скрыть все сообщения через 4 секунд
-setTimeout(function() {
-    var messages = document.querySelectorAll('.flash');
-    for (var i = 0; i < messages.length; i++) {
-        messages[i].style.display = 'none';
-    }
-}, 3000);
-</script>
 
 
-<!-- Модальное окно -->
+<!-- Модальное окно выбора даты -->
 <div id="myModal" class="modal-blanks-select">
-    <div class="modal-blanks-content">
+    <div class="modal-content modal-blanks-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h2>ამოირჩიეთ გაგზავნის თარიღი</h2>
-        <input type="date" id="datepicker">
-        <label for="citySelect">ქალაქი:</label>
-        <select id="citySelect">
-            <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
-            <option value="Москва">მოსკოვი</option>
-        </select>
+        <h2>ამოირჩიეთ გაგზავნის თარიღი და ქალაქი</h2>
+        <div class="date-city-container">
+            <input type="date" id="datepicker">
+            <select id="citySelect">
+                <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
+                <option value="Москва">მოსკოვი</option>
+            </select>
+        </div>
         <button onclick="redirectToPage()">გადასვლა</button>
         <div class="dates_block">
             <div class="spb_dates_block">
@@ -112,29 +117,14 @@ setTimeout(function() {
             </div>
         </div>
     </div>
+</div>
 
-</div>  
-
-
-<!-- Модальное окно -->
-<div id="ModalAdd" class="modal-add-select">
-    <div class="modal-add-content">
-        <span class="close" onclick="closeAddModal()">&times;</span>
-        <h2>ამოირჩიეთ გაგზავნის თარიღი</h2>
-        <input type="date" id="datepickerAdd">
-        <button onclick="redirectAddPage()">გადასვლა</button>
-    </div>
-</div>  
-
-
-
-
+<!-- Модальное окно бронирования -->
 <div id="reservationModal" class="modal-reservation">
-    <div class="modal-reservation-content">
+    <div class="modal-content modal-reservation-content">
         <span class="close" onclick="closeReservationModal()">&times;</span>
         <h2>ამოირჩიეთ თარიღი და მარშრუტი</h2>
         <input type="date" id="reservationDate">
-        <label for="routeSelect">მარშრუტი:</label>
         <select id="routeSelect">
             <option value="1">თბილისი-მოსკოვი</option>
             <option value="2">მოსკოვი-თბილისი</option>
@@ -147,11 +137,21 @@ setTimeout(function() {
 
 
 
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 
+
+
+<script>
+    // Скрыть все сообщения через 4 секунд
+    setTimeout(function() {
+        var messages = document.querySelectorAll('.flash');
+        for (var i = 0; i < messages.length; i++) {
+            messages[i].style.display = 'none';
+        }
+    }, 3000);
+</script>
 
 <script>
 function openModal() {
@@ -285,33 +285,58 @@ function redirectToPage() {
 
 
 
-
-<!--  -->
-
-
-<!--  -->
-
-
-
-
-
-
 <div class="footer">
     <div class="footer-block">
-        <h3>უკუკავშირი და შეცდომების გასწორება:</h3>
-        <p>თუ თქვენ გაქვთ კითხვები, შეთავაზებები ან თქვენ იპოვეთ შეცდომა საიტზე, გთხოვთ, დაგვიკავშირდეთ:</p>
-        <p>ტელეფონი: +995571181762</p>
+        <h3>უკუკავშირი</h3>
+        <p>თუ თქვენ გაქვთ კითხვები, შემოთავაზებები ან ნახეთ შეცდომა, გთხოვთ, დამიკავშირდეთ:</p>
         <p>Email: <a href="mailto:hardinhell@gmail.com">hardinhell@gmail.com</a></p>
     </div>
     <div class="footer-block">
-        <h3>უსაფრთხოების პოლიტიკა და პროცედურები:</h3>
-        <p>ჩვენ ვაფასებთ მონაცემების უსაფრთხოებას. გთხოვთ, არ გადასცეთ თქვენი აქაუნთის მონაცემები მესამე პირებს.</p>
-        <p>შემთხვევაში თუ, ვინმემ როგორღაც გაიგო თქვენი აქაუნთის  მონაცემები, გთხოვთ დაუკავშირდით ადმინისტრატორს მონაცემების შესაცვლელად.</p>
+        <h3>მონაცემების უსაფრთხოება</h3>
+        <p>გთხოვთ, არ გადასცეთ ავტორიზაციის მონაცემები მესამე პირს.</p>
+        <p>თუ თქვენ გაქვთ ეჭვი, რომ ინფორმაცია მიიღო მესამე პირმა, გთხოვთ, დამიკავშირდეთ.</p>
     </div>
     <div class="footer-block">
-        <p class="company">&copy;2024-"VIP-TOUR"</p>
+        <h3>გასვლის დროები ივლისი</h3>
+        <p> 4 - 15:00 </p>
+        <p> 11 - 10:00 </p>
+        <p> 19 - 10:00 პარასკევი </p>
+        <p> 25 - 10:00 </p>
+        <p>  </p>
+
+    </div>
+    <div class="footer-block company">
+        <p>&copy; 2024 "VIP-TOUR". ყველა უფლება დაცულია.</p>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+  // Получаем все элементы с классом hexagon
+  const hexagons = document.querySelectorAll('.hexagon');
+
+  // Функция для добавления анимации случайным ячейкам
+  function addPulseAnimation() {
+    // Удаляем класс pulsate у всех ячеек перед добавлением к случайным
+    hexagons.forEach(hex => hex.classList.remove('pulsate'));
+
+    // Выбираем случайное количество ячеек (например, 1-3 ячейки)
+    const randomCount = Math.floor(Math.random() * 3) + 1;
+    for (let i = 0; i < randomCount; i++) {
+      const randomIndex = Math.floor(Math.random() * hexagons.length);
+      hexagons[randomIndex].classList.add('pulsate');
+    }
+  }
+
+  // Запускаем анимацию при загрузке страницы
+  addPulseAnimation();
+
+  // Можно добавить регулярное обновление анимации, если нужно
+  setInterval(addPulseAnimation, 1500); // обновление каждые 5 секунд
+});
+
+</script>
 
 
 </body>

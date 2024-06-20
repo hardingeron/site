@@ -263,7 +263,6 @@ a:hover {
 
 .modal-reservation-content input[type="date"],
 .modal-reservation-content select {
-  width: 90%;
   padding: 12px;
   margin: 10px 0;
   border: 1px solid #ccc;
@@ -306,8 +305,7 @@ a:hover {
   gap: 20px; /* Расстояние между элементами */
 }
 
-#datepicker {
-  width: 90%;
+#datepicker, #reservationDate {
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;

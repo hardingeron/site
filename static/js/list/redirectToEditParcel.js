@@ -1,7 +1,7 @@
 // script.js
 document.addEventListener("DOMContentLoaded", function() {
-    // Получаем все элементы списка с классом list-group-item
-    const listItems = document.querySelectorAll('.list-group-item');
+    // Получаем все элементы списка с классом list-group-edit
+    const listItems = document.querySelectorAll('.list-group-edit');
 
     // Добавляем обработчик клика для каждого элемента списка
     listItems.forEach(function(item) {

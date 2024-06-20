@@ -2,12 +2,24 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="/static/images/icon.jpg">
     <title>{% block title %}{% endblock %}</title>
-    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">   
     {% block styles_js %}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
     {% endblock %}
+
+    <!-- Подключение jQuery (если требуется для некоторых компонентов) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Подключение Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Подключение Bootstrap 5 JS (включая необходимые компоненты) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+
 </head>
 
 <body>
@@ -17,10 +29,10 @@
 
     <div id="loading-screen" class="loading-screen">
         <div class="loading-spinner-container">
-            <div class="loading-spinner" id="spinner1"></div>
-            <div class="loading-spinner" id="spinner2"></div>
-            <div class="loading-spinner" id="spinner3"></div>
-            <div class="loading-spinner" id="spinner4"></div>
+            <div class="loading-spinner"></div>
+            <div class="loading-spinner"></div>
+            <div class="loading-spinner"></div>
+            <div class="loading-spinner"></div>
         </div>
     </div>
 
@@ -36,110 +48,123 @@
             {% block content %}
             {% endblock %}
         </div>
-        
-        <div class="modal" id="ModalMenu">
-            <div class="Menu-content">
-                <div class="first_line_block">
-                    <div class="menu_element_block">
-                        <div class="el">
-                            <a href="/expertise">
-                                <img src="/static/images/expertise.png" alt="Изображение">
-                            </a>
-                            <label>ექსპერტიზა</label>
-                        </div>
-                        <div class="el">
-                            <a href="/add">
-                                <img src="/static/images/add.png" alt="Изображение">
-                            </a>
-                            <label>დამატება</label>
-                        </div>
-                        <div class="el">
-                            <a href="/storage">
-                                <img src="/static/images/storage.png" alt="Изображение">
-                            </a>
-                            <label>საწყობი</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="last_line_block">
-                    <div class="menu_element_block">
-                        <div class="el2">
-                            <a href="#" onclick="openReservationModal()">
-                                <img src="/static/images/booking.webp" alt="Изображение">
-                            </a>
-                            <label>ჯავშანი</label>
-                        </div>
-                        <div class="el2">
-                                <a href="#" onclick="openModal()">
-                                    <img src="/static/images/blanks.png" alt="Изображение"></a>
-                                <label>ბლანკები</label>
-                        </div>
-                        <div class="el2">
-                            <a href="/all" >
-                                <img src="/static/images/all.png" alt="Изображение">
-                            </a>
-                            <label>სია</label>
-                        </div>
-                        <div class="el2">
-                            <a href="/logout">
-                                <img src="/static/images/exit.webp" alt="Изображение">
-                            </a>
-                            <label>გასვლა</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
     </div>
+        
+<!-- Модальное окно меню-->
+<div class="modal" id="ModalMenu">
+    <div class="modal-menu-content">
+      <div class="hexagon-row">
+        <a href="/expertise">
+          <div class="hexagon" data-index="1">
+            <div class="content">
+              <i class="bi bi-journal-check"></i>
+              <p>ექსპერტიზა</p>
+            </div>
+          </div>
+        </a>
+        <a href="/add">
+          <div class="hexagon" data-index="2">
+            <div class="content">
+              <i class="bi bi-plus-circle-fill"></i>
+              <p>დამატება</p>
+            </div>
+          </div>
+        </a>
+        <a href="/storage">
+          <div class="hexagon" data-index="3">
+            <div class="content">
+              <i class="bi bi-box-fill"></i>
+              <p>საწყობი</p>
+            </div>
+          </div>
+        </a>
+      </div>
+      <div class="hexagon-row">
+        <a href="#" onclick="openReservationModal()">
+          <div class="hexagon" data-index="4">
+            <div class="content">
+              <i class="bi bi-calendar-check-fill"></i>
+              <p>ჯავშანი</p>
+            </div>
+          </div>
+        </a>
+        <a href="#" onclick="openModal()">
+          <div class="hexagon" data-index="5">
+            <div class="content">
+              <i class="bi bi-file-earmark-text-fill"></i>
+              <p>ბლანკები</p>
+            </div>
+          </div>
+        </a>
+        <a href="/all">
+          <div class="hexagon" data-index="6">
+            <div class="content">
+              <i class="bi bi-list-check"></i>
+              <p>სია</p>
+            </div>
+          </div>
+        </a>
+        <a href="/logout">
+          <div class="hexagon" data-index="7">
+            <div class="content">
+              <i class="bi bi-box-arrow-right"></i>
+              <p>გასვლა</p>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+  
 
     
     <script src="/static/js/messages.js"></script>
 
 
-<!-- Модальное окно -->
+<!-- Модальное окно выбора даты -->
 <div id="myModal" class="modal-blanks-select">
-    <div class="modal-blanks-content">
+    <div class="modal-content-cas modal-blanks-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h2>ამოირჩიეთ გასვლის თარიღი და ქალაქი</h2>
-        <input type="date" id="datepicker">
-        <label for="citySelect">ქალაქი:</label>
-        <select id="citySelect">
-            <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
-            <option value="Москва">მოსკოვი</option>
-        </select>
+        <h2>ამოირჩიეთ გაგზავნის თარიღი და ქალაქი</h2>
+        <div class="date-city-container">
+            <input type="date" id="datepicker">
+            <select id="citySelect">
+                <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
+                <option value="Москва">მოსკოვი</option>
+            </select>
+        </div>
         <button onclick="redirectToPage()">გადასვლა</button>
         <div class="dates_block">
             <div class="spb_dates_block">
-                <label>Санкт-Петербург</label>
+                <label>პეტერბურგი</label>
                 <div class="spb_list_block">
-                    <ul id="spb_dates_list">
-                    </ul>
+                    <ul id="spb_dates_list"></ul>
                 </div>
             </div>
             <div class="msk_dates_block">
-                <label>Москва</label>
+                <label>მოსკოვი</label>
                 <div class="msk_list_block">
-                    <ul id="msk_dates_list">
-                    </ul>
+                    <ul id="msk_dates_list"></ul>
                 </div>
             </div>
         </div>
     </div>
-</div>  
+</div> 
+
+
+        
+        
+        
 
 
 
 
-
-
+<!-- Модальное окно бронирования -->
 <div id="reservationModal" class="modal-reservation">
-    <div class="modal-reservation-content">
+    <div class="modal-content-cas modal-reservation-content">
         <span class="close" onclick="closeReservationModal()">&times;</span>
         <h2>ამოირჩიეთ თარიღი და მარშრუტი</h2>
         <input type="date" id="reservationDate">
-        <label for="routeSelect">მარშრუტი:</label>
         <select id="routeSelect">
             <option value="1">თბილისი-მოსკოვი</option>
             <option value="2">მოსკოვი-თბილისი</option>
@@ -164,39 +189,36 @@
 <script>
     const openMenuModalButton = document.getElementById('openModalButton');
     const menu_modal = document.getElementById('ModalMenu');
-    
+  
     function openMenuModal() {
-        menu_modal.style.display = 'block';
-    
-        // Используем setTimeout, чтобы добавить класс "open" через короткой задержки
-        setTimeout(function () {
-            menu_modal.classList.add('open');
-        }, 100);
+      menu_modal.style.display = 'block';
+  
+      const hexagons = document.querySelectorAll('.hexagon');
+      hexagons.forEach((hexagon, index) => {
+        // Задаем случайную задержку для начала анимации
+        const randomDelay = Math.random() * 8; // от 0 до 2 секунд
+        hexagon.style.animation = `pulse 2s ${randomDelay}s infinite`;
+      });
     }
-    
+  
     function closeMenuModal() {
-        menu_modal.classList.remove('open');
-    
-        // После окончания анимации, скрываем модальное окно
-        setTimeout(function () {
-            menu_modal.style.display = 'none';
-        }, 500); // Задержка должна быть равной длительности анимации (0.5s)
+      menu_modal.style.display = 'none';
     }
-    
+  
     openMenuModalButton.addEventListener('click', openMenuModal);
-    
+  
     menu_modal.addEventListener('click', function (event) {
-        if (event.target === menu_modal) {
-            closeMenuModal();
-        }
+      if (event.target === menu_modal) {
+        closeMenuModal();
+      }
     });
-    
+  
     document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
-            closeMenuModal();
-        }
+      if (event.key === 'Escape') {
+        closeMenuModal();
+      }
     });
-    </script>
+  </script>
 
 
 

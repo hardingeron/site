@@ -7,7 +7,7 @@
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_list.css') }}">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
 
 <style>
     .hidden {
@@ -16,31 +16,44 @@
 </style>
 
 
+
+
 <div class="container text-center">
     <div class="list-menu d-flex justify-content-center align-items-center">
 
-        <img class="icon" src="/static/images/translation.png" alt="language" id="toggleLanguageButton">
+        <div id="toggleLanguageButton" class="icons" title="ენის შეცვლა">
+            <i class="bi bi-translate"></i>
+        </div> 
 
-        <button data-lang="ge" class="btn btn-primary mr-2 text-nowrap" id="openPaymentModalGe">სტატისტიკა</button>
-        <button data-lang="ru" class="btn btn-primary mr-2 text-nowrap hidden" id="openPaymentModalRu">Статистика</button>
+        <div data-lang="ge" id="openPaymentModalGe" class="icons" title="სტატისტიკა" >
+            <i class="bi bi-currency-exchange"></i>
+        </div>
+        <div data-lang="ru" id="openPaymentModalRu" class="icons hidden" title="Статистика">
+            <i class="bi bi-currency-exchange"></i>
+        </div>
 
-        <button data-lang="ge" class="btn btn-primary mr-2 text-nowrap" onclick="manifestDownload()">მანიფესტის გამოწერა</button>
-        <button data-lang="ru" class="btn btn-primary mr-2 text-nowrap hidden" onclick="manifestDownload()">Скачать манифест</button>
+        <div data-lang="ge" onclick="manifestDownload()" class="icons" title="გადმოწერა">
+            <i class="bi bi-download"></i>
+        </div>
+        <div data-lang="ru" onclick="manifestDownload()" class="icons hidden" title="Скачать">
+            <i class="bi bi-download"></i>
+        </div>
 
-        <button data-lang="ge" class="btn btn-primary mr-2 text-nowrap" id="openDeliveryModalGe">მიტანები</button>
-        <button data-lang="ru" class="btn btn-primary mr-2 text-nowrap hidden" id="openDeliveryModalRu">Доставки</button>
-
-        
+        <div data-lang="ge" id="openDeliveryModalGe" class="icons" title="მიტანები">
+            <i class="bi bi-truck"></i>
+        </div>
+        <div data-lang="ru" id="openDeliveryModalRu" class="icons hidden" title="Доставки">
+            <i class="bi bi-truck"></i>
+        </div>
 
         <input data-lang="ge" type="text" class="form-control mr-2" placeholder="ძიება" id="filterInput">
         <input data-lang="ru" type="text" class="form-control mr-2 hidden" placeholder="Поиск" id="filterInput">
 
-        <p data-lang="ge" class="weight-info mb-0 text-nowrap">საერთო წონა: <span class="red">{{ total_weight }} </span> კგ</p>
-        <p data-lang="ru" class="weight-info mb-0 text-nowrap hidden">Общий вес: <span class="red">{{ total_weight }} </span> Кг</p>
+        <p data-lang="ge" class="weight-info mb-0 text-nowrap">წონა: <span class="red">{{ total_weight }} </span> კგ</p>
+        <p data-lang="ru" class="weight-info mb-0 text-nowrap hidden">вес: <span class="red">{{ total_weight }} </span> Кг</p>
 
     </div>
 </div>
-
 
 
 
@@ -363,9 +376,9 @@
         <ul class="list-group" id="orderList">
             {% if data %}
                 {% for item in data %}
-                <li class="list-group-item" id="{{item.id}}">
-                    <h5 data-lang="ge" class="{% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">შეკვეთა # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
-                    <h5 data-lang="ru" class="hidden {% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">Заказ # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
+                <li class="list-group-item">
+                    <h5 data-lang="ge" id="{{item.id}}" class="list-group-edit {% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">შეკვეთა # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
+                    <h5 data-lang="ru" id="{{item.id}}" class="list-group-edit hidden {% if item.added_to_the_manifest == 'yes' %}mb-3 green{% else %}mb-3{% endif %}">Заказ # {% if item.where_from=='Москва' %} {{ item.number }} {% else %} 0{{ item.number }} {% endif %}</h5>
 
                     <div class="row">
                         <div class="col-md-4">

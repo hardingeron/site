@@ -9,43 +9,74 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_storage.css') }}">
 
 <div class="bg-image"></div>
-<div class="storage_forms">
-    <div id="add-container">
-        <div class="storage_add">
-            <form id="add-form" class="add-form" action="/save">
-                <label class="add_name">დამატება</label>
-                <input type="text" name="shelf" id="add_shelf" value="{{ last }}" autocomplete="off" placeholder="თარო" class="input-centered">
-                <textarea name="trecing" id="add_trecing" autocomplete="off" placeholder="თრექინგები" class="input-centered"></textarea>
-                <input type="submit" value="დამატება">
-            </form>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <!-- Форма добавления товара -->
+        <div class="col-md-4 col-sm-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">დამატება</h5>
+                </div>
+                <div class="card-body bg-light">
+                    <form id="add-form" action="/save">
+                        <div class="form-group">
+                            <input type="text" name="shelf" id="add_shelf" value="{{ last }}" autocomplete="off" placeholder="თარო" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <textarea name="trecing" id="add_trecing" autocomplete="off" placeholder="თრექინგები" class="form-control"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">დამატება</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма добавления пользователя -->
+        <div class="col-md-4 col-sm-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">ბოტი</h5>
+                </div>
+                <div class="card-body bg-light">
+                    <form id="user_add" action="/user_add" method="POST">
+                        <div class="form-group">
+                            <input type="text" name="user_id" class="form-control" placeholder="telegram ID">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">დამატება</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Форма поиска -->
+        <div class="col-md-4 col-sm-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">ძიება</h5>
+                </div>
+                <div class="card-body bg-light">
+                    <form id="find-form" action="/find" method="POST">
+                        <div class="form-group">
+                            <div id="location-container">
+                                <input type="text" name="shelf" id="find_shelf" readonly value="{{ location }}" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="trecing" id="find_trecing" autocomplete="off" placeholder="თრექინგი" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" name="info" id="trecing_info" autocomplete="off" placeholder="კომენტარი" class="form-control">
+                        </div>
+                        <button type="submit" id="f_s" class="btn btn-primary btn-block">ძიება</button>
+                    </form>
+                    <div id="result-container"></div>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="add_user_bot">
-        <form id="user_add" action="/user_add" method="POST">
-            <label class="user_add_label">ბოტი</label>
-            <input type="text" name="user_id"  class="user_add_input" placeholder="telegram ID">
-            <input type="submit" value="დამატება" id="user_add_submit">
-        </form>
-    </div>
-
-    <div class="storage_find">
-        <form id="find-form" class="find-form" action="/find" method="POST">
-            <label class="find_name">ძიება</label>
-            <div id="location-container">
-                <input type="text" name="shelf" id="find_shelf" readonly value="{{ location }}" class="input-centered">
-            </div>
-            <div class="f">
-                <input type="text" name="trecing" id="find_trecing" autocomplete="off" placeholder="თრექინგი" class="input-centered">
-                <input type="text" name="info" id="trecing_info" autocomplete="off" placeholder="კომენტარი" class="input-centered">
-            </div>
-            <input type="submit" value="ძიება" id="f_s">
-        </form>
-        <div id="result-container"></div>
-    </div>
-
-
 </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -91,7 +122,7 @@ $(document).ready(function() {
                 success: function(response) {
                     var location = response.shelf;
 
-                    $('#location-container').html('<input type="text" name="shelf" id="find_shelf" readonly value="' + location + '" class="input-centered">');
+                    $('#location-container').html('<input type="text" name="shelf" id="find_shelf" readonly value="' + location + '" class="form-control">');
                     $('#find_trecing').val('');
                     $('#result-container').html(response.otherData);
                     $('#find_trecing').focus();

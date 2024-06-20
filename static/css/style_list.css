@@ -9,7 +9,7 @@ html, body {
     padding: 20px; /* Внутренний отступ */
     margin-bottom: 20px; /* Внешний отступ снизу */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень */
-    width: 700px;
+    max-width: 700px;
     margin: 0 auto; /* Центрирование по горизонтали */
 }
 
@@ -331,3 +331,16 @@ color: #000000a0;
     margin-right: 10px;
 }
 
+
+
+/* стиль для иконк */
+.icons {
+    font-size: 30px; /* Размер иконки 40x40 */
+    margin-right: 20px; /* Отступ справа 20px */
+    transition: transform 0.3s ease, color 0.3s ease; /* Плавный переход для изменения размера и цвета */
+}
+
+.icons:hover {
+    transform: scale(1.2); /* Увеличение иконки при наведении */
+    color: orange; /* Изменение цвета на оранжевый при наведении */
+}

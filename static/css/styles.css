@@ -7,23 +7,6 @@ body {
   background-color: #353745;
 }
 
-/* Задний фон */
-/* .bg-image {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url("../images/2.jpeg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.9;
-  z-index: -1;
-} */
-
-
-
 /* конец заднего фона  */
 
 /* меню сайта */
@@ -132,117 +115,76 @@ body {
   color: white;
 }
 
+.modal a {
+  text-decoration: none;
+} 
 
 
-/* загрузка сайта */
+/* Стили для экрана загрузки */
 .loading-screen {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #444654; /* Задний фон не прозрачный */
+  background-color: #2c3e50; /* Темный фон */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
 }
 
+/* Контейнер для анимации */
 .loading-spinner-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* Анимация спинеров */
 .loading-spinner {
   width: 20px;
   height: 20px;
   background-color: #3498db;
   border-radius: 50%;
   margin: 0 10px; /* Расстояние между кружочками */
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out; /* Плавное изменение видимости */
+  opacity: 0;
+  animation: bounce 0.6s ease-in-out infinite alternate;
 }
 
+/* Анимация прыжка для спинеров */
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px);
+    opacity: 0.5;
+  }
+}
+
+/* Плавный переход */
+.loading-screen .loading-spinner:nth-child(1) {
+  animation-delay: 0s;
+}
+.loading-screen .loading-spinner:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-screen .loading-spinner:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.loading-screen .loading-spinner:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+/* Стили для основного контента страницы */
+#page-content {
+  display: none;
+}
 
 /*модельное окно меню*/
     /* Стили для модального окна */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(5px);
-}
-
-.Menu-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 800px;
-    height: 550px;
-    background-color: #444654;
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    text-align: center;
-}
-
-/* Стили для кнопки закрытия модального окна */
-.close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 24px;
-}
-
-.first_line_block, .last_line_block {
-    width: 100%;
-    height: 50%;
-    text-align: center;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.menu_element_block {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.el, .el2 {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    margin-right: 50px;
-}
-
-.el:last-child, .el2:last-child {
-    margin-right: 0;
-}
-
-.el img, .el2 img {
-    width: 150px;
-    height: 150px;
-}
-
-.el label, .el2 label {
-    width: 150px;
-    height: 20px;
-    color: #d2d2d2;
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    font-size: 25px;
-}
 
 .menu_button {
     position: absolute; /* Абсолютное позиционирование */
@@ -262,127 +204,8 @@ body {
     position: fixed; /* Задаем позицию блока как фиксированную */
     top: 0; /* Закрепляем блок в верхней части окна браузера */
     right: 0; /* Закрепляем блок в правой части окна браузера */
-    z-index: 99; /* Задаем z-index, чтобы блок был выше других элементов */
 
 }
-
-
-/* CSS для начального состояния модального окна */
-#ModalMenu {
-    display: none;
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 0;
-    height: 0;
-    background-color: rgba(93, 93, 93, 0.604);
-    overflow: hidden;
-    transition: 0.5s; /* Длительность анимации */
-    transform-origin: right top; /* Устанавливаем точку начала анимации в правом верхнем углу */
-    transform: scale(0); /* Начальный масштаб 0 */
-    z-index: 50; /* Задаем z-index, чтобы блок был выше других элементов */
-}
-
-/* CSS для открытого состояния модального окна */
-#ModalMenu.open {
-    width: 100%;
-    height: 100%;
-    transform: scale(1); /* Завершение анимации с масштабом 1 (обычный размер) */
-}
-
-
-
-
-
-
-.modal-reservation,
-.modal-blanks-select,
-.modal-add-select {
-  display: none;
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.7);
-  color: #8e8ea0;
-}
-.modal-reservation input,
-.modal-reservation select,
-.modal-blanks-select input,
-.modal-blanks-select select,
-.modal-add-select input,
-.modal-add-select select {
-  background-color: #40414f;
-  border: none;
-  border-radius: 5px;
-  padding: 5px;
-  font-size: 16px;
-  width: 230px;
-  height: 30px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.596);
-  color: #8e8ea0;;
-  text-align: center;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.modal-reservation button,
-.modal-blanks-select button,
-.modal-add-select button {
-  background-color: #333333;
-  color: #8e8ea0;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  font-size: 16px;
-  border-radius: 5px;
-  font-weight: bold;
-}
-.modal-reservation-content label,
-.modal-blanks-content label {
-  font-size: 20px;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.modal-reservation button:hover,
-.modal-blanks-select button:hover,
-.modal-add-select button:hover {
-  background-color: #1a1a1a;
-}
-
-.modal-reservation-content,
-.modal-blanks-content,
-.modal-add-content {
-  background-color: #444654;
-  margin: 0; /* Убрать внешние отступы */
-  padding: 20px;
-  border: none;
-  border-radius: 20px;
-  width: 400px;
-  text-align: center;
-  position: absolute; /* Абсолютное позиционирование */
-  top: 50%; /* Разместить блок по вертикали на 50% высоты экрана */
-  left: 50%; /* Разместить блок по горизонтали на 50% ширины экрана */
-  transform: translate(-50%, -50%); /* Центрировать относительно самого блока */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-}
-
-.close {
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 10px;
-  cursor: pointer;
-}
-
-
 
 
 
@@ -408,72 +231,322 @@ body {
 
 
 
-.dates_block {
-  display: flex;
-  flex-direction: row; /* Расположение элементов в ряд по горизонтали */
-}
-
-
-
-
-.dates_block > *:not(:last-child) {
-  margin-right: 30px;
-}
-
-.msk_list_block,
-.spb_list_block {
-  height: 150px; /* Установите максимальную высоту блока в 50 пикселей */
-  width: 180px;
-  overflow-y: auto; /* Добавьте вертикальную прокрутку при необходимости */
-  border: solid 1px;
-  border-top-left-radius: 20px; /* Закругляем левый верхний угол */
-  border-bottom-left-radius: 20px; /* Закругляем левый нижний угол */
-  border-top-right-radius: 0; /* Убираем закругление с правого верхнего угла */
-  border-bottom-right-radius: 0; /* Убираем закругление с правого нижнего угла */
-}
-
-/* Изменяем стиль полосы прокрутки */
-.msk_list_block::-webkit-scrollbar,
-.spb_list_block::-webkit-scrollbar {
-  width: 5px; /* Ширина элемента прокрутки */
-  background: rgba(0, 0, 0, 0.2); /* Задаем прозрачный цвет фона */
-  
-}
-
-/* Изменяем стиль ползунка полосы прокрутки */
-.msk_list_block::-webkit-scrollbar-thumb,
-.spb_list_block::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.5); /* Задаем более прозрачный цвет ползунка */
-  border-radius: 5px; /* Закругляем углы ползунка */
-  
-  
-}
-
-/* Изменяем стиль трека полосы прокрутки */
-.msk_list_block::-webkit-scrollbar-track,
-.spb_list_block::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1); /* Задаем прозрачный цвет трека */
-  
-}
-
-
-.dates_block label {
-  font-size: 20px;
-}
-
-
-
-.dates_block a:link,
-.dates_block a:visited {
-  color: white; /* Цвет текста для невыбранной и посещенной ссылки */
-  text-decoration: none; /* Убираем подчеркивание */
-}
-
-.dates_block a:hover {
-  color: red; /* Цвет текста при наведении курсора */
-}
-
-
 li {
   margin-bottom: 8px;
+}
+
+
+/* Общие стили для модального окна меню */
+.modal {
+  display: none; /* Скрыть модальное окно по умолчанию */
+  position: fixed; /* Фиксированное позиционирование */
+  z-index: 1; /* Поверх всех элементов */
+  left: 0;
+  top: 0;
+  width: 100%; /* Полная ширина */
+  height: 100%; /* Полная высота */
+  background-color: rgba(0, 0, 0, 0.4); /* Черный с прозрачностью */
+}
+
+.modal-menu-content {
+  width: 0;
+  margin: 5% auto;
+  padding: 20px;
+  position: relative;
+  box-shadow: none; /* Убрать тень /
+  background: none; / Убрать фон /
+  border: none; / Убрать рамку */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  }
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Стили для hexagon-ячейки */
+.hexagon-row {
+  display: flex;
+  justify-content: center;
+}
+
+.hexagon {
+  width: 150px;
+  height: 175px; /* Высота для вертикального выравнивания */
+  background-color: #4fc3f7; /* Основной цвет шестиугольника */
+  position: relative;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s, background-color 0.3s;
+  margin: -10px 10px; /* Увеличенные отступы для разделения */
+  z-index: 1; /* Убедитесь, что шестиугольник сверху */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+}
+
+.hexagon .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff; /* Белый цвет для текста */
+  z-index: 1;
+  text-align: center;
+  transform: translateY(-10px); /* Поднятие текста немного */
+}
+
+.hexagon p {
+  font-weight: bold;
+}
+
+.hexagon .content i {
+  font-size: 2rem; /* Увеличение размера иконки */
+  margin-bottom: 10px; /* Увеличение промежутка между иконкой и текстом */
+}
+
+.hexagon p {
+  margin: 0;
+}
+
+.hexagon:hover {
+  background-color: #29b6f6; /* Цвет при наведении */
+  transform: scale(1.05); /* Немного увеличить при наведении */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличение тени при наведении */
+}
+
+.hexagon:hover .content i,
+.hexagon:hover .content p {
+  color: #ff9800; /* Оранжевый цвет текста и иконки при наведении */
+}
+
+
+
+/* Стили для модального окна бронирования */
+.modal-reservation {
+  display: none;
+  position: fixed;
+  z-index: 1060 !important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-reservation-content {
+  padding: 20px;
+  
+}
+
+.modal-reservation-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-reservation-content input[type="date"],
+.modal-reservation-content select {
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-reservation-content input[type="date"]:focus,
+.modal-reservation-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-reservation-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.modal-reservation-content button:hover {
+  background-color: #0056b3;
+}
+
+/* Общие стили для модальных окон */
+.modal-content-cas {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  margin: 5% auto; /* Центрирование по вертикали и горизонтали */
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: #888888;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff0000;
+}
+
+
+.modal-blanks-select {
+  display: none;
+  position: fixed;
+  z-index: 1060 !important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-blanks-content {
+  padding: 20px;
+}
+
+.modal-blanks-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-blanks-content input[type="date"],
+.modal-blanks-content select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-blanks-content input[type="date"]:focus,
+.modal-blanks-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-blanks-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+.modal-blanks-content button:hover {
+  background-color: #0056b3;
+}
+
+
+/* Контейнер для списка дат */
+.dates_block {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Расстояние между блоками */
+}
+
+/* Блок для города */
+.spb_dates_block, .msk_dates_block {
+  flex: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  overflow-y: auto; /* Включение прокрутки */
+  max-height: 300px; /* Максимальная высота блока */
+}
+
+.spb_dates_block label, .msk_dates_block label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* Отступ снизу для метки */
+}
+
+/* Стили для списка */
+.spb_list_block ul, .msk_list_block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.spb_list_block li, .msk_list_block li {
+  margin-bottom: 8px; /* Отступ снизу для элементов списка */
+}
+
+.spb_list_block li a, .msk_list_block li a {
+  display: block;
+  padding: 10px;
+  background-color: #f1f1f1;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.spb_list_block li a:hover, .msk_list_block li a:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* Стили для прокрутки */
+.spb_list_block, .msk_list_block {
+  max-height: 200px; /* Максимальная высота прокручиваемого блока */
+  overflow-y: auto; /* Включение прокрутки */
+}
+
+
+
+
+
+/* Медиа-запрос для планшетов */
+@media (max-width: 1024px) {
+  .hexagon {
+    width: 120px;
+    height: 140px;
+  }
+
+  .hexagon p {
+    font-size: 10px;
+  }
+}
+
+/* Медиа-запрос для мобильных телефонов */
+@media (max-width: 768px) {
+  .hexagon {
+    width: 100px;
+    height: 120px;
+  }
+}
+
+/* Медиа-запрос для очень маленьких экранов */
+@media (max-width: 480px) {
+  .hexagon {
+    width: 70px;
+    height: 90px;
+  }
+
 }

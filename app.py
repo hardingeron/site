@@ -344,6 +344,7 @@ class StorageFindView(MethodView):
         # Возвращаем данные в формате JSON
         return jsonify({'shelf': location})
 
+
 app.add_url_rule('/find', view_func=StorageFindView.as_view('find'))
 
 def start_loop(loop):
@@ -649,7 +650,7 @@ def generate_ticket():
             if current_user.role == 'Moscow':
                 sheet['A15'] = '10 : 00'
             else:
-                sheet['A15'] = '11 : 00'
+                sheet['A15'] = '10 : 00'
             sheet['A15'].alignment = Alignment(horizontal='center', vertical='center')
             sheet['A15'].font = bold_font
 

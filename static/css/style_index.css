@@ -1,5 +1,5 @@
 body {
-  background-color: #f3f8fa; /* Более светлый и нейтральный фон */
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
   display: flex;
   flex-direction: column; /* Для расположения футера внизу */
   justify-content: space-between; /* Равное распределение пространства между элементами */
@@ -109,7 +109,7 @@ a:hover {
 /* Стили для футера */
 /* Стили для футера */
 .footer {
-  background-color: #01579b; /* Темно-синий цвет футера */
+  background-color: #4ca1af;
   padding: 40px 20px; /* Увеличение отступов */
   width: 100%;
   color: #ffffff; /* Белый цвет текста */

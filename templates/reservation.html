@@ -16,16 +16,43 @@
 
 <body>
 
-  
+  <style>
+    .hidden {
+        display: none;
+    }
+  </style>
+
+
+
+
+  <div class="mini-menu">
+    <div id="toggleLanguageButton" class="icons" title="ენის შეცვლა">
+      <i class="bi bi-translate"></i>
+    </div> 
+    <button data-lang="ge" class="btn btn-primary" id="openModalStatisticGe">სტატისტიკა</button>
+    <button data-lang="ru" class="btn btn-primary hidden" id="openModalStatisticRu">Статистика</button>
+    <form id="download_form" action="/download_ved" method="POST">
+      <input type="hidden" name="reis" value="">
+      <input type="hidden" name="selected_date" value="">
+      <button class="bi bi-download" type="submit" id="download_dev"></button>
+    </form>
+  </div>
 
   
   <div class="bus_color">
     <div class="bus_container">
-      <h1 class="bus_header_text">
+      <h1 data-lang="ge" class="bus_header_text">
         {% if reis == '1' %}
-            მგზავრობა თბილისიდან მოსკოვში - {{ d }}
+            თბილისი/მოსკოვი - {{ d }}
         {% elif reis == '2' %}
-            მგზავრობა მოსკოვიდან თბილისში - {{ d }}
+            მოსკოვი/თბილისი - {{ d }}
+        {% endif %}
+      </h1>
+      <h1 data-lang="ru" class="bus_header_text hidden">
+        {% if reis == '1' %}
+            Тбилиси/Москва - {{ d }}
+        {% elif reis == '2' %}
+            Москва/Тбилиси - {{ d }}
         {% endif %}
       </h1>
       <div class="bus">
@@ -174,182 +201,231 @@
     <label id="came_of_count_free">{{ came_of_count_free }}</label>
   </div>
 
-  <div class="buttons_block_stat-ved">
-    <form id="download_form" action="/download_ved" method="POST">
-      <input type="hidden" name="reis" value="">
-      <input type="hidden" name="selected_date" value="">
-      <button type="submit" id="download_dev">ვედომოსტი</button>
-    </form>
-    <button id="openModalStatistic">სტატისტიკა</button>
-
-  </div>
-
-
-
-
-
-
 
 
 
   <!-- Модальное окно -->
   <div id="modal">
-    <div class="exit_ticet_block">
-      <button type="button" class="ticket-button">ბილეთი</button>
-      <button id="delete">წაშლა</button>
-      <button id="exit">დახურვა</button>
-    </div>
-
+    
     <form id="modal-form" data-seat-number="{{ seat_number }}">
-      <h2 class="modal_text_block">ჩაწერეთ მონაცემები:</h2>
-      <input type="hidden" value="" name="old_seat_number">
-      <input type="hidden" value="{{reis}}" name="reis" required readonly><br>
-      <input type="hidden" value="{{d}}" name="selected_date" required readonly><br>
-  
-      <div class="chair_block">
-        <label>ადგილი</label>
-        <input type="text" value="" name="s_n" required ><br>
+      <div class="exit_ticet_block">
+        <button type="button" class="ticket-button bi bi-printer"></button>
+        <button type="button" id="delete" class="bi bi-trash"></button>
+        <button type="button" id="exit" class="bi bi-x-circle"></button>
       </div>
-  
-      <div class="gender_block">
-        <label>სქესი</label>
-        <input type="radio" id="male" name="gender" value="male" required>
-        <label>მმ</label>
-        <input type="radio" id="female" name="gender" value="female" required>
-        <label>მდ</label><br>
+        <h2 data-lang="ge" class="modal_text_block">ჩაწერეთ მონაცემები</h2>
+        <h2 data-lang="ru" class="modal_text_block hidden">Введите данные</h2>
+        <input type="hidden" value="" name="old_seat_number">
+        <input type="hidden" value="{{reis}}" name="reis" required readonly><br>
+        <input type="hidden" value="{{d}}" name="selected_date" required readonly><br>
+        
+        <div class="gender_block">
+          <label data-lang="ge" >სქესი</label>
+          <label data-lang="ru" class="hidden" >Пол</label>
+          <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" id="male" name="gender" value="male" required>
+              <label class="form-check-label" for="male">
+                  <i class="bi bi-gender-male"></i> მმ
+              </label>
+          </div>
+          <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" id="female" name="gender" value="female" required>
+              <label class="form-check-label" for="female" style="color: pink;">
+                  <i class="bi bi-gender-female"></i> მდ
+              </label>
+          </div>
       </div>
-  
-      <div class="fl_name_phone_block">
-        <div class="fl_name_block">
-          <label>სახელი გვარი</label>
-          <input type="text" name="flname" required ><br>
+
+
+        <div class="chair_block">
+            <label data-lang="ge">ადგილი</label>
+            <label data-lang="ru" class="hidden">Место</label>
+            <input type="text" value="" name="s_n" required ><br>
         </div>
-        <div class="phone_block">
-          <label>ტელეფონი</label>
-          <input type="text" name="phone" required ><br>
+        
+
+        
+        <div class="fl_name_phone_block">
+            <div class="fl_name_block">
+                <label data-lang="ge">სახელი გვარი</label>
+                <label data-lang="ru" class="hidden">Имя фамилия</label>
+                <input type="text" name="flname" required ><br>
+            </div>
+            <div class="phone_block">
+                <label data-lang="ge">ტელეფონი</label>
+                <label data-lang="ru" class="hidden">Телефон</label>
+
+                <input type="text" name="phone" required ><br>
+            </div>
         </div>
-      </div>
-  
-      <div class="pass_comm_block">
-        <div class="passport_block">
-          <label>პასპორტი</label>
-          <input type="text" name="pasport"  ><br>
+        
+        <div class="pass_comm_block">
+            <div class="passport_block">
+                <label data-lang="ge">პასპორტი</label>
+                <label data-lang="ru" class="hidden">Пасспорт</label>
+                <input type="text" name="pasport"  ><br>
+            </div>
+            <div class="date_of_birth_block">
+                <label data-lang="ge">დაბადების თარიღი</label>
+                <label data-lang="ru" class="hidden">Дата рождения</label>
+                <input type="text" name="date_of_birth" ><br>
+            </div>
         </div>
-        <div class="date_of_birth_block">
-          <label>თარიღი</label>
-          <input type="text" name="date_of_birth" ><br>
+        
+        <div class="solo-content">
+            <div class="comment_block">
+                <label data-lang="ge">კომენტარი</label>
+                <label data-lang="ru" class="hidden">Комментарий</label>
+                <input type="text" name="comment"  ><br>
+            </div>
         </div>
-      </div>
-      <div class="solo-content">
-        <div class="comment_block">
-          <label>კომენტარი</label>
-          <input type="text" name="comment"  ><br>
-        </div>    
-      </div>  
-      <div class="pay_dest_block">
-        <div class="pay_block">
-          <label>გადახდა</label>
-          <input type="text" name="payment" ><br>
+        
+        <div class="pay_dest_block">
+            <div class="pay_block">
+                <label data-lang="ge">გადახდა</label>
+                <label data-lang="ru" class="hidden">Оплата</label>
+                <input type="text" name="payment" ><br>
+            </div>
+            <div class="destination_block">
+                <label data-lang="ge">დანიშნულების ადგილი</label>
+                <label data-lang="ru" class="hidden">Место назначения</label>
+                <select name="destination" required>
+                    <option value="Москва">Москва</option>
+                    <option value="Тбилиси">Тбилиси</option>
+                    <option value="Тула">Тула</option>
+                    <option value="Воронеж">Воронеж</option>
+                    <option value="Павловск">Павловск</option>
+                    <option value="Богучар">Богучар</option>
+                    <option value="Миллерово">Миллерово</option>
+                    <option value="Каменск-Шахтинск">Каменск-Шахтинск</option>
+                    <option value="Ростов">Ростов</option>
+                    <option value="Тихорецк">Тихорецк</option>
+                    <option value="Кропоткин">Кропоткин</option>
+                    <option value="Армавир">Армавир</option>
+                    <option value="Невинномысск">Невинномысск</option>
+                    <option value="Мин. Воды">Мин. Воды</option>
+                    <option value="Пятигорск">Пятигорск</option>
+                    <option value="Владикавказ">Владикавказ</option>
+                </select><br>
+            </div>
         </div>
-        <div class="destination_block">
-          <label>დანიშნულება</label>
-          <select name="destination" required>
-            <option value="Москва">Москва</option>
-            <option value="Тбилиси">Тбилиси</option>
-            <option value="Тула">Тула</option>
-            <option value="Воронеж">Воронеж</option>
-            <option value="Павловск">Павловск</option>
-            <option value="Богучар">Богучар</option>
-            <option value="Миллерово">Миллерово</option>
-            <option value="Каменск-Шахтинск">Каменск-Шахтинск</option>
-            <option value="Ростов">Ростов</option>
-            <option value="Тихорецк">Тихорецк</option>
-            <option value="Кропоткин">Кропоткин</option>
-            <option value="Армавир">Армавир</option>
-            <option value="Невинномысск">Невинномысск</option>
-            <option value="Мин. Воды">Мин. Воды</option>
-            <option value="Пятигорск">Пятигорск</option>
-            <option value="Владикавказ">Владикавказ</option>
-          </select><br>
+        
+<div class="pay_radio_block">
+    <input type="radio" id="payment_method_plus" name="payment_method" value="+" required>
+    <label for="payment_method_plus">
+        <i class="bi bi-plus-circle"></i>
+        <span data-lang="ge">ნაღდი</span>
+        <span data-lang="ru" class="hidden">Наличка</span>
+    </label>
+    
+    <input type="radio" id="payment_method_card" name="payment_method" value="C" required>
+    <label for="payment_method_card">
+        <i class="bi bi-credit-card"></i>
+        <span data-lang="ge">ბარათი</span>
+        <span data-lang="ru" class="hidden">Карта</span>
+    </label>
+    
+    <input type="radio" id="payment_method_minus" name="payment_method" value="-" required>
+    <label for="payment_method_minus">
+        <i class="bi bi-dash-circle"></i>
+        <span>---</span>
+    </label>
+</div>
+
+<div class="pay_radio_block_two">
+    <input type="radio" id="payment_method_gel" name="payment_method_card" value="GEL" required>
+    <label for="payment_method_gel">₾</label>
+    
+    <input type="radio" id="payment_method_rub" name="payment_method_card" value="RUB" required>
+    <label for="payment_method_rub">₽</label>
+    
+    <input type="radio" id="payment_method_usd" name="payment_method_card" value="USD" required>
+    <label for="payment_method_usd">$</label>
+    
+    <input type="radio" id="payment_method_eur" name="payment_method_card" value="EUR" required>
+    <label for="payment_method_eur">€</label>
+</div>
+        
+        <div class="button_block">
+            <input type="submit" value="დაჯავშნა">
         </div>
-      </div>
-      
-      <div class="pay_radio_block">
-        <input type="radio" name="payment_method" value="+" required>
-        <label>ნაღდი</label>
-        <input type="radio" name="payment_method" value="C" required>
-        <label>ბარათი</label>
-        <input type="radio" name="payment_method" value="-" required>
-        <label>-</label><br>
-      </div>
-      
-      <div class="pay_radio_block_two">
-        <input type="radio" name="payment_method_card" value="GEL" required>
-        <label>₾</label>
-        <input type="radio" name="payment_method_card" value="RUB" required>
-        <label>₽</label>
-        <input type="radio" name="payment_method_card" value="USD" required>
-        <label>$</label>
-        <input type="radio" name="payment_method_card" value="EUR" required>
-        <label>€</label>
-      </div>
-  
-      <div class="button_block">
-        <input type="submit" value="დაჯავშნა">
-      </div>
+        <div class="edit_block">
+            <button type="button" id="edit">რედაქტირება</button>
+        </div>
     </form>
     
-    <div class="edit_block">
-      <button id="edit">რედაქტირება</button>
-    </div>
+    
     <div class="error_block">
-      <div id="error-message"></div>
+        <div id="error-message"></div>
+    </div>
+</div>
+
+<div id="myModalStatistic" class="modal_statistic">
+  <div class="modal_statistic-content">
+    <h2 data-lang="ge" class="statistic_text">სტატისტიკა</h2>
+    <h2 data-lang="ru" class="statistic_text hidden">Статистика</h2>
+    <span class="close-statistic">&times;</span>
+    <div class="diagram_box_block">
+      <div class="diagram_block">
+        <canvas id="myChart1"></canvas>
+      </div>
+      <div class="diagram_block_four">
+        <canvas id="myChart2"></canvas>
+      </div>
+      <div class="diagram_block_two">
+        <canvas id="combinedChart"></canvas>
+      </div>
+      <div class="diagram_block_three">
+        <canvas id="cameChart"></canvas>
+      </div>
+    </div>
+    <div class="statistic_p">
+      <table data-lang="ge">
+        <tr>
+          <th>ლარში გადაიხადა</th>
+          <td>{{ sum_gel_p }}</td>
+        </tr>
+        <tr>
+          <th>ლარში ბარათით გადაიხადა</th>
+          <td>{{ sum_gel_pc }}</td>
+        </tr>
+      </table>
+
+      <table data-lang="ge">
+        <tr>
+          <th>რუბლში გადაიხადა</th>
+          <td>{{ sum_rub_p }}</td>
+        </tr>
+        <tr>
+          <th>რუბლში ბარათით გადაიხადა</th>
+          <td>{{ sum_rub_pc }}</td>
+        </tr>
+      </table>
+
+      <table data-lang="ru" class="hidden">
+        <tr>
+          <th>Оплата в лари</th>
+          <td>{{ sum_gel_p }}</td>
+        </tr>
+        <tr>
+          <th>Оплата в лари на карту</th>
+          <td>{{ sum_gel_pc }}</td>
+        </tr>
+      </table>
+
+      <table data-lang="ru" class="hidden">
+        <tr>
+          <th>Оплата в рублях</th>
+          <td>{{ sum_rub_p }}</td>
+        </tr>
+        <tr>
+          <th>Оплата в рублях на карту</th>
+          <td>{{ sum_rub_pc }}</td>
+        </tr>
+      </table>
     </div>
   </div>
-
-  <div id="myModalStatistic" class="modal_statistic">
-    <div class="modal_statistic-content">
-          <h2 class="statistic_text">სტატისტიკა</h2>
-          <span class="close-statistic">&times;</span>
-          <div class="diagram_box_block">
-              <div class="diagram_block">
-                  <canvas id="myChart1"></canvas>
-              </div>
-              <div class="diagram_block_four">
-                <canvas id="myChart2"></canvas>
-              </div>
-              <div class="diagram_block_two">
-                  <canvas id="combinedChart"></canvas>
-              </div>
-              <div class="diagram_block_three">
-                  <canvas id="cameChart"></canvas>
-              </div>
-          </div>
-          <div class="statistic_p">
-            <table>
-              <tr>
-                <th>ლარში გადაიხადა</th>
-                <td>{{ sum_gel_p }}</td>
-              </tr>
-              <tr>
-                <th>ლარში ბარათით გადაიხადა</th>
-                <td>{{ sum_gel_pc }}</td>
-              </tr>
-            </table>
-            <table>
-              <tr>
-                <th>რუბლში გადაიხადა</th>
-                <td>{{ sum_rub_p }}</td>
-              </tr>
-              <tr>
-                <th> რუბლში	ბარათით გადაიხადა</th>
-                <td>{{ sum_rub_pc }}</td>
-              </tr>
-            </table>
-          </div>
-      </div>
-  </div>
-
+</div>
 
 
 <script>
@@ -854,25 +930,39 @@ ticketButton.addEventListener('click', async () => {
 
 
 
-
-
 <script>
   // Открытие модального окна при нажатии на кнопку
-  document.getElementById("openModalStatistic").addEventListener("click", function() {
-      document.getElementById("myModalStatistic").style.display = "block";
+  document.getElementById("openModalStatisticGe").addEventListener("click", function() {
+    document.getElementById("myModalStatistic").style.display = "block";
+    document.querySelectorAll('[data-lang="ge"]').forEach(function(table) {
+      table.classList.remove('hidden');
+    });
+    document.querySelectorAll('[data-lang="ru"]').forEach(function(table) {
+      table.classList.add('hidden');
+    });
+  });
+
+  document.getElementById("openModalStatisticRu").addEventListener("click", function() {
+    document.getElementById("myModalStatistic").style.display = "block";
+    document.querySelectorAll('[data-lang="ru"]').forEach(function(table) {
+      table.classList.remove('hidden');
+    });
+    document.querySelectorAll('[data-lang="ge"]').forEach(function(table) {
+      table.classList.add('hidden');
+    });
   });
 
   // Закрытие модального окна при нажатии на крестик
   document.querySelector(".close-statistic").addEventListener("click", function() {
-      document.getElementById("myModalStatistic").style.display = "none";
+    document.getElementById("myModalStatistic").style.display = "none";
   });
 
   // Закрытие модального окна при клике вне его
   window.addEventListener("click", function(event) {
-      var modal = document.getElementById("myModalStatistic");
-      if (event.target == modal) {
-          modal.style.display = "none";
-      }
+    var modal = document.getElementById("myModalStatistic");
+    if (event.target === modal) {
+      modal.style.display = "none";
+    }
   });
 
 </script>
@@ -880,10 +970,29 @@ ticketButton.addEventListener('click', async () => {
 
 
 
-
 {% for cat, msg in get_flashed_messages(True) %}
 <div class='flash {{cat}}'>{{msg}}</div>
 {% endfor %}
+
+
+
+
+<script>
+  function toggleLanguage() {
+      var russianElements = document.querySelectorAll('[data-lang="ru"]');
+      var englishElements = document.querySelectorAll('[data-lang="ge"]');
+      
+      russianElements.forEach(function(element) {
+          element.classList.toggle('hidden');
+      });
+      
+      englishElements.forEach(function(element) {
+          element.classList.toggle('hidden');
+      });
+  }
+
+  document.getElementById('toggleLanguageButton').addEventListener('click', toggleLanguage);
+</script>
 
 
 </body>

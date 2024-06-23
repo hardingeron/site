@@ -1,12 +1,14 @@
 body {
   background: linear-gradient(135deg, #2c3e50, #4ca1af);
   background-attachment: fixed;
+  color: #fff;
 }
 
 /* Стили для карточек */
 .card {
   border-radius: 10px;
   margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .card-header {
@@ -29,6 +31,13 @@ body {
   padding: 10px;
   font-size: 1rem;
   background-color: #f8f9fa;
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.form-control:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 /* Стили для кнопок */
@@ -40,4 +49,31 @@ body {
 
 .btn-primary:hover {
   background-color: #0056b3;
+}
+
+/* Стили для заголовков */
+.card-header h5 {
+  margin: 0;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .card {
+    margin: 10px;
+  }
+}
+
+.bg-image_l {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  background-image: url("../images/soccer-football.gif");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.9;
+  z-index: -1;
+  width: 1050px;
+  height: 200px; /* Пример высоты, подберите под ваш дизайн */
 }

@@ -287,7 +287,7 @@
                 <input type="text" name="payment" ><br>
             </div>
             <div class="destination_block">
-                <label data-lang="ge">დანიშნულების ადგილი</label>
+                <label data-lang="ge">დანიშნულებია</label>
                 <label data-lang="ru" class="hidden">Место назначения</label>
                 <select name="destination" required>
                     <option value="Москва">Москва</option>
@@ -328,7 +328,7 @@
     <input type="radio" id="payment_method_minus" name="payment_method" value="-" required>
     <label for="payment_method_minus">
         <i class="bi bi-dash-circle"></i>
-        <span>---</span>
+        <span> ---</span>
     </label>
 </div>
 
@@ -362,9 +362,9 @@
 
 <div id="myModalStatistic" class="modal_statistic">
   <div class="modal_statistic-content">
+    <span class="close-statistic">&times;</span>
     <h2 data-lang="ge" class="statistic_text">სტატისტიკა</h2>
     <h2 data-lang="ru" class="statistic_text hidden">Статистика</h2>
-    <span class="close-statistic">&times;</span>
     <div class="diagram_box_block">
       <div class="diagram_block">
         <canvas id="myChart1"></canvas>
@@ -427,7 +427,7 @@
   </div>
 </div>
 
-
+ 
 <script>
 const modal = document.getElementById('modal');
 const modalForm = document.getElementById('modal-form');

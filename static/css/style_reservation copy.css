@@ -131,7 +131,7 @@ margin-left: 20px;
   top: 55%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #444654;
+  background: linear-gradient(135deg, #3e4a59, #1d2733);
   display: none;
   align-items: center; /* Центрируем содержимое по горизонтали */
   justify-content: center; /* Центрируем содержимое по вертикали */

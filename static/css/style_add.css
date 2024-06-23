@@ -5,6 +5,8 @@ body {
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
+  width: 200%;
+  height: 200%;
 }
 
 
@@ -44,8 +46,7 @@ body {
 
 
 .add_block {
-  width: 570px;
-  height: 800px;
+  padding: 10px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -65,7 +66,6 @@ h2 {
   font-size: 32px; /* Размер шрифта */
   text-align: center; /* Выравнивание текста по центру */
   text-transform: uppercase; /* Преобразование текста в верхний регистр */
-  width: 700px;
 }
 
 
@@ -145,7 +145,7 @@ h2 {
 .recipient_block input {
   border: none;
   border-radius: 5px;
-  padding: 5px;
+  padding: 20px;
   font-size: 16px;
   margin-top: 2px;
   width: 230px;
@@ -167,7 +167,7 @@ h2 {
   width: 130px;
   border: none;
   border-radius: 5px;
-  padding: 5px;
+  padding: 20px;
   font-size: 16px;
   margin-top: 2px;
   height: 20px;
@@ -232,7 +232,7 @@ textarea[name="inventory"]:focus {
   border: none;
   border-radius: 5px;
   padding: 5px;
-  height: 30px;
+  height: 40px;
   font-size: 16px;
   margin-top: 2px;
   width: 140px;
@@ -326,9 +326,87 @@ textarea[name="inventory"]:focus {
 .payment_currency label,
 .departure_status_block label {
   color: #d2d2d2;
-  height: 30px;
+
 }
 
 .radio-label-text {
   font-size: 30px;
 }
+
+
+
+
+
+/* Устройства шириной до 480px (обычно смартфоны) */
+@media only screen and (max-width: 480px) {
+  .sender_block input, .recipient_block input {
+    width: 170px;
+  }
+  textarea[name="inventory"] {
+    width: 355px;
+  }
+  .description {
+    width: auto;
+  }
+  .information_one_block input, .information_two_block input {
+    width: 100%;
+  }
+  .weight_block, .responsibility_block, .passport_block, .price, .city, .photo_block, #city-select {
+    width: 96px;
+  }
+  .pay {
+    /* display: table-column; */
+    height: auto;
+  }
+  .pay > *:not(:last-child) {
+    margin-right: 0px;
+  }
+  .Payment_method, .payment_currency {
+    width: 108px;
+  }
+  .add_block {
+    margin-top: 110px;
+  }
+  /* Здесь ваши стили для смартфонов */
+}
+
+/* Устройства шириной от 481px до 767px (обычно большие смартфоны и маленькие планшеты) */
+@media only screen and (min-width: 481px) and (max-width: 767px) {
+  .sender_block input, .recipient_block input {
+    width: 170px;
+  }
+  textarea[name="inventory"] {
+    width: 355px;
+  }
+  .description {
+    width: auto;
+  }
+  .information_one_block input, .information_two_block input {
+    width: 100%;
+  }
+  .weight_block, .responsibility_block, .passport_block, .price, .city, .photo_block, #city-select {
+    width: 96px;
+  }
+  .pay {
+    /* display: table-column; */
+    height: auto;
+  }
+  .pay > *:not(:last-child) {
+    margin-right: 0px;
+  }
+  .Payment_method, .payment_currency {
+    width: 108px;
+  }
+  .add_block {
+    margin-top: 110px;
+  }
+  /* Здесь ваши стили для больших смартфонов и маленьких планшетов */
+}
+
+
+
+
+
+/* * {
+  outline: 4px solid green !important;
+} */

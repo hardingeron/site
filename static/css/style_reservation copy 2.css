@@ -194,13 +194,120 @@ background: linear-gradient(135deg, #2c3e50, #4ca1af); */
   
   
   
-
+  
+  /*----------------------------------------------------------------------------------------`-------`---------`-------------`------------`------------`--------------`
+  /* Стили для модального окна */
+  .modal_statistic {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    color: #d2d2d2;
+  }
+  
+  .modal_statistic-content {
+    background-color: #353742;
+    margin: 1% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 850px;
+    height: 600px;
+    position: relative;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+  
+  .close, .close-statistic {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* Стили для контейнера диаграмм */
+  .diagram_box_block {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    height: 400px;
+  
+    
+  }
+  
+  /* Стили для каждой диаграммы */
+  .diagram_block, .diagram_block_two, .diagram_block_three, .diagram_block_four {
+    flex: 1;
+    margin: 0 10px;
+    padding: 20px;
+    border-radius: 10px;
+  
+  }
+  
+  /* Стили для canvas внутри диаграммы */
+  canvas {
+    background-color: #444654;
+    border-radius: 10px;
+    box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .statistic_text {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 30px;
+  }
+  
+  
+  
   
   
   .yellow-text {
     color: yellow;
   }
   
+  
+  
+  .statistic_p {
+    margin: 10px auto 0;
+    text-align: center;
+    width: 600px;
+    display: flex;
+  }
+  
+  
+  
+  
+  .statistic_p table {
+    border-collapse: collapse;
+    width: 300px;
+  }
+  
+  .statistic_p > *:not(:last-child) {
+    margin-right: 60px;
+  }
+  
+  .statistic_p th, .statistic_p td {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #d2d2d2;
+  }
+  
+  .statistic_p th {
+    background-color: #444654;
+  }
+  
+  
+  .statistic_p td {
+    background-color: #444654;
+  }
+
+
+ 
+
 /* стиль дял мини меню */
 .mini-menu {
   background-color: #4ca1af;
@@ -472,7 +579,7 @@ button:hover, .btn:hover {
   }
   
   .exit_ticet_block, .edit_block, .error_block {
-      /* flex-direction: column; */
+      flex-direction: column;
       align-items: center;
   }
   
@@ -482,7 +589,7 @@ button:hover, .btn:hover {
   }
 
   .gender_block, .fl_name_phone_block, .pass_comm_block, .pay_dest_block {
-      /* flex-direction: column; */
+      flex-direction: column;
       align-items: flex-start;
   }
 
@@ -532,100 +639,3 @@ button:hover, .btn:hover {
 .button_block input {
   width: 100%;
 }
-
-
-/* Модальное окно для статистики */
-
-.modal_statistic {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1000; /* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.6); /* Black w/ opacity */
-}
-
-.modal_statistic-content {
-  background: linear-gradient(135deg, #3e4a59, #1d2733);
-  margin: 5% auto; /* 5% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; /* Could be more or less, depending on screen size */
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  position: relative;
-  max-width: 1000px; /* Max width for larger screens */
-}
-
-.close-statistic {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.close-statistic:hover,
-.close-statistic:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.statistic_text {
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  margin-top: 0;
-}
-
-.diagram_box_block {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  margin-top: 20px;
-}
-
-.diagram_block,
-.diagram_block_four,
-.diagram_block_two,
-.diagram_block_three {
-  width: 45%;
-  margin-bottom: 20px;
-}
-
-.statistic_p {
-  margin-top: 20px;
-  font-family: 'Arial', sans-serif;
-  color: #333;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
-
-table th,
-table td {
-  background-color: #505968;
-  border: 1px solid #055263;
-  padding: 8px;
-  text-align: left;
-  color: white;
-}
-
-
-.hidden {
-  display: none;
-}
-
-canvas {
-  background: linear-gradient(135deg, #2c3e50, #086979);
-  border-radius: 10px;
-  box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
-  min-height: 200px;
-}
-

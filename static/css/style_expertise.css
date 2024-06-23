@@ -1,3 +1,12 @@
+body {
+    background: linear-gradient(135deg, #2c3e50, #4ca1af);
+    background-attachment: fixed;
+    font-family: 'Arial', sans-serif;
+    color: #f1f1f1;
+    margin: 0;
+    padding: 0;
+  }
+
 .table_block {
     display: flex;
     flex-direction: column;
@@ -90,7 +99,7 @@ h1 {
     justify-content: center; /* Распределяем элементы равномерно по горизонтали */
     align-items: center; /* Выравниваем элементы по центру по вертикали (по желанию) */
     width: 950px;
-    background-color: #444654;
+    background: linear-gradient(135deg, #3e4a59, #1d2733);
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.501);
 
@@ -146,7 +155,7 @@ h1 {
 
 
 .ss {
-    background-color: #444654;
+    background: linear-gradient(135deg, #3e4a59, #1d2733);
     width: 400px;
     display: flex;
     justify-content: space-between; /* Равномерно распределяем элементы по горизонтали */
@@ -208,7 +217,7 @@ h1 {
     justify-content: center; /* Центрируем элементы по горизонтали */
     margin: 20px auto; /* Устанавливаем автоматические отступы слева и справа для центрирования */
     width: 400px;
-    background-color: #444654;
+    background: linear-gradient(135deg, #3e4a59, #1d2733);
     border-radius: 10px;
     color: #8e8ea0;
     height: 77px;

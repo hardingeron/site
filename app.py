@@ -23,13 +23,13 @@ from sqlalchemy.exc import SQLAlchemyError
 import re
 from openpyxl.drawing.image import Image
 from decimal import Decimal
-
+from docx import Document
 
 import json
 
 import random
+from io import BytesIO
 
- 
 import qrcode
 
 
@@ -184,6 +184,150 @@ class EditParcelView(MethodView):
             return jsonify({'message': 'რედაქტირებამ წარმატებით ჩაიარა', 'success': True}), 200
         except Exception as e:
             return jsonify({'message': f'დაფიქსირდა შეცდომა : {e}', 'success': False}), 400
+
+
+
+
+class DocumentsView(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        access = ['admin', 'Tbilisi']
+        if current_user.role not in access:
+            flash('თქვენ არ გაქვთ წვდომა ამ გვერდზე', 'error')
+            return redirect(url_for('index'))
+    
+        return render_template('documents.html')
+
+
+class CreateDocxRequestView(MethodView):
+    decorators = [login_required]
+
+    def post(self):
+        # Получаем данные из формы
+        ka_name = request.form['ka_f-l_name']
+        ge_name = request.form['ge_f-l_name']
+        personal_id = request.form['id']
+        phone = request.form['phone']
+        tracking = request.form['tracking']
+
+        # Открываем существующий документ
+        doc = Document('documents/request.docx')
+
+        # Словарь замен
+        replacements = {
+            "[ka_f/l name]": ka_name,
+            "[en f/l_name]": ge_name,
+            "[ID]": personal_id,
+            "[phone]": phone,
+            "[tracking]": f'MP{tracking}'
+        }
+
+        # Проходим по каждому параграфу в документе
+        for paragraph in doc.paragraphs:
+            for key, value in replacements.items():
+                if key in paragraph.text:
+                    # Заменяем текст
+                    paragraph.text = paragraph.text.replace(key, value)
+
+        # Сохраняем документ в память (BytesIO)
+        file_stream = BytesIO()
+        doc.save(file_stream)
+        file_stream.seek(0)
+
+        # Отправляем документ на скачивание
+        file_name = f'{ka_name}.docx'
+        return send_file(file_stream, as_attachment=True, download_name=file_name)
+
+
+
+class CreateDocxGetTransportingInvoiceView(MethodView):
+    decorators = [login_required]
+
+    def post(self):
+        # Получаем данные из формы
+        date = request.form['date']
+        payer = request.form['payer']
+        code = request.form['code']
+        tracking = request.form['tracking']
+        quantity = request.form['quantity']
+        price = request.form['price']
+        broker_service = request.form.get('broker_service', 'No')
+
+        tot_transp = int(price) * int(quantity)
+
+        if broker_service == 'on':
+            tot_pri = tot_transp + 15
+
+            replacements = {
+            "[date]": date,
+            "[payer]": payer,
+            "[code]": code,
+            "[tracking]": f'MP{tracking}',
+            "[quantity]": quantity,
+            "[price]": price,
+            "[tot_transp]": f"{tot_transp:.2f}",
+            "[tot_pri]": f"{tot_pri:.2f}",
+            "[2]": "2",
+            "[საბროკერო მომსახურეობა]": "საბროკერო მომსახურეობა",
+            "[ერთ]": "ერთ",
+            "[1]": "1",
+            "[15]": "15"
+        }
+        else:
+            tot_pri = tot_transp
+
+            replacements = {
+            "[date]": date,
+            "[payer]": payer,
+            "[code]": code,
+            "[tracking]": f'MP{tracking}',
+            "[quantity]": quantity,
+            "[price]": price,
+            "[tot_transp]": f"{tot_transp:.2f}",
+            "[tot_pri]": f"{tot_pri:.2f}",
+            "[2]": "",
+            "[საბროკერო მომსახურეობა]": "",
+            "[ერთ]": "",
+            "[1]": "",
+            "[15]": ""
+        }
+        # Открываем существующий документ
+        doc = Document('documents/transportation invoice.docx')
+
+
+        # Функция для замены текста в ячейке
+        def replace_text_in_cell(cell, replacements):
+            for key, value in replacements.items():
+                if key in cell.text:
+                    cell.text = cell.text.replace(key, value)
+
+        # Проходим по каждому параграфу в документе
+        for paragraph in doc.paragraphs:
+            for key, value in replacements.items():
+                if key in paragraph.text:
+                    # Заменяем текст
+                    paragraph.text = paragraph.text.replace(key, value)
+
+        # Проходим по каждой таблице в документе
+        for table in doc.tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    replace_text_in_cell(cell, replacements)
+
+        # Сохраняем документ в память (BytesIO)
+        file_stream = BytesIO()
+        doc.save(file_stream)
+        file_stream.seek(0)
+
+        # Отправляем документ на скачивание
+        file_name = f'Transporting_Invoice_{payer}.docx'
+        return send_file(file_stream, as_attachment=True, download_name=file_name)
+
+
+app.add_url_rule('/documents', view_func=DocumentsView.as_view('documents'))
+app.add_url_rule('/create_docxrequest', view_func=CreateDocxRequestView.as_view('create_docxrequest'))
+app.add_url_rule('/create_transporting_invoice', view_func=CreateDocxGetTransportingInvoiceView.as_view('create_transporting_invoice'))
 
 
 
@@ -495,7 +639,6 @@ def save_data():
 @login_required
 def edit_booking():
     if request.method == 'POST':
-        print('aaaaaaaaaaaaaaaaa', request.form.get('date_of_birth'))
         seat_number = request.form.get('seat_number')
         old_seat_number = request.form.get('old_seat_number')  # Получаем старое место
         gender = request.form.get('gender')
@@ -621,7 +764,7 @@ def generate_ticket():
         selected_date = request.form.get('selected_date')
 
         # Загружаем шаблон Excel-файла
-        template_path = 'ticket.xlsx'
+        template_path = 'documents/ticket.xlsx'
         workbook = load_workbook(template_path)
         sheet = workbook.active
 
@@ -631,7 +774,8 @@ def generate_ticket():
             Booking.data == selected_date,
             Booking.position == s_n
         ).first()
-        print(booking.destination)
+       
+
         if booking:
             booking.action = 'yes'
             db.session.commit()  # Сохранение изменений в базе данных
@@ -713,24 +857,17 @@ def generate_ticket():
             sheet.add_image(img, "X10")
 
 
+            # Сохраняем Excel в память
+            output = BytesIO()
+            workbook.save(output)
+            output.seek(0)
 
+            # Отправляем файл для скачивания
+            return send_file(output, as_attachment=True, download_name=f'ticket-{s_n}_for{selected_date}.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
-
-
-            # Генерируем имя для сохраняемого файла
-            output_filename = f'bileti.xlsx'
-
-            # Сохраняем файл
-            workbook.save(output_filename)
-
-            # Отправляем файл в ответе с правильными заголовками
-            return send_file(
-                output_filename,
-                as_attachment=True,
-                download_name=output_filename
-            )
         else:
             return jsonify({'success': False, 'message': 'Данные не найдены'})
+
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)})
 

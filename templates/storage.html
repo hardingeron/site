@@ -21,7 +21,7 @@
                 <div class="card-body bg-light">
                     <form id="add-form" action="/save">
                         <div class="form-group">
-                            <input type="text" name="shelf" id="add_shelf" value="{{ last }}" autocomplete="off" placeholder="თარო" class="form-control">
+                            <input type="text" name="shelf" id="add_shelf" value="" autocomplete="off" placeholder="თარო" class="form-control">
                         </div>
                         <div class="form-group">
                             <textarea name="trecing" id="add_trecing" autocomplete="off" placeholder="თრექინგები" class="form-control"></textarea>
@@ -118,7 +118,7 @@ $(document).ready(function() {
         var inputValue = $(this).val().trim(); // Получаем текущее значение поля
 
         // Регулярное выражение для поиска значения между "/X\" (например, /2\ или /ABC\)
-        var match = inputValue.match(/\/(.*?)\\/);
+        var match = inputValue.match(/\|(.*?)\\/);
 
         if (match) { // Если найдено совпадение
             var shelfValue = match[1]; // Получаем текст между слэшами
@@ -129,7 +129,7 @@ $(document).ready(function() {
             // Используем setTimeout для задержки и установки значения shelf после отправки данных
             setTimeout(function() {
                 $('#add_shelf').val(shelfValue); // Заменяем значение в поле "shelf" на найденное
-            }, 100); // 100 мс задержка, можно регулировать при необходимости
+            }, 400); // 100 мс задержка, можно регулировать при необходимости
         }
     });
 

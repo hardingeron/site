@@ -206,7 +206,6 @@
 
   <!-- Модальное окно -->
   <div id="modal">
-    
     <form id="modal-form" data-seat-number="{{ seat_number }}">
       <div class="exit_ticet_block">
         <button type="button" class="ticket-button bi bi-printer"></button>
@@ -682,41 +681,51 @@ downloadButton.addEventListener('click', () => {
 // ... Ваш текущий код ...
 
 // Объявляем переменную для кнопки "Билет"
-const ticketButton = document.querySelector('.ticket-button');
+document.addEventListener('DOMContentLoaded', function() {
+    const ticketButton = document.querySelector('.ticket-button');
+    const modal = document.getElementById('modal'); // Получаем модальное окно
+    const modalForm = document.getElementById('modal-form'); // Получаем форму внутри модального окна
 
-ticketButton.addEventListener('click', async () => {
-  const formData = new FormData();
-  formData.append('s_n', selectedSeatNumber);
-  formData.append('reis', modalForm.querySelector('[name="reis"]').value);
-  formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
+    ticketButton.addEventListener('click', async () => {
+        const formData = new FormData();
+        formData.append('s_n', selectedSeatNumber);
+        formData.append('reis', modalForm.querySelector('[name="reis"]').value);
+        formData.append('selected_date', modalForm.querySelector('[name="selected_date"]').value);
 
-  const response = await fetch('/ticket', {
-    method: 'POST',
-    body: formData,
-  });
+        const response = await fetch('/ticket', {
+            method: 'POST',
+            body: formData,
+        });
 
-  if (response.ok) {
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
 
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = response.headers.get('content-disposition').split('filename=')[1];
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = response.headers.get('content-disposition').split('filename=')[1];
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
 
-    console.log('Билет успешно сгенерирован');
+            console.log('Билет успешно сгенерирован');
 
-    // Перезагрузите страницу
-    window.location.reload();
-  } else {
-    const responseData = await response.json();
-    console.error('Ошибка при генерации билета:', responseData.message);
-    const errorMessageElement = document.getElementById('error-message');
-    errorMessageElement.textContent = responseData.message;
-    errorMessageElement.style.display = 'block';
-  }
+            // Обновление класса у элемента
+            const seatElement = document.querySelector(`.seat[data-seat-number="${selectedSeatNumber}"]`);
+            if (seatElement) {
+                seatElement.classList.add('gray-background');
+            }
+
+            // Закрытие модального окна
+            modal.style.display = 'none'; // Или используйте класс, который скрывает модальное окно
+        } else {
+            const responseData = await response.json();
+            console.error('Ошибка при генерации билета:', responseData.message);
+            const errorMessageElement = document.getElementById('error-message');
+            errorMessageElement.textContent = responseData.message;
+            errorMessageElement.style.display = 'block';
+        }
+    });
 });
 
 // ... Остальной код ...

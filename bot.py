@@ -25,7 +25,7 @@ async def start_handler(message: types.Message):
     if message.from_user.id not in user_id:
         user_id.append(message.from_user.id)
     else:
-        await bot.send_message(chat_id=message.from_user.id, text='თქვენ უკე ხართ ჩატში')
+        await bot.send_message(chat_id=message.from_user.id, text='თქვენ უკვე ხართ ჩატში')
 
 
 

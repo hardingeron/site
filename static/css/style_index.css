@@ -13,8 +13,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1; /* Позволяет контейнеру растягиваться */
-  padding-top: 30px;
 }
 
 .hexagon-row {
@@ -84,7 +82,7 @@ body {
 }
 
 .hexagon .content i {
-  font-size: 2rem; /* Увеличение размера иконки */
+  font-size: 1.7rem; /* Увеличение размера иконки */
   margin-bottom: 10px; /* Увеличение промежутка между иконкой и текстом */
 }
 
@@ -110,7 +108,6 @@ a:hover {
 /* Стили для футера */
 .footer {
   background-color: #4ca1af;
-  padding: 40px 20px; /* Увеличение отступов */
   width: 100%;
   color: #ffffff; /* Белый цвет текста */
   display: flex;
@@ -382,6 +379,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     height: 140px;
   }
 
+
   .hexagon p {
     font-size: 10px;
   }
@@ -393,6 +391,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 100px;
     height: 120px;
   }
+
 }
 
 /* Медиа-запрос для очень маленьких экранов */
@@ -401,6 +400,8 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     width: 70px;
     height: 90px;
   }
+
+
 
 }
 

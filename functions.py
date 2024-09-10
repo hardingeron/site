@@ -14,7 +14,8 @@ from sqlalchemy import func
 from models import Purcell, Booking, Storage, Forms
 import re
 import xml.etree.ElementTree as ET
-
+from openpyxl.styles import Alignment, Font
+import random
 
 #===========================================================================================================================================================
 #-------------------------- ДЛЯ ОБРАБОТЧИКА /add
@@ -618,3 +619,147 @@ def xml_convertor():
     json_file_path = 'expertise_data.json'
     with open(json_file_path, 'w', encoding='utf-8') as json_file:
         json_file.write(json_data)
+
+
+
+
+
+
+# стили для экселя
+
+def apply_styles_to_cell(sheet, cell, value):
+    bold_font = Font(bold=True)
+    sheet[cell] = value
+    sheet[cell].alignment = Alignment(horizontal='center', vertical='center')
+    sheet[cell].font = bold_font
+
+
+
+#-------------
+def random_names():
+    names = [
+    "ALEXANDER IVANOV", "EKATERINA PETROVA", "DMITRY SMIRNOV", "ANNA FEDOROVA", "SERGEI KOZLOV",
+    "MARIA NOVIKOVA", "IVAN SOKOLOV", "ANASTASIA KUZNETSOVA", "ARTEM POPOV", "OLGA MOROZOVA",
+    "VLADIMIR KUZMIN", "IRINA PAVLOVA", "NIKOLAI ZAKHAROV", "YULIA SEMENOVA", "PAVEL KONDRATOV",
+    "SVETLANA SMIRNOVA", "ANDREI FEDOROV", "ELENA VASILIEVA", "ANDREY LEBEDEV", "TATIANA KUZNETSOVA",
+    "ALEXEY MEDVEDEV", "NATALIA YAKOVLEVA", "VIKTORIA PROKOPIEVA", "MIKHAIL SOKOLOV", "ANGELINA KONOVALENKO",
+    "RUSLAN VORONIN", "YANA PETROVA", "IGOR KARPOV", "VALERIA STEPANOVA", "ANTONINA MALININA", "KONSTANTIN ZAITSEV",
+    "MARINA ROMANOVA", "PAVEL SERGEYEV", "OLGA KIRILLOVA", "ILYA KUZNETSOV", "KSENIA MOROZOVA", "DENIS POPOV",
+    "VICTORIA KOVALENKO", "YURY ANTONOV", "JULIA KOROLEVA", "ALEXANDRA SIDOROVA", "MAXIM KUZMIN", "LARISA PAVLOVA",
+    "SERGEY GORSHKOV", "ANNA KONONOVA", "ALEKSEI FOMIN", "EKATERINA KOROLEVA", "ARSENII VOLKOV", "IRINA ZAKHAROVA",
+    "ALEKSANDR GORBUNOV", "ALEXANDRA KUZNETSOVA", "ANDREI MOROZOV", "VICTORIA SEMENOVA", "MAXIM FEDOROV",
+    "OLGA PETROV", "KIRILL KONDRATOV", "YULIA ROMANOVA", "DENIS KOVALENKO", "SVETLANA ZAKHAROVA",
+    "ANTONINA SIDOROVA", "DMITRY LEBEDEV", "EKATERINA SERGEYEVA", "ILYA KIRILLOV", "MARIA GORBUNOVA",
+    "IGOR MALININ", "ANNA KUZMINA", "ARTEM ZAITSEV", "ELENA KONOVA", "NIKOLAI GORSHKOV", "VALERIA PAVLOVA",
+    "SERGEY PROKOPIEV", "ANGELINA MEDVEDEVA", "VLADIMIR ANTONOV", "TATIANA KOROLEVA", "ANDREY VORONIN",
+    "LARISA YAKOVLEVA", "PAVEL KARPOV", "NATALIA KIRKOROVA", "MIKHAIL ZAITSEV", "KSENIA SOKOLOVA",
+    "YURY KUZNETSOV", "MARINA KUZMINA", "ALEKSANDR FOMIN", "ELENA VORONOVA", "ALEXEI KIRILLOV",
+    "VALERIYA KUZNETSOVA", "VIKTOR KOROLEV", "ANNA SMIRNOVA", "ANDREY SOKOLOV", "OLGA GORBUNOVA",
+    "ALEKSANDRA ROMANOVA", "DMITRIY KUZMIN", "EKATERINA ZAKHAROVA", "MAXIM KARPOV", "YANA KONONOVA",
+    "VLADIMIR LEBEDEV", "MARIYA KIRKOROVA", "ANDREY PETUKHOV", "DARIA SMOLYAKOVA", "ALEXEY KONDRATENKO", 
+    "SVETLANA IVANOVA", "IGOR SEMYONOV", "MARINA LUKINA", "ANDREI SOKOLOVSKY", "EKATERINA KAZAKOVA",
+    "VLADIMIR PETROVICH", "ANNA DUBROVSKAYA", "DMITRY STEPANOV", "ELENA FEDOTOVA", "ALEXANDER ROMANOV",
+    "OLGA GAVRILOVA", "MAXIM TARASOV", "YULIA KORNEEVA", "NIKOLAI SHIROKOV", "MARIA TIMOFEEVA",
+    "PAVEL VASILIEV", "EKATERINA KOSHKINA", "DMITRIY MOROZOV", "NATALIA KOVALEVSKAYA", "ANDREY KOZLOV",
+    "SVETLANA EGOROVA", "SERGEY BORISOV", "ANASTASIA EGOROVA", "ALEXANDER BELIAKOV", "EKATERINA LEBEDEVA",
+    "DMITRY KUZMIN", "ANNA ZAKHAROVA", "YURY LARIN", "TATIANA FROLOVA", "ANDREY LUKIN", "ELENA ZAITSEVA",
+    "ALEXEY SMIRNOV", "MARINA PAVLOVA", "ANTON KISELEV", "IRINA KARPOVA", "DMITRIY TITOV", "EKATERINA ZAITSEVA",
+    "VLADIMIR LEBEDIN", "OLGA KUZNETSOVA", "NIKOLAI BELIAEV", "ANASTASIA SMIRNOVA", "IGOR ZHDANOV",
+    "MARIA BELYAEVA", "ANDREY KURAEV", "EKATERINA ORLOVA", "ALEXANDER PAVLOV", "ANNA KUZMINA", "VLADIMIR RODIN",
+    "SVETLANA YAKOVLEVA", "DMITRY DMITRIEV", "YULIA GRIGORIEVA", "VLADIMIR NIKOLAEV", "TATIANA PETROVA",
+    "MAXIM KUZNETSOV", "EKATERINA NOVIKOVA", "ANDREI ZUBKOV", "NATALIA MOROZOVA", "SERGEY BORISOV",
+    "ALEXANDRA SOKOLOVA", "DMITRY PETROV", "ELENA KONSTANTINOVA", "VLADIMIR GAVRILOV", "ANNA SMIRNOVA",
+    "NIKOLAI KISELEV", "MARIA KOMAROVA", "ANDREY TIMOFEEV", "OLGA SMIRNOVA", "VLADIMIR VORONOV",
+    "IRINA IVANOVA", "DMITRY EGOROV", "EKATERINA KAZANTSEVA", "ANDREY ZHDANOV", "MARIA SEMENOVA",
+    "MAXIM EGOROV", "YULIA KISELEVA", "ALEXANDER KUZNETSOV", "ANASTASIA GAVRILOVA",
+    "VLADIMIR KISELEV", "EKATERINA PAVLOVA", "DMITRY BORISOV", "MARIA ZHDANOVA", "ANDREY KUZNETSOV",
+    "EKATERINA SERGEEVA", "SERGEY PAVLOV", "TATIANA SHIROKOVA", "ALEXANDER FROLOV", "ANNA PETROVA",
+    "NIKOLAI EGOROV", "MARIA KOVALEVSKAYA", "ANDREY ZINOVIEV", "ELENA LUKINA", "DMITRY ZHUKOV",
+    "SVETLANA KULIKOVA", "VLADIMIR ZAKHAROV", "IRINA ZHDANOVA", "ANDREI KUZNETSOV", "EKATERINA PONOMAREVA",
+    "DMITRY SOKOLOV", "MARIA SHIROKOVA",
+    ]
+    return random.choice(names)
+
+
+
+# expertise 
+
+def find_duplicates_in_json(json_file_path, tracking):
+    with open(json_file_path, 'r', encoding='utf-8') as json_file:
+        expertise_data = json.load(json_file)
+
+    # Ищем дубликаты
+    duplicates = [key for key, value in expertise_data.items()
+                  if key != tracking and value[3] == expertise_data[tracking][3] and value[5] == expertise_data[tracking][5]]
+    return duplicates
+
+
+def status_checker(trecing):
+    if len(trecing) < 2:
+        return 'არასწორი მონაცემების ფორმატი'
+
+    status_type = trecing[0]
+    status_detail = trecing[1]
+
+    if status_type == 'გასატანი' and status_detail == 'დაუბეგრავი':
+        return 'დაუბეგრავი!'
+    elif status_type == 'გასატანი' and status_detail == 'დაბეგვრადი':
+        return 'დაბეგვრადი დასრულებული!'
+    elif status_type == 'დასადეკლარირებელი' and status_detail == 'დაბეგვრადი':
+        return 'დაბეგვრადი! არ არის მზად!'
+    elif status_detail == 'გაურკვეველი':
+        return 'ყვითელი!'
+    else:
+        return 'ამოუცნობიუ სტატუსი'
+
+
+def random_quote():
+    # Загружаем цитаты из JSON файла
+    with open('documents/quotes.json', 'r', encoding='utf-8') as file:
+        quotes = json.load(file)['quotes']
+    
+    # Выбираем случайную цитату
+    return random.choice(quotes)
+
+
+
+
+
+
+
+#  добавка проверка пользователей для отправлениия шаблон
+
+
+
+
+def load_data(file_path):
+    """Загрузить данные из JSON-файла."""
+    try:
+        with open(file_path, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
+def save_data(file_path, data):
+    """Сохранить данные в JSON-файл."""
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
+
+def add_record_to_json(file_path, name, sender_phone, recipient, recipient_phone):
+    """Добавить запись в JSON-файл, если ее еще нет."""
+    # Загрузить текущие данные
+    data = load_data(file_path)
+    
+    # Проверить, существует ли запись
+    if name not in data:
+        # Добавить новую запись
+        data[name] = {
+            "sender phone": sender_phone,
+            "recipient": recipient,
+            "recipient phone": recipient_phone
+        }
+        # Сохранить обновленные данные
+        save_data(file_path, data)
+        print(f"Запись для {name} добавлена.")
+    else:
+        print(f"Запись для {name} уже существует.")

@@ -1,112 +1,186 @@
-
-.bg-image_l {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: url("../images/2.jpeg");
-  background-size: contain;
-  background-repeat: no-repeat;
-  opacity: 0.9;
-  z-index: -1;
-}
-
+/* Подключаем грузинский шрифт */
 body {
-  background: #26282f;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Noto Sans Georgian', sans-serif;
   margin: 0;
   padding: 0;
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
 }
 
+
+
+/* Основные стили для окна формы */
 .login-window {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+  margin: auto;
+  max-width: 600px; /* Увеличиваем максимальную ширину формы */
+  width: 90%; /* Ширина формы на экране */
+  box-sizing: border-box;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%); /* Центрирование формы по вертикали */
 }
 
-.login-form {
-    width: 400px;
-    padding: 30px;
-    background: #444654;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
-    animation: slideIn 0.5s ease;
-}
-
+/* Заголовок формы */
 .login-title {
-  text-align: center;
-  color: #8e8ea0;
-  font-size: 24px;
-  margin-bottom: 30px;
-}
-
-.login-form input[type="text"],
-.login-form input[type="password"] {
-  width: 95%;
-  padding: 10px;
+  color: #333;
+  font-size: 28px; /* Увеличиваем размер заголовка */
   margin-bottom: 20px;
-  border: none;
-  border-radius: 5px;
-  background: #40414f;
-  color: #8e8ea0;
-  font-size: 16px;
+  text-align: center;
 }
 
-.login-form input[type="text"]::placeholder,
-.login-form input[type="password"]::placeholder {
-  color: #8e8ea0;
+/* Стили для формы */
+.login-form {
+  display: flex;
+  flex-direction: column;
 }
 
-.submit-button {
-  display: block;
-  width: 100%;
-  padding: 10px;
+/* Поля ввода */
+.login-form .login-input, .login-form .password-input {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 15px; /* Увеличиваем внутренние отступы */
+  margin-bottom: 15px; /* Отступ между полями */
+  font-size: 16px; /* Увеличиваем размер шрифта */
+}
+
+/* Кнопка отправки */
+.login-form .submit-button {
+  background-color: #0d6efd;
   border: none;
-  border-radius: 5px;
-  background: #333333;
-  color: #8e8ea0;
-  font-size: 16px;
-  font-weight: bold;
+  border-radius: 8px;
+  padding: 15px; /* Увеличиваем внутренние отступы */
+  font-size: 18px; /* Увеличиваем размер шрифта кнопки */
+  color: white;
   cursor: pointer;
-  align-items: center;
-
-  transition: background 0.3s ease;
 }
 
-.submit-button:hover {
-  background: #202020;
+.login-form .submit-button:hover {
+  background-color: #0a58ca;
+}
+
+/* Стили для сообщений об ошибке или успехе */
+.flash {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .flash.success {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  max-width: 300px;
-  padding: 10px;
-  background-color: #389027;
-  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
-  z-index: 9999;
-  border-radius: 5px;
-  color: #fff;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  font-size: 20px;
+  background-color: #d4edda;
+  color: #155724;
 }
 
 .flash.error {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  max-width: 300px;
-  padding: 10px;
-  background-color: #cc0000;
-  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
-  z-index: 9999;
-  border-radius: 5px;
-  color: #fff;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  font-size: 20px;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+
+.justify-content-center {
+  width: 100%;
+}
+
+
+
+/* Основные стили для контейнера анимации */
+.animated-text-container {
+  position: fixed; /* Закрепляем контейнер */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Прячем выходящий за границы текст */
+}
+
+/* Контейнер для текстов */
+.text-wrapper {
+  position: absolute; /* Абсолютное позиционирование */
+  width: 100%; /* Ширина контейнера */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Центрируем по горизонтали */
+}
+
+/* Стили для текста */
+.text-item {
+  padding: 5px;
+  font-size: 20px; /* Размер шрифта */
+  color: rgba(9, 163, 252, 0.774); /* Белый цвет с полупрозрачностью */
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Добавляем тень для лучшего визуального эффекта */
+  white-space: nowrap;
+  font-family: 'Noto Sans Georgian', sans-serif;
+  line-height: 1.5; /* Высота строки */
+  position: absolute; /* Абсолютное позиционирование */
+  width: auto; /* Автоматическая ширина для центрирования текста */
+}
+
+/* Анимации движения текста влево и вправо */
+.move-left {
+  animation: moveLeft 10s linear infinite alternate;
+}
+
+.move-right {
+  animation: moveRight 10s linear infinite alternate;
+}
+
+/* Определение анимации движения текста влево */
+@keyframes moveLeft {
+  0% {
+    transform: translateX(10%); /* Начинает справа, за пределами экрана */
+  }
+  100% {
+    transform: translateX(-10%); /* Достигает левого края и реверсивное движение */
+  }
+}
+
+/* Определение анимации движения текста вправо */
+@keyframes moveRight {
+  0% {
+    transform: translateX(-10%); /* Начинает слева, за пределами экрана */
+  }
+  100% {
+    transform: translateX(10%); /* Достигает правого края и реверсивное движение */
+  }
+}
+
+
+
+
+
+.flash.message {
+  display: block; /* Убедитесь, что оно отображается */
+  position: fixed; /* Закрепляем элемент на странице */
+  bottom: 20px; /* Отступ от нижнего края */
+  right: 20px; /* Отступ от правого края */
+  background-color: rgba(52, 152, 219, 0.9); /* Прозрачный синий фон */
+  color: #fff; /* Белый цвет текста */
+  padding: 15px 30px; /* Внутренние отступы для создания пространства */
+  border-radius: 8px; /* Закругленные углы */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Легкая тень для объема */
+  font-family: 'Arial', sans-serif; /* Шрифт для текста */
+  font-size: 16px; /* Размер шрифта */
+  z-index: 1000; /* Размещаем выше других элементов */
+  animation: slideIn 0.5s ease-out, fadeOut 4s ease-out forwards; /* Анимации появления и исчезновения */
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%); /* Начинаем за пределами экрана справа */
+  }
+  to {
+    transform: translateX(0); /* Появляется на месте */
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1; /* Полностью видимый */
+  }
+  90% {
+    opacity: 1; /* Остается видимым долгое время */
+  }
+  100% {
+    opacity: 0; /* Полностью исчезает */
+    display: none; /* Элемент больше не отображается */
+  }
 }

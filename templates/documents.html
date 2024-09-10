@@ -112,8 +112,33 @@
             </div>
         </div>
     </div>
-    
 
+
+
+
+
+
+
+
+
+    <div class="container mt-5">
+        <h1>Input Excel Column Names</h1>
+        <form action="/manifest_checker" method="post">
+            <div class="form-group">
+                <label for="receiver_first_name_col">Receiver's First Name:</label>
+                <textarea class="form-control" id="receiver_first_name_col" name="receiver_first_name_col" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="receiver_last_name_col">Receiver's Last Name:</label>
+                <textarea class="form-control" id="receiver_last_name_col" name="receiver_last_name_col" rows="5" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="weight_col">Weight:</label>
+                <textarea class="form-control" id="weight_col" name="weight_col" rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 </body>
 
 

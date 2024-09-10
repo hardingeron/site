@@ -29,423 +29,130 @@
 
 
 
-<div class="date_block">
-    <div class="buttons">
-        <div class="buttons_set">
-            <input type="text" class="select_date">
-        </div>
-    </div>
-    <div class="selected_date_block">
-        <ul>
-            {% for record in unique_dates_list %}
-                <li><a href="{{ url_for('expertise', selected_date=record) }}">{{ record }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
-
-<div class="sheet1">
-    <div class="trecing_check_block">
-        <input type="text" placeholder="trecing" id="trecing_checker"></input>
-        <button onclick="checkTrecing()">შემოწმება</button>
-    </div>
-
-    <div class="ss">
-        <div class="xml_block">
-            <input type="file" id="xmlFile" accept=".xml" required>
-            <button id="uploadButton" onclick="uploadFile()">განახლება</button>
-
-        </div>
-    </div>
-</div>
-<div class="add_form">
-    <div class="form-group">
-        <label for="Number">ამანათის ნომერი</label>
-        <input type="text" class="form-control" id="Number" placeholder="Number">
-    </div>
-    <div class="form-group">
-        <label for="tracking">თრექინგი</label>
-        <input type="text" class="form-control" id="tracking" placeholder="Tracking">
-    </div>
-    <div class="form-group">
-        <label for="comment">კოპმენტარი</label>
-        <input class="form-control" id="comment" placeholder="Comment" rows="3"></input>
-    </div>
-    <div class="form-group">
-        <label for="date">თარიღი</label>
-        <input type="date" class="form-control" id="date" value="{{ date }}" readonly>
-    </div>
-    
-
-    <!-- Кнопка для добавления записи -->
-    <div class="form-group">
-        <label></label>
-        <button type="button" class="btn btn-primary" id="addRecordBtn">დამატება</button>
-    </div>
-</div>
-
-
-
-<div class="table_block">
-    <h1>საექსპერტო სიის ჩანაწერები</h1>
-
-    {% if records %}
-        <table border="1" id="recordsTable" class="table_headers">
-            <tr>
-                <th>ID</th>
-                <th>სტატუსი</th>
-                <th>მიმღები</th>
-                <th>წონა</th>
-                <th>ნომერი</th>
-                <th>თრექინგი</th>
-                <th>კომენტარი</th>
-                <th>თარიღი</th>
-                <th>მოქმედება</th>
-            </tr>
-            {% for record in records %}
-                <tr id="row-{{ record.id }}" class="table_values">
-                    <td>{{ record.id }}</td>
-                    <td class="status_color {{ record.status }}">{{ record.status }}</td>
-                    <td>{{ record.recipient }}</td>
-                    <td>{{ record.weight }}</td>
-                    <td>{{ record.Number }}</td>
-                    <td>{{ record.tracking }}</td>
-                    <td>{{ record.comment }}</td>
-                    <td>{{ record.date }}</td>
-                    <td><button class="deleteBtn" data-record-id="{{ record.id }}">წაშლა</button></td>
-                </tr>
-            {% endfor %}
-        </table>
-        
-    {% else %}
-    <table border="1" id="recordsTable" class="table_headers">
-        <tr>
-            <th>ID</th>
-            <th>Status</th>
-            <th>Recipient</th>
-            <th>Weight</th>
-            <th>Number</th>
-            <th>Tracking</th>
-            <th>Comment</th>
-            <th>Date</th>
-            <th>Action</th>
-        </tr>
-    </table>
-    {% endif %}
-</div>
-<div class="excel_convert">
-    <button id="downloadExcel">ექსპორტი</button>
-</div>
-
-
-
-
-
-
-<!-- добавление новой записи -->
-<script>
-    $("#addRecordBtn").click(function() {
-        // Получаем данные из полей ввода
-        var Number = $("#Number").val();
-        var tracking = $("#tracking").val();
-        var comment = $("#comment").val();
-        var date = $("#date").val();
-
-        // Создаем объект данных для отправки на сервер
-        var data = {
-            Number: Number,
-            tracking: tracking,
-            comment: comment,
-            date: date
-        };
-
-        // Отправляем данные на сервер с использованием AJAX
-        $.ajax({
-        type: "POST",
-        url: "/expertise_add_record",
-        contentType: "application/json;charset=UTF-8",
-        data: JSON.stringify(data),
-        success: function(records) {
-            // Выводим сообщение об успешном добавлении записей
-            showMessage('ამანათი წარმატებით დაემატა', true);
-
-
-            // Создаем строки для каждой записи
-            records.forEach(function(response) {
-                // Создаем уникальный ID для строки
-                var rowId = 'row-' + response.id;
-
-                // Определение класса цвета в зависимости от значения статуса
-                var statusColorClass = '';
-                if (response.status === 'დაუბეგრავი') {
-                    statusColorClass = 'დაუბეგრავი';
-                } else if (response.status === 'დაბეგვრადი') {
-                    statusColorClass = 'დაბეგვრადი';
-                } else if (response.status === 'გაურკვეველი') {
-                    statusColorClass = 'გაურკვეველი';
-                }
-
-                // Создание строки таблицы с добавлением класса цвета
-                var newRow = '<tr id="' + rowId + '" class="table_values">' +
-                    '<td>' + response.id + '</td>' +
-                    '<td class="status_color ' + statusColorClass + '">' + response.status + '</td>' +
-                    '<td>' + response.recipient + '</td>' +
-                    '<td>' + response.weight + '</td>' +
-                    '<td>' + response.Number + '</td>' +
-                    '<td>' + response.tracking + '</td>' +
-                    '<td>' + response.comment + '</td>' +
-                    '<td>' + response.date + '</td>' +
-                    '<td><button class="deleteBtn" data-record-id="' + response.id + '">წაშლა</button></td>' +
-                    '</tr>';
-                // Добавляем новую запись к таблице
-                $("#recordsTable").append(newRow);
-            });
-        },
-        error: function(error) {
-            // Выводим сообщение об ошибке
-            showMessage('ამანათი ვერ დამუშავდა!', false);
-            console.log(error);
-        }
-    });
-
-    });
-</script>
-
-
-
-<script>
-    $(document).ready(function() {
-        // Добавляем обработчик событий для кнопок удаления
-        $("#recordsTable").on("click", ".deleteBtn", function() {
-            // Получаем ID записи из атрибута data-record-id
-            var recordId = $(this).data("record-id");
-
-            // Отображаем всплывающее окно с подтверждением
-            var confirmation = confirm("ნამდვილად გსურთ ჩანაწერის წაშლა?");
-
-            // Если пользователь подтвердил удаление, отправляем запрос на удаление с использованием AJAX
-            if (confirmation) {
-                $.ajax({
-                    type: "POST",
-                    url: "/expertise_deleted",
-                    contentType: "application/json;charset=UTF-8",
-                    data: JSON.stringify({ id: recordId }),
-                    success: function(response) {
-                        // Удаляем строку из таблицы без перезагрузки страницы
-                        $("#row-" + recordId).remove();
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            }
-        });
-    });
-</script>
-
-
-
-
-<!-- загрузка xml файла -->
-<script>
-    // Добавление функции uploadFile
-    function uploadFile() {
-        var input = document.getElementById('xmlFile');
-        var file = input.files[0];
-        var dateValue = document.getElementById('date').value; // Получение значения даты
-        var button = document.getElementById('uploadButton'); // Получение кнопки
-
-        // Сохранение оригинального цвета кнопки
-        var originalButtonColor = button.style.backgroundColor;
-
-        // Изменение цвета кнопки на синий и запрет ее нажатия
-        button.style.backgroundColor = 'blue';
-        button.disabled = true;
-
-        var formData = new FormData();
-        formData.append('xmlFile', file);
-        formData.append('date', dateValue); // Добавление значения даты в formData
-
-        $.ajax({
-            url: "{{ url_for('rs_xml') }}",
-            type: 'POST',
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                // Обработка успешного ответа от сервера
-                showMessage(response.message, response.success);
-
-                // Очистка поля с файлом
-                input.value = '';
-
-                // Перезагрузка страницы после успешного выполнения
-                if (response.success) {
-                    window.location.reload();
-                }
-            },
-            error: function(error) {
-                // Обработка ошибки
-                showMessage('Error communicating with the server', false);
-            },
-            complete: function() {
-                // Показать кнопку после завершения запроса (в том числе после ошибки)
-                button.style.backgroundColor = originalButtonColor;
-                button.disabled = false;
-            }
-        });
-    }
-</script>
-
-<!-- выбор даты -->
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        flatpickr(".select_date", {
-            dateFormat: "Y-m-d",
-            locale: "ru",
-            confirmDate: true,
-            onChange: function(selectedDates, dateStr, instance) {
-                window.location.href = "/expertise?selected_date=" + dateStr;
-            }
-        });
-    });
-</script>
-
-
-
-
-<!-- проваерка статуса посылки -->
-<script>
-    function checkTrecing() {
-        var trecingInput = document.getElementById('trecing_checker');
-        var trecingValue = trecingInput.value;
-
-        // Проверяем, что поле ввода не пустое
-        if (trecingValue.trim() === '') {
-            return;
-        }
-
-        // Используем fetch для отправки данных на сервер
-        fetch('/trecing_checker', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'trecing_value=' + encodeURIComponent(trecingValue),
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Выводим результат в SweetAlert2
-            Swal.fire({
-                text: data.result,
-                icon: getIconByResult(data.result),
-                timer: 2000, // 2 секунды
-                showConfirmButton: true, // Показываем кнопку
-                confirmButtonText: 'OK', // Текст кнопки
-                confirmButtonColor: getButtonColor(data.result), // Цвет кнопки
-                position: isMobile() ? 'top-start' : 'center', // Позиция в зависимости от устройства
-                toast: isMobile(), // Используем в режиме toast для мобильных устройств
-                customClass: {
-                    container: 'mobile-toast-container', // Добавляем класс для стилизации
-                    popup: 'mobile-toast-popup' // Добавляем класс для стилизации
-                }
-            });
-
-            // Очищаем поле ввода
-            trecingInput.value = '';
+<div class="container mt-5 bg-white">
+    <!-- Блок выбора даты -->
+    <div class="date_block mb-4">
+        <div class="d-flex align-items-center">
+            <!-- Поле выбора даты -->
+            <div class="buttons_set me-3">
+                <input type="text" class="form-control select_date" placeholder="აირჩიეთ თარიღი">
+            </div>
             
-            // Возвращаем фокус на поле ввода
-            trecingInput.focus();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-
-    // Функция для обработки события нажатия клавиши Enter
-    function handleKeyPress(event) {
-        if (event.key === 'Enter') {
-            checkTrecing();
-        }
-    }
-
-    // Привязываем функцию handleKeyPress к событию нажатия клавиши
-    document.getElementById('trecing_checker').addEventListener('keypress', handleKeyPress);
-
-    // Функция для определения цвета иконки в зависимости от результата
-    function getIconByResult(result) {
-        switch (result) {
-            case 'დაუბეგრავი!':
-            case 'დაბეგვრადი დასრულებული!':
-                return 'success'; // Зелёная иконка
-            case 'დაბეგვრადი! არ არის მზად!':
-                return 'error'; // Красная иконка
-            case 'ყვითელი!':
-                return 'warning'; // Жёлтая иконка
-            default:
-                return 'info'; // Синяя иконка
-        }
-    }
-
-    // Функция для определения цвета кнопки в зависимости от результата
-    function getButtonColor(result) {
-        switch (result) {
-            case 'დაუბეგრავი!':
-            case 'დაბეგვრადი დასრულებული!':
-                return '#5cb85c'; // Зелёная кнопка
-            case 'დაბეგვრადი! არ არის მზად!':
-                return '#d9534f'; // Красная кнопка
-            case 'ყვითელი!':
-                return '#f0ad4e'; // Жёлтая кнопка
-            default:
-                return '#5bc0de'; // Синяя кнопка
-        }
-    }
-
-    // Функция для определения, является ли устройство мобильным
-    function isMobile() {
-        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    }
-</script>
+            <!-- Иконка с выпадающим списком -->
+            <button class="btn btn-outline-secondary" id="toggleDateList">
+                <i class="bi bi-calendar3"></i> <!-- Иконка календаря -->
+            </button>
+        </div>
+    
+        <!-- Блок с плавным раскрытием -->
+        <div class="selected_date_block mt-3" id="dateList">
+            <ul class="list-group">
+                {% for record in unique_dates_list %}
+                    <li class="list-group-item">
+                        <a href="{{ url_for('expertise', selected_date=record) }}">{{ record }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
 
-<script>
-    document.getElementById('downloadExcel').addEventListener('click', function() {
-        // Получение значения даты, предположим, что у вас есть элемент input с id 'date'
-        var dateValue = document.getElementById('date').value;
-
-        // Создание объекта FormData для отправки данных на сервер
-        var formData = new FormData();
-        formData.append('date', dateValue);
-
-        // Отправка POST-запроса на сервер для создания и скачивания файла Excel
-        fetch('/expertise_export', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.blob();  // Получаем бинарные данные
-        })
-        .then(blob => {
-            // Создаем ссылку для скачивания
-            var url = window.URL.createObjectURL(blob);
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = `expertise-${dateValue}.xlsx`;  // Имя файла для скачивания
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-        })
-        .catch(error => {
-            console.error('There has been a problem with your fetch operation:', error);
-        });
-    });
-</script>
+    <!-- Блок проверки трекинга и загрузки XML -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="trecing_check_block input-group">
+                <input type="text" class="form-control" placeholder="თრექინგის შემოწმება" id="trecing_checker">
+                <button class="btn btn-outline-primary" onclick="checkTrecing()">შემოწმება</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="file" class="form-control" id="xmlFile" accept=".xml" required>
+                <button class="btn btn-outline-success" id="uploadButton" onclick="uploadFile()">განახლება</button>
+            </div>
+        </div>
+    </div>
 
 
+    <!-- Форма добавления записи -->
+    <div class="add_form mb-5 border p-4 rounded shadow-sm">
+        <div class="form-group mb-3">
+            <label for="Number">ამანათის ნომერი</label>
+            <input type="text" class="form-control" id="Number" placeholder="Number">
+        </div>
+        <div class="form-group mb-3">
+            <label for="tracking">თრექინგი</label>
+            <input type="text" class="form-control" id="tracking" placeholder="Tracking">
+        </div>
+        <div class="form-group mb-3">
+            <label for="comment">კომენტარი</label>
+            <textarea class="form-control" id="comment" placeholder="Comment" rows="3"></textarea>
+        </div>
+        <div class="form-group mb-3">
+            <label for="date">თარიღი</label>
+            <input type="date" class="form-control" id="date" value="{{ date }}" readonly>
+        </div>
+        <div class="form-group">
+            <button type="button" class="btn btn-primary w-100" id="addRecordBtn">დამატება</button>
+        </div>
+    </div>
+
+    <!-- Таблица записей -->
+    <div class="table-responsive">
+        <h1 class="text-center mb-4">საექსპერტო სიის ჩანაწერები</h1>
+        <table class="table table-bordered table-hover table-striped" id="recordsTable">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>სტატუსი</th>
+                    <th>მიმღები</th>
+                    <th>წონა</th>
+                    <th>ნომერი</th>
+                    <th>თრექინგი</th>
+                    <th>კომენტარი</th>
+                    <th>თარიღი</th>
+                    <th>მოქმედება</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if records %}
+                    {% for record in records %}
+                        <tr id="row-{{ record.id }}">
+                            <td class="status_color {{ record.status }}">{{ record.id }}</td>
+                            <td>{{ record.status }}</td>
+                            <td>{{ record.recipient }}</td>
+                            <td>{{ record.weight }}</td>
+                            <td>{{ record.Number }}</td>
+                            <td>{{ record.tracking }}</td>
+                            <td>{{ record.comment }}</td>
+                            <td>{{ record.date }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm deleteBtn" data-record-id="{{ record.id }}">წაშლა</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center">No records available</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Кнопка для экспорта -->
+    <div class="text-center">
+        <button class="btn btn-success" id="downloadExcel">ექსპორტი</button>
+    </div>
+</div>
+
+
+<script src="{{ url_for('static', filename='js/expertise/add_new_record.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expertise/remove_record.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expertise/xml_load.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expertise/date_select.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expertise/status_check.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expertise/date_list.js') }}"></script>
+<script src="{{ url_for('static', filename='js/expertise/download.js') }}"></script>
 
 {% endblock %}

@@ -12,9 +12,9 @@
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <!-- Форма добавления товара -->
-        <div class="col-md-4 col-sm-12 mb-4">
-            <div class="card shadow">
+        <!-- Форма добавления -->
+        <div class="col-md-4 col-sm-12 mb-4 d-flex">
+            <div class="card shadow flex-fill">
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0">დამატება</h5>
                 </div>
@@ -32,26 +32,9 @@
             </div>
         </div>
 
-        <!-- Форма добавления пользователя -->
-        <div class="col-md-4 col-sm-12 mb-4">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">ბოტი</h5>
-                </div>
-                <div class="card-body bg-light">
-                    <form id="user_add" action="/user_add" method="POST">
-                        <div class="form-group">
-                            <input type="text" name="user_id" class="form-control" placeholder="telegram ID">
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">დამატება</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
         <!-- Форма поиска -->
-        <div class="col-md-4 col-sm-12 mb-4">
-            <div class="card shadow">
+        <div class="col-md-4 col-sm-12 mb-4 d-flex">
+            <div class="card shadow flex-fill">
                 <div class="card-header bg-dark text-white">
                     <h5 class="mb-0">ძიება</h5>
                 </div>
@@ -82,119 +65,13 @@
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-$(document).ready(function() {
-    $('#add_trecing').focus();
-
-    // Обработка отправки формы
-    $('#add-form').submit(function(event) {
-        event.preventDefault(); // Остановка стандартного поведения формы
-
-        var formData = $(this).serialize(); // Сериализация данных формы
-
-        $.ajax({
-            type: 'POST',
-            url: '/save', // Путь к обработчику на сервере
-            data: formData,
-            success: function(response) {
-                if (response.success === false) {
-                    showMessage(response.message, false); // Обработка ошибки
-                } else {
-                    // Обработка успешного ответа от сервера
-                    var lastShelf = response.last;
-                    $('#add_shelf').val(lastShelf); // Устанавливаем новое значение полки
-                    $('#add_trecing').val(''); // Очищаем поле текстовой области
-                    $('#add_trecing').focus(); // Снова фокусируемся на текстовой области
-                }
-            },
-            error: function() {
-                console.log('Ошибка при выполнении AJAX-запроса'); // Обработка ошибки запроса
-            }
-        });
-    });
-
-    // Обработка ввода в текстовое поле
-    $('#add_trecing').on('input', function() {
-        var inputValue = $(this).val().trim(); // Получаем текущее значение поля
-
-        // Регулярное выражение для поиска значения между "/X\" (например, /2\ или /ABC\)
-        var match = inputValue.match(/\|(.*?)\\/);
-
-        if (match) { // Если найдено совпадение
-            var shelfValue = match[1]; // Получаем текст между слэшами
-
-            // Отправляем форму, чтобы данные были сохранены
-            $('#add-form').submit();
-
-            // Используем setTimeout для задержки и установки значения shelf после отправки данных
-            setTimeout(function() {
-                $('#add_shelf').val(shelfValue); // Заменяем значение в поле "shelf" на найденное
-            }, 400); // 100 мс задержка, можно регулировать при необходимости
-        }
-    });
 
 
 
 
 
-
-        $('#find-form').submit(function(event) {
-            event.preventDefault();
-
-            var formData = $(this).serialize();
-
-            $.ajax({
-                type: 'POST',
-                url: '/find',
-                data: formData,
-                success: function(response) {
-                    var location = response.shelf;
-
-                    $('#location-container').html('<input type="text" name="shelf" id="find_shelf" readonly value="' + location + '" class="form-control">');
-                    $('#find_trecing').val('');
-                    $('#result-container').html(response.otherData);
-                    $('#find_trecing').focus();
-                },
-                error: function() {
-                    console.log('Ошибка при выполнении AJAX-запроса');
-                }
-            });
-        });
-    });
-</script>
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-      const form = document.getElementById("user_add");
-      const userInput = document.querySelector(".user_add_input");
-  
-      form.addEventListener("submit", function(event) {
-        event.preventDefault(); // Предотвратить стандартное поведение отправки формы
-        const user_id = userInput.value;
-  
-        // Отправить POST-запрос на сервер
-        fetch("/user_add", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user_id }),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            // Обработать ответ от сервера, если необходимо
-            console.log(data);
-            
-            // Очистить инпут после успешной отправки
-            userInput.value = '';
-          })
-          .catch((error) => {
-            console.error("Ошибка при отправке POST-запроса:", error);
-          });
-      });
-    });
-  </script>
+<script src="{{ url_for('static', filename='js/storage/data_save.js') }}"></script>
+<script src="{{ url_for('static', filename='js/storage/data_find.js') }}"></script>
 
 {% for cat, msg in get_flashed_messages(True) %}
     <div class='flash {{cat}}'>{{msg}}</div>

@@ -22,30 +22,34 @@
 
 
 
-<div class="navigation_block border border-primary p-3 mx-auto" style="max-width: 600px;">
+
+
+<div class="navigation_block border border-primary p-4 mx-auto" style="max-width: 600px;">
     <div class="pictures_list_block">
-        <form id="dateForm" action="/images_list" method="post" class="row g-3">
-            <div class="col">
-                <label for="startDate" class="form-label">დან:</label>
-                <input type="date" id="startDate" name="startDate" class="form-control">
-            </div>
-            <div class="col">
-                <label for="endDate" class="form-label">მდე:</label>
-                <input type="date" id="endDate" name="endDate" class="form-control">
-            </div>
-            <div class="col">
-                <label for="images_city" class="form-label">ქალაქი:</label>
-                <select name="images_city" id="images_city" class="form-select">
-                    <option value="Moscow">Moscow</option>
-                    <option value="S.P.B">S.P.B</option>
-                </select>
-            </div>
-            <div class="col d-flex align-items-end">
-                <button class="btn btn-primary flex-grow-1 flex-shrink-1" type="submit">გადასვლა</button>
-            </div>
-        </form>
+      <form id="dateForm" action="/images_list" method="post" class="row g-3">
+        <div class="col-md-6">
+          <label for="startDate" class="form-label">დან:</label>
+          <input type="date" id="startDate" name="startDate" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label for="endDate" class="form-label">მდე:</label>
+          <input type="date" id="endDate" name="endDate" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label for="images_city" class="form-label">ქალაქი:</label>
+          <select name="images_city" id="images_city" class="form-select">
+            <option value="Moscow">Moscow</option>
+            <option value="S.P.B">S.P.B</option>
+          </select>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">გადასვლა</button>
+        </div>
+      </form>
     </div>
 </div>
+
+
 
 <div class="modal fade" id="image-modal" tabindex="-1" role="dialog" aria-labelledby="image-modal-label" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -67,69 +71,105 @@
 
 <div class="table-responsive">
     <table class="table table-striped table-hover">
-        <thead class="bg-primary text-white">
-            <tr class="list-detals">
-                <th scope="col">VIP-TOUR</th>
-                <th scope="col"><input type="text" id="filter-number" name="filter-number" class="form-control form-control-sm" placeholder="#" style="width: 40px;" ></th>
-                <th scope="col"><input type="text" id="filter-sender" name="filter-sender" class="form-control form-control-sm" placeholder="გამგზავნი"></th>
-                <th scope="col"><input type="text" id="filter-sender-phone" name="filter-sender-phone" class="form-control form-control-sm" placeholder="ტელეფონი" ></th>
-                <th scope="col"><input type="text" id="filter-recipient" name="filter-recipient" class="form-control form-control-sm" placeholder="მიმღები" ></th>
-                <th scope="col"><input type="text" id="filter-recipient-phone" name="filter-recipient-phone" class="form-control form-control-sm" placeholder="ტელეფონი" ></th>
-                <th scope="col"><input type="text" id="filter-cost" name="filter-cost" class="form-control form-control-sm" placeholder="გადახდა" ></th>
-                <th scope="col"><input type="text" id="filter-passport" name="filter-passport" class="form-control form-control-sm" placeholder="პასპორტი" ></th>
-                <th scope="col"><input type="text" id="filter-weight" name="filter-weight" class="form-control form-control-sm" placeholder="წონა" ></th>
-                <th scope="col"><input type="text" id="filter-responsibility" name="filter-responsibility" class="form-control form-control-sm" placeholder="ღირებულება" ></th>
-                <th scope="col"><input type="text" id="filter-city" name="filter-city" class="form-control form-control-sm" placeholder="ქალაქი" ></th>
-                <th scope="col"><input type="text" id="filter-flight" name="filter-flight" class="form-control form-control-sm" placeholder="თარიღი" ></th>
-                <th scope="col"><input type="text" id="filter-where_from" name="filter-where_from" class="form-control form-control-sm" placeholder="გამგზავნი" ></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for data in all_data %}
-            <tr {% if data.delivery == 'yes' %} class="green" {% elif data.departure_status == '+' %} class="red"{% endif %}  data-id="{{ data.id }}">
-                <td class="description">
-                    <img src="/static/images/delete.png" class="icon" onclick="removeFromList('{{ data.id }}')">
-                    <img src="/static/images/edit.png" class="icon" onclick="openEditModal(this)" data-id="{{ data.id }}" 
-                                                                                                  data-sender="{{ data.sender }}" 
-                                                                                                  data-sender_phone="{{ data.sender_phone }}" 
-                                                                                                  data-recipient="{{ data.recipient }}"
-                                                                                                  data-recipient_phone="{{ data.recipient_phone }}"
-                                                                                                  data-inventory="{{ data.inventory }}"
-                                                                                                  data-weight="{{ data.weight }}"
-                                                                                                  data-responsibility="{{ data.responsibility }}"
-                                                                                                  data-passport="{{ data.passport }}"
-                                                                                                  data-cost="{{ data.cost }}"
-                                                                                                  data-number="{{ data.number }}"
-                                                                                                  data-city="{{ data.city }}"
-                                                                                                  data-departure_status ="{{ data.departure_status }}">
-                                                                                                  
-                    <img src="/static/images/photo.png" class="icon" onclick="openImageModal('{{ data.image }}', '{{ data.inventory }}', '{{data.number}}')">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">
+            <input type="text" id="filter-number" name="filter-number" class="form-control form-control-sm" placeholder="#" style="width: 80px;">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-sender" name="filter-sender" class="form-control form-control-sm" placeholder="გამგზავნი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-sender-phone" name="filter-sender-phone" class="form-control form-control-sm" placeholder="ტელეფონი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-recipient" name="filter-recipient" class="form-control form-control-sm" placeholder="მიმღები">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-recipient-phone" name="filter-recipient-phone" class="form-control form-control-sm" placeholder="ტელეფონი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-cost" name="filter-cost" class="form-control form-control-sm" placeholder="გადახდა">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-passport" name="filter-passport" class="form-control form-control-sm" placeholder="პასპორტი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-weight" name="filter-weight" class="form-control form-control-sm" placeholder="წონა">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-responsibility" name="filter-responsibility" class="form-control form-control-sm" placeholder="ღირებულება">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-city" name="filter-city" class="form-control form-control-sm" placeholder="ქალაქი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-flight" name="filter-flight" class="form-control form-control-sm" placeholder="თარიღი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-where_from" name="filter-where_from" class="form-control form-control-sm" placeholder="გამგზავნი">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in all_data %}
+        <tr {% if data.delivery == 'yes' %} class="green" {% elif data.departure_status == '+' %} class="red"{% endif %} data-id="{{ data.id }}">
+            <td class="description" style="position: relative;">
+                <!-- Иконка для открытия/закрытия дополнительных иконок -->
+                <i class="bi bi-caret-down-fill toggle-icon" onclick="toggleActions(this)"></i>
+                
+                <!-- Дополнительные иконки с действиями -->
+                <div class="actions">
+                    <!-- Удаление -->
+                    <i class="bi bi-trash icon" onclick="removeFromList('{{ data.id }}')"></i>
+                
+                    <!-- Редактирование -->
+                    <i class="bi bi-pencil icon" onclick="openEditModal(this)"
+                    data-id="{{ data.id }}" 
+                    data-sender="{{ data.sender }}" 
+                    data-sender_phone="{{ data.sender_phone }}" 
+                    data-recipient="{{ data.recipient }}"
+                    data-recipient_phone="{{ data.recipient_phone }}"
+                    data-inventory="{{ data.inventory }}"
+                    data-weight="{{ data.weight }}"
+                    data-responsibility="{{ data.responsibility }}"
+                    data-passport="{{ data.passport }}"
+                    data-cost="{{ data.cost }}"
+                    data-number="{{ data.number }}"
+                    data-city="{{ data.city }}"
+                    data-departure_status="{{ data.departure_status }}"></i>
+                
+                    <!-- Фотография -->
+                    <i class="bi bi-camera icon" onclick="openImageModal('{{ data.image }}', '{{ data.inventory }}', '{{data.number}}')"></i>
+                
+                    <!-- Выдача посылки -->
                     {% if data.delivery == 'yes' %}
-                        <img src="/static/images/delivery.png" class="icon" style="display: none;">
+                    <i class="bi bi-box icon" style="display: none;"></i>
                     {% else %}
-                    <img id="deliveryImage_{{ data.id }}" src="/static/images/delivery.png" class="icon" onclick="updateDeliveryStatus('{{ data.id }}')">
+                    <i id="deliveryImage_{{ data.id }}" class="bi bi-box icon" onclick="updateDeliveryStatus('{{ data.id }}')"></i>
                     {% endif %}
-                </td>
-                <td class="number">{{ data.number }}</td>
-                <td>{{ data.sender }}</td>
-                <td>{{ data.sender_phone }}</td>
-                <td>{{ data.recipient }}</td>
-                <td>{{ data.recipient_phone }}</td>
-                <td class="cost_block" {% if data.cost.startswith('-') %}style="color:#7b0000;"{% elif data.cost.startswith('+') %}style="color:#008400;"{% else %}style="color:black;"{% endif %}>
-                    {{ data.cost }}
-                </td>
-                <td>{{ data.passport }}</td>
-                <td>{{ data.weight }}</td>
-                <td>{{ data.responsibility }}</td>
-                <td>{{ data.city }}</td>
-                <td>{{ data.flight }}</td>
-                <td>{{ data.where_from }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
+                </div>
+            </td>
+          <td class="number">{{ data.number }}</td>
+          <td>{{ data.sender }}</td>
+          <td>{{ data.sender_phone }}</td>
+          <td>{{ data.recipient }}</td>
+          <td>{{ data.recipient_phone }}</td>
+          <td class="cost_block" {% if data.cost.startswith('-') %}style="color:#7b0000;"{% elif data.cost.startswith('+') %}style="color:#008400;"{% else %}style="color:black;"{% endif %}>
+            {{ data.cost }}
+          </td>
+          <td>{{ data.passport }}</td>
+          <td>{{ data.weight }}</td>
+          <td>{{ data.responsibility }}</td>
+          <td>{{ data.city }}</td>
+          <td>{{ data.flight }}</td>
+          <td>{{ data.where_from }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
-</div>
-
+  </div>
 
 
 
@@ -140,87 +180,106 @@
 
 
 
+<div class="modal fade" id="editTheParcel" tabindex="-1" aria-labelledby="editParcelLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editParcelLabel">Редактирование посылки</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" name="editIdInput" id="editIdInput">
 
-<!-- Модальное окно для редактирования посылки -->
-<div id="editTheParcel" class="editModal">
-    <div class="editModalContent">
-        <span class="editModalClose" onclick="closeEditModal()">&times;</span>
-        <!-- Здесь разместите все содержимое модального окна, которое вы предоставили -->
-            <label id="editNumberLabel"></label>
+                    <!-- Первая строка -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editSenderInput" class="form-label fw-bold">Имя / Фамилия отправителя</label>
+                            <input type="text" class="form-control" id="editSenderInput" name="sender">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editSenderPhoneInput" class="form-label fw-bold">Телефон отправителя</label>
+                            <input type="text" class="form-control" id="editSenderPhoneInput" name="sender_phone" oninput="formatPhoneNumber(this)">
+                        </div>
+                    </div>
 
-            <input hidden type="text" name="editIdInput" id="editIdInput" >
-    
-            <div class="sender_block">
-                <div class="sender_first_last_name">
-                    <label>სახელი / გვარი</label>
-                    <input type="text" name="sender" id="editSenderInput" data-error="sender">
-                </div>
-                <div class="sender_phone_block">
-                    <label>გამგზავნის ტელეფონი</label>
-                    <input type="text" name="sender_phone" id="editSenderPhoneInput" data-error="sender_phone" oninput="formatPhoneNumber(this)">
-                </div>
+                    <!-- Вторая строка -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="editRecipientInput" class="form-label fw-bold">Имя / Фамилия получателя</label>
+                            <input type="text" class="form-control" id="editRecipientInput" name="recipient">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editRecipienPhonetInput" class="form-label fw-bold">Телефон получателя</label>
+                            <input type="text" class="form-control" id="editRecipienPhonetInput" name="recipient_phone" oninput="formatRecipientPhone(this)">
+                        </div>
+                    </div>
+
+                    <!-- Третья строка -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="editInventoryTextarea" class="form-label fw-bold">Описание</label>
+                            <textarea class="form-control" id="editInventoryTextarea" name="inventory"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Четвертая строка -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="editWeightInput" class="form-label fw-bold">Вес</label>
+                            <input type="text" class="form-control" id="editWeightInput" name="weight" oninput="formatWeight(this)">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editResponsibilityInput" class="form-label fw-bold">Стоимость</label>
+                            <input type="text" class="form-control" id="editResponsibilityInput" name="responsibility">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editPassportInput" class="form-label fw-bold">Паспорт</label>
+                            <input type="text" class="form-control" id="editPassportInput" name="passport">
+                        </div>
+                    </div>
+
+                    <!-- Пятая строка -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="editCostInput" class="form-label fw-bold">Цена</label>
+                            <input type="text" class="form-control" id="editCostInput" name="cost" oninput="formatCost(this)">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editCitySelect" class="form-label fw-bold">Город</label>
+                            <select class="form-select" id="editCitySelect" name="city">
+                                <option value="Moscow">Москва</option>
+                                <option value="S.P.B">Санкт-Петербург</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="photo" class="form-label fw-bold">Фото</label>
+                            <input type="file" class="form-control" id="photo" name="photo">
+                        </div>
+                    </div>
+
+                    <!-- Шестая строка -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="editDepartureStatusCheckbox" name="departureStatus">
+                                <label class="form-check-label fw-bold" for="editDepartureStatusCheckbox">Готов к отправке</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label id="editNumberLabel" class="form-label fw-bold"></label>
+                    </div>
+                </form>
             </div>
-    
-            <div class="recipient_block">
-                <div class="recipient_first_last_name">
-                    <label>სახელი / გვარი</label>
-                    <input type="text" name="recipient"  id="editRecipientInput" data-error="recipient">
-                </div>
-                <div class="recipient_phone_block">
-                    <label>მიმღების ტელეფონი</label>
-                    <input type="text" name="recipient_phone" id="editRecipienPhonetInput" data-error="recipient_phone" oninput="formatRecipientPhone(this)">
-                </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                <button type="button" class="btn btn-primary" id="editButton">Редактировать</button>
             </div>
-    
-            <div class="description_block">
-                <div class="editDescription">
-                    <label>აღწერა</label>
-                    <textarea name="inventory"  id="editInventoryTextarea" data-error="inventory"></textarea>
-                </div>
-            </div>
-    
-            <div class="information_one_block">
-                <div class="weight_block">
-                    <label>წონა</label>
-                    <input type="text" name="weight" id="editWeightInput" data-error="weight" oninput="formatWeight(this)" >
-                </div>
-                <div class="responsibility_block">
-                    <label>ღირებულება</label>
-                    <input type="text" name="responsibility" id="editResponsibilityInput" data-error="responsibility">
-                </div>
-                <div class="passport_block">
-                    <label>პასპორტი</label>
-                    <input type="text" name="passport" id="editPassportInput" data-error="passport">
-                </div>
-            </div>
-    
-            <div class="information_two_block">
-                <div class="price">
-                    <label>ფასი</label>
-                    <input type="text" name="cost" id="editCostInput" data-error="cost" oninput="formatCost(this)">
-                </div>
-                <div class="city">
-                    <label>ქალაქი</label>
-                    <select name="city" id="editCitySelect">
-                        <option value="Moscow">Moscow</option>
-                        <option value="S.P.B">S.P.B</option>
-                    </select>
-                </div>
-                <div class="photo_block">
-                    <label>ფოტო</label>
-                    <input type="file" id="photo"  name="photo" class="fandm" data-error="photo">
-                </div>
-            </div>
-            <div class="departure_status_block">
-                <label for="myCheckbox">გატანება</label>
-                <input type="checkbox" id="editDepartureStatusCheckbox" name="departureStatus" value="value">
-            </div>
-            <div class="button_block">
-                <button id="editButton" type="button">რედაქტირება</button>
-            </div>
+        </div>
     </div>
 </div>
-
 
 
 
@@ -426,96 +485,77 @@
 
 
 <script>
-    // Получаем модальное окно
-    var editModal = document.getElementById('editTheParcel');
+// Получаем модальное окно
+var editModal = new bootstrap.Modal(document.getElementById('editTheParcel'));
 
-    // Открывает модальное окно редактирования
-    function openEditModal(element) {
-        var id = element.getAttribute('data-id');
-        var sender = element.getAttribute('data-sender');
-        var senderPhone = element.getAttribute('data-sender_phone');
-        var recipient = element.getAttribute('data-recipient');
-        var recipientPhone = element.getAttribute('data-recipient_phone');
-        var inventory = element.getAttribute('data-inventory');
-        var weight = element.getAttribute('data-weight');
-        var responsibility = element.getAttribute('data-responsibility');
-        var passport = element.getAttribute('data-passport');
-        var cost = element.getAttribute('data-cost');
-        var number = element.getAttribute('data-number');
-        var city = element.getAttribute('data-city');
-        var departure = element.getAttribute('data-departure_status');
+// Открывает модальное окно редактирования
+function openEditModal(element) {
+    var id = element.getAttribute('data-id');
+    var sender = element.getAttribute('data-sender');
+    var senderPhone = element.getAttribute('data-sender_phone');
+    var recipient = element.getAttribute('data-recipient');
+    var recipientPhone = element.getAttribute('data-recipient_phone');
+    var inventory = element.getAttribute('data-inventory');
+    var weight = element.getAttribute('data-weight');
+    var responsibility = element.getAttribute('data-responsibility');
+    var passport = element.getAttribute('data-passport');
+    var cost = element.getAttribute('data-cost');
+    var number = element.getAttribute('data-number');
+    var city = element.getAttribute('data-city');
+    var departure = element.getAttribute('data-departure_status');
 
-        // Находим элементы модального окна, куда будем вставлять данные
-        var editIdInput = document.getElementById('editIdInput');
-        var editSenderInput = document.getElementById('editSenderInput');
-        var editSenderPhoneInput = document.getElementById('editSenderPhoneInput');
-        var editRecipientInput = document.getElementById('editRecipientInput');
-        var editRecipienPhonetInput = document.getElementById('editRecipienPhonetInput');
-        var editInventoryTextarea = document.getElementById('editInventoryTextarea');
-        var editWeightInput = document.getElementById('editWeightInput');
-        var editResponsibilityInput = document.getElementById('editResponsibilityInput');
-        var editPassportInput = document.getElementById('editPassportInput');
-        var editCostInput = document.getElementById('editCostInput');
-        var editNumberLabel = document.getElementById('editNumberLabel');
-        var editCitySelect = document.getElementById('editCitySelect');
-        var editDepartureStatusCheckbox = document.getElementById('editDepartureStatusCheckbox');
+    // Находим элементы модального окна, куда будем вставлять данные
+    var editIdInput = document.getElementById('editIdInput');
+    var editSenderInput = document.getElementById('editSenderInput');
+    var editSenderPhoneInput = document.getElementById('editSenderPhoneInput');
+    var editRecipientInput = document.getElementById('editRecipientInput');
+    var editRecipienPhonetInput = document.getElementById('editRecipienPhonetInput');
+    var editInventoryTextarea = document.getElementById('editInventoryTextarea');
+    var editWeightInput = document.getElementById('editWeightInput');
+    var editResponsibilityInput = document.getElementById('editResponsibilityInput');
+    var editPassportInput = document.getElementById('editPassportInput');
+    var editCostInput = document.getElementById('editCostInput');
+    var editNumberLabel = document.getElementById('editNumberLabel');
+    var editCitySelect = document.getElementById('editCitySelect');
+    var editDepartureStatusCheckbox = document.getElementById('editDepartureStatusCheckbox');
 
-        // Вставляем данные в соответствующие элементы модального окна
-        editIdInput.value = id;
-        editSenderInput.value = sender;
-        editSenderPhoneInput.value = senderPhone;
-        editRecipientInput.value = recipient;
-        editRecipienPhonetInput.value = recipientPhone;
-        editInventoryTextarea.value = inventory;
-        editWeightInput.value = weight;
-        editResponsibilityInput.value = responsibility;
-        editPassportInput.value = passport;
-        editCostInput.value = cost;
+    // Вставляем данные в соответствующие элементы модального окна
+    editIdInput.value = id;
+    editSenderInput.value = sender;
+    editSenderPhoneInput.value = senderPhone;
+    editRecipientInput.value = recipient;
+    editRecipienPhonetInput.value = recipientPhone;
+    editInventoryTextarea.value = inventory;
+    editWeightInput.value = weight;
+    editResponsibilityInput.value = responsibility;
+    editPassportInput.value = passport;
+    editCostInput.value = cost;
 
-        editNumberLabel.textContent = 'ამანათის ნომერია : ' + number;
+    editNumberLabel.textContent = 'Номер посылки: ' + number;
 
-        var options = editCitySelect.options;
+    var options = editCitySelect.options;
 
-        // Проходимся по каждому option и устанавливаем атрибут selected для нужного значения
-        for (var i = 0; i < options.length; i++) {
-            if (options[i].value === city) {
-                options[i].setAttribute('selected', 'selected');
-            } else {
-                options[i].removeAttribute('selected');
-            }
-        }
-        
-        // Проверяем, равно ли значение атрибута "data-departure_status" "+"
-        if (departure === '+') {
-            // Если значение "+", отмечаем чекбокс
-            editDepartureStatusCheckbox.checked = true;
+    // Проходимся по каждому option и устанавливаем атрибут selected для нужного значения
+    for (var i = 0; i < options.length; i++) {
+        if (options[i].value === city) {
+            options[i].setAttribute('selected', 'selected');
         } else {
-            // Если значение не "+", снимаем отметку с чекбокса
-            editDepartureStatusCheckbox.checked = false;
+            options[i].removeAttribute('selected');
         }
-
-        // Открываем модальное окно
-        editModal.style.display = 'block';
+    }
+    
+    // Проверяем, равно ли значение атрибута "data-departure_status" "+"
+    if (departure === '+') {
+        // Если значение "+", отмечаем чекбокс
+        editDepartureStatusCheckbox.checked = true;
+    } else {
+        // Если значение не "+", снимаем отметку с чекбокса
+        editDepartureStatusCheckbox.checked = false;
     }
 
-    // Закрывает модальное окно редактирования
-    function closeEditModal() {
-        editModal.style.display = 'none';
-    }
-
-    // Закрывает модальное окно при нажатии клавиши Escape (Esc)
-    window.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && editModal.style.display === 'block') {
-            closeEditModal();
-        }
-    });
-
-    // Закрывает модальное окно при клике за его пределами
-    window.addEventListener('click', function (event) {
-        if (event.target === editModal) {
-            closeEditModal();
-        }
-    });
+    // Открываем модальное окно с помощью Bootstrap
+    editModal.show();
+}
 </script>
 
 
@@ -524,10 +564,8 @@
 <script>
     // Функция для отправки данных на сервер
     function sendDataToServer() {
-        // Создаем объект FormData для удобной работы с данными формы
         var formData = new FormData();
 
-        // Получаем значения полей и добавляем их в объект FormData
         formData.append("id", document.getElementById('editIdInput').value);
         formData.append("sender", document.getElementById('editSenderInput').value);
         formData.append("sender_phone", document.getElementById('editSenderPhoneInput').value);
@@ -540,47 +578,43 @@
         formData.append("cost", document.getElementById('editCostInput').value);
         formData.append("city", document.getElementById('editCitySelect').value);
 
-
         var departureCheckbox = document.getElementById('editDepartureStatusCheckbox');
-        // Проверяем, отмечен ли чекбокс
-        var isDepartureChecked = departureCheckbox.checked;
-        // Если чекбокс отмечен, добавляем его значение в formData
-        if (isDepartureChecked) {
-            formData.append("departureStatus", "+");
-        } else {
-            formData.append("departureStatus", "-");
-}
-        // Получаем элемент input для фотографии
+        formData.append("departureStatus", departureCheckbox.checked ? "+" : "-");
+
         var photoInput = document.getElementById('photo');
-        // Если пользователь выбрал файл, добавляем его в объект FormData
         if (photoInput.files.length > 0) {
             formData.append("photo", photoInput.files[0]);
         }
 
-        // Отправляем данные на сервер с помощью AJAX-запроса
         fetch('/edit_parcel', {
             method: 'POST',
             body: formData
         })
-        .then(response => response.json()) // Ожидаем JSON-ответ от сервера
+        .then(response => response.json())
         .then(data => {
-            console.log(data); // Выводим ответ сервера в консоль
-            // Проверяем успешность операции
+            console.log(data);
             if (data.success) {
                 showMessage(data.message, data.success);
-                // Закрываем модальное окно
-                closeEditModal();
-                // Можно выполнить дополнительные действия после успешной отправки данных
+                closeEditModal(); // Закрываем модальное окно
             } else {
                 showMessage(data.message, data.success);
-
-                console.error('Error:', data.message); // Выводим сообщение об ошибке в консоль
-                // Можно выполнить дополнительные действия в случае ошибки
+                console.error('Error:', data.message);
             }
         })
         .catch(error => {
-            console.error('Error:', error); // Выводим ошибку в консоль
+            console.error('Error:', error);
         });
+    }
+
+    // Функция для закрытия модального окна
+    function closeEditModal() {
+        var modalElement = document.getElementById('editTheParcel');
+        if (modalElement) {
+            var modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+        }
     }
 
     // Добавляем обработчик события нажатия на кнопку
@@ -610,7 +644,24 @@
     });
 </script>
 
+<script>
+// Функция для переключения видимости блока с иконками
+function toggleActions(icon) {
+    var actionsDiv = icon.nextElementSibling; // Находим следующий элемент после иконки
 
+    // Если блок с действиями видим, скрываем его
+    if (actionsDiv.classList.contains('show')) {
+        actionsDiv.classList.remove('show');
+    } else {
+        // В противном случае, показываем его
+        actionsDiv.classList.add('show');
+    }
+
+    // Опционально: смена иконки при раскрытии/скрытии
+    icon.classList.toggle('bi-caret-down-fill');
+    icon.classList.toggle('bi-caret-up-fill');
+}
+</script>
 
 {% endblock %}
     

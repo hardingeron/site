@@ -21,7 +21,6 @@ from apps.feedback import register_feedback_routes
 app = Flask(__name__)
 
 
-
 app.config['SQLALCHEMY_DATABASE_URI'] = db_url_key
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Отключает отслеживание изменений
 app.config['REMEMBER_COOKIE_DURATION'] = timedelta(hours=8)

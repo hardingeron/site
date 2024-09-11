@@ -70,4 +70,4 @@ class DeleteParcelView(MethodView):
 
 def register_list_edit_routes(app, db):
     app.add_url_rule('/list_edit_id', view_func=EditParcelView.as_view('list_edit', db=db))
-    app.add_url_rule('/list_delete', view_func=DeleteParcelView.as_view('list_delete'))
+    app.add_url_rule('/list_delete', view_func=DeleteParcelView.as_view('list_delete', db=db))

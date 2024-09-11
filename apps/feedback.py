@@ -52,7 +52,7 @@ class FeedbackSubmitView(MethodView):
         save_data(json_file_path, feedback_list)
 
         # Вернуть ответ пользователю
-        return jsonify({"message": f"Thank you for your feedback on {page}!"}), 200
+        return redirect(url_for('feedback'))
 
 
 

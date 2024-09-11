@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }}
+    გამოხმაურება
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_feedback.css') }}">
+
+<div class="container feedback-container">
+    <h2 class="text-center mb-4">მომხმარებლების იდეები / Идеи пользователей</h2>
+
+    <!-- Список фидбеков -->
+    <div class="feedback-list mb-5">
+        {% if feedback_list %}
+            <h4 class="text-center">სია / Список</h4>
+            <div class="row">
+                {% for date, feedback in feedback_list.items() %}
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <strong>გვერდი / Страница:</strong> {{ feedback['page'] | capitalize }}
+                            </div>
+                            <div class="card-body">
+                                <p><strong>იდეა / Идея:</strong> {{ feedback['idea'] }}</p>
+                                <p><strong>დაამატა / Добавил:</strong> {{ feedback['user'] }}</p>
+                                {% if feedback['approval'] %}
+                                    <p><strong>მოქმედება / Действие:</strong> {{ feedback['approval'] }}</p>
+                                {% else %}
+                                    <p><strong>მოქმედება / Действие:</strong> {{ feedback['approval'] }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer text-muted">
+                                <small>დამატებულია / Добавлено {{ date }}</small>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">იდეები არ არის / Нет идей!</p>
+        {% endif %}
+    </div>
+
+    <h2>იდეის დამატება / Добавление идеи </h2>
+    <!-- Начало формы -->
+    <form action="/submit_feedback" method="POST">
+        <div class="mb-3">
+            <label for="pageSelect">ამოირჩიეთ გვერდი / Выберите страницу:</label>
+            <select class="form-select" id="pageSelect" name="page">
+                <option value="authorization">ავტორიზაცია / Авторизация</option>
+                <option value="index">მთავარი / Главная</option>
+                <option value="expertise">ექსპერტიზა / Экспертиза</option>
+                <option value="add_georgia">ამანათების დამატება საქართველო / Добавление посылок Грузия</option>
+                <option value="storage">საწყობი / Склад</option>
+                <option value="reservation">ჯავშანი / Бронь</option>
+                <option value="add_russia">ამანათების დამატება რუსეთი / Добавление посылок Россия</option>
+                <option value="list">ამანათების სია / Список посылок</option>
+                <option value="documents">დოკუმენტები / Документы</option>
+                <option value="other">სხვა / Другое</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="feedbackText">აღწერეთ თქვენი იდეა ან გაუმჯობესება / Опишите ваше предложение или улучшение:</label>
+            <textarea class="form-control" id="feedbackText" name="feedback" rows="5"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-up-right-square"></i>დამატება / Добавление</button>
+    </form>
+    <!-- Конец формы -->
+</div>
+
+<footer>
+    <p>გმადლობთ თქვენი იდეებისათვის სიყვარულით VIP-TOUR / Спасибо за ваши идеи с любовью VIP-TOUR</p>
+</footer>
+
+{% endblock %}

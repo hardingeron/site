@@ -84,17 +84,23 @@ class AddParcelToList(MethodView):
         try:
             data = request.form.to_dict()
 
-            highest_number = self.db.session.query(func.max(Forms.number)).filter(
-                Forms.date == data['date'],
-                Forms.where_from == data['where_from']
-            ).scalar()
+            highest_number = self.db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
+                                                                        Forms.where_from == data['where_from']).scalar()
+            if highest_number is not None:
+                new_number = highest_number + 1
+            else:
+                new_number = 1
+            # Получите данные из JSON-запроса
+            if data['cost'] == '':
+                cost = 0
+            else:
+                cost = data['cost']
 
-            new_number = highest_number + 1 if highest_number is not None else 1
-
-            # Получите данные из формы
-            cost = int(data.get('cost', 0))
-            passport = data.get('passport', '---')
-
+            if data['passport'] == '':
+                passport = '---'
+            else:
+                passport = data['passport']
+        
             new_parcel = Forms(
                 number=new_number,
                 date=data['date'],

@@ -16,6 +16,7 @@ from apps.reservation import register_reservation_routes
 from apps.list import register_list_routes
 from apps.list_edit import register_list_edit_routes
 from apps.expertise import register_expertise_routes
+from apps.feedback import register_feedback_routes
 
 app = Flask(__name__)
 
@@ -61,6 +62,9 @@ register_image_routes(app, db)
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /reservation         ------------------------------#
 register_reservation_routes(app, db)
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /Feedback            ------------------------------#
+register_feedback_routes(app, db)
 
 
 

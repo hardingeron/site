@@ -63,3 +63,8 @@ footer {
 .form-control, .form-select {
     border-radius: 0.375rem;
 }
+
+label {
+    color: black;
+    font-weight: bold;
+}

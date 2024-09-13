@@ -3,6 +3,9 @@ document.getElementById('inventory').addEventListener('input', function () {
     var currentLength = this.value.length;
     var remaining = maxLength - currentLength;
 
+    // Удаляем запятые
+    this.value = this.value.replace(/,/g, ''); // Запрещаем ввод запятых
+
     // Обновляем текст счётчика
     document.getElementById('charCount').textContent = `დარჩა ${remaining} სიმბოლო`;
 

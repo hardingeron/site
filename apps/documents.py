@@ -162,7 +162,7 @@ class ManifestCheckerView(MethodView):
         receiver_last_name_col = request.form.get('receiver_last_name_col', '').strip().split('\n')
         weight_col = request.form.get('weight_col', '').strip().split('\n')
 
-        # Убираем только символы \r, пробелы оставляем
+        # Убираем символы \r
         receiver_first_name_col = [name.replace('\r', '') for name in receiver_first_name_col]
         receiver_last_name_col = [name.replace('\r', '') for name in receiver_last_name_col]
         weight_col = [weight.replace('\r', '') for weight in weight_col]
@@ -178,21 +178,47 @@ class ManifestCheckerView(MethodView):
             try:
                 weight_value = float(weight)
             except ValueError:
-                weight_value = 0  # Или другое значение по умолчанию, если данные не могут быть преобразованы в float
+                weight_value = 0  # Если вес не числовой, установим 0
 
             if key in data_dict:
-                data_dict[key] += weight_value  # Добавляем вес к существующему значению
+                data_dict[key] += weight_value
             else:
-                data_dict[key] = weight_value  # Устанавливаем начальное значение
+                data_dict[key] = weight_value
 
         # Округляем значения до двух знаков после запятой
         data_dict = {key: round(value, 2) for key, value in data_dict.items()}
 
-        # Печатаем словарь для проверки
-        print(data_dict)
+        # Возвращаем только те записи, где вес >= 29.95
+        result = {key: value for key, value in data_dict.items() if value >= 29.95}
 
-        # Возвращаем словарь в формате JSON
-        return jsonify({"data": data_dict, "status": "success"})
+        return jsonify({"data": result, "status": "success"})
+
+
+class PhoneCheckerView(MethodView):
+    decorators = [login_required]
+
+    def post(self):
+        phone_numbers = request.form.get('phone_numbers', '')  # Получаем текст из textarea
+        phone_numbers_list = phone_numbers.splitlines()  # Разделяем по строкам
+
+        invalid_numbers = set()  # Множество для хранения некорректных номеров
+        valid_numbers = set()  # Множество для хранения корректных номеров
+
+        # Проверяем каждый номер телефона
+        for number in phone_numbers_list:
+            number = number.strip()  # Убираем пробелы в начале и конце
+            if len(number) == 9 and number.startswith('5') and number.isdigit():
+                valid_numbers.add(number)  # Добавляем уникальный номер в множество корректных
+            else:
+                invalid_numbers.add(number)  # Добавляем уникальный номер в множество некорректных
+
+        # Преобразуем множества обратно в списки для возврата в JSON
+        return jsonify(
+            valid_numbers=list(valid_numbers),
+            invalid_numbers=list(invalid_numbers)
+        )
+
+
 
 
 
@@ -201,3 +227,4 @@ def register_documents_routes(app, db):
     app.add_url_rule('/create_docxrequest', view_func=CreateDocxRequestView.as_view('create_docxrequest'))
     app.add_url_rule('/create_transporting_invoice', view_func=CreateDocxGetTransportingInvoiceView.as_view('create_transporting_invoice'))
     app.add_url_rule('/manifest_checker', view_func=ManifestCheckerView.as_view('manifest_checker'))
+    app.add_url_rule('/phone_number_checker', view_func=PhoneCheckerView.as_view('phone_number_checker'))

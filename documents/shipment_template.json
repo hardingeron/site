@@ -1,1 +1,62 @@
-{}
+{
+    "EGOR PESTEREV": {
+        "sender phone": "505556184",
+        "recipient": "VASILI PESTEREV",
+        "recipient phone": "+79111370038"
+    },
+    "VALERII SHALGALIEV": {
+        "sender phone": "571230344",
+        "recipient": "IULIIA SHALGALIEVA",
+        "recipient phone": "+79522132799"
+    },
+    "CHUCHULASHVILI MIKHEIL": {
+        "sender phone": "555",
+        "recipient": "TVITON",
+        "recipient phone": "+77"
+    },
+    "ALBERT ALOIANI": {
+        "sender phone": "579187105",
+        "recipient": "DIMA EGUNIAN",
+        "recipient phone": "+79773381180"
+    },
+    "RUSLAN SUNJAEVI": {
+        "sender phone": "558371616",
+        "recipient": "GALINA BOBKOVA",
+        "recipient phone": "+79219394992"
+    },
+    "IOSEBI TODUA": {
+        "sender phone": "511469076",
+        "recipient": "DARIA ALKESEEVNA",
+        "recipient phone": "+79522454401"
+    },
+    "SERGO PETROSIANI": {
+        "sender phone": "598419808",
+        "recipient": "SIOMA",
+        "recipient phone": "+79771926240"
+    },
+    "RTVELISI KOMPANIA": {
+        "sender phone": "599943894",
+        "recipient": "ALEKSEI",
+        "recipient phone": "+79263494217"
+    },
+    "ANNA VATIL": {
+        "sender phone": "592149055",
+        "recipient": "ANKASILNIKOV",
+        "recipient phone": "+79262134971"
+    },
+    "LIANA MELIKIDZE": {
+        "sender phone": "568585794",
+        "recipient": "VAKHO AWILEBI",
+        "recipient phone": "+7777"
+    },
+    "ARTUR KHITAROBI": {
+        "sender phone": "558656307",
+        "recipient": "ROMA SHKOBARO",
+        "recipient phone": "+79169084390"
+    },
+    "ALEKSANDR BUAVA": {
+        "sender phone": "598500429",
+        "recipient": "DARIA TATAROVA",
+        "recipient phone": "+79108739833"
+    }
+}

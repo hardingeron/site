@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from datetime import timedelta
 from flask_login import login_required, logout_user, current_user
 import os 
-from models import db, login_manager
+from models import db, login_manager, Forms
 from config import secret_key, db_url_key
 from functions import get_reservation_data
 from apps.auth import register_auth_routes  # Импорт маршрутов авторизации
@@ -17,6 +17,7 @@ from apps.list import register_list_routes
 from apps.list_edit import register_list_edit_routes
 from apps.expertise import register_expertise_routes
 from apps.feedback import register_feedback_routes
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -114,6 +115,34 @@ def page_not_found(error):
 @app.errorhandler(500)
 def internal_error(error):
     return render_template('error.html', message='Внутренняя ошибка сервера'), 500
+
+
+
+@app.route('/check_passport', methods=['POST'])
+def check_passport():
+    passport = request.json.get('passport')
+    records = Forms.query.filter_by(passport=passport).all()
+    
+    # Преобразуем дату в объект datetime и сортируем
+    sorted_records = sorted(
+        records,
+        key=lambda x: datetime.strptime(x.date, '%d-%m-%Y'),
+        reverse=True
+    )
+    record = sorted_records[0] if sorted_records else None
+
+    if record:
+        return jsonify({
+            "found": True,
+            "sender_fio": record.sender_fio,
+            "sender_phone": record.sender_phone,
+            "recipient_fio": record.recipient_fio,
+            "recipient_phone": record.recipient_phone,
+            "city": record.city
+        })
+    else:
+        return jsonify({"found": False})
+    
 
 
 if __name__ == '__main__':

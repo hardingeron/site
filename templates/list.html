@@ -179,12 +179,18 @@
                 </div>
             </div>
 
+
+            
+
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
                         <label data-lang="ge" for="passport">პასპორტი:</label>
                         <label data-lang="ru" class="hidden" for="passport">Паспорт:</label>
-                        <input type="text" class="form-control" name="passport" id="passport">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="passport" id="passport">
+                            <button type="button" class="btn btn-primary" id="checkButton">Check</button>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -282,9 +288,21 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
+                        <!-- Лейблы для разных языков -->
                         <label data-lang="ge" for="payment">თანხა/მიტანა:</label>
                         <label data-lang="ru" class="hidden" for="payment">Оплата/Доставка:</label>
-                        <input type="text" class="form-control" id="payment" name="payment" oninput="sanitizeInput(this)" required>
+                
+                        <div class="input-group">
+                            <!-- Поле для отображения оплаты -->
+                            <input type="text" class="form-control" id="payment" name="payment" oninput="sanitizeInput(this)" required readonly>
+                
+                            <!-- Кнопка в виде чекбокса -->
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" id="enable_payment_button" onclick="togglePaymentField()">
+                                    სტანდარტული
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -428,6 +446,23 @@
         </ul>
     </div>
 </div>
+
+
+
+<!-- Модальное окно -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">გაფრთხილება</h5>
+            </div>
+            <div class="modal-body">
+                მონაცემთა ბაზაში მითითებული პასპორტის ნომერი არ მოიძებნა. სავარაუდოდ, ამ მიმღებზე ამანათი ფორმდება პირველად, ან მისი მონაცემები ადრე არ ყოფილა ჩაწერილი.
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <div class="scroll_block">
@@ -691,6 +726,17 @@
 <script src="/static/js/list/orderListSearch.js"></script>
 <!-- выделяет красным все те записи чей вес выше 29.5кг -->
 <script src="/static/js/list/highlightWeights.js"></script>
+<!-- проверяет есть ли пользователь и если да то вернёт данные -->
+<script src="/static/js/list/PasspoerCkeck.js"></script>
+<!-- будет включать или выключать возможность редактировать поле payment -->
+<script src="/static/js/list/OnOrOffAutoPrice.js"></script>
+<!-- Функция для перерасчета стоимости -->
+<script src="/static/js/list/SelectVault.js"></script>
+<!-- Функции для получения выбранных значений -->
+<script src="/static/js/list/PriceSum.js"></script>
+<!-- Вызов перерасчета при изменении данных -->
+<script src="/static/js/list/ReSum.js"></script>
+
 
 
 

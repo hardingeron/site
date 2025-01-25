@@ -17,7 +17,9 @@ from apps.list import register_list_routes
 from apps.list_edit import register_list_edit_routes
 from apps.expertise import register_expertise_routes
 from apps.feedback import register_feedback_routes
+from apps.parcel_delivery import register_parcel_delivery_routes
 from datetime import datetime
+
 
 app = Flask(__name__)
 
@@ -65,6 +67,9 @@ register_reservation_routes(app, db)
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               /Feedback            ------------------------------#
 register_feedback_routes(app, db)
+#-------------------------------------------------------------------------------------------------#
+# ------------------------------               /parcel_delivery     ------------------------------#
+register_parcel_delivery_routes(app, db)
 
 
 

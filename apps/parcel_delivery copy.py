@@ -7,11 +7,8 @@ from models import Forms, ParcelIssuance  # Импортируем модель 
 from sqlalchemy import func
 from io import BytesIO
 from openpyxl.styles import Font, Alignment, Border, Side
-from datetime import datetime
-import os
 
-
-class ParcelSearch(MethodView):
+class ParcelDelivery(MethodView):
     decorators = [login_required]
 
     def __init__(self):
@@ -25,7 +22,7 @@ class ParcelSearch(MethodView):
 
     def post(self):
         """
-        Обрабатывает POST-запросы для поиска посылок.
+        Обрабатывает POST-запросы как для основного запроса, так и для поиска.
         """
         # Получаем JSON с фронтенда
         data = request.json
@@ -45,7 +42,7 @@ class ParcelSearch(MethodView):
 
         # Проверяем наличие ключа
         if recipient_key not in all_data:
-            return jsonify({'error': 'ამანათი მითითებული თრექინგით არ მოიძებნა'}), 404  # Уведомление, если ключ не найден
+            return jsonify([])  # Пустой список, если ключ не найден
 
         # Получаем имя и дату из ключа
         recipient_name = all_data[recipient_key][5]
@@ -54,30 +51,18 @@ class ParcelSearch(MethodView):
         # Ищем записи, которые соответствуют имени и дате
         result = []
         for key, values in all_data.items():
-            # Проверка значения в values[1], если оно не равно "დაუდბეგრავი", пропускаем посылку
-            if values[1] != "დაუბეგრავი":
-                continue  # Пропускаем посылку, если она не в нужном состоянии
-
-            # Если значение key[1] равно "დაუბეგრავი", продолжаем стандартную обработку
-            if values[1] == "დაუბეგრავი" and values[5] == recipient_name and values[3] == date:
+            if values[5] == recipient_name and values[3] == date:
                 matched_record = self.find_matching_record_in_db(values[5])
+                print(f'sssssssssssssss {matched_record.passport}')
                 if matched_record:
-                    # Проверяем, существует ли посылка с таким tracking_number в базе данных
-                    tracking_number = key
-                    is_issued = self.check_if_issued(tracking_number)
-
                     result.append({
-                        'tracking': tracking_number,
+                        'tracking': key,
                         'recipient': matched_record.recipient_fio,
                         'weight': values[7],
                         'date': values[3],
-                        'issued': is_issued,  # Статус выдано/не выдано
+                        'issued': values[0] == 'გასატანი',  # Условие "выдана"
                         'passport': matched_record.passport
                     })
-
-        # Если не нашли ни одной посылки с состоянием "დაუბეგრავი"
-        if not result:
-            return jsonify({'error': 'ამანათი ყვითელშია ან ექვემდებარება გამბაჟებას!'}), 404
 
         return jsonify(result)  # Возвращаем список записей
 
@@ -105,101 +90,26 @@ class ParcelSearch(MethodView):
             # Логируем ошибку или возвращаем None в случае сбоя
             print(f"Ошибка при поиске записи: {e}")
             return None
-
-    def check_if_issued(self, tracking_number):
-        """
-        Проверяет, существует ли запись с указанным tracking_number в базе данных.
-        Если такая запись найдена, считается, что посылка "выдана".
-        """
-        try:
-            # Ищем запись с таким tracking_number
-            parcel_record = ParcelIssuance.query.filter_by(tracking_number=tracking_number).first()
-
-            # Если запись найдена, то посылка "выдана"
-            if parcel_record:
-                return True  # Посылка выдана
-            else:
-                return False  # Посылка не выдана
-
-        except Exception as e:
-            # Логируем ошибку или возвращаем False в случае сбоя
-            print(f"Ошибка при проверке статуса посылки: {e}")
-            return False
-
-
-
-class ParcelProcessing(MethodView):
-    decorators = [login_required]
-
-    def __init__(self, db):
-        super().__init__()
-        self.db = db
-
-    def post(self):
-        """
-        Обрабатывает POST-запрос для получения данных и сохранения их в базе данных.
-        """
-        try:
-            data = request.json  # Получаем данные из запроса
-
-            # Выводим полученные данные для отладки
-            print("Полученные данные:", json.dumps(data, indent=4, ensure_ascii=False))
-
-            # Проходим по всем записям и проверяем наличие по трекинг-номеру
-            for record in data.get('records', []):
-                tracking_number = record['tracking']
-                recipient = record['recipient']
-                is_resident = data.get('citizenship', False)
-                passport = data.get('passport', '')
-
-                # Проверяем, существует ли запись с таким tracking_number
-                existing_record = ParcelIssuance.query.filter_by(tracking_number=tracking_number).first()
-
-                if existing_record:
-                    # Если запись уже существует, пропускаем её
-                    print(f"Запись с tracking_number {tracking_number} уже существует.")
-                    continue
-
-                # Если записи с таким трекингом нет, создаем новую запись
-                new_record = ParcelIssuance(
-                    tracking_number=tracking_number,
-                    recipient=recipient,
-                    passport=passport,
-                    is_resident=is_resident,
-                    created_at=datetime.utcnow()  # Устанавливаем текущую дату и время
-                )
-
-                # Добавляем новую запись в сессию и сохраняем в базе данных
-                self.db.session.add(new_record)
-
-            # Сохраняем все записи в базе данных
-            self.db.session.commit()
-
-            return jsonify({'success': True})
-
-        except Exception as e:
-            print(f"Ошибка при обработке данных: {e}")
-            self.db.session.rollback()  # Откатываем транзакцию в случае ошибки
-            return jsonify({'error': 'Ошибка при обработке данных'}), 500
+        
 
 class DownloadForRs(MethodView):
-    decorators = [login_required]  # Убедитесь, что пользователь авторизован
+    decorators = [login_required]
 
     def __init__(self):
         super().__init__()
-    
+
     def post(self):
         try:
-            
             # Получаем все записи из базы данных
             parcel_data = ParcelIssuance.query.all()
 
             # Загружаем шаблон Excel файла
-            workbook = load_workbook('documents/ForRsToLoad.xlsx')
+            workbook = load_workbook('documents/templ_6.xls')
             sheet = workbook.active
 
             start_row = 2  # Начинаем с второй строки
             col_letters = ['A', 'B', 'C', 'D', 'E']
+
             # Устанавливаем стиль шрифта по умолчанию с размером 10
             font = Font(size=10)
             alignment = Alignment(horizontal='center', vertical='center')
@@ -208,12 +118,16 @@ class DownloadForRs(MethodView):
             # Заполняем данные
             for row_idx, data in enumerate(parcel_data, start=start_row):
                 # Заполняем столбцы
+                # Столбец A: tracking_number
                 sheet[f'A{row_idx}'] = data.tracking_number
+
+                # Столбец B: passport
                 sheet[f'B{row_idx}'] = data.passport
 
                 # Столбцы C и D: разделяем имя и фамилию
                 recipient_split = data.recipient.split()
                 if len(recipient_split) >= 2:
+                    # Имя и фамилия
                     sheet[f'C{row_idx}'] = recipient_split[0]  # Имя
                     sheet[f'D{row_idx}'] = recipient_split[-1]  # Фамилия
                 else:
@@ -243,7 +157,7 @@ class DownloadForRs(MethodView):
             # В случае ошибки возвращаем сообщение
             return jsonify({'error': str(e)}), 500
 
-
+        
 
 def register_parcel_delivery_routes(app, db):
     """
@@ -251,10 +165,8 @@ def register_parcel_delivery_routes(app, db):
     """
     app.add_url_rule(
         '/ParcelDelivery',
-        view_func=ParcelSearch.as_view('ParcelDelivery')
+        view_func=ParcelDelivery.as_view('ParcelDelivery')
     )
 
     # Регистрируем маршрут для поиска
-    app.add_url_rule('/search', view_func=ParcelSearch.as_view('search'), methods=['POST'])
-    app.add_url_rule('/processRecords', view_func=ParcelProcessing.as_view('processRecords', db=db), methods=['POST'])
-    app.add_url_rule('/downloadExcel', view_func=DownloadForRs.as_view('downloadExcel'), methods=['POST'])
+    app.add_url_rule('/search', view_func=ParcelDelivery.as_view('search'), methods=['POST'])

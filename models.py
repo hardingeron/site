@@ -95,6 +95,7 @@ class Booking(db.Model):
 
 
 
+
 class Forms(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     date = db.Column(db.String(20))
@@ -114,3 +115,15 @@ class Forms(db.Model):
     where_from = db.Column(db.String(30))
     added_to_the_manifest = db.Column(db.String(10), default='no')
     address = db.Column(db.Text(300))
+
+
+
+
+class ParcelIssuance(db.Model):
+    __tablename__ = 'ParcelIssuance'  # Указываем имя таблицы явно
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    tracking_number = db.Column(db.String(20), nullable=False)
+    recipient = db.Column(db.String(100), nullable=False)
+    passport = db.Column(db.String(50), nullable=False)
+    is_resident = db.Column(db.Boolean, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False)

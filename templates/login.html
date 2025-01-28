@@ -7,56 +7,112 @@
 
 {% block content %}
 <!-- Подключаем стили и скрипты -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_login.css') }}">
-<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+<style>
+    body {
+        font-family: 'Noto Sans Georgian', sans-serif;
+        background: linear-gradient(135deg, #2c3e50, #4ca1af);
+        color: #fff;
+    }
 
-<!-- Контейнер для анимации текста -->
+    .login-container {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    .login-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        padding: 30px;
+        color: #333;
+        animation: fadeIn 0.8s ease-out;
+    }
 
-<div class="row justify-content-center">
-  <div class="col-md-10 col-lg-8 col-xl-6"> <!-- Увеличены значения ширины -->
-    <div class="login-window p-5 border rounded shadow-sm bg-white">
-      <h2 class="login-title text-center mb-4">ავტორიზაცია</h2>
+    .login-title {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+    }
 
-      
-      <form action="login" method="post" class="login-form">
-        <div class="mb-4">
-          <label for="login" class="form-label">Login:</label>
-          <input id="login" class="form-control form-control-lg" type="text" name="login" placeholder="ლოგინი" required autocomplete="username">
-        </div>
-        <div class="mb-4">
-          <label for="password" class="form-label">Password:</label>
-          <input id="password" class="form-control form-control-lg" type="password" name="psw" placeholder="პაროლი" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn btn-primary w-100 btn-lg">შესვლა</button>
-      </form>
-      <div class="animated-text-container">
-        <div class="text-wrapper">
-          <div class="text-item move-right">* VIP-TOUR * კომპანია და მეტი * მგზავრობა - გაგზავნა * </div>
+    .form-control {
+        border-radius: 8px;
+        height: 50px;
+        font-size: 16px;
+    }
+
+    .btn-primary {
+        border-radius: 8px;
+        font-size: 18px;
+        padding: 10px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0a58ca;
+    }
+
+    .text-muted {
+        font-size: 14px;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .input-group-text {
+        border-radius: 8px 0 0 8px;
+        background-color: #eef2f7;
+        border: 1px solid #ced4da;
+    }
+</style>
+
+<div class="container login-container">
+    <div class="col-md-6 col-lg-5">
+        <div class="login-card">
+            <h2 class="login-title">ავტორიზაცია</h2>
+
+            <form action="login" method="post">
+                <div class="mb-4 input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input id="login" class="form-control" type="text" name="login" placeholder="ლოგინი" required autocomplete="username">
+                </div>
+
+                <div class="mb-4 input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input id="password" class="form-control" type="password" name="psw" placeholder="პაროლი" required autocomplete="current-password">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">შესვლა</button>
+            </form>
+
+            <p class="text-muted">VIP-TOUR - კომპანია და მეტი</p>
+            {% for cat, msg in get_flashed_messages(True) %}
+            <div class="alert alert-{{ 'success' if cat == 'success' else 'danger' }} mt-3" role="alert">
+                {{ msg }}
+            </div>
+            {% endfor %}
         </div>
     </div>
-    </div>
-  </div>
 </div>
 
 <!-- Flash messages -->
-{% for cat, msg in get_flashed_messages(True) %}
-<div class="flash {{ cat }}">{{ msg }}</div>
-{% endfor %}
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-
-
-
-
-
-{% endblock %}
-
 {% block menu %}{% endblock %}
 {% block loading %}{% endblock %}
 {% block open %}{% endblock %}
+{% endblock %}

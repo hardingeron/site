@@ -57,18 +57,19 @@ class StorageSaveView(MethodView):
                 return jsonify({'success': False, 'message': 'დამატება ვერ მოხერხდა: შეავსეთ მოცემული ველები!'})
 
             date = datetime.now().date()
-            last_shelf = None  # Переменная для отслеживания последнего значения
+
             for record in trecing_list:
                 formatted_trecing = format_trecing(record)
-                
+
                 try:
-                    last_shelf = save_record(shelf, formatted_trecing, date, self.db)
-                except SQLAlchemyError as e:
+                    save_record(shelf, formatted_trecing, date, self.db)
+                except SQLAlchemyError:
                     return jsonify({'success': False, 'message': 'დაიკარგა მონაცემთა ბაზასთან კავშირი!'})
 
-            return jsonify({'last': last_shelf})
-        except Exception as e:
+            return jsonify({'success': True})  # Убираем last_shelf из ответа
+        except Exception:
             return jsonify({'error': 'მოხდა ამოუცნობი შეცდომა.'})
+
         
 
 # Вьюха для поиска и получения местоположения посылки

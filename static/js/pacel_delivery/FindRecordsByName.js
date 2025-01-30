@@ -50,3 +50,23 @@ document.getElementById('searchByName').addEventListener('click', function () {
         })
         .catch(error => console.error('Ошибка:', error));
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

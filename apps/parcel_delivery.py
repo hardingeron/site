@@ -298,7 +298,7 @@ class ParcelSearchByName(MethodView):
         for key, values in all_data.items():
             if values[1] != "დაუბეგრავი":  
                 continue  
-
+            full_name_key = full_name_key.replace(' ', '')  # Убираем все пробелы
             if values[5] == full_name_key:  
                 matched_record = self.find_matching_record_in_db(values[5])
                 if matched_record:

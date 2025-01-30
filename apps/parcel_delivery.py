@@ -373,7 +373,7 @@ def register_parcel_delivery_routes(app, db):
     )
 
     # Регистрируем маршрут для поиска
-    app.add_url_rule('/search', view_func=ParcelSearch.as_view('search'), methods=['POST'])
+    app.add_url_rule('/search_by_mp', view_func=ParcelSearch.as_view('search_by_mp'), methods=['POST'])
     app.add_url_rule('/processRecords', view_func=ParcelProcessing.as_view('processRecords', db=db), methods=['POST'])
     app.add_url_rule('/downloadExcel', view_func=DownloadForRs.as_view('downloadExcel'), methods=['POST'])
     app.add_url_rule('/search_by_name', view_func=ParcelSearchByName.as_view('search_by_name'), methods=['POST'])

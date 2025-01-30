@@ -60,7 +60,7 @@ document.getElementById('issueButton').addEventListener('click', function () {
                     if (statusButton) {
                         statusButton.classList.remove('btn-danger');
                         statusButton.classList.add('btn-success');
-                        statusButton.textContent = 'Выдана';
+                        statusButton.textContent = 'გაცემულია';
                     }
                 }
             });

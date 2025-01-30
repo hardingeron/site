@@ -1,5 +1,5 @@
-document.getElementById('searchButton').addEventListener('click', function () {
-    const recipient = document.getElementById('recipient').value.trim();
+document.getElementById('searchByTracking').addEventListener('click', function () {
+    const recipient = document.getElementById('trackingInput').value.trim();
     if (!recipient) {
         alert('ჩაწერეთ თრექინგი');
         return;
@@ -39,7 +39,7 @@ document.getElementById('searchButton').addEventListener('click', function () {
                     <td>${record.tracking}</td>
                     <td>${record.recipient}</td>
                     <td>${record.weight} кг</td>
-                    <td>${record.date}</td>
+                    <td>${record.days_ago}</td>
                     <td>
                         <button class="btn ${record.issued ? 'btn-success' : 'btn-danger'} btn-sm btn-status" disabled>
                             ${record.issued ? 'გაცემულია' : 'გასაცემია'}

@@ -58,5 +58,10 @@
         "sender phone": "598500429",
         "recipient": "DARIA TATAROVA",
         "recipient phone": "+79108739833"
+    },
+    "234234": {
+        "sender phone": "234234",
+        "recipient": "234234",
+        "recipient phone": "+7234234"
     }
 }

@@ -1,7 +1,9 @@
 html, body {
-    background-color: #eee;
+    background: #eee;
     font-family: sans-serif;
 }
+
+body
 
 .blanks_block_ {
     border: 2px solid #007bff; /* Цвет рамки */

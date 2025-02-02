@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_index.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <title>მთავარი მენიუ</title>
+    <div class="bg-image_l"></div>
+</head>
+<body>
+
+
+    <div class="menu-container">
+        <div class="hexagon-row">
+            <a href="/expertise">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-journal-check"></i>
+                        <p>ექსპერტიზა</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/add">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <p>დამატება</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/storage">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-box-fill"></i>
+                        <p>საწყობი</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="hexagon-row">
+            <a href="#" onclick="openReservationModal()">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-calendar-check-fill"></i>
+                        <p>ჯავშანი</p>
+                    </div>
+                </div>
+            </a>
+            <a href="#" onclick="openModal()">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                        <p>ბლანკები</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/all">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-list-check"></i>
+                        <p>სია</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/logout">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <p>გასვლა</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="hexagon-row">
+            <a href="/documents">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-file-earmark-word"></i>
+                        <p>საბუთები</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/feedback">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-chat-dots"></i>
+                        <p>Feedback</p>
+                    </div>
+                </div>
+            </a>
+            <a href="/ParcelDelivery">
+                <div class="hexagon">
+                    <div class="content">
+                        <i class="bi bi-envelope"></i>
+                        <p>გაცემა</p>
+                    </div>
+                </div>
+            </a>
+
+
+        </div>
+    </div>
+
+
+
+{% for cat, msg in get_flashed_messages(True) %}
+<div class='flash {{cat}}'>{{msg}}</div>
+{% endfor %}
+
+
+<!-- Модальное окно выбора даты -->
+<div id="myModal" class="modal-blanks-select">
+    <div class="modal-content modal-blanks-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>ამოირჩიეთ გაგზავნის თარიღი და ქალაქი</h2>
+        <div class="date-city-container">
+            <input type="date" id="datepicker">
+            <select id="citySelect">
+                <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
+                <option value="Москва">მოსკოვი</option>
+            </select>
+        </div>
+        <button onclick="redirectToPage()">გადასვლა</button>
+        <div class="dates_block">
+            <div class="spb_dates_block">
+                <label>პეტერბურგი</label>
+                <div class="spb_list_block">
+                    <ul>
+                        {% for date in spb_dates %}
+                            <li><a href="/list?date={{ date }}&where_from=Санкт-Петербург">{{ date }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="msk_dates_block">
+                <label>მოსკოვი</label>
+                <div class="msk_list_block">
+                    <ul>
+                        {% for date in msk_dates %}
+                            <li><a href="/list?date={{ date }}&where_from=Москва">{{ date }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно бронирования -->
+<div id="reservationModal" class="modal-reservation">
+    <div class="modal-content modal-reservation-content">
+        <span class="close" onclick="closeReservationModal()">&times;</span>
+        <h2>ამოირჩიეთ თარიღი და მარშრუტი</h2>
+        <input type="date" id="reservationDate">
+        <select id="routeSelect">
+            <option value="1">თბილისი-მოსკოვი</option>
+            <option value="2">მოსკოვი-თბილისი</option>
+        </select>
+        <button onclick="redirectToReservationPage()">გადასვლა</button>
+    </div>
+</div>
+
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
+
+
+
+<script>
+    // Скрыть все сообщения через 4 секунд
+    setTimeout(function() {
+        var messages = document.querySelectorAll('.flash');
+        for (var i = 0; i < messages.length; i++) {
+            messages[i].style.display = 'none';
+        }
+    }, 3000);
+</script>
+
+<script>
+function openModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'block';
+
+    // Инициализация календаря с использованием flatpickr
+    const datepicker = flatpickr("#datepicker", {
+        dateFormat: "d-m-Y", // Формат даты
+        locale: "ru", // Установка русского языка
+    });
+
+    // Добавляем обработчик события на клавишу "Esc"
+    window.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+
+    // Добавляем обработчик события на клик вне модального окна
+    modal.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+// Функция закрытия модального окна
+function closeModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'none';
+}
+
+// Функция перенаправления на страницу /list с выбранной датой
+function redirectToPage() {
+    const selectedDate = document.getElementById('datepicker').value;
+    const selectedCity = document.getElementById('citySelect').value;
+    
+    if (selectedDate) {
+        // Передаем выбранную дату и город в URL
+        window.location.href = `/list?date=${selectedDate}&where_from=${selectedCity}`;
+    }
+}
+
+
+</script>
+
+
+
+<script>
+    // Функция открытия модального окна
+    function openReservationModal() {
+        const modal = document.getElementById('reservationModal');
+        modal.style.display = 'block';
+
+        // Инициализация календаря с использованием flatpickr
+        const datepicker = flatpickr("#reservationDate", {
+            dateFormat: "Y-m-d", // Формат даты
+            locale: "ru", // Установка русского языка
+        });
+
+        // Добавляем обработчик события на клавишу "Esc"
+        window.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                closeReservationModal();
+            }
+        });
+
+        // Добавляем обработчик события на клик вне модального окна
+        modal.addEventListener('click', function (event) {
+            if (event.target === modal) {
+                closeReservationModal();
+            }
+        });
+    }
+
+    // Функция закрытия модального окна
+    function closeReservationModal() {
+        const modal = document.getElementById('reservationModal');
+        modal.style.display = 'none';
+    }
+
+    // Функция перенаправления на страницу в зависимости от выбора
+    function redirectToReservationPage() {
+        const selectedDate = document.getElementById('reservationDate').value;
+        const selectedRoute = document.getElementById('routeSelect').value;
+
+        let destination = '/error'; // По умолчанию, если дата не подходит
+        if (selectedDate) {
+            if (selectedRoute === '1') {
+                if (isThursday(selectedDate)) {
+                    destination = '/reservation?date=' + selectedDate + '&route=1';
+                } else if (isSunday(selectedDate)) {
+                    destination = '/reservation_big?date=' + selectedDate + '&route=1';
+                }
+            } else if (selectedRoute === '2') {
+                if (isWednesday(selectedDate)) {
+                    destination = '/reservation_big?date=' + selectedDate + '&route=2';
+                } else if (isSunday(selectedDate)) {
+                    destination = '/reservation?date=' + selectedDate + '&route=2';
+                }
+            }
+
+            // Перенаправляем пользователя на выбранную страницу
+            window.location.href = destination;
+        }
+    }
+
+    // Функция проверки, является ли день четвергом
+    function isThursday(dateString) {
+        const date = new Date(dateString);
+        return date.getDay() === 4; // 4 представляет четверг (0 - воскресенье, 1 - понедельник, и так далее)
+    }
+
+    // Функция проверки, является ли день средой
+    function isWednesday(dateString) {
+        const date = new Date(dateString);
+        return date.getDay() === 3; // 3 представляет среду
+    }
+
+    // Функция проверки, является ли день воскресеньем
+    function isSunday(dateString) {
+        const date = new Date(dateString);
+        return date.getDay() === 0; // 0 представляет воскресенье
+    }
+</script>
+
+
+
+
+
+
+
+<div class="footer">
+    <div class="footer-block">
+        <h3>უკუკავშირი</h3>
+        <p>თუ თქვენ გაქვთ კითხვები, შემოთავაზებები ან ნახეთ შეცდომა, გთხოვთ, დამიკავშირდეთ:</p>
+        <p>Email: <a href="mailto:hardinhell@gmail.com">hardinhell@gmail.com</a></p>
+    </div>
+    <div class="footer-block">
+        <h3>მონაცემების უსაფრთხოება</h3>
+        <p>გთხოვთ, არ გადასცეთ ავტორიზაციის მონაცემები მესამე პირს.</p>
+        <p>თუ თქვენ გაქვთ ეჭვი, რომ ინფორმაცია მიიღო მესამე პირმა, გთხოვთ, დამიკავშირდეთ.</p>
+    </div>
+    <div class="footer-block">
+        <h3>დღის ციტატა</h3>
+        <blockquote>"{{ quote.text }}" – {{ quote.author }}</blockquote>
+    </div>
+    <div class="footer-block company">
+        <p>&copy; 2024 "VIP-TOUR". ყველა უფლება დაცულია.</p>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+  // Получаем все элементы с классом hexagon
+  const hexagons = document.querySelectorAll('.hexagon');
+
+  // Функция для добавления анимации случайным ячейкам
+  function addPulseAnimation() {
+    // Удаляем класс pulsate у всех ячеек перед добавлением к случайным
+    hexagons.forEach(hex => hex.classList.remove('pulsate'));
+
+    // Выбираем случайное количество ячеек (например, 1-3 ячейки)
+    const randomCount = Math.floor(Math.random() * 3) + 1;
+    for (let i = 0; i < randomCount; i++) {
+      const randomIndex = Math.floor(Math.random() * hexagons.length);
+      hexagons[randomIndex].classList.add('pulsate');
+    }
+  }
+
+  // Запускаем анимацию при загрузке страницы
+  addPulseAnimation();
+
+  // Можно добавить регулярное обновление анимации, если нужно
+  setInterval(addPulseAnimation, 1500); // обновление каждые 5 секунд
+});
+
+</script>
+
+
+</body>
+
+</html>

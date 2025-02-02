@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,12 +20,8 @@
 
     <!-- Подключение jQuery (если требуется для некоторых компонентов) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <!-- Подключение Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Подключение Bootstrap 5 JS (включая необходимые компоненты) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 
 </head>
@@ -51,167 +55,162 @@
     </div>
         
 <!-- Модальное окно меню-->
-<div class="modal" id="ModalMenu">
-    <div class="modal-menu-content">
-      <div class="hexagon-row">
-        <a href="/expertise">
-          <div class="hexagon" data-index="1">
-            <div class="content">
-              <i class="bi bi-journal-check"></i>
-              <p>ექსპერტიზა</p>
-            </div>
-          </div>
-        </a>
-        <a href="/add">
-          <div class="hexagon" data-index="2">
-            <div class="content">
-              <i class="bi bi-plus-circle-fill"></i>
-              <p>დამატება</p>
-            </div>
-          </div>
-        </a>
-        <a href="/storage">
-          <div class="hexagon" data-index="3">
-            <div class="content">
-              <i class="bi bi-box-fill"></i>
-              <p>საწყობი</p>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="hexagon-row">
-        <a href="#" onclick="openReservationModal()">
-          <div class="hexagon" data-index="4">
-            <div class="content">
-              <i class="bi bi-calendar-check-fill"></i>
-              <p>ჯავშანი</p>
-            </div>
-          </div>
-        </a>
-        <a href="#" onclick="openModal()">
-          <div class="hexagon" data-index="5">
-            <div class="content">
-              <i class="bi bi-file-earmark-text-fill"></i>
-              <p>ბლანკები</p>
-            </div>
-          </div>
-        </a>
-        <a href="/all">
-          <div class="hexagon" data-index="6">
-            <div class="content">
-              <i class="bi bi-list-check"></i>
-              <p>სია</p>
-            </div>
-          </div>
-        </a>
-        <a href="/logout">
-          <div class="hexagon" data-index="7">
-            <div class="content">
-              <i class="bi bi-box-arrow-right"></i>
-              <p>გასვლა</p>
-            </div>
-          </div>
-        </a>
-      </div>
-      <div class="hexagon-row">
-        <a href="/documents">
-            <div class="hexagon">
-                <div class="content">
-                    <i class="bi bi-file-earmark-word"></i>
-                    <p>საბუთები</p>
-                </div>
-            </div>
-        </a>
-        <a href="/feedback">
-            <div class="hexagon">
-                <div class="content">
-                    <i class="bi bi-chat-dots"></i>
-                    <p>Feedback</p>
-                </div>
-            </div>
-        </a>
-        <a href="/ParcelDelivery">
-            <div class="hexagon">
-              <div class="content">
-                <i class="bi bi-envelope"></i>
-                <p>გაცემა</p>
+<div class="modal_menu" id="ModalMenu">
+  <div class="menu_modal_content">
+      <span class="close-modal animate-fade-in-up" onclick="closeMenuModal()">&times;</span>
+    <main class="flex-grow-1 py-5">
+      <div class="row g-4"> <!-- mt-5 добавляет отступ сверху -->
+          <div class="col-md-4">
+            <a href="/expertise">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-journal-check fs-4"></i>
+                <span>ექსპერტიზა</span>
               </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="/add">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-plus fs-4"></i>
+                <span>დამატება</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="/storage">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-box fs-4"></i>
+                <span>საწყობი</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="#" onclick="openReservationModal()">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-calendar fs-4"></i>
+                <span>ჯავშანი</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="#" onclick="openModal()">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-file-earmark fs-4"></i>
+                <span>ბლანკები</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="/all">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-list-check fs-4"></i>
+                <span>სია</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="/documents">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-file-earmark-word fs-4"></i>
+                <span>საბუთები</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="/feedback">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-chat-dots fs-4"></i>
+                <span>იდეები</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-md-4">
+            <a href="/ParcelDelivery">
+              <div class="menu-item rounded-3 animate-fade-in-up">
+                <i class="bi bi-envelope fs-4"></i>
+                <span>გაცემები</span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="d-grid mt-4">
+          <a href="/logout">
+            <div class="menu-item rounded-3 animate-fade-in-up">
+              <i class="bi bi-box-arrow-right fs-4"></i>
+              <span>გასვლა</span>
             </div>
-        </a>
-    </div>
+          </a>
+        </div>
+      </main>
     </div>
   </div>
-  
+
 
 
     
-    <script src="/static/js/messages.js"></script>
+
+  <!-- Модальное окно бронирования -->
+  <div id="reservationModal" class="modal-reservation">
+    <div class="modal-content modal-reservation-content">
+      <span class="close" onclick="closeReservationModal()">&times;</span>
+      <h2>შეავსეთ ველები</h2>
+      <input class="menu-item rounded-3 animate-fade-in-up" type="date" id="reservationDate" placeholder="ამოირჩიეთ თარიღი" >
+      <select class="menu-item rounded-3 animate-fade-in-up" id="routeSelect">
+        <option style="background-color: rgb(51, 48, 48)" value="1">თბილისი-მოსკოვი</option>
+        <option style="background-color: rgb(51, 48, 48)" value="2">მოსკოვი-თბილისი</option>
+      </select>
+      <button onclick="redirectToReservationPage()">გადასვლა</button>
+    </div>
+  </div>
+
 
 
 <!-- Модальное окно выбора даты -->
-<div id="myModal" class="modal-blanks-select">
-    <div class="modal-content-cas modal-blanks-content">
+<div id="myModal" class="modal-reservation">
+    <div class="modal-content modal-reservation-content">
         <span class="close" onclick="closeModal()">&times;</span>
-        <h2>ამოირჩიეთ გაგზავნის თარიღი და ქალაქი</h2>
-        <div class="date-city-container">
-            <input type="date" id="datepicker">
-            <select id="citySelect">
-                <option value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
-                <option value="Москва">მოსკოვი</option>
-            </select>
-        </div>
+        <h2>შეავსეთ სათანადო ველები</h2>
+        <input type="date" id="datepicker" class="menu-item rounded-3 animate-fade-in-up" placeholder="ამოირჩიეთ თარიღი">
+        <select id="citySelect" class="menu-item rounded-3 animate-fade-in-up">
+            <option style="background-color: rgb(51, 48, 48)" value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
+            <option style="background-color: rgb(51, 48, 48)" value="Москва">მოსკოვი</option>
+        </select>
         <button onclick="redirectToPage()">გადასვლა</button>
-        <div class="dates_block">
+        <div class="dates_block animate-fade-in-up">
             <div class="spb_dates_block">
                 <label>პეტერბურგი</label>
                 <div class="spb_list_block">
-                    <ul id="spb_dates_list"></ul>
+                      <ul id="spb_dates_list"></ul>
                 </div>
             </div>
-            <div class="msk_dates_block">
+            <div class="msk_dates_block animate-fade-in-up">
                 <label>მოსკოვი</label>
                 <div class="msk_list_block">
-                    <ul id="msk_dates_list"></ul>
+
+                      <ul id="msk_dates_list"></ul>
+
                 </div>
             </div>
         </div>
-    </div>
-</div> 
-
-
-        
-        
-        
-
-
-
-
-<!-- Модальное окно бронирования -->
-<div id="reservationModal" class="modal-reservation">
-    <div class="modal-content-cas modal-reservation-content">
-        <span class="close" onclick="closeReservationModal()">&times;</span>
-        <h2>ამოირჩიეთ თარიღი და მარშრუტი</h2>
-        <input type="date" id="reservationDate">
-        <select id="routeSelect">
-            <option value="1">თბილისი-მოსკოვი</option>
-            <option value="2">მოსკოვი-თბილისი</option>
-        </select>
-        <button onclick="redirectToReservationPage()">გადასვლა</button>
     </div>
 </div>
 
 
 
-    
+
+
 </body>
 
 </html>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ru.js"></script>
 <script src="/static/js/loading_screen.js"></script>
-
+<script src="/static/js/index/ListModal.js"></script>
+<script src="/static/js/index/ReservationModal.js"></script>
+<script src="/static/js/messages.js"></script>
 
 {% block open %}
 <script>
@@ -220,13 +219,7 @@
   
     function openMenuModal() {
       menu_modal.style.display = 'block';
-  
-      const hexagons = document.querySelectorAll('.hexagon');
-      hexagons.forEach((hexagon, index) => {
-        // Задаем случайную задержку для начала анимации
-        const randomDelay = Math.random() * 8; // от 0 до 2 секунд
-        hexagon.style.animation = `pulse 2s ${randomDelay}s infinite`;
-      });
+
     }
   
     function closeMenuModal() {
@@ -248,170 +241,39 @@
     });
   </script>
 
+<script>
+  fetch('static/json/dates.json')
+      .then(response => response.json())
+      .then(data => {
+          const spbDatesList = document.getElementById('spb_dates_list');
+          const mskDatesList = document.getElementById('msk_dates_list');
 
+          data.spb_dates.forEach(date => {
+              const li = document.createElement('li');
+              const a = document.createElement('a');
+              a.href = `/list?date=${date}&where_from=Санкт-Петербург`;
+              a.textContent = date;
+              li.appendChild(a);
+              spbDatesList.appendChild(li);
+          });
+
+          data.msk_dates.forEach(date => {
+              const li = document.createElement('li');
+              const a = document.createElement('a');
+              a.href = `/list?date=${date}&where_from=Москва`;
+              a.textContent = date;
+              li.appendChild(a);
+              mskDatesList.appendChild(li);
+          });
+      });
+</script>
 {% endblock %}
 
 
 
 
-<script>
-    function openModal() {
-        const modal = document.getElementById('myModal');
-        modal.style.display = 'block';
-
-        // Инициализация календаря с использованием flatpickr
-        const datepicker = flatpickr("#datepicker", {
-            dateFormat: "d-m-Y", // Формат даты
-            locale: "ru", // Установка русского языка
-        });
-
-        // Добавляем обработчик события на клавишу "Esc"
-        window.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        // Добавляем обработчик события на клик вне модального окна
-        modal.addEventListener('click', function (event) {
-            if (event.target === modal) {
-                closeModal();
-            }
-        });
-    }
-
-    // Функция закрытия модального окна
-    function closeModal() {
-        const modal = document.getElementById('myModal');
-        modal.style.display = 'none';
-    }
-
-    // Функция перенаправления на страницу /list с выбранной датой
-    function redirectToPage() {
-        const selectedDate = document.getElementById('datepicker').value;
-        const selectedCity = document.getElementById('citySelect').value;
-        
-        if (selectedDate) {
-            // Передаем выбранную дату и город в URL
-            window.location.href = `/list?date=${selectedDate}&where_from=${selectedCity}`;
-        }
-    }
-
-
-</script>
 
 
 
 
 
-<script>
-    // Функция открытия модального окна
-    function openReservationModal() {
-        const modal = document.getElementById('reservationModal');
-        modal.style.display = 'block';
-
-        // Инициализация календаря с использованием flatpickr
-        const datepicker = flatpickr("#reservationDate", {
-            dateFormat: "Y-m-d", // Формат даты
-            locale: "ru", // Установка русского языка
-        });
-
-        // Добавляем обработчик события на клавишу "Esc"
-        window.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
-                closeReservationModal();
-            }
-        });
-
-        // Добавляем обработчик события на клик вне модального окна
-        modal.addEventListener('click', function (event) {
-            if (event.target === modal) {
-                closeReservationModal();
-            }
-        });
-    }
-
-    // Функция закрытия модального окна
-    function closeReservationModal() {
-        const modal = document.getElementById('reservationModal');
-        modal.style.display = 'none';
-    }
-
-    // Функция перенаправления на страницу в зависимости от выбора
-    function redirectToReservationPage() {
-        const selectedDate = document.getElementById('reservationDate').value;
-        const selectedRoute = document.getElementById('routeSelect').value;
-
-        let destination = '/error'; // По умолчанию, если дата не подходит
-        if (selectedDate) {
-            if (selectedRoute === '1') {
-                if (isThursday(selectedDate)) {
-                    destination = '/reservation?date=' + selectedDate + '&route=1';
-                } else if (isSunday(selectedDate)) {
-                    destination = '/reservation_big?date=' + selectedDate + '&route=1';
-                }
-            } else if (selectedRoute === '2') {
-                if (isWednesday(selectedDate)) {
-                    destination = '/reservation_big?date=' + selectedDate + '&route=2';
-                } else if (isSunday(selectedDate)) {
-                    destination = '/reservation?date=' + selectedDate + '&route=2';
-                }
-            }
-
-            // Перенаправляем пользователя на выбранную страницу
-            window.location.href = destination;
-        }
-    }
-
-    // Функция проверки, является ли день четвергом
-    function isThursday(dateString) {
-        const date = new Date(dateString);
-        return date.getDay() === 4; // 4 представляет четверг (0 - воскресенье, 1 - понедельник, и так далее)
-    }
-
-    // Функция проверки, является ли день средой
-    function isWednesday(dateString) {
-        const date = new Date(dateString);
-        return date.getDay() === 3; // 3 представляет среду
-    }
-
-    // Функция проверки, является ли день воскресеньем
-    function isSunday(dateString) {
-        const date = new Date(dateString);
-        return date.getDay() === 0; // 0 представляет воскресенье
-    }
-</script>
-
-
-
-
-
-
-
-
-<script>
-    fetch('static/json/dates.json')
-        .then(response => response.json())
-        .then(data => {
-            const spbDatesList = document.getElementById('spb_dates_list');
-            const mskDatesList = document.getElementById('msk_dates_list');
-
-            data.spb_dates.forEach(date => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `/list?date=${date}&where_from=Санкт-Петербург`;
-                a.textContent = date;
-                li.appendChild(a);
-                spbDatesList.appendChild(li);
-            });
-
-            data.msk_dates.forEach(date => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `/list?date=${date}&where_from=Москва`;
-                a.textContent = date;
-                li.appendChild(a);
-                mskDatesList.appendChild(li);
-            });
-        });
-</script>

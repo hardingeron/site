@@ -1,441 +1,204 @@
+
 body {
-  background: linear-gradient(135deg, #2c3e50, #4ca1af);
-  display: flex;
-  flex-direction: column; /* Для расположения футера внизу */
-  justify-content: space-between; /* Равное распределение пространства между элементами */
-  align-items: center;
-  min-height: 100vh; /* Минимальная высота экрана */
-  margin: 0;
-  font-family: 'Roboto', sans-serif; /* Современный шрифт */
+  background: linear-gradient(to bottom right, #221F26, #403E43, #0EA5E9);
+  color: white;
+  font-family: 'Noto Sans Georgian', Arial, sans-serif;
+  font-weight: 700; /* Жирный шрифт */
 }
-
-.menu-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.container {
+  max-width: 56rem; /* Уменьшаем ширину контейнера */
 }
-
-.hexagon-row {
+.menu-item {
+  background: rgba(51, 51, 51, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
   display: flex;
+  align-items: center;
   justify-content: center;
-}
-
-.hexagon {
-  width: 150px;
-  height: 175px; /* Высота для вертикального выравнивания */
-  background-color: #4ca1af;
-  position: relative;
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.3s, background-color 0.3s;
-  margin: 10px; /* Увеличенные отступы для разделения */
-  z-index: 1; /* Убедитесь, что шестиугольник сверху */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для глубины */
-}
-
-.hexagon::before,
-.hexagon::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  clip-path: inherit; /* Унаследовать форму шестиугольника */
-  transition: transform 0.3s, background-color 0.3s;
-  z-index: -1; /* Убедитесь, что они позади шестиугольника */
-}
-
-.hexagon::before {
-  background-color: #039be5; /* Темный цвет для внутренней тени */
-  transform: scale(1.1); /* Немного больше шестиугольника */
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Добавление тени для глубины */
-  border-radius: 10px; /* Легкое скругление углов для стиля */
-}
-
-.hexagon::after {
-  background-color: #4ca1af; /* Еще более темный цвет для внешней тени */
-  transform: scale(1.2); /* Больше, чем шестиугольник и первая граница */
-  border-radius: 10px; /* Легкое скругление углов для стиля */
-}
-
-.hexagon:hover {
-  background-color: #29b6f6; /* Цвет при наведении */
-  transform: scale(1.05); /* Немного увеличить при наведении */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличение тени при наведении */
-}
-
-.hexagon:hover .content i,
-.hexagon:hover .content p {
-  color: #ff9800; /* Оранжевый цвет текста и иконки при наведении */
-}
-
-.hexagon .content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #ffffff; /* Белый цвет для текста */
-  z-index: 1;
+  gap: 10px; /* Расстояние между иконкой и текстом */
+  padding: 1.2rem; /* Увеличиваем внутренний отступ */
   text-align: center;
-  transform: translateY(-10px); /* Поднятие текста немного */
+  color: white; /* Белый цвет текста */
+}
+.menu-item:hover {
+  background: rgba(15, 160, 206, 0.2);
+  transform: scale(1.1); /* Увеличиваем масштаб при наведении */
+  box-shadow: 0 0 20px rgba(15, 160, 206, 0.1);
+}
+.quote-box {
+  background: rgba(51, 51, 51, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+.quote-box:hover {
+  background: rgba(15, 160, 206, 0.2);
+}
+.footer-item {
+  background: rgba(51, 51, 51, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+.footer-item:hover {
+  background: rgba(15, 160, 206, 0.2);
 }
 
-.hexagon .content i {
-  font-size: 1.7rem; /* Увеличение размера иконки */
-  margin-bottom: 10px; /* Увеличение промежутка между иконкой и текстом */
+/* Анимация появления сверху вниз */
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.hexagon-row:not(:last-child) {
-  margin-bottom: -30px; /* Регулировка промежутка между рядами */
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
 }
 
-a {
-  text-decoration: none; /* Удаление подчеркивания ссылок */
-  transition: color 0.3s; /* Плавный переход цвета */
+/* Задержка анимации для каждого элемента */
+.menu-item, .quote-box, .footer-item, h1 {
+  opacity: 0; /* Начальное состояние: невидимый */
 }
 
-a:hover {
-  color: #29b6f6; /* Цвет при наведении на ссылку */
+.menu-item {
+  animation-delay: 0.2s;
 }
 
-.menu-container p {
-  font-weight: bold;
-  margin: 0; /* Удаление отступов вокруг текста */
-}
-/* ----------------------------------------------------------- */
-/* Стили для футера */
-/* Стили для футера */
-.footer {
-  background-color: #4ca1af;
-  width: 100%;
-  color: #ffffff; /* Белый цвет текста */
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap; /* Для адаптивности */
-  flex-shrink: 0; /* Запрещает сжиматься */
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+.quote-box {
+  animation-delay: 0.4s;
 }
 
-.footer-block {
-  max-width: 300px; /* Максимальная ширина блока */
-  margin: 10px; /* Отступы для разделения блоков */
-  text-align: center; /* Центрирование текста */
+.footer-item {
+  animation-delay: 0.6s;
 }
 
-.footer-block h3 {
-  margin-top: 0; /* Удаление верхнего отступа у заголовка */
-  font-size: 1.1rem; /* Уменьшение размера заголовка */
-  border-bottom: 2px solid #ffffff; /* Подчеркивание заголовка */
-  padding-bottom: 5px; /* Отступ под заголовком */
-  white-space: nowrap; /* Запрещает перенос текста на новую строку */
+h1 {
+  animation-delay: 0.1s;
 }
 
-.footer-block p {
-  margin: 10px 0; /* Отступы между абзацами */
+button {
+  animation-delay: 0.3s;
 }
 
-.footer a {
-  color: #ffeb3b; /* Желтый цвет ссылок */
-  text-decoration: underline; /* Подчеркивание ссылок */
+/* Анимация увеличения при наведении на элементы списка */
+.col-md-4, .menu-item, .bi, .mt-4 {
+  transition: transform 0.3s ease; /* Плавное изменение трансформации */
 }
 
-.footer a:hover {
-  text-decoration: none; /* Удаление подчеркивания при наведении */
+.col-md-4:hover, .menu-item:hover, .bi:hover, .mt-4:hover {
+  transform: scale(1.05); /* Увеличение при наведении */
 }
 
-.footer .company {
-  text-align: center;
-  width: 100%;
-  margin-top: 20px; /* Отступ сверху для компании */
-  font-size: 1rem; /* Размер текста для компании */
-}
 /* Стили для модального окна */
-
-
-/* Общие стили для модальных окон */
-.modal-content {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  width: 90%;
-  max-width: 600px;
-  margin: 5% auto; /* Центрирование по вертикали и горизонтали */
-  text-align: center;
-}
-
-.close {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  font-size: 1.5rem;
-  color: #888888;
-  cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-  color: #ff0000;
-}
-
-/* Стили для модального окна выбора даты */
-.modal-blanks-select {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-blanks-content {
-  padding: 20px;
-}
-
-.modal-blanks-content h2 {
-  margin-top: 0;
-  color: #333333;
-}
-
-.modal-blanks-content input[type="date"],
-.modal-blanks-content select {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-.modal-blanks-content input[type="date"]:focus,
-.modal-blanks-content select:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.modal-blanks-content button {
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 10px;
-  width: 50%;
-}
-
-.modal-blanks-content button:hover {
-  background-color: #0056b3;
-}
-
-
-
-
-/* Стили для модального окна бронирования */
 .modal-reservation {
-  display: none;
+  display: none; /* Скрыто по умолчанию */
   position: fixed;
-  z-index: 1;
-  left: 0;
   top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to bottom right, #221F26, #403E43, #0EA5E9); /* Полупрозрачный фон */
+  backdrop-filter: blur(10px); /* Размытие фона */
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-reservation-content {
-  padding: 20px;
+  background: rgba(51, 51, 51, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 500px;
+  color: white;
+  position: relative;
+  animation: fade-in-up 0.3s ease-out;
 }
 
 .modal-reservation-content h2 {
-  margin-top: 0;
-  color: #333333;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
-.modal-reservation-content input[type="date"],
+.modal-reservation-content input,
 .modal-reservation-content select {
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
   font-size: 1rem;
 }
 
-.modal-reservation-content input[type="date"]:focus,
+
+
+
+.modal-reservation-content input:focus,
 .modal-reservation-content select:focus {
-  border-color: #007bff;
   outline: none;
 }
 
-.modal-reservation-content button {
-  background-color: #007bff;
-  color: #ffffff;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 6px;
+
+
+.modal-reservation-content button:hover {
+  background-color: #0d8ec7;
+}
+
+
+.modal-reservation-content .close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  color: white;
   cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.modal-reservation-content .close:hover {
+  color: #0EA5E9;
+}
+
+
+/* Новые стили для кнопки */
+.modal-reservation-content button {
+  background-color: #067075; /* Синий фон */
+  color: white; /* Белый текст */
+  border: none;
+  border-radius: 5px;
+  padding: 0.75rem;
   font-size: 1rem;
-  margin-top: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .modal-reservation-content button:hover {
-  background-color: #0056b3;
+  background-color: #0d8ec7; /* Темно-синий при наведении */
 }
 
 
 
-
-
-/* Стили для поля выбора даты */
-
-/* Контейнер для горизонтального размещения */
-.date-city-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px; /* Расстояние между элементами */
-}
-
-#datepicker, #reservationDate {
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 1rem;
-  color: #333;
-  background-color: #f9f9f9;
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-#datepicker:focus {
-  border-color: #007bff;
-  outline: none;
-  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
-}
-
-/* Для браузеров, которые не поддерживают стандартный стиль поля даты */
-input[type="date"]::-webkit-calendar-picker-indicator {
-  background-color: #007bff;
-  border-radius: 4px;
-  color: white;
-  padding: 5px;
-  cursor: pointer;
-}
-
-input[type="date"]::-webkit-calendar-picker-indicator:hover {
-  background-color: #0056b3;
-}
-
-
-.flash.success {
-  position: fixed;
-  top: 50%; /* Положение сверху - на 50% экрана */
-  left: 50%; /* Положение слева - на 50% экрана */
-  transform: translate(-50%, -50%); /* Центрирование по вертикали и горизонтали */
-  width: auto; /* Ширина автоматически регулируется содержимым */
-  max-width: 300px; /* Максимальная ширина блока */
-  height: 50px; /* Высота автоматически регулируется содержимым */
-  padding: 10px;
-  background-color: #42a429;
-  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
-  border-radius: 5px;
-  color: #fff;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  font-size: 15px;
-  line-height: 1.5; /* Межстрочное расстояние для лучшей читаемости */
-  overflow: hidden; /* Обрезаем лишний текст, если он не помещается */
-}
-
-
-
-.flash.error {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  max-width: 300px;
-  padding: 10px;
-  background-color: #ff0000;
-  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
-  z-index: 9999;
-  border-radius: 5px;
-  color: #fff; /* цвет текста */
-  text-align: center; /* выравнивание текста по центру */
-  font-family: Arial, sans-serif; /* выбранный шрифт */
-}
-
-
-/* Медиа-запрос для планшетов */
-@media (max-width: 1024px) {
-  .hexagon {
-    width: 120px;
-    height: 140px;
-  }
-
-
-  .hexagon p {
-    font-size: 10px;
-  }
-}
-
-/* Медиа-запрос для мобильных телефонов */
-@media (max-width: 768px) {
-  .hexagon {
-    width: 100px;
-    height: 120px;
-  }
-
-}
-
-/* Медиа-запрос для очень маленьких экранов */
-@media (max-width: 480px) {
-  .hexagon {
-    width: 70px;
-    height: 90px;
-  }
-
-
-
-}
-
-
-@keyframes pulse {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.1);
-  }
-}
-
-.hexagon.pulsate {
-  animation: pulse 2s infinite;
-}
-
-
-
-
-/* даты для выбора из списка */
-
+    
 /* Контейнер для списка дат */
 .dates_block {
   display: flex;
   justify-content: space-between;
   gap: 20px; /* Расстояние между блоками */
+  margin-top: 1.2rem;
 }
 
 /* Блок для города */
 .spb_dates_block, .msk_dates_block {
   flex: 1;
-  background-color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 15px;
@@ -445,7 +208,7 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 
 .spb_dates_block label, .msk_dates_block label {
   display: block;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
   margin-bottom: 10px; /* Отступ снизу для метки */
 }
@@ -455,17 +218,18 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   list-style: none;
   padding: 0;
   margin: 0;
+  
 }
 
 .spb_list_block li, .msk_list_block li {
   margin-bottom: 8px; /* Отступ снизу для элементов списка */
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .spb_list_block li a, .msk_list_block li a {
   display: block;
   padding: 10px;
-  background-color: #f1f1f1;
-  color: #333;
+  color: white;
   text-decoration: none;
   border-radius: 4px;
   transition: background-color 0.3s;
@@ -482,3 +246,32 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   max-height: 200px; /* Максимальная высота прокручиваемого блока */
   overflow-y: auto; /* Включение прокрутки */
 }
+
+
+/* Стилизация полосы прокрутки */
+.spb_list_block::-webkit-scrollbar,
+.msk_list_block::-webkit-scrollbar {
+  width: 4px; /* Ширина полосы прокрутки */
+}
+
+/* Стилизация трека (фона) полосы прокрутки */
+.spb_list_block::-webkit-scrollbar-track,
+.msk_list_block::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
+  border-radius: 4px; /* Закругление углов */
+}
+
+/* Стилизация бегунка (самой полосы прокрутки) */
+.spb_list_block::-webkit-scrollbar-thumb,
+.msk_list_block::-webkit-scrollbar-thumb {
+  background: #067075; /* Цвет бегунка */
+  border-radius: 4px; /* Закругление углов */
+  transition: background 0.3s ease; /* Плавное изменение цвета */
+}
+
+/* Изменение цвета бегунка при наведении */
+.spb_list_block::-webkit-scrollbar-thumb:hover,
+.msk_list_block::-webkit-scrollbar-thumb:hover {
+  background: #0d8ec7; /* Темно-синий при наведении */
+}
+

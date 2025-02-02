@@ -1,0 +1,567 @@
+
+/*стиль для добавления посылки*/
+
+
+/*конец стиля для добавления посылки*/
+body {
+  background-color: #353745;
+}
+
+/* конец заднего фона  */
+
+/* меню сайта */
+
+
+/* флеш сообщения */
+
+
+.flash.success {
+  position: fixed;
+  top: 50%; /* Положение сверху - на 50% экрана */
+  left: 50%; /* Положение слева - на 50% экрана */
+  transform: translate(-50%, -50%); /* Центрирование по вертикали и горизонтали */
+  width: auto; /* Ширина автоматически регулируется содержимым */
+  max-width: 300px; /* Максимальная ширина блока */
+  height: 50px; /* Высота автоматически регулируется содержимым */
+  padding: 10px;
+  background-color: #42a429;
+  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
+  border-radius: 5px;
+  color: #fff;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5; /* Межстрочное расстояние для лучшей читаемости */
+  overflow: hidden; /* Обрезаем лишний текст, если он не помещается */
+}
+
+
+
+.flash.error {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  max-width: 300px;
+  padding: 10px;
+  background-color: #ff0000;
+  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
+  z-index: 9999;
+  border-radius: 5px;
+  color: #fff; /* цвет текста */
+  text-align: center; /* выравнивание текста по центру */
+  font-family: Arial, sans-serif; /* выбранный шрифт */
+}
+
+
+
+/* конец флеш сообщения */
+
+
+
+
+
+/*404*/
+.not_found_img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("../images/not_found.jpg");
+  background-size: cover;
+  opacity: 0.9;
+  z-index: -1;
+  background-position: center; /* Центрирование изображения */
+
+}
+
+
+.not_found {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  text-align: center;
+  color: white;
+  margin-left: 5%;
+}
+
+.not_found h1 {
+  margin-left: 5%;
+  font-size: 36px;
+  margin-bottom: -15px;
+}
+
+.not_found h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.not_found a {
+  display: inline-block;
+  font-size: 18px;
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-left: 5%;
+  
+}
+
+.not_found a:hover {
+  background-color: gray;
+  color: white;
+}
+
+.modal a {
+  text-decoration: none;
+} 
+
+
+/* Стили для экрана загрузки */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #2c3e50; /* Темный фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Контейнер для анимации */
+.loading-spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Анимация спинеров */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  background-color: #3498db;
+  border-radius: 50%;
+  margin: 0 10px; /* Расстояние между кружочками */
+  opacity: 0;
+  animation: bounce 0.6s ease-in-out infinite alternate;
+}
+
+/* Анимация прыжка для спинеров */
+@keyframes bounce {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px);
+    opacity: 0.5;
+  }
+}
+
+/* Плавный переход */
+.loading-screen .loading-spinner:nth-child(1) {
+  animation-delay: 0s;
+}
+.loading-screen .loading-spinner:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.loading-screen .loading-spinner:nth-child(3) {
+  animation-delay: 0.4s;
+}
+.loading-screen .loading-spinner:nth-child(4) {
+  animation-delay: 0.6s;
+}
+
+/* Стили для основного контента страницы */
+#page-content {
+  display: none;
+}
+
+/*модельное окно меню*/
+    /* Стили для модального окна */
+
+.menu_button {
+    position: absolute; /* Абсолютное позиционирование */
+    top: 5px; /* Располагаем кнопку вверху */
+    right: 20px; /* Располагаем кнопку вправо */
+    width: 75px; /* Задаем ширину кнопки */
+    height: 75px; /* Задаем высоту кнопки */
+}
+
+#openModalButton {
+    width: 100px; /* Заполняем всю доступную ширину */
+    height: 100%; /* Заполняем всю доступную высоту */
+    
+}
+
+.menu_block {
+    position: fixed; /* Задаем позицию блока как фиксированную */
+    top: 0; /* Закрепляем блок в верхней части окна браузера */
+    right: 0; /* Закрепляем блок в правой части окна браузера */
+
+}
+
+
+
+
+#message-container {
+  display: none;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  z-index: 9999;
+}
+
+#message-container.success {
+  background-color: #4CAF50;
+}
+
+#message-container.error {
+  background-color: #c72b1f;
+}
+
+
+
+li {
+  margin-bottom: 8px;
+}
+
+
+/* Общие стили для модального окна меню */
+.modal {
+  display: none; /* Скрыть модальное окно по умолчанию */
+  position: fixed; /* Фиксированное позиционирование */
+  z-index: 1; /* Поверх всех элементов */
+  left: 0;
+  top: 0;
+  width: 100%; /* Полная ширина */
+  height: 100%; /* Полная высота */
+  background-color: rgba(0, 0, 0, 0.4); /* Черный с прозрачностью */
+}
+
+.modal-menu-content {
+  width: 0;
+  margin: 5% auto;
+  padding: 20px;
+  position: relative;
+  box-shadow: none; /* Убрать тень /
+  background: none; / Убрать фон /
+  border: none; / Убрать рамку */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  }
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* Стили для hexagon-ячейки */
+.hexagon-row {
+  display: flex;
+  justify-content: center;
+}
+
+.hexagon {
+  width: 150px;
+  height: 175px; /* Высота для вертикального выравнивания */
+  background-color: #4ca1af;
+  position: relative;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s, background-color 0.3s;
+  margin: -10px 10px; /* Увеличенные отступы для разделения */
+  z-index: 1; /* Убедитесь, что шестиугольник сверху */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+}
+
+.hexagon .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff; /* Белый цвет для текста */
+  z-index: 1;
+  text-align: center;
+  transform: translateY(-10px); /* Поднятие текста немного */
+}
+
+.hexagon p {
+  font-weight: bold;
+}
+
+.hexagon .content i {
+  font-size: 2rem; /* Увеличение размера иконки */
+  margin-bottom: 10px; /* Увеличение промежутка между иконкой и текстом */
+}
+
+.hexagon p {
+  margin: 0;
+}
+
+.hexagon:hover {
+  background-color: #29b6f6; /* Цвет при наведении */
+  transform: scale(1.05); /* Немного увеличить при наведении */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличение тени при наведении */
+}
+
+.hexagon:hover .content i,
+.hexagon:hover .content p {
+  color: #ff9800; /* Оранжевый цвет текста и иконки при наведении */
+}
+
+
+
+/* Стили для модального окна бронирования */
+.modal-reservation {
+  display: none;
+  position: fixed;
+  z-index: 1060 !important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-reservation-content {
+  padding: 20px;
+  
+}
+
+.modal-reservation-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-reservation-content input[type="date"],
+.modal-reservation-content select {
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.modal-reservation-content input[type="date"]:focus,
+.modal-reservation-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-reservation-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.modal-reservation-content button:hover {
+  background-color: #0056b3;
+}
+
+/* Общие стили для модальных окон */
+.modal-content-cas {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  margin: 5% auto; /* Центрирование по вертикали и горизонтали */
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: #888888;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff0000;
+}
+
+
+.modal-blanks-select {
+  display: none;
+  position: fixed;
+  z-index: 1060 !important;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-blanks-content {
+  padding: 20px;
+}
+
+.modal-blanks-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-blanks-content input[type="date"],
+.modal-blanks-content select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-blanks-content input[type="date"]:focus,
+.modal-blanks-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-blanks-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+.modal-blanks-content button:hover {
+  background-color: #0056b3;
+}
+
+
+/* Контейнер для списка дат */
+.dates_block {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Расстояние между блоками */
+}
+
+/* Блок для города */
+.spb_dates_block, .msk_dates_block {
+  flex: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  overflow-y: auto; /* Включение прокрутки */
+  max-height: 300px; /* Максимальная высота блока */
+}
+
+.spb_dates_block label, .msk_dates_block label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* Отступ снизу для метки */
+  color: black;
+}
+
+/* Стили для списка */
+.spb_list_block ul, .msk_list_block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.spb_list_block li, .msk_list_block li {
+  margin-bottom: 8px; /* Отступ снизу для элементов списка */
+}
+
+.spb_list_block li a, .msk_list_block li a {
+  display: block;
+  padding: 10px;
+  background-color: #f1f1f1;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.spb_list_block li a:hover, .msk_list_block li a:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* Стили для прокрутки */
+.spb_list_block, .msk_list_block {
+  max-height: 200px; /* Максимальная высота прокручиваемого блока */
+  overflow-y: auto; /* Включение прокрутки */
+}
+
+
+
+
+
+/* Медиа-запрос для планшетов */
+@media (max-width: 1024px) {
+  .hexagon {
+    width: 120px;
+    height: 140px;
+  }
+
+  .hexagon p {
+    font-size: 10px;
+  }
+}
+
+/* Медиа-запрос для мобильных телефонов */
+@media (max-width: 768px) {
+  .hexagon {
+    width: 100px;
+    height: 120px;
+  }
+}
+
+/* Медиа-запрос для очень маленьких экранов */
+@media (max-width: 480px) {
+  .hexagon {
+    width: 70px;
+    height: 90px;
+  }
+
+}
+
+#datepicker, #reservationDate {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+}

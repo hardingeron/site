@@ -3,9 +3,17 @@ document.getElementById('clearButton').addEventListener('click', function () {
     const tableBody = document.getElementById('parcelTableBody');
     tableBody.innerHTML = ''; // Удаляем все строки таблицы
 
-    // Очищаем поле поиска
+    // Очищаем поле поиска по трекингу
+    const trackingInput = document.getElementById('trackingInput');
+    trackingInput.value = ''; // Очищаем поле "Трекинг"
+
+    // Очищаем поле поиска по имени
+    const nameInput = document.getElementById('nameInput');
+    nameInput.value = ''; // Очищаем поле "Имя"
+
+    // Очищаем поле "Получатель"
     const recipientInput = document.getElementById('recipient');
-    recipientInput.value = ''; // Очищаем поле "Получатель"
+    if (recipientInput) recipientInput.value = ''; // Очищаем поле "Получатель"
 
     // Очищаем поле паспорта
     const passportInput = document.getElementById('passport');

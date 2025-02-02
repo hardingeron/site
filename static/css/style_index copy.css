@@ -1,0 +1,484 @@
+body {
+  background: linear-gradient(135deg, #2c3e50, #4ca1af);
+  display: flex;
+  flex-direction: column; /* Для расположения футера внизу */
+  justify-content: space-between; /* Равное распределение пространства между элементами */
+  align-items: center;
+  min-height: 100vh; /* Минимальная высота экрана */
+  margin: 0;
+  font-family: 'Roboto', sans-serif; /* Современный шрифт */
+}
+
+.menu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hexagon-row {
+  display: flex;
+  justify-content: center;
+}
+
+.hexagon {
+  width: 150px;
+  height: 175px; /* Высота для вертикального выравнивания */
+  background-color: #4ca1af;
+  position: relative;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s, background-color 0.3s;
+  margin: 10px; /* Увеличенные отступы для разделения */
+  z-index: 1; /* Убедитесь, что шестиугольник сверху */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+}
+
+.hexagon::before,
+.hexagon::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  clip-path: inherit; /* Унаследовать форму шестиугольника */
+  transition: transform 0.3s, background-color 0.3s;
+  z-index: -1; /* Убедитесь, что они позади шестиугольника */
+}
+
+.hexagon::before {
+  background-color: #039be5; /* Темный цвет для внутренней тени */
+  transform: scale(1.1); /* Немного больше шестиугольника */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Добавление тени для глубины */
+  border-radius: 10px; /* Легкое скругление углов для стиля */
+}
+
+.hexagon::after {
+  background-color: #4ca1af; /* Еще более темный цвет для внешней тени */
+  transform: scale(1.2); /* Больше, чем шестиугольник и первая граница */
+  border-radius: 10px; /* Легкое скругление углов для стиля */
+}
+
+.hexagon:hover {
+  background-color: #29b6f6; /* Цвет при наведении */
+  transform: scale(1.05); /* Немного увеличить при наведении */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Увеличение тени при наведении */
+}
+
+.hexagon:hover .content i,
+.hexagon:hover .content p {
+  color: #ff9800; /* Оранжевый цвет текста и иконки при наведении */
+}
+
+.hexagon .content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff; /* Белый цвет для текста */
+  z-index: 1;
+  text-align: center;
+  transform: translateY(-10px); /* Поднятие текста немного */
+}
+
+.hexagon .content i {
+  font-size: 1.7rem; /* Увеличение размера иконки */
+  margin-bottom: 10px; /* Увеличение промежутка между иконкой и текстом */
+}
+
+.hexagon-row:not(:last-child) {
+  margin-bottom: -30px; /* Регулировка промежутка между рядами */
+}
+
+a {
+  text-decoration: none; /* Удаление подчеркивания ссылок */
+  transition: color 0.3s; /* Плавный переход цвета */
+}
+
+a:hover {
+  color: #29b6f6; /* Цвет при наведении на ссылку */
+}
+
+.menu-container p {
+  font-weight: bold;
+  margin: 0; /* Удаление отступов вокруг текста */
+}
+/* ----------------------------------------------------------- */
+/* Стили для футера */
+/* Стили для футера */
+.footer {
+  background-color: #4ca1af;
+  width: 100%;
+  color: #ffffff; /* Белый цвет текста */
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap; /* Для адаптивности */
+  flex-shrink: 0; /* Запрещает сжиматься */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Тень для глубины */
+}
+
+.footer-block {
+  max-width: 300px; /* Максимальная ширина блока */
+  margin: 10px; /* Отступы для разделения блоков */
+  text-align: center; /* Центрирование текста */
+}
+
+.footer-block h3 {
+  margin-top: 0; /* Удаление верхнего отступа у заголовка */
+  font-size: 1.1rem; /* Уменьшение размера заголовка */
+  border-bottom: 2px solid #ffffff; /* Подчеркивание заголовка */
+  padding-bottom: 5px; /* Отступ под заголовком */
+  white-space: nowrap; /* Запрещает перенос текста на новую строку */
+}
+
+.footer-block p {
+  margin: 10px 0; /* Отступы между абзацами */
+}
+
+.footer a {
+  color: #ffeb3b; /* Желтый цвет ссылок */
+  text-decoration: underline; /* Подчеркивание ссылок */
+}
+
+.footer a:hover {
+  text-decoration: none; /* Удаление подчеркивания при наведении */
+}
+
+.footer .company {
+  text-align: center;
+  width: 100%;
+  margin-top: 20px; /* Отступ сверху для компании */
+  font-size: 1rem; /* Размер текста для компании */
+}
+/* Стили для модального окна */
+
+
+/* Общие стили для модальных окон */
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 90%;
+  max-width: 600px;
+  margin: 5% auto; /* Центрирование по вертикали и горизонтали */
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 1.5rem;
+  color: #888888;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff0000;
+}
+
+/* Стили для модального окна выбора даты */
+.modal-blanks-select {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-blanks-content {
+  padding: 20px;
+}
+
+.modal-blanks-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-blanks-content input[type="date"],
+.modal-blanks-content select {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-blanks-content input[type="date"]:focus,
+.modal-blanks-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-blanks-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 10px;
+  width: 50%;
+}
+
+.modal-blanks-content button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+/* Стили для модального окна бронирования */
+.modal-reservation {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-reservation-content {
+  padding: 20px;
+}
+
+.modal-reservation-content h2 {
+  margin-top: 0;
+  color: #333333;
+}
+
+.modal-reservation-content input[type="date"],
+.modal-reservation-content select {
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.modal-reservation-content input[type="date"]:focus,
+.modal-reservation-content select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.modal-reservation-content button {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 10px;
+}
+
+.modal-reservation-content button:hover {
+  background-color: #0056b3;
+}
+
+
+
+
+
+/* Стили для поля выбора даты */
+
+/* Контейнер для горизонтального размещения */
+.date-city-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px; /* Расстояние между элементами */
+}
+
+#datepicker, #reservationDate {
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #f9f9f9;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+#datepicker:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+/* Для браузеров, которые не поддерживают стандартный стиль поля даты */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: #007bff;
+  border-radius: 4px;
+  color: white;
+  padding: 5px;
+  cursor: pointer;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-color: #0056b3;
+}
+
+
+.flash.success {
+  position: fixed;
+  top: 50%; /* Положение сверху - на 50% экрана */
+  left: 50%; /* Положение слева - на 50% экрана */
+  transform: translate(-50%, -50%); /* Центрирование по вертикали и горизонтали */
+  width: auto; /* Ширина автоматически регулируется содержимым */
+  max-width: 300px; /* Максимальная ширина блока */
+  height: 50px; /* Высота автоматически регулируется содержимым */
+  padding: 10px;
+  background-color: #42a429;
+  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
+  border-radius: 5px;
+  color: #fff;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5; /* Межстрочное расстояние для лучшей читаемости */
+  overflow: hidden; /* Обрезаем лишний текст, если он не помещается */
+}
+
+
+
+.flash.error {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  max-width: 300px;
+  padding: 10px;
+  background-color: #ff0000;
+  box-shadow: 0px 0px 10px 0px rgba(255, 255, 255, 0.981);
+  z-index: 9999;
+  border-radius: 5px;
+  color: #fff; /* цвет текста */
+  text-align: center; /* выравнивание текста по центру */
+  font-family: Arial, sans-serif; /* выбранный шрифт */
+}
+
+
+/* Медиа-запрос для планшетов */
+@media (max-width: 1024px) {
+  .hexagon {
+    width: 120px;
+    height: 140px;
+  }
+
+
+  .hexagon p {
+    font-size: 10px;
+  }
+}
+
+/* Медиа-запрос для мобильных телефонов */
+@media (max-width: 768px) {
+  .hexagon {
+    width: 100px;
+    height: 120px;
+  }
+
+}
+
+/* Медиа-запрос для очень маленьких экранов */
+@media (max-width: 480px) {
+  .hexagon {
+    width: 70px;
+    height: 90px;
+  }
+
+
+
+}
+
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.hexagon.pulsate {
+  animation: pulse 2s infinite;
+}
+
+
+
+
+/* даты для выбора из списка */
+
+/* Контейнер для списка дат */
+.dates_block {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Расстояние между блоками */
+}
+
+/* Блок для города */
+.spb_dates_block, .msk_dates_block {
+  flex: 1;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  overflow-y: auto; /* Включение прокрутки */
+  max-height: 300px; /* Максимальная высота блока */
+}
+
+.spb_dates_block label, .msk_dates_block label {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px; /* Отступ снизу для метки */
+}
+
+/* Стили для списка */
+.spb_list_block ul, .msk_list_block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.spb_list_block li, .msk_list_block li {
+  margin-bottom: 8px; /* Отступ снизу для элементов списка */
+}
+
+.spb_list_block li a, .msk_list_block li a {
+  display: block;
+  padding: 10px;
+  background-color: #f1f1f1;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.spb_list_block li a:hover, .msk_list_block li a:hover {
+  background-color: #007bff;
+  color: #fff;
+  border-radius: 4px;
+}
+
+/* Стили для прокрутки */
+.spb_list_block, .msk_list_block {
+  max-height: 200px; /* Максимальная высота прокручиваемого блока */
+  overflow-y: auto; /* Включение прокрутки */
+}

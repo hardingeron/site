@@ -185,8 +185,9 @@ li {
 
 /* ---------------------------- */
 
-
-
+.modal_menu a {
+  text-decoration: none;
+}
 
 .menu-item {
   background: rgba(51, 51, 51, 0.3);
@@ -200,6 +201,15 @@ li {
   padding: 1.2rem; /* Увеличиваем внутренний отступ */
   text-align: center;
   color: white; /* Белый цвет текста */
+}
+
+/* Мобильный стиль */
+@media (max-width: 768px) {
+  .menu-item {
+    padding: 0.2rem; /* Уменьшаем отступы для мобильных устройств */
+ 
+  }
+
 }
 .menu-item:hover {
   background: rgba(15, 160, 206, 0.2);

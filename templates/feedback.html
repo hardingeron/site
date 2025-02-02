@@ -18,18 +18,14 @@
             <div class="row">
                 {% for date, feedback in feedback_list.items() %}
                     <div class="col-md-4">
-                        <div class="card mb-3">
+                        <div class="card mb-3 {% if feedback['approval'] == 'completed' %}bg-success text-white{% endif %}">
                             <div class="card-header">
                                 <strong>გვერდი / Страница:</strong> {{ feedback['page'] | capitalize }}
                             </div>
                             <div class="card-body">
                                 <p><strong>იდეა / Идея:</strong> {{ feedback['idea'] }}</p>
                                 <p><strong>დაამატა / Добавил:</strong> {{ feedback['user'] }}</p>
-                                {% if feedback['approval'] %}
-                                    <p><strong>მოქმედება / Действие:</strong> {{ feedback['approval'] }}</p>
-                                {% else %}
-                                    <p><strong>მოქმედება / Действие:</strong> {{ feedback['approval'] }}</p>
-                                {% endif %}
+                                <p><strong>მოქმედება / Действие:</strong> {{ feedback['approval'] }}</p>
                             </div>
                             <div class="card-footer text-muted">
                                 <small>დამატებულია / Добавлено {{ date }}</small>

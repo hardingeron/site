@@ -275,3 +275,6 @@ button {
   background: #0d8ec7; /* Темно-синий при наведении */
 }
 
+a {
+    text-decoration: none;
+  }

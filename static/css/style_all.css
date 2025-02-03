@@ -1,136 +1,132 @@
-body {
-  background: linear-gradient(135deg, #2c3e50, #4ca1af);
+
+
+.navigation_block {
+  background-color: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон */
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.pictures_list_block {
+  padding: 15px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1); /* Полупрозрачный фон для блока */
+}
+
+.form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
   color: #ffffff;
 }
 
-/* Фон таблицы и строки */
-.table-responsive {
-  margin: 20px;
-  max-height: 800px; /* Максимальная высота блока */
-  overflow-y: auto;  /* Добавляем вертикальную прокрутку */
+.form-control, .form-select {
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.form-control::placeholder, .form-select::placeholder {
+  color: #ccc;
+}
+
+.btn {
+  padding: 10px 15px;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #067075;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+  background-color: #065f5f;
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 .table {
-  background-color: #ffffff;
-  color: #333333;
+  margin-top: 5%;
+  background-color: rgba(255, 255, 255, 0.918); /* Полупрозрачный фон для таблицы */
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.table thead {
-  background-color: #4ca1af;
-  color: #ffffff;
+.table th {
+  background-color: #0EA5E9;
+  color: #ffffff; 
 }
 
 .table tbody tr.green {
-  background-color: #d4edda; /* Зеленый фон для доставки */
+  background-color: rgba(13, 110, 23, 0.2); /* Легкий зеленый фон для доставки */
 }
 
 .table tbody tr.red {
-  background-color: #f8d7da; /* Красный фон для статуса отправки */
+  background-color: rgba(220, 53, 69, 0.2); /* Легкий красный фон для статуса отправки */
+}
+
+.table tbody tr:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Легкое выделение строк при наведении */
 }
 
 .table .icon {
   cursor: pointer;
-  font-size: 1.2rem; /* Размер иконок */
-  margin-right: 10px; /* Отступы между иконками */
+  font-size: 1.2rem;
+  margin-right: 10px;
   color: #4ca1af;
 }
 
 .table .icon:hover {
-  color: #0d6efd; /* Цвет при наведении */
+  color: #0d6efd;
 }
 
-/* Формы */
-.form-control {
-  background-color: #ffffff;
-  color: #333333;
-  border: 1px solid #4ca1af;
-}
-
-.form-control::placeholder {
-  color: #666666;
-}
-
-
-.navigation_block {
-  background-color: #ffffff;
-  color: #333333;
-  border-radius: 8px;
-}
-
-.form-label {
-  color: #333333;
-}
-
-.form-control, .form-select {
-  border: 1px solid #4ca1af;
-  border-radius: 5px;
-}
-
-.btn-primary {
-  background-color: #4ca1af;
-  border-color: #4ca1af;
-}
-
-.btn-primary:hover {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.btn-primary:focus {
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
-}
-
-
-/* Применяем к ячейкам таблицы */
 td {
-  white-space: nowrap; /* Запрещает перенос строк внутри ячейки */
-  overflow: hidden; /* Скрывает текст, который не помещается в пределах ячейки */
-  text-overflow: ellipsis; /* Добавляет многоточие в конце строки, если текст не помещается */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Стили для блока с действиями */
-.actions {
-  max-height: 0; /* Начальная высота для плавного перехода */
-  overflow: hidden; /* Скрытие переполненного текста */
-  opacity: 0; /* Начальная прозрачность */
-  transition: max-height 0.3s ease-out, opacity 0.3s ease-out; /* Плавное изменение высоты и прозрачности */
-  width: 10px;
-  
+.cost_block {
+  color: #ccc;
+  font-weight: 600;
 }
 
-/* Раскрытие блока */
-.actions.show {
-  max-height: 200px; /* Устанавливаем максимальную высоту для раскрытия */
-  opacity: 1; /* Полная непрозрачность */
-  width: auto;
+.cost_block.positive {
+  color: #28a745; /* Зеленый для положительных значений */
 }
 
-.actions.show .inner-element {
-  position: absolute; /* Абсолютное позиционирование для элементов внутри */
-  /* Убедитесь, что элементы внутри правильно позиционируются относительно родителя */
+.cost_block.negative {
+  color: #dc3545; /* Красный для отрицательных значений */
 }
 
-/* Стили для иконки переключения */
-.toggle-icon {
-  cursor: pointer; /* Указывает, что иконка кликабельна */
-  transition: color 0.3s ease; /* Плавное изменение цвета */
+.number {
+  font-weight: bold;
 }
 
-/* Изменение цвета иконки при наведении */
-.toggle-icon:hover {
-  color: blue; /* Цвет при наведении */
-}
-
-/* Стили для иконок действия */
-.icon {
-  cursor: pointer; /* Указывает, что иконка кликабельна */
-  margin-right: 10px; /* Отступ между иконками */
-  transition: color 0.3s ease; /* Плавное изменение цвета */
-}
-
-/* Изменение цвета иконок при наведении */
-.icon:hover {
-  color: darkblue; /* Цвет при наведении */
+.table-container {
+  overflow-x: auto;
+  max-width: 100%;
 }
 
 
+/* Стили для отображения картинки */
+.image-preview {
+  position: absolute;
+  z-index: 9999;
+  max-width: 500px;
+  max-height: 900px;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  background-color: #000;
+  padding: 10px;
+  display: none;
+}
+
+/* Мелкие стили для улучшения отображения */
+#previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

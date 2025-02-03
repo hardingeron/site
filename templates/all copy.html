@@ -24,31 +24,30 @@
 
 
 
-<div class="navigation_block border p-4 mx-auto" style="max-width: 600px;">
+<div class="navigation_block border border-primary p-4 mx-auto" style="max-width: 600px;">
     <div class="pictures_list_block">
-        <form id="dateForm" action="/images_list" method="post" class="d-flex align-items-center justify-content-between row g-3">
-            <div class="col-md-3">
-                <label for="startDate" class="form-label">დან:</label>
-                <input type="date" id="startDate" name="startDate" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <label for="endDate" class="form-label">მდე:</label>
-                <input type="date" id="endDate" name="endDate" class="form-control">
-            </div>
-            <div class="col-md-3">
-                <label for="images_city" class="form-label">ქალაქი:</label>
-                <select name="images_city" id="images_city" class="form-select">
-                    <option value="Moscow">Moscow</option>
-                    <option value="S.P.B">S.P.B</option>
-                </select>
-            </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button class="btn btn-primary w-100" type="submit">გადასვლა</button>
-            </div>
-        </form>
+      <form id="dateForm" action="/images_list" method="post" class="row g-3">
+        <div class="col-md-6">
+          <label for="startDate" class="form-label">დან:</label>
+          <input type="date" id="startDate" name="startDate" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label for="endDate" class="form-label">მდე:</label>
+          <input type="date" id="endDate" name="endDate" class="form-control">
+        </div>
+        <div class="col-md-6">
+          <label for="images_city" class="form-label">ქალაქი:</label>
+          <select name="images_city" id="images_city" class="form-select">
+            <option value="Moscow">Moscow</option>
+            <option value="S.P.B">S.P.B</option>
+          </select>
+        </div>
+        <div class="col-md-6 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">გადასვლა</button>
+        </div>
+      </form>
     </div>
 </div>
-
 
 
 
@@ -62,8 +61,6 @@
             <div class="modal-body text-center">
                 <img id="modal-image" src="" class="img-fluid" alt="Image">
                 <p id="modal-description"></p>
-                <p id="modal-passport"></p>
-                <p id="modal-responsibility"></p>
             </div>
         </div>
     </div>
@@ -72,76 +69,107 @@
 
 <div class="bg-image"></div>
 
-<div class="container-fluid">
-    <div class="table-container" style="overflow-x: auto; max-width: 100%;">
-        <table class="table table-striped table-hover align-middle shadow-sm">
-            <thead class="table-dark ">
-                <tr>
-                    <th class="col-auto">მოქმედება</th>
-                    <th class="col-auto"><input type="text" id="filter-number" class="form-control form-control-sm" placeholder="#" style="max-width: 80px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-sender" class="form-control form-control-sm" placeholder="გამგზავნი" style="max-width: 150px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-sender-phone" class="form-control form-control-sm" placeholder="ტელეფონი" style="max-width: 120px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-recipient" class="form-control form-control-sm" placeholder="მიმღები" style="max-width: 150px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-recipient-phone" class="form-control form-control-sm" placeholder="ტელეფონი" style="max-width: 120px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-cost" class="form-control form-control-sm" placeholder="გადახდა" style="max-width: 100px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-weight" class="form-control form-control-sm" placeholder="წონა" style="max-width: 80px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-city" class="form-control form-control-sm" placeholder="ქალაქი" style="max-width: 150px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-flight" class="form-control form-control-sm" placeholder="თარიღი" style="max-width: 120px;"></th>
-                    <th class="col-auto"><input type="text" id="filter-where_from" class="form-control form-control-sm" placeholder="გამგზავნი" style="max-width: 150px;"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for data in all_data %}
-                <tr {% if data.delivery == 'yes' %} class="table-success" {% elif data.departure_status == '+' %} class="table-danger" {% endif %} data-id="{{ data.id }}">
-                    <td class="text-center">
-                        <i class="bi bi-pencil-square text-primary me-2 fs-5" onclick="openEditModal(this)"
-                           data-id="{{ data.id }}" 
-                           data-sender="{{ data.sender }}" 
-                           data-sender_phone="{{ data.sender_phone }}" 
-                           data-recipient="{{ data.recipient }}"
-                           data-recipient_phone="{{ data.recipient_phone }}"
-                           data-inventory="{{ data.inventory }}"
-                           data-weight="{{ data.weight }}"
-                           data-responsibility="{{ data.responsibility }}"
-                           data-passport="{{ data.passport }}"
-                           data-cost="{{ data.cost }}"
-                           data-number="{{ data.number }}"
-                           data-city="{{ data.city }}"
-                           data-departure_status="{{ data.departure_status }}"></i>
-                        <i class="bi bi-trash text-danger me-2 fs-5" onclick="removeFromList('{{ data.id }}')"></i>
-                        <i class="bi bi-camera text-primary me-2 fs-5" onclick="openImageModal('{{ data.image }}', '{{ data.inventory }}', '{{data.number}}', '{{ data.passport }}', '{{ data.responsibility }}')"></i>
-                        {% if data.delivery == 'yes' %}
-                        <i class="bi bi-box text-secondary fs-5" style="opacity: 0.5;"></i>
-                        {% else %}
-                        <i id="deliveryImage_{{ data.id }}" class="bi bi-box text-success fs-5" onclick="updateDeliveryStatus('{{ data.id }}')"></i>
-                        {% endif %}
-                    </td>
-                    <td class="number">{{ data.number }}</td>
-                    <td>{{ data.sender }}</td>
-                    <td>{{ data.sender_phone }}</td>
-                    <td>{{ data.recipient }}</td>
-                    <td>{{ data.recipient_phone }}</td>
-                    <td class="cost_block" 
-                    {% if data.cost.startswith('-') %}style="color:#7b0000;"{% elif data.cost.startswith('+') %}style="color:#008400;"{% else %}style="color:black;"{% endif %}
-                    data-image="{{ data.image }}"
-                    onmouseover="showImage(this)" 
-                    onmouseout="hideImage()">
-                    {{ data.cost }}
-                    </td>
-                    <!-- Добавляем контейнер для изображения -->
-                    <div id="imagePreview" class="image-preview" style="display:none;">
-                        <img id="previewImage" src="" alt="Image preview" />
-                    </div>
-                    <td>{{ data.weight }}</td>
-                    <td>{{ data.city }}</td>
-                    <td>{{ data.flight }}</td>
-                    <td>{{ data.where_from }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">
+            <input type="text" id="filter-number" name="filter-number" class="form-control form-control-sm" placeholder="#" style="width: 80px;">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-sender" name="filter-sender" class="form-control form-control-sm" placeholder="გამგზავნი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-sender-phone" name="filter-sender-phone" class="form-control form-control-sm" placeholder="ტელეფონი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-recipient" name="filter-recipient" class="form-control form-control-sm" placeholder="მიმღები">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-recipient-phone" name="filter-recipient-phone" class="form-control form-control-sm" placeholder="ტელეფონი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-cost" name="filter-cost" class="form-control form-control-sm" placeholder="გადახდა">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-passport" name="filter-passport" class="form-control form-control-sm" placeholder="პასპორტი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-weight" name="filter-weight" class="form-control form-control-sm" placeholder="წონა">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-responsibility" name="filter-responsibility" class="form-control form-control-sm" placeholder="ღირებულება">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-city" name="filter-city" class="form-control form-control-sm" placeholder="ქალაქი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-flight" name="filter-flight" class="form-control form-control-sm" placeholder="თარიღი">
+          </th>
+          <th scope="col">
+            <input type="text" id="filter-where_from" name="filter-where_from" class="form-control form-control-sm" placeholder="გამგზავნი">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for data in all_data %}
+        <tr {% if data.delivery == 'yes' %} class="green" {% elif data.departure_status == '+' %} class="red"{% endif %} data-id="{{ data.id }}">
+            <td class="description" style="position: relative;">
+                <!-- Иконка для открытия/закрытия дополнительных иконок -->
+                <i class="bi bi-caret-down-fill toggle-icon" onclick="toggleActions(this)"></i>
+                
+                <!-- Дополнительные иконки с действиями -->
+                <div class="actions">
+                    <!-- Удаление -->
+                    <i class="bi bi-trash icon" onclick="removeFromList('{{ data.id }}')"></i>
+                
+                    <!-- Редактирование -->
+                    <i class="bi bi-pencil icon" onclick="openEditModal(this)"
+                    data-id="{{ data.id }}" 
+                    data-sender="{{ data.sender }}" 
+                    data-sender_phone="{{ data.sender_phone }}" 
+                    data-recipient="{{ data.recipient }}"
+                    data-recipient_phone="{{ data.recipient_phone }}"
+                    data-inventory="{{ data.inventory }}"
+                    data-weight="{{ data.weight }}"
+                    data-responsibility="{{ data.responsibility }}"
+                    data-passport="{{ data.passport }}"
+                    data-cost="{{ data.cost }}"
+                    data-number="{{ data.number }}"
+                    data-city="{{ data.city }}"
+                    data-departure_status="{{ data.departure_status }}"></i>
+                
+                    <!-- Фотография -->
+                    <i class="bi bi-camera icon" onclick="openImageModal('{{ data.image }}', '{{ data.inventory }}', '{{data.number}}')"></i>
+                
+                    <!-- Выдача посылки -->
+                    {% if data.delivery == 'yes' %}
+                    <i class="bi bi-box icon" style="display: none;"></i>
+                    {% else %}
+                    <i id="deliveryImage_{{ data.id }}" class="bi bi-box icon" onclick="updateDeliveryStatus('{{ data.id }}')"></i>
+                    {% endif %}
+                </div>
+            </td>
+          <td class="number">{{ data.number }}</td>
+          <td>{{ data.sender }}</td>
+          <td>{{ data.sender_phone }}</td>
+          <td>{{ data.recipient }}</td>
+          <td>{{ data.recipient_phone }}</td>
+          <td class="cost_block" {% if data.cost.startswith('-') %}style="color:#7b0000;"{% elif data.cost.startswith('+') %}style="color:#008400;"{% else %}style="color:black;"{% endif %}>
+            {{ data.cost }}
+          </td>
+          <td>{{ data.passport }}</td>
+          <td>{{ data.weight }}</td>
+          <td>{{ data.responsibility }}</td>
+          <td>{{ data.city }}</td>
+          <td>{{ data.flight }}</td>
+          <td>{{ data.where_from }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
 
 
@@ -258,20 +286,114 @@
 
 
 
-<script src="/static/js/all/Filter.js"></script>
 
 <script>
-    function openImageModal(imageUrl, description, number, passport, responsibility) {
-        document.getElementById("modal-image").src = imageUrl;
-        document.getElementById("modal-description").textContent = "ამანათის #" + number + ", აღწერა: " + description;
-        document.getElementById("modal-passport").textContent = "პასპორტი: " + passport;
-        document.getElementById("modal-responsibility").textContent = "ღირებულება: " + responsibility;
+    function openImageModal(imageUrl, description, number) {
+        var modalImage = document.getElementById("modal-image");
+        var modalDescription = document.getElementById("modal-description");
+
+        modalImage.src = imageUrl;
+        modalDescription.textContent = "ამანათის #" + number + ", აღწერა: " + description;
+
         $('#image-modal').modal('show');
     }
 </script>
 
 
+
  
+ <script>
+        var filterNumberInput = document.getElementById('filter-number');
+    var filterSenderInput = document.getElementById('filter-sender');
+    var filterSenderPhoneInput = document.getElementById('filter-sender-phone');
+    var filterRecipientInput = document.getElementById('filter-recipient');
+    var filterRecipientPhoneInput = document.getElementById('filter-recipient-phone');
+    var filterCostInput = document.getElementById('filter-cost');
+    var filterPassportInput = document.getElementById('filter-passport');
+    var filterWeightInput = document.getElementById('filter-weight');
+    var filterResponsibilityInput = document.getElementById('filter-responsibility');
+    var filterCityInput = document.getElementById('filter-city');
+    var filterFlightInput = document.getElementById('filter-flight');
+    var filterWhereFromInput = document.getElementById('filter-where_from');
+
+    // Обработчик события ввода в поля фильтров
+    filterNumberInput.addEventListener('input', filterTable);
+    filterSenderInput.addEventListener('input', filterTable);
+    filterSenderPhoneInput.addEventListener('input', filterTable);
+    filterRecipientInput.addEventListener('input', filterTable);
+    filterRecipientPhoneInput.addEventListener('input', filterTable);
+    filterCostInput.addEventListener('input', filterTable);
+    filterPassportInput.addEventListener('input', filterTable);
+    filterWeightInput.addEventListener('input', filterTable);
+    filterResponsibilityInput.addEventListener('input', filterTable);
+    filterCityInput.addEventListener('input', filterTable);
+    filterFlightInput.addEventListener('input', filterTable);
+    filterWhereFromInput.addEventListener('input', filterTable);
+
+    function filterTable() {
+    var filterNumberValue = filterNumberInput.value.toLowerCase();
+    var filterSenderValue = filterSenderInput.value.toLowerCase();
+    var filterSenderPhoneValue = filterSenderPhoneInput.value.toLowerCase();
+    var filterRecipientValue = filterRecipientInput.value.toLowerCase();
+    var filterRecipientPhoneValue = filterRecipientPhoneInput.value.toLowerCase();
+    var filterCostValue = filterCostInput.value.toLowerCase();
+    var filterPassportValue = filterPassportInput.value.toLowerCase();
+    var filterWeightValue = filterWeightInput.value.toLowerCase();
+    var filterResponsibilityValue = filterResponsibilityInput.value.toLowerCase();
+    var filterCityValue = filterCityInput.value.toLowerCase();
+    var filterFlightValue = filterFlightInput.value.toLowerCase();
+    var filterWhereFromValue = filterWhereFromInput.value.toLowerCase();
+
+    var tableRows = document.querySelectorAll('.table tbody tr');
+
+    tableRows.forEach(function(row) {
+        var numberCell = row.querySelector('.number');
+        var senderCell = row.querySelectorAll('td')[2];
+        var senderPhoneCell = row.querySelectorAll('td')[3];
+        var recipientCell = row.querySelectorAll('td')[4];
+        var recipientPhoneCell = row.querySelectorAll('td')[5];
+        var costCell = row.querySelectorAll('td')[6];
+        var passportCell = row.querySelectorAll('td')[7];
+        var weightCell = row.querySelectorAll('td')[8];
+        var responsibilityCell = row.querySelectorAll('td')[9];
+        var cityCell = row.querySelectorAll('td')[10];
+        var flightCell = row.querySelectorAll('td')[11];
+        var whereFromCell = row.querySelectorAll('td')[12];
+
+        var numberValue = numberCell.textContent.toLowerCase();
+        var senderValue = senderCell.textContent.toLowerCase();
+        var senderPhoneValue = senderPhoneCell.textContent.toLowerCase();
+        var recipientValue = recipientCell.textContent.toLowerCase();
+        var recipientPhoneValue = recipientPhoneCell.textContent.toLowerCase();
+        var costValue = costCell.textContent.toLowerCase();
+        var passportValue = passportCell.textContent.toLowerCase();
+        var weightValue = weightCell.textContent.toLowerCase();
+        var responsibilityValue = responsibilityCell.textContent.toLowerCase();
+        var cityValue = cityCell.textContent.toLowerCase();
+        var flightValue = flightCell.textContent.toLowerCase();
+        var whereFromValue = whereFromCell.textContent.toLowerCase();
+
+        if (numberValue.includes(filterNumberValue) &&
+            senderValue.includes(filterSenderValue) &&
+            senderPhoneValue.includes(filterSenderPhoneValue) &&
+            recipientValue.includes(filterRecipientValue) &&
+            recipientPhoneValue.includes(filterRecipientPhoneValue) &&
+            costValue.includes(filterCostValue) &&
+            passportValue.includes(filterPassportValue) &&
+            weightValue.includes(filterWeightValue) &&
+            responsibilityValue.includes(filterResponsibilityValue) &&
+            cityValue.includes(filterCityValue) &&
+            flightValue.includes(filterFlightValue) &&
+            whereFromValue.includes(filterWhereFromValue)) {
+            row.style.display = ''; // Показываем строку, если соответствует фильтру
+        } else {
+            row.style.display = 'none'; // Скрываем строку, если не соответствует фильтру
+        }
+    });
+}
+    </script>
+ </script>
+
 
 
 <!-- დასამუშავებელია ეს კოდი !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
@@ -522,32 +644,24 @@ function openEditModal(element) {
     });
 </script>
 
-
 <script>
-    function showImage(cell) {
-    var imageUrl = cell.getAttribute('data-image'); // Получаем ссылку на картинку
-    var imagePreview = document.getElementById('imagePreview');
-    var previewImage = document.getElementById('previewImage');
-    
-    // Устанавливаем источник картинки
-    previewImage.src = imageUrl;
-    
-    // Показываем контейнер с картинкой
-    imagePreview.style.display = 'block';
-    
-    // Устанавливаем позицию контейнера с картинкой рядом с ячейкой
-    var rect = cell.getBoundingClientRect();
-    imagePreview.style.left = rect.left + window.scrollX + 'px';
-    imagePreview.style.top = rect.bottom + window.scrollY + 'px';
-}
+// Функция для переключения видимости блока с иконками
+function toggleActions(icon) {
+    var actionsDiv = icon.nextElementSibling; // Находим следующий элемент после иконки
 
-function hideImage() {
-    var imagePreview = document.getElementById('imagePreview');
-    imagePreview.style.display = 'none'; // Скрываем контейнер с картинкой
-}
+    // Если блок с действиями видим, скрываем его
+    if (actionsDiv.classList.contains('show')) {
+        actionsDiv.classList.remove('show');
+    } else {
+        // В противном случае, показываем его
+        actionsDiv.classList.add('show');
+    }
 
+    // Опционально: смена иконки при раскрытии/скрытии
+    icon.classList.toggle('bi-caret-down-fill');
+    icon.classList.toggle('bi-caret-up-fill');
+}
 </script>
-
 
 {% endblock %}
     

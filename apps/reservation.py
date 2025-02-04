@@ -327,11 +327,60 @@ class GenerateTicketView(MethodView):
             return jsonify({'success': False, 'message': str(e)})
 
 
+class UserCheckWithPhone(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def post(self):
+        data = request.get_json()
+        phone = data.get("phone")
+
+        if not phone:
+            return jsonify({"success": False, "error": "ტელეფონი არ არის მითითებული"}), 400
+
+        # Ищем запись с указанным телефоном, начиная с самой новой (по id или дате)
+        user = Booking.query.filter_by(phone=phone).order_by(Booking.id.desc()).first()
+
+        if user:
+            return jsonify({
+                "success": True,
+                "flname": user.flname,
+                "gender": user.gender,
+                "pasport": user.pasport,
+                "date_of_birth": user.date_of_birth
+            })
+        else:
+            return jsonify({"success": False})
 
 
+class UserCheckWithPassport(MethodView):
+    decorators = [login_required]
 
+    def __init__(self, db):
+        self.db = db
 
+    def post(self):
+        data = request.get_json()
+        passport = data.get("pasport")
 
+        if not passport:
+            return jsonify({"success": False, "error": "საბუთი არ არის მითითებული"}), 400
+
+        # Ищем запись с указанным телефоном, начиная с самой новой (по id или дате)
+        user = Booking.query.filter_by(pasport=passport).order_by(Booking.id.desc()).first()
+
+        if user:
+            return jsonify({
+                "success": True,
+                "flname": user.flname,
+                "gender": user.gender,
+                "phone": user.phone,
+                "date_of_birth": user.date_of_birth
+            })
+        else:
+            return jsonify({"success": False})
 
 
 
@@ -345,3 +394,5 @@ def register_reservation_routes(app, db):
     app.add_url_rule('/booking_del', view_func=BookingDeleteView.as_view('booking_del', db=db))
     app.add_url_rule('/download_ved', view_func=DownloadVedView.as_view('download_ved', db=db))
     app.add_url_rule('/ticket', view_func=GenerateTicketView.as_view('generate_ticket', db=db))
+    app.add_url_rule('/check_user_with_phone', view_func=UserCheckWithPhone.as_view('check_user_with_phone', db=db))
+    app.add_url_rule('/check_user_with_passport', view_func=UserCheckWithPassport.as_view('check_user_with_passport', db=db))

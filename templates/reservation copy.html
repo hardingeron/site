@@ -214,7 +214,6 @@
       </div>
         <h2 data-lang="ge" class="modal_text_block">ჩაწერეთ მონაცემები</h2>
         <h2 data-lang="ru" class="modal_text_block hidden">Введите данные</h2>
-        <div id="alert" class="alert alert-danger d-none">Данные не найдены!</div>
         <input type="hidden" value="" name="old_seat_number">
         <input type="hidden" value="{{reis}}" name="reis" required readonly><br>
         <input type="hidden" value="{{d}}" name="selected_date" required readonly><br>
@@ -229,9 +228,8 @@
               </label>
           </div>
           <div class="form-check form-check-inline">
-              <input class="form-check-input ms-3" type="radio" id="female" name="gender" value="female" required>
+              <input class="form-check-input" type="radio" id="female" name="gender" value="female" required>
               <label class="form-check-label" for="female" style="color: pink;">
-                
                   <i class="bi bi-gender-female"></i> მდ
               </label>
           </div>
@@ -250,15 +248,13 @@
             <div class="fl_name_block">
                 <label data-lang="ge">სახელი გვარი</label>
                 <label data-lang="ru" class="hidden">Имя фамилия</label>
-                <input type="text" id="flname" name="flname" class="form-control" required>
+                <input type="text" name="flname" required ><br>
             </div>
             <div class="phone_block">
                 <label data-lang="ge">ტელეფონი</label>
                 <label data-lang="ru" class="hidden">Телефон</label>
-                <div class="d-flex">
-                  <input type="text" id="phone" name="phone" class="form-control" required>
-                  <button id="check" class="btn_check">?</button>
-                </div>
+
+                <input type="text" name="phone" required ><br>
             </div>
         </div>
         
@@ -266,15 +262,12 @@
             <div class="passport_block">
                 <label data-lang="ge">პასპორტი</label>
                 <label data-lang="ru" class="hidden">Пасспорт</label>
-                <div class="d-flex">
-                  <input type="text" id="pasport" name="pasport" class="form-control">
-                  <button id="check_pas" class="btn_check">?</button>
-                </div>
+                <input type="text" name="pasport"  ><br>
             </div>
             <div class="date_of_birth_block">
-                <label data-lang="ge">დაბ/თარიღი</label>
+                <label data-lang="ge">დაბადების თარიღი</label>
                 <label data-lang="ru" class="hidden">Дата рождения</label>
-                <input type="text" id="date_of_birth" name="date_of_birth" class="form-control">
+                <input type="text" name="date_of_birth" ><br>
             </div>
         </div>
         
@@ -365,9 +358,6 @@
         <div id="error-message"></div>
     </div>
 </div>
-
-
-
 
 <div id="myModalStatistic" class="modal_statistic">
   <div class="modal_statistic-content">
@@ -1013,8 +1003,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('toggleLanguageButton').addEventListener('click', toggleLanguage);
 </script>
 
-<script src="/static/js/reservation/PhoneCheck.js"></script>
-<script src="/static/js/reservation/PassportCheck.js"></script>
+
 </body>
 </html>
 

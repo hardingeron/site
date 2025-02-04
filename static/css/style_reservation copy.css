@@ -390,7 +390,7 @@ button:hover, .btn:hover {
  */
 
 
- #modal-form input[type="text"]:not(#phone):not(#pasport), #modal-form select {
+#modal-form input[type="text"], #modal-form select {
   width: 100%;
   padding: 10px;
   margin-bottom: 10px;
@@ -400,32 +400,12 @@ button:hover, .btn:hover {
   color: #f1f1f1;
 }
 
-#phone, #pasport {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ccc; 
-  background-color: #505968;
-  color: #f1f1f1;
-}
-
 #modal-form input[type="radio"] {
   margin: 0 5px 0 0;
   width: 1em;
 }
 
-#modal-form select, .btn_check {
-  height: 46px;
-}
 
-.btn_check {
-  max-width: 20%;
-  border-radius: 0 8px 8px 0; /* Закругления только справа */
-}
-
-#phone, #pasport {
-  border-radius: 5px 0 0 5px; /* Закругления только справа */
-}
 
 .gender_block, .fl_name_phone_block, .pass_comm_block, .pay_dest_block, .pay_radio_block, .pay_radio_block_two {
   display: flex;
@@ -632,5 +612,4 @@ canvas {
   box-shadow: 0 0 4px 2px rgba(0, 0, 0, 0.1);
   min-height: 200px;
 }
-
 

@@ -18,6 +18,7 @@ from apps.list_edit import register_list_edit_routes
 from apps.expertise import register_expertise_routes
 from apps.feedback import register_feedback_routes
 from apps.parcel_delivery import register_parcel_delivery_routes
+from apps.analysis import register_analysis_routes
 from datetime import datetime
 
 
@@ -98,6 +99,9 @@ register_list_edit_routes(app, db)
 register_expertise_routes(app, db)
 #-------------------------------------------------------------------------------------------------#
 # ------------------------------               other                ------------------------------#
+register_analysis_routes(app, db)
+
+
 @app.route('/logout')
 @login_required
 def logout():

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"></script>
+    <style>
+        body {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+        .menu {
+            background-color: #212529;
+            height: 100vh;
+            padding: 15px;
+            width: 250px;
+            overflow: hidden;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .menu-item:hover {
+            background-color: #1b1e21;
+        }
+        .menu-item i {
+            margin-right: 10px;
+        }
+        .content-section {
+            display: none; /* По умолчанию скрываем */
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <div class="menu">
+            <ul class="list-unstyled">
+                <li class="menu-item" onclick="showSection('batumi-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Батуми</span></li>
+                <li class="menu-item" onclick="showSection('tbilisi-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Тбилиси</span></li>
+                <li class="menu-item" onclick="showSection('spb-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Санкт-Петербург</span></li>
+                <li class="menu-item" onclick="showSection('moscow-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Москва</span></li>
+            </ul>
+        </div>
+
+        <div class="flex-grow-1 p-3">
+            <h2>Добро пожаловать!</h2>
+
+            <!-- Анализ Батуми -->
+            <div id="batumi-analysis" class="content-section">
+                <h3>Анализ Батуми</h3>
+                <p id="batumi-loading">Загрузка данных...</p>
+                <canvas id="batumiChart"></canvas>
+            </div>
+
+            <!-- Анализ Тбилиси -->
+            <div id="tbilisi-analysis" class="content-section">
+                <h3>Анализ Тбилиси</h3>
+                <p id="tbilisi-loading">Загрузка данных...</p>
+                <canvas id="tbilisiChart"></canvas>
+            </div>
+
+            <!-- Анализ Санкт-Петербурга -->
+            <div id="spb-analysis" class="content-section">
+                <h3>Анализ Санкт-Петербурга</h3>
+                <p>Информация о посылках...</p>
+            </div>
+
+            <!-- Анализ Москвы -->
+            <div id="moscow-analysis" class="content-section">
+                <h3>Анализ Москвы</h3>
+                <p>Анализ пассажиров и посылок...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Скрываем все секции
+            $('.content-section').hide();
+
+            // Показываем нужную секцию
+            $('#' + sectionId).show();
+        }
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/analysis/AnalysisBatumi.js"></script>
+    <script src="/static/js/analysis/AnalysisTbilisi.js"></script>
+</body>
+</html>

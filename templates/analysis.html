@@ -35,46 +35,65 @@
         .content-section {
             display: none; /* По умолчанию скрываем */
         }
+
+        .menu h2 {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 10px;
+}
+
+        .separator {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, white, rgba(255, 255, 255, 0.6), white); /* Сложная линия */
+            margin: 10px 0; /* Отступы сверху и снизу */
+        }
+        h3 {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="d-flex">
         <div class="menu">
+            <h2>ანალიზი</h2> <!-- Заголовок для раздела анализов -->
+            <div class="separator"></div> <!-- Разделительная линия -->
             <ul class="list-unstyled">
-                <li class="menu-item" onclick="showSection('batumi-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Батуми</span></li>
-                <li class="menu-item" onclick="showSection('tbilisi-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Тбилиси</span></li>
-                <li class="menu-item" onclick="showSection('spb-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Санкт-Петербург</span></li>
-                <li class="menu-item" onclick="showSection('moscow-analysis')"><i class="fas fa-chart-bar"></i> <span>Анализ Москва</span></li>
+                <li class="menu-item" onclick="showSection('batumi-analysis')"><i class="fas fa-chart-bar"></i> <span>- ბათუმი</span></li>
+                <li class="menu-item" onclick="showSection('tbilisi-analysis')"><i class="fas fa-chart-bar"></i> <span>- თბილისი</span></li>
+                <li class="menu-item" onclick="showSection('spb-analysis')"><i class="fas fa-chart-bar"></i> <span>- პეტერბურგი</span></li>
+                <li class="menu-item" onclick="showSection('moscow-analysis')"><i class="fas fa-chart-bar"></i> <span>- მოსკოვი</span></li>
             </ul>
         </div>
-
         <div class="flex-grow-1 p-3">
-            <h2>Добро пожаловать!</h2>
+            <h2>მოგესალმებით!</h2>
 
             <!-- Анализ Батуми -->
             <div id="batumi-analysis" class="content-section">
-                <h3>Анализ Батуми</h3>
+                <h3>ბათუმის ანალიზი</h3>
                 <p id="batumi-loading">Загрузка данных...</p>
                 <canvas id="batumiChart"></canvas>
             </div>
 
             <!-- Анализ Тбилиси -->
             <div id="tbilisi-analysis" class="content-section">
-                <h3>Анализ Тбилиси</h3>
+                <h3>თბილისის ანალიზი</h3>
                 <p id="tbilisi-loading">Загрузка данных...</p>
                 <canvas id="tbilisiChart"></canvas>
             </div>
 
             <!-- Анализ Санкт-Петербурга -->
             <div id="spb-analysis" class="content-section">
-                <h3>Анализ Санкт-Петербурга</h3>
-                <p>Информация о посылках...</p>
+                <h3>პეტერბურგის ანალიზი</h3>
+                <p id="spb-loading">Загрузка данных...</p>
+                <canvas id="spbChart"></canvas>
             </div>
 
             <!-- Анализ Москвы -->
             <div id="moscow-analysis" class="content-section">
-                <h3>Анализ Москвы</h3>
-                <p>Анализ пассажиров и посылок...</p>
+                <h3>მოსკოვის ანალიზი</h3>
+                <p id="moscow-loading">Загрузка данных...</p>
+                <canvas id="moscowChart"></canvas>
             </div>
         </div>
     </div>
@@ -93,5 +112,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="/static/js/analysis/AnalysisBatumi.js"></script>
     <script src="/static/js/analysis/AnalysisTbilisi.js"></script>
+    <script src="/static/js/analysis/AnalysisSPB.js"></script>
+    <script src="/static/js/analysis/AnalysisMoscow.js"></script>
 </body>
 </html>

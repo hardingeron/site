@@ -1,30 +1,30 @@
 $(document).ready(function () {
     $('.menu-item').on('click', function () {
-        if ($(this).text().trim() === "- თბილისი") {
-            loadTbilisiData();
+        if ($(this).text().trim() === "- მოსკოვი") {
+            loadMoscowData();
         }
     });
 });
 
-function loadTbilisiData() {
-    $('#tbilisi-loading').show(); // Показываем сообщение о загрузке
+function loadMoscowData() {
+    $('#moscow-loading').show(); // Показываем сообщение о загрузке
 
     $.ajax({
-        url: "/tbilisi_data",
+        url: "/moscow_data",
         method: "POST",  // Был GET, меняем на POST
         dataType: "json",
         success: function (response) {
-            $('#tbilisi-loading').hide();
-            renderTbilisiChart(response);
+            $('#moscow-loading').hide();
+            renderMoscowChart(response);
         },
         error: function () {
-            $('#tbilisi-loading').text("Ошибка загрузки данных");
+            $('#moscow-loading').text("Ошибка загрузки данных");
         }
     });
 }
 
-function renderTbilisiChart(data) {
-    let ctx = document.getElementById("tbilisiChart").getContext("2d");
+function renderMoscowChart(data) {
+    let ctx = document.getElementById("moscowChart").getContext("2d");
 
 
     // Создание градиентов для фона

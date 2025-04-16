@@ -38,6 +38,8 @@ class Purcell(db.Model):
     delivery = db.Column(db.String(3), default='no')
 
 class Temporarylink(db.Model):
+    __tablename__ = 'Temporarylink'  # Используй именно то имя, что в БД\
+
     id = db.Column(db.Integer, primary_key=True)
     token = db.Column(db.String(64), unique=True, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -99,6 +101,7 @@ class Booking(db.Model):
     date_of_birth = db.Column(db.String(20))
 
 class Temporaryparcel(db.Model):
+    __tablename__ = 'Temporaryparcel'  # <- Обязательно укажи так, как в БД
 
     id = db.Column(db.Integer, primary_key=True)
     tracking_number = db.Column(db.String(8), unique=True, nullable=False)  # Уникальный номер посылки

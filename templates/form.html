@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Оформление посылки</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
       background: #f8f9fa;
@@ -25,144 +25,241 @@
     .form-control::placeholder {
       color: #bbb;
     }
+
+    /* Центрируем модальное окно */
+    .modal-dialog {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
 
-<div class="form-container">
-  <h2 class="form-title">Оформление посылки</h2>
-
-  <!-- Сообщения -->
-  <div id="message-area">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div class="container mt-3">
-        {% for category, message in messages %}
+    <div class="form-container">
+        <h2 class="form-title text-center mb-4" style="color: #3c4a6e;">Оформление посылки</h2>
+      
+        <!-- Сообщения -->
+        <div id="message-area">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <div class="container mt-3">
+            {% for category, message in messages %}
             <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-        {% endfor %}
+            {% endfor %}
+          </div>
+          {% endif %}
+          {% endwith %}
         </div>
-    {% endif %}
-    {% endwith %}
+      
+        <form id="parcel-form" enctype="multipart/form-data" class="p-4 shadow-lg rounded-lg bg-light">
+          <input type="hidden" name="token" value="{{ token }}">
+      
+          <!-- Имя отправителя и фамилия -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Имя отправителя</label>
+              <input type="text" name="sender_first_name" class="form-control form-control-lg" placeholder="Введите имя" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Фамилия отправителя</label>
+              <input type="text" name="sender_last_name" class="form-control form-control-lg" placeholder="Введите фамилию" required>
+            </div>
+          </div>
+      
+          <!-- Телефон и паспорт отправителя -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Телефон отправителя</label>
+              <input type="tel" name="sender_phone" class="form-control form-control-lg" placeholder="+7..." required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Паспорт отправителя</label>
+              <input type="text" name="sender_passport" class="form-control form-control-lg" placeholder="Серия и номер" required>
+            </div>
+          </div>
+      
+          <!-- Имя получателя и фамилия -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Имя получателя</label>
+              <input type="text" name="recipient_first_name" class="form-control form-control-lg" placeholder="Введите имя" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Фамилия получателя</label>
+              <input type="text" name="recipient_last_name" class="form-control form-control-lg" placeholder="Введите фамилию" required>
+            </div>
+          </div>
+      
+          <!-- Телефон и паспорт получателя -->
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Телефон получателя</label>
+              <input type="tel" name="recipient_phone" class="form-control form-control-lg" placeholder="+995..." required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Паспорт получателя</label>
+              <input type="text" name="recipient_passport" class="form-control form-control-lg" placeholder="Серия и номер" required>
+            </div>
+          </div>
+      
+          <!-- Город получения -->
+          <div class="mb-3">
+            <label class="form-label">Город получения</label>
+            <select class="form-control form-control-lg" name="city" id="city" required>
+                <option value="TBILISI">TBILISI</option>
+                <option value="BATUMI">BATUMI</option>
+                <option value="KOBULETI">KOBULETI</option>
+                <option value="KUTAISI">KUTAISI</option>
+                <option value="TELAVI">TELAVI</option>
+                <option value="GORI">GORI</option>
+                <option value="ZUGDIDI">ZUGDIDI</option>
+                <option value="POTI">POTI</option>
+                <option value="KHASHURI">KHASHURI</option>
+                <option value="RUSTAVI">RUSTAVI</option>
+                <option value="SAMTREDIA">SAMTREDIA</option>
+                <option value="SENAKI">SENAKI</option>
+                <option value="ZESTAPHONI">ZESTAPHONI</option>
+                <option value="MARNEULI">MARNEULI</option>
+                <option value="AKHALTSIKHE">AKHALTSIKHE</option>
+                <option value="OZURGETI">OZURGETI</option>
+                <option value="KASPI">KASPI</option>
+                <option value="TCHIATURA">TCHIATURA</option>
+                <option value="TSKALTUBO">TSKALTUBO</option>
+                <option value="SAGAREJO">SAGAREJO</option>
+                <option value="GARDABANI">GARDABANI</option>
+                <option value="BORJOMI">BORJOMI</option>
+                <option value="TKIBULI">TKIBULI</option>
+                <option value="KHONI">KHONI</option>
+                <option value="BOLNISI">BOLNISI</option>
+                <option value="AKHALKALAKI">AKHALKALAKI</option>
+                <option value="GURJAANI">GURJAANI</option>
+                <option value="MTSKHETA">MTSKHETA</option>
+                <option value="KVARELI">KVARELI</option>
+                <option value="AKHMETA">AKHMETA</option>
+                <option value="KARELI">KARELI</option>
+                <option value="LANCHKHUTA">LANCHKHUTA</option>
+                <option value="DUSHETI">DUSHETI</option>
+                <option value="SACHKHERE">SACHKHERE</option>
+                <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
+                <option value="LAGODEKHI">LAGODEKHI</option>
+                <option value="NINOTSMINDA">NINOTSMINDA</option>
+                <option value="ABASHA">ABASHA</option>
+                <option value="TSNORI">TSNORI</option>
+                <option value="TERJOBA">TERJOBA</option>
+                <option value="MARTVILI">MARTVILI</option>
+                <option value="KHOBI">KHOBI</option>
+                <option value="TSALENJIKHA">TSALENJIKHA</option>
+                <option value="VANI">VANI</option>
+                <option value="BAGDADI">BAGDADI</option>
+                <option value="VALE">VALE</option>
+                <option value="CHKHOROTSKU">CHKHOROTSKU</option>
+                <option value="TETRITSQARO">TETRITSQARO</option>
+                <option value="DMANISI">DMANISI</option>
+                <option value="ONI">ONI</option>
+                <option value="TSALKA">TSALKA</option>
+                <option value="AMBROLAURI">AMBROLAURI</option>
+                <option value="SIGNAGI">SIGNAGI</option>
+                <option value="TSAGERI">TSAGERI</option>
+                <option value="JVARI">JVARI</option>
+            </select>
+          </div>
+      
+          <!-- Описание посылки -->
+          <div class="mb-3">
+            <label class="form-label">Описание посылки</label>
+            <textarea name="description" rows="3" class="form-control form-control-lg" placeholder="Что внутри? Укажите важные детали..." required></textarea>
+          </div>
+      
+          <!-- Загрузка накладной -->
+          <div class="mb-4">
+            <label class="form-label">
+                Загрузите товарную накладную (PDF)
+                <span class="text-muted">(Обязательное для растаможки)</span>
+              </label>
+              <p class="form-text text-muted">
+                Пожалуйста, загрузите товарную накладную в формате PDF, если ваша посылка подлежит растаможке. Это обязательный документ для таможенного оформления.
+              </p>
+            <input type="file" name="invoice" accept="application/pdf" class="form-control form-control-lg">
+          </div>
+      
+          <!-- Кнопка отправки -->
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary btn-lg">Отправить заявку</button>
+          </div>
+        </form>
+      </div>
+      
+      <style>
+        .form-container {
+          max-width: 900px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f8f9fa;
+          border-radius: 10px;
+        }
+      
+        .form-title {
+          font-family: 'Roboto', sans-serif;
+          color: #3c4a6e;
+          font-weight: 600;
+          font-size: 32px;
+        }
+      
+        .form-control-lg {
+          font-size: 1.1rem;
+          padding: 12px;
+          border-radius: 8px;
+          box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        }
+      
+        .alert {
+          border-radius: 8px;
+        }
+      
+        .btn-primary {
+          background-color: #4d79ff;
+          border-color: #4d79ff;
+          transition: background-color 0.3s ease;
+        }
+      
+        .btn-primary:hover {
+          background-color: #3b68e7;
+          border-color: #3b68e7;
+        }
+      
+        .btn-close {
+          font-size: 1.5rem;
+          padding: 0;
+        }
+      </style>
+      
+
+
+
+  <!-- Модальное окно с информацией -->
+  <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="infoModalLabel">Внимание!</h5>
+        </div>
+        <div class="modal-body">
+          <p><strong>Важно!</strong> Пожалуйста, внимательно заполняйте все поля формы. В случае ошибки компания не несет ответственности за корректность указанных данных. В случае возникновения чрезвычайной ситуации (ЧП) отправитель несет полную ответственность за правильность и полноту предоставленной информации.</p>
+          <p>При нажатии на кнопку <strong>«Подтвердить»</strong>, вы подтверждаете, что ознакомлены с условиями и соглашаетесь с ними. В случае возникновения проблем с отправкой, вы не будете иметь претензий к компании.</p>
+        </div>
+        <div class="modal-footer">
+          <!-- Оставляем только кнопку "Подтвердить" -->
+          <button type="button" class="btn btn-primary" id="confirmBtn">Подтверждаю</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <form id="parcel-form" enctype="multipart/form-data">
-    <input type="hidden" name="token" value="{{ token }}">
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Имя отправителя</label>
-        <input type="text" name="sender_first_name" class="form-control" placeholder="Введите имя" required>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Фамилия отправителя</label>
-        <input type="text" name="sender_last_name" class="form-control" placeholder="Введите фамилию" required>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Телефон отправителя</label>
-        <input type="tel" name="sender_phone" class="form-control" placeholder="+7..." required>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Паспорт отправителя</label>
-        <input type="text" name="sender_passport" class="form-control" placeholder="Серия и номер" required>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Имя получателя</label>
-        <input type="text" name="recipient_first_name" class="form-control" placeholder="Введите имя" required>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Фамилия получателя</label>
-        <input type="text" name="recipient_last_name" class="form-control" placeholder="Введите фамилию" required>
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <label class="form-label">Телефон получателя</label>
-        <input type="tel" name="recipient_phone" class="form-control" placeholder="+995..." required>
-      </div>
-      <div class="col-md-6">
-        <label class="form-label">Паспорт получателя</label>
-        <input type="text" name="recipient_passport" class="form-control" placeholder="Серия и номер" required>
-      </div>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Город получения</label>
-      <select class="form-control" name="city" id="city" required>
-        <option value="TBILISI">TBILISI</option>
-        <option value="BATUMI">BATUMI</option>
-        <option value="KOBULETI">KOBULETI</option>
-        <option value="KUTAISI">KUTAISI</option>
-        <option value="TELAVI">TELAVI</option>
-        <option value="GORI">GORI</option>
-        <option value="ZUGDIDI">ZUGDIDI</option>
-        <option value="POTI">POTI</option>
-        <option value="KHASHURI">KHASHURI</option>
-        <option value="RUSTAVI">RUSTAVI</option>
-        <option value="SAMTREDIA">SAMTREDIA</option>
-        <option value="SENAKI">SENAKI</option>
-        <option value="ZESTAPHONI">ZESTAPHONI</option>
-        <option value="MARNEULI">MARNEULI</option>
-        <option value="AKHALTSIKHE">AKHALTSIKHE</option>
-        <option value="OZURGETI">OZURGETI</option>
-        <option value="KASPI">KASPI</option>
-        <option value="TCHIATURA">TCHIATURA</option>
-        <option value="TSKALTUBO">TSKALTUBO</option>
-        <option value="SAGAREJO">SAGAREJO</option>
-        <option value="GARDABANI">GARDABANI</option>
-        <option value="BORJOMI">BORJOMI</option>
-        <option value="TKIBULI">TKIBULI</option>
-        <option value="KHONI">KHONI</option>
-        <option value="BOLNISI">BOLNISI</option>
-        <option value="AKHALKALAKI">AKHALKALAKI</option>
-        <option value="GURJAANI">GURJAANI</option>
-        <option value="MTSKHETA">MTSKHETA</option>
-        <option value="KVARELI">KVARELI</option>
-        <option value="AKHMETA">AKHMETA</option>
-        <option value="KARELI">KARELI</option>
-        <option value="LANCHKHUTA">LANCHKHUTA</option>
-        <option value="DUSHETI">DUSHETI</option>
-        <option value="SACHKHERE">SACHKHERE</option>
-        <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
-        <option value="LAGODEKHI">LAGODEKHI</option>
-        <option value="NINOTSMINDA">NINOTSMINDA</option>
-        <option value="ABASHA">ABASHA</option>
-        <option value="TSNORI">TSNORI</option>
-        <option value="TERJOBA">TERJOBA</option>
-        <option value="MARTVILI">MARTVILI</option>
-        <option value="KHOBI">KHOBI</option>
-        <option value="TSALENJIKHA">TSALENJIKHA</option>
-        <option value="VANI">VANI</option>
-        <option value="BAGDADI">BAGDADI</option>
-        <option value="VALE">VALE</option>
-        <option value="CHKHOROTSKU">CHKHOROTSKU</option>
-        <option value="TETRITSQARO">TETRITSQARO</option>
-        <option value="DMANISI">DMANISI</option>
-        <option value="ONI">ONI</option>
-        <option value="TSALKA">TSALKA</option>
-        <option value="AMBROLAURI">AMBROLAURI</option>
-        <option value="SIGNAGI">SIGNAGI</option>
-        <option value="TSAGERI">TSAGERI</option>
-        <option value="JVARI">JVARI</option>
-    </select>
-    </div>
-    <div class="mb-3">
-      <label class="form-label">Описание посылки</label>
-      <textarea name="description" rows="3" class="form-control" placeholder="Что внутри? Укажите важные детали..." required></textarea>
-    </div>
-    <div class="mb-4">
-      <label class="form-label">Загрузить накладную (PDF)</label>
-      <input type="file" name="invoice" accept="application/pdf" class="form-control">
-    </div>
-    <div class="d-grid">
-      <button type="submit" class="btn btn-primary btn-lg">Отправить заявку</button>
-    </div>
-  </form>
-</div>
 
 <script>
 document.getElementById('parcel-form').addEventListener('submit', function(e) {
@@ -204,6 +301,27 @@ document.getElementById('parcel-form').addEventListener('submit', function(e) {
   });
 });
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+    // Скрипт для автоматического открытия модального окна
+    window.onload = function() {
+      var modal = new bootstrap.Modal(document.getElementById('infoModal'), {
+        keyboard: false,  // Окно нельзя закрыть с помощью клавиши ESC
+        backdrop: 'static' // Окно не закрывается при клике вне окна
+      });
+      modal.show(); // Окно появляется сразу при загрузке страницы
+    };
+
+    // Скрыть окно при нажатии "Подтвердить"
+    document.getElementById('confirmBtn').addEventListener('click', function() {
+      var modal = bootstrap.Modal.getInstance(document.getElementById('infoModal'));
+      modal.hide(); // Скрыть окно сразу после подтверждения
+    });
+</script>
+
 
 </body>
 </html>

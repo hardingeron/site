@@ -9,7 +9,7 @@ from flask import send_file
 from io import BytesIO
 from fpdf import FPDF
 import qrcode
-
+# from PyPDF2 import PdfFileReader
 from datetime import datetime
 from werkzeug.utils import secure_filename
 from models import db, login_manager, Forms, Temporarylink, Temporaryparcel

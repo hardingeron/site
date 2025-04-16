@@ -55,7 +55,44 @@
     </div>
 </div>
 
+<div class="container my-4">
+    <div class="mb-3">
+      <label for="trackSearch" class="form-label">Введите Tracking Number</label>
+      <input type="text" id="trackSearch" class="form-control" placeholder="Например: TRK123456">
+    </div>
+    <button class="btn btn-primary mb-4" onclick="fetchTrackingData()">Заполнить по номеру</button>
+</div>
 
+
+<script>
+    function sanitizeInput(input) {
+      input.value = input.value.replace(/[^0-9+]/g, '');
+    }
+  
+    async function fetchTrackingData() {
+      const trackingNumber = document.getElementById('trackSearch').value.trim();
+      if (!trackingNumber) {
+        alert("Введите номер для поиска");
+        return;
+      }
+  
+      const response = await fetch(`/get-tracking-data?tracking_number=${trackingNumber}`);
+      const data = await response.json();
+  
+      if (data.success) {
+        document.getElementById('sender_fl').value = `${data.sender_first_name} ${data.sender_last_name}`;
+        document.getElementById('sender_phone').value = data.sender_phone;
+        document.getElementById('recipient_fl').value = `${data.recipient_first_name} ${data.recipient_last_name}`;
+        document.getElementById('recipient_phone').value = data.recipient_phone;
+        document.getElementById('passport').value = data.recipient_passport;
+        document.getElementById('sender_passport').value = data.sender_passport;
+        document.getElementById('city').value = data.city;
+        document.getElementById('comment').value = `${data.description}`;
+      } else {
+        alert("Запись не найдена");
+      }
+    }
+  </script>
 
 
 <div id="DeliveryModal" class="modal-delivery">
@@ -145,55 +182,92 @@
         <form method="POST" action="/add_parcell_to_list">
             <input type="text" name="date" hidden value="{{ date_param }}">
             <input type="text" name="where_from" hidden value="{{ city_param }}">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label data-lang="ge" for="sender_fl">გამგზავნი:</label>
-                        <label data-lang="ru" class="hidden" for="sender_fl">Отправитель:</label>
-                        <input type="text" class="form-control" name="sender_fl" id="sender_fl">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label data-lang="ge" for="sender_phone">ტელეფონი:</label>
-                        <label data-lang="ru" class="hidden" for="sender_phone">Телефон:</label>
-                        <input type="text" class="form-control" name="sender_phone" id="sender_phone" oninput="sanitizeInput(this)">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label data-lang="ge" for="recipient_fl">მიმღები:</label>
-                        <label data-lang="ru" class="hidden" for="recipient_fl">Получатель:</label>
-                        <input type="text" class="form-control" name="recipient_fl" id="recipient_fl" required>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label data-lang="ge" for="recipient_phone">ტელეფონი:</label>
-                        <label data-lang="ru" class="hidden" for="recipient_phone">Телефон:</label>
-                        <input type="text" class="form-control" name="recipient_phone" id="recipient_phone" oninput="sanitizeInput(this)" required>
-                    </div>
-                </div>
-            </div>
-
-
             
+
 
             <div class="row">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label data-lang="ge" for="passport">პასპორტი:</label>
-                        <label data-lang="ru" class="hidden" for="passport">Паспорт:</label>
+                        <label data-lang="ge" for="sender_fl">გამგზავნი:</label>
+                        <label data-lang="ru" class="hidden" for="sender_fl">Отправитель:</label>
+
                         <div class="input-group">
-                            <input type="text" class="form-control" name="passport" id="passport">
-                            <button type="button" class="btn btn-primary" id="checkButton">Check</button>
+                            <input type="text" class="form-control" name="sender_fl" id="sender_fl">
+
                         </div>
                     </div>
                 </div>
                 <div class="col-md-4">
+                    <div class="form-group">
+                        <label data-lang="ge" for="sender_phone">ტელეფონი:</label>
+                        <label data-lang="ru" class="hidden" for="sender_phone">Телефон:</label>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="sender_phone" id="sender_phone" oninput="sanitizeInput(this)">
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label data-lang="ge" for="sender_passport">პასპორტი:</label>
+                        <label data-lang="ru" class="hidden" for="sender_passport">Паспорт:</label>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="sender_passport" id="sender_passport" required>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label data-lang="ge" for="recipient_fl">მიმღები:</label>
+                        <label data-lang="ru" class="hidden" for="recipient_fl">Получатель:</label>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="recipient_fl" id="recipient_fl" required>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label data-lang="ge" for="recipient_phone">ტელეფონი:</label>
+                        <label data-lang="ru" class="hidden" for="recipient_phone">Телефон:</label>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="recipient_phone" id="recipient_phone" oninput="sanitizeInput(this)" required>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label data-lang="ge" for="passport">პასპორტი:</label>
+                        <label data-lang="ru" class="hidden" for="passport">Паспорт:</label>
+
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="passport" id="passport">
+                            <button type="button" class="btn btn-primary" id="checkButton">Check</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        
+
+            
+
+            <div class="row">
+
+                <div class="col-md-6">
                     <div class="form-group">
                         <label data-lang="ge" for="city">ქალაქი:</label>
                         <label data-lang="ru" class="hidden" for="city">Город:</label>
@@ -256,7 +330,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="form-group">
                         <label data-lang="ge" for="cost">ღირებულება:</label>
                         <label data-lang="ru" class="hidden" for="cost">Стоимость:</label>
@@ -385,10 +459,37 @@
     </div>
 </div>
 
-            
+<div class="text-center" style="padding-top: 20px;">
+    <button id="generateBtn" class="btn btn-primary mb-3">Генерация ссылки</button>
+    <input type="text" id="linkField" readonly class="form-control" style="opacity: 0; position: absolute;">
+</div>
+
+<script>
+document.getElementById("generateBtn").addEventListener("click", function () {
+    fetch("/generate-link", {
+        method: "POST"
+    })
+    .then(response => response.json())
+    .then(data => {
+        const linkField = document.getElementById("linkField");
+        linkField.value = data.link;
+        linkField.style.opacity = 1; // Можно показать поле, если хочешь
+
+        // Копируем в буфер обмена
+        linkField.select();
+        document.execCommand("copy");
+
+        alert("Ссылка скопирована: " + data.link);
+    })
+    .catch(error => {
+        alert("Ошибка при генерации ссылки");
+        console.error(error);
+    });
+});
+</script>
 
 <div class="container">
-    <h1 data-lang="ge" class="header text-center my-4">შეკვეთები</h1>
+    <h1 data-lang="ge" class="header text-center my-4 ">შეკვეთები</h1>
     <h1 data-lang="ru" class="header text-center my-4 hidden">Заказы</h1>
     <div class="table-responsive">
         <ul class="list-group" id="orderList">
@@ -438,6 +539,8 @@
 
                         </div>
                     </div>
+                    <button class="btn btn-sm btn-secondary generate-qr-btn" data-id="{{ item.id }}">QR</button>
+
                 </li>
                 {% endfor %}
             {% else %}
@@ -480,7 +583,22 @@
 
 
 
-
+<script>
+    document.querySelectorAll('.generate-qr-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const formId = this.dataset.id;
+            fetch(`/generate_qr/${formId}`)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    window.open(url, '_blank');
+                })
+                .catch(error => {
+                    alert("Ошибка при генерации QR: " + error);
+                });
+        });
+    });
+    </script>
 
 
 

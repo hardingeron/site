@@ -1,9 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, login_required, UserMixin, login_user, logout_user, current_user
 import mysql
-
+import uuid
+import random
 
 db = SQLAlchemy()
 
@@ -36,7 +37,14 @@ class Purcell(db.Model):
     departure_status = db.Column(db.String(10), nullable=True)
     delivery = db.Column(db.String(3), default='no')
 
+class Temporarylink(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(64), unique=True, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
 
+    def is_expired(self):
+        return datetime.utcnow() > self.created_at + timedelta(minutes=30)
 
 
 class User(db.Model, UserMixin):
@@ -90,6 +98,36 @@ class Booking(db.Model):
     action = db.Column(db.String(20))
     date_of_birth = db.Column(db.String(20))
 
+class Temporaryparcel(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    tracking_number = db.Column(db.String(8), unique=True, nullable=False)  # Уникальный номер посылки
+    sender_first_name = db.Column(db.String(100), nullable=False)
+    sender_last_name = db.Column(db.String(100), nullable=False)
+    sender_phone = db.Column(db.String(20), nullable=False)
+    sender_passport = db.Column(db.String(50), nullable=False)
+
+    recipient_first_name = db.Column(db.String(100), nullable=False)
+    recipient_last_name = db.Column(db.String(100), nullable=False)
+    recipient_phone = db.Column(db.String(20), nullable=False)
+    recipient_passport = db.Column(db.String(50), nullable=False)
+
+    city = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=False)
+
+    invoice_path = db.Column(db.String(255), nullable=False)  # путь к PDF
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.tracking_number = self.generate_unique_number()
+
+    @staticmethod
+    def generate_unique_number():
+        while True:
+            number = str(random.randint(10000000, 99999999))
+            if not Temporaryparcel.query.filter_by(tracking_number=number).first():
+                return number
 
 
 
@@ -105,6 +143,7 @@ class Forms(db.Model):
     recipient_fio = db.Column(db.String(50))
     recipient_phone = db.Column(db.String(15))
     passport = db.Column(db.String(20))
+    sender_passport = db.Column(db.String(20), nullable=True)
     city = db.Column(db.String(20))
     comment = db.Column(db.Text)
     price = db.Column(db.Integer)

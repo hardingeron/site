@@ -23,6 +23,7 @@ document.getElementById('checkButton').addEventListener('click', function () {
                 document.getElementById('recipient_fl').value = data.recipient_fio;
                 document.getElementById('recipient_phone').value = data.recipient_phone;
                 document.getElementById('city').value = data.city;
+                document.getElementById('sender_passport').value = data.sender_passport;
             } else {
                 // Показ модального окна
                 $('#errorModal').modal('show');

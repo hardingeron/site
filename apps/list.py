@@ -8,7 +8,7 @@ import random
 from openpyxl import load_workbook
 from functions import random_names
 from io import BytesIO
-
+from datetime import datetime
 
 class ListView(MethodView):
     def __init__(self):
@@ -109,6 +109,7 @@ class AddParcelToList(MethodView):
                 recipient_fio=data['recipient_fl'].upper(),
                 recipient_phone=data['recipient_phone'],
                 passport=passport,
+                sender_passport = data['sender_passport'],
                 city=data['city'],
                 comment=data['comment'],
                 price=int(cost),
@@ -133,6 +134,8 @@ class AddParcelToList(MethodView):
 
 
 class DownloadManifest(MethodView):
+    decorators = [login_required]
+
     def __init__(self, db):
         self.db = db
 
@@ -219,9 +222,46 @@ class DownloadManifest(MethodView):
 
 
 
+class CheckPassport(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def post(self):
+
+        passport = request.json.get('passport')
+        records = Forms.query.filter_by(passport=passport).all()
+        
+        # Преобразуем дату в объект datetime и сортируем
+        sorted_records = sorted(
+            records,
+            key=lambda x: datetime.strptime(x.date, '%d-%m-%Y'),
+            reverse=True
+        )
+        record = sorted_records[0] if sorted_records else None
+
+        if record:
+            return jsonify({
+                "found": True,
+                "sender_fio": record.sender_fio,
+                "sender_phone": record.sender_phone,
+                "recipient_fio": record.recipient_fio,
+                "recipient_phone": record.recipient_phone,
+                "city": record.city,
+                "sender_passport": record.sender_passport
+                
+            })
+        else:
+            return jsonify({"found": False})
+
+
+
+
 
 
 def register_list_routes(app, db):
     app.add_url_rule('/list', view_func=ListView.as_view('list'))
     app.add_url_rule('/add_parcell_to_list', view_func=AddParcelToList.as_view('add_parcell_to_list', db=db))
     app.add_url_rule('/download_manifest', view_func=DownloadManifest.as_view('download_manifest', db=db))
+    app.add_url_rule('/check_passport', view_func=CheckPassport.as_view('check_passport', db=db))

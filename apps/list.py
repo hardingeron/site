@@ -22,7 +22,6 @@ class ListView(MethodView):
 
         data = Forms.query.filter_by(date=date_param, where_from=city_param).order_by(desc(Forms.number)).all()
         list_delivery = [data for data in data if data.address]
-
         data_dict = {
             'GEL': {'paid': 0, 'card': 0, 'not_paid': 0},
             'RUB': {'paid': 0, 'card': 0, 'not_paid': 0},
@@ -83,7 +82,6 @@ class AddParcelToList(MethodView):
 
         try:
             data = request.form.to_dict()
-
             highest_number = self.db.session.query(func.max(Forms.number)).filter(Forms.date == data['date'],
                                                                         Forms.where_from == data['where_from']).scalar()
             if highest_number is not None:
@@ -109,8 +107,9 @@ class AddParcelToList(MethodView):
                 recipient_fio=data['recipient_fl'].upper(),
                 recipient_phone=data['recipient_phone'],
                 passport=passport,
-                sender_passport = data['sender_passport'],
+                sender_passport=data['sender_passport'],
                 city=data['city'],
+                company_comment=data['company_comment'],
                 comment=data['comment'],
                 price=int(cost),
                 weights=data['weights'],
@@ -118,7 +117,9 @@ class AddParcelToList(MethodView):
                 payment_status=data['payment_status'],
                 currency=data['payment_currency'],
                 where_from=data['where_from'],
-                address=data['address']
+                address=data['address'],
+                pdf_adress=data['pdf_adress']
+
             )
 
             self.db.session.add(new_parcel)

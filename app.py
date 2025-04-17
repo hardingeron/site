@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 from datetime import timedelta
 from flask_login import login_required, logout_user, current_user
 import os 
 import uuid
 import tempfile
-
+from sqlalchemy.exc import SQLAlchemyError  # Импортируем исключения SQLAlchemy
 from flask import send_file
 from io import BytesIO
 from fpdf import FPDF
@@ -29,6 +29,7 @@ from apps.expertise import register_expertise_routes
 from apps.feedback import register_feedback_routes
 from apps.parcel_delivery import register_parcel_delivery_routes
 from apps.analysis import register_analysis_routes
+
 
 app = Flask(__name__)
 
@@ -133,66 +134,81 @@ def form_page(token):
 
 @app.route('/submit-parcel', methods=['POST'])
 def submit_parcel():
-    # Получаем токен из формы
     token = request.form.get('token')
     link = Temporarylink.query.filter_by(token=token).first()
 
-    # Проверка на существование, срок действия и активность
     if not link or link.is_expired() or not link.is_active:
         return jsonify({'status': 'danger', 'message': 'Ссылка недействительна или уже использована.'})
 
-    # Получаем данные из формы
-    sender_first_name = request.form['sender_first_name']
-    sender_last_name = request.form['sender_last_name']
-    sender_phone = request.form['sender_phone']
-    sender_passport = request.form['sender_passport']
+    try:
+        # Получаем данные из формы
+        sender_phone = request.form['sender_phone']
+        recipient_phone = request.form['recipient_phone']
 
-    recipient_first_name = request.form['recipient_first_name']
-    recipient_last_name = request.form['recipient_last_name']
-    recipient_phone = request.form['recipient_phone']
-    recipient_passport = request.form['recipient_passport']
 
-    city = request.form['city']
-    description = request.form['description']
+        sender_first_name = request.form['sender_first_name']
+        sender_last_name = request.form['sender_last_name']
 
-    # Работа с PDF файлом
-    invoice = request.files['invoice']
-    invoice_path = "empty"
+        # Если номер начинается с '+', удаляем '+' в начале
+        if sender_phone.startswith('+'):
+            sender_phone = sender_phone[1:]
 
-    if invoice and invoice.filename.endswith('.pdf'):
-        now = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
-        filename = f"{sender_first_name}-{sender_last_name}-{now}.pdf"
-        filename = secure_filename(filename)
-        file_path = os.path.join(app.config['UPLOAD_INVOICE'], filename)
-        invoice.save(file_path)
-        invoice_path = f"documents/invoice/{filename}"
+        sender_passport = request.form['sender_passport']
+        recipient_first_name = request.form['recipient_first_name']
+        recipient_last_name = request.form['recipient_last_name']
 
-    # Сохраняем данные в БД
-    parcel = Temporaryparcel(
-        sender_first_name=sender_first_name,
-        sender_last_name=sender_last_name,
-        sender_phone=sender_phone,
-        sender_passport=sender_passport,
-        recipient_first_name=recipient_first_name,
-        recipient_last_name=recipient_last_name,
-        recipient_phone=recipient_phone,
-        recipient_passport=recipient_passport,
-        city=city,
-        description=description,
-        invoice_path=invoice_path,
-    )
-    db.session.add(parcel)
-    db.session.commit()  # Сохраняем данные в базе данных
+        # Если номер начинается с '+995', удаляем '+995'
+        if recipient_phone.startswith('+995'):
+            recipient_phone = recipient_phone[4:]
 
-    # Получаем tracking_number из только что сохраненной записи
-    tracking_number = parcel.tracking_number  # Предполагаем, что tracking_number уже сгенерирован и сохранен в базе данных
+        recipient_passport = request.form['recipient_passport']
+        city = request.form['city']
+        description = request.form['description']
 
-    # Деактивируем ссылку
-    link.is_active = False
-    db.session.commit()
+        invoice = request.files['invoice']
+        invoice_path = "empty"
 
-    # Отправляем ответ с tracking_number
-    return jsonify({'status': 'success', 'message': f'Заявка успешно отправлена! Вот ваш номер отслеживания: {tracking_number}'})
+        if invoice and invoice.filename.endswith('.pdf'):
+            now = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S')
+            filename = f"{sender_first_name}-{sender_last_name}-{now}.pdf"
+            filename = secure_filename(filename)
+            file_path = os.path.join(app.config['UPLOAD_INVOICE'], filename)
+            invoice.save(file_path)
+            invoice_path = f"documents/invoice/{filename}"
+
+        # Пытаемся сохранить в базу данных
+        parcel = Temporaryparcel(
+            sender_first_name=sender_first_name,
+            sender_last_name=sender_last_name,
+            sender_phone=sender_phone,
+            sender_passport=sender_passport,
+            recipient_first_name=recipient_first_name,
+            recipient_last_name=recipient_last_name,
+            recipient_phone=recipient_phone,
+            recipient_passport=recipient_passport,
+            city=city,
+            description=description,
+            invoice_path=invoice_path,
+        )
+        db.session.add(parcel)
+        db.session.commit()
+
+        tracking_number = parcel.tracking_number
+        link.is_active = False
+        db.session.commit()
+
+        return jsonify({
+            'status': 'success',
+            'message': f'<div style="text-align:center">Поздравляем, заявка принята! Не потеряйте код — он необходим для завершения оформления посылки. </div><div style="text-align:center; font-weight:bold; font-size:1.5em; color:red; margin-top:10px;">{tracking_number}</div>'
+        })
+
+    except SQLAlchemyError as e:
+        db.session.rollback()  # Откатываем транзакцию
+        error_code = str(e.__class__.__name__)
+        return jsonify({
+            'status': 'danger',
+            'message': f'Произошла ошибка при сохранении данных. Пожалуйста, обратитесь к сотрудникам. Код ошибки: <strong>{error_code}</strong>'
+        })
 
 
 @app.route('/get-tracking-data')
@@ -219,7 +235,8 @@ def get_tracking_data():
         'recipient_phone': record.recipient_phone,
         'recipient_passport': record.recipient_passport,
         'city': record.city,
-        'description': record.description
+        'description': record.description,
+        'pdf_adress' : record.invoice_path
     })
 
 
@@ -314,7 +331,7 @@ def generate_qr(form_id):
     pdf.add_page()
 
     # Добавляем изображение QR-кода
-    pdf.image(tmp_path, x=60, y=pdf.get_y() + 10, w=90)
+    pdf.image(tmp_path, x=5, y=pdf.get_y() + 5, w=95)
 
     # Сохраняем PDF в память
     pdf_output = BytesIO()
@@ -329,7 +346,12 @@ def generate_qr(form_id):
     )
 
 
+@app.route('/documents/invoice/<path:filename>')
+@login_required
+def get_invoice_pdf(filename):
+    return send_from_directory('documents/invoice', filename)
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
 
 

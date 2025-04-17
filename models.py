@@ -157,6 +157,8 @@ class Forms(db.Model):
     where_from = db.Column(db.String(30))
     added_to_the_manifest = db.Column(db.String(10), default='no')
     address = db.Column(db.Text(300))
+    company_comment = db.Column(db.Text, nullable=True)
+    pdf_adress = db.Column(db.String(255), nullable=True)
 
 
 

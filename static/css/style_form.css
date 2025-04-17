@@ -1,0 +1,71 @@
+body {
+    background: #f8f9fa;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.form-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.form-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-control::placeholder {
+    color: #bbb;
+}
+
+/* Центрируем модальное окно */
+.modal-dialog {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.form-title {
+    font-family: 'Roboto', sans-serif;
+    color: #3c4a6e;
+    font-weight: 600;
+    font-size: 32px;
+}
+
+.form-control-lg {
+    font-size: 1.1rem;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.alert {
+    border-radius: 8px;
+}
+
+.btn-primary {
+    background-color: #4d79ff;
+    border-color: #4d79ff;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #3b68e7;
+    border-color: #3b68e7;
+}
+
+.btn-close {
+    font-size: 1.5rem;
+    padding: 0;
+}

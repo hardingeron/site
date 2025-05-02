@@ -9,6 +9,9 @@ from openpyxl import load_workbook
 from functions import random_names
 from io import BytesIO
 from datetime import datetime
+import re
+from openpyxl import Workbook
+from openpyxl.styles import PatternFill, Border, Side, Font, Alignment
 
 class ListView(MethodView):
     def __init__(self):
@@ -259,6 +262,115 @@ class CheckPassport(MethodView):
 
 
 
+class DownloadInfoExcel(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def get(self):
+        date = request.args.get('date')
+        city = request.args.get('city')
+
+        if not date or not city:
+            return jsonify({'error': 'Missing parameters'}), 400
+
+        forms = Forms.query.filter_by(date=date, where_from=city).all()
+        if not forms:
+            return jsonify({'message': 'Нет данных для указанных параметров'}), 404
+
+        wb = Workbook()
+        ws = wb.active
+        ws.title = 'Info'
+
+        # Стили
+        gray_fill = PatternFill(start_color='F2F2F2', end_color='F2F2F2', fill_type='solid')
+        white_fill = PatternFill(start_color='FFFFFF', end_color='FFFFFF', fill_type='solid')
+        thin = Side(border_style="thin", color="000000")
+        thick = Side(border_style="thick", color="000000")
+        font = Font(size=14)
+        alignment = Alignment(wrap_text=True, vertical='top')
+
+        # Заголовки
+        headers = ['Номер посылки', 'Информация отправителя', 'Информация получателя', 'Опись', 'Вес']
+        for col_num, title in enumerate(headers, 1):
+            cell = ws.cell(row=1, column=col_num, value=title)
+            cell.font = font
+            cell.alignment = alignment
+
+        current_row = 2
+
+        for index, form in enumerate(forms):
+            fill = gray_fill if index % 2 == 0 else white_fill
+
+            ws[f'A{current_row}'] = form.number
+            ws[f'B{current_row}'] = form.sender_fio or ''
+            ws[f'B{current_row + 1}'] = form.sender_phone or ''
+            ws[f'B{current_row + 2}'] = form.sender_passport or ''
+
+            ws[f'C{current_row}'] = form.recipient_fio or ''
+            ws[f'C{current_row + 1}'] = form.recipient_phone or ''
+            ws[f'C{current_row + 2}'] = form.passport or ''
+
+            comments = [c.strip() for c in (form.comment or '').split(',') if c.strip()]
+            for i, comment in enumerate(comments):
+                ws[f'D{current_row + i}'] = comment
+
+            weights = re.findall(r'\d+(?:\.\d+)?', form.weights or '')
+            weight_sum = sum([float(w) for w in weights])
+            ws[f'E{current_row}'] = weight_sum
+
+            used_rows = max(3, len(comments))
+            row_start = current_row
+            row_end = current_row + used_rows - 1
+
+            for row in range(row_start, row_end + 1):
+                for col_idx, col_letter in enumerate(['A', 'B', 'C', 'D', 'E'], 1):
+                    cell = ws[f'{col_letter}{row}']
+                    cell.fill = fill
+                    cell.font = font
+                    cell.alignment = alignment
+                    cell.border = Border(
+                        left=thick if col_letter == 'A' else thin,
+                        right=thick if col_letter == 'E' else thin,
+                        top=thick if row == row_start else thin,
+                        bottom=thick if row == row_end else thin
+                    )
+
+            current_row += used_rows + 1
+
+        # Автоматическая ширина столбцов
+        for col in ws.columns:
+            max_length = 0
+            col_letter = col[0].column_letter
+            for cell in col:
+                try:
+                    cell_len = len(str(cell.value))
+                    if cell_len > max_length:
+                        max_length = cell_len
+                except:
+                    pass
+            ws.column_dimensions[col_letter].width = max_length + 2  # запас
+
+        # Автоматическая высота строк
+        for row in ws.iter_rows():
+            for cell in row:
+                if cell.value and '\n' in str(cell.value):
+                    cell.alignment = Alignment(wrap_text=True)
+
+        # Сохраняем
+        output = BytesIO()
+        wb.save(output)
+        wb.close()
+        output.seek(0)
+
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name='info_data.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    
 
 
 def register_list_routes(app, db):
@@ -266,3 +378,4 @@ def register_list_routes(app, db):
     app.add_url_rule('/add_parcell_to_list', view_func=AddParcelToList.as_view('add_parcell_to_list', db=db))
     app.add_url_rule('/download_manifest', view_func=DownloadManifest.as_view('download_manifest', db=db))
     app.add_url_rule('/check_passport', view_func=CheckPassport.as_view('check_passport', db=db))
+    app.add_url_rule('/download_info_excel', view_func=DownloadInfoExcel.as_view('download_info_excel', db=db))

@@ -108,7 +108,7 @@ def generate_link():
     db.session.add(link)
     db.session.commit()
 
-    full_url = request.host_url + 'form/' + token
+    full_url = request.host_url.replace("http://", "https://") + 'form/' + token
     return jsonify({'link': full_url})
 
 
@@ -330,6 +330,17 @@ def generate_qr(form_id):
     pdf = FPDF()
     pdf.add_page()
 
+    # Добавляем номер формы слева с отступом в 20 пикселей
+    form_number = str(form.number)
+
+    # Устанавливаем шрифт для номера формы с большим размером
+    pdf.set_font('Arial', 'B', 20)  # Увеличиваем размер шрифта для номера формы
+    pdf.set_xy(50, pdf.get_y())  # Устанавливаем позицию для номера формы слева
+    pdf.cell(0, 10, form_number)  # Выводим номер формы
+
+    # Уменьшаем расстояние между номером и QR-кодом (например, на 10 пикселей)
+    pdf.ln(5)  # Отступ на 10 пикселей перед QR-кодом
+
     # Добавляем изображение QR-кода
     pdf.image(tmp_path, x=5, y=pdf.get_y() + 5, w=95)
 
@@ -344,6 +355,9 @@ def generate_qr(form_id):
         as_attachment=False,
         download_name=f"QR_Form_{form_id}.pdf"
     )
+
+
+
 
 
 @app.route('/documents/invoice/<path:filename>')

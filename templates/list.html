@@ -15,7 +15,9 @@
 </style>
 
 
-
+<button id="downloadExcelBtn" class="btn btn-primary btn-lg" data-bs-toggle="tooltip" data-bs-placement="top" title="Скачать Excel">
+    <i class="bi bi-file-earmark-excel"></i> Скачать Excel
+</button>
 
 <div class="container text-center">
     <div class="list-menu d-flex justify-content-center align-items-center">
@@ -61,6 +63,8 @@
     </div>
     <button class="btn btn-primary mb-4" onclick="fetchTrackingData()">Заполнить по номеру</button>
 </div>
+
+
 
 
 <script>
@@ -895,5 +899,17 @@ document.getElementById("generateBtn").addEventListener("click", function () {
     document.getElementById('toggleLanguageButton').addEventListener('click', toggleLanguage);
 </script>
 
+
+<script>
+    document.getElementById("downloadExcelBtn").addEventListener("click", function () {
+        const date = "{{ date_param }}";
+        const city = "{{ city_param }}";
+        
+        const url = `/download_info_excel?date=${encodeURIComponent(date)}&city=${encodeURIComponent(city)}`;
+    
+        // Открываем ссылку — браузер начнёт скачивание
+        window.location.href = url;
+    });
+    </script>
     
 {% endblock %}

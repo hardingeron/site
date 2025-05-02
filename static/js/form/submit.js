@@ -63,6 +63,8 @@ document.getElementById('confirmSubmitBtn').addEventListener('click', function (
       const modal = bootstrap.Modal.getInstance(confirmModalEl);
       modal.hide();
 
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
       pendingFormData = null;
     })
     .catch(err => {

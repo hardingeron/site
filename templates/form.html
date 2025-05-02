@@ -336,20 +336,34 @@
       </div>
     
       <div class="mb-3">
-
-        <label class="form-label" data-i18n="description_label">
+        <label class="form-label">
           Описание посылки
           <i 
             class="bi bi-question-circle-fill text-muted" 
             data-bs-toggle="tooltip" 
             data-bs-placement="right" 
-            title="Укажите подробное описание содержимого посылки. Чем точнее будет список, тем лучше — особенно при наличии техники (указывайте наименование и модель). Это поможет избежать задержек на таможне.
-            Если посылка коммерческого назначения и у вас есть товарная накладная, описание не требуется — достаточно указать, что груз коммерческий, и загрузить накладную ниже.">
+            title="Введите подробное описание содержимого посылки. После каждого товара нажимайте Enter или ставьте запятую — система добавит его в виде отдельного тега.">
           </i>
         </label>
-
-
-        <textarea name="description" rows="3" class="form-control form-control-lg" required placeholder="Что внутри?" data-i18n-placeholder="description_placeholder"></textarea>
+      
+        <!-- Контейнер для тегов -->
+        <div id="tags-container" class="form-control form-control-lg" style="min-height: 100px; display: flex; flex-wrap: wrap; gap: 5px; padding: 10px;">
+          <input 
+            type="text" 
+            id="tag-input" 
+            placeholder="Введите товар и нажмите Enter или запятую" 
+            style="border: none; outline: none; flex: 1;" 
+          />
+        </div>
+      
+        
+        <!-- Подсказка -->
+        <div class="form-text text-muted mt-1" style="font-size: 0.9em;">
+          Добавьте товары, разделяя их <strong>запятой</strong> или нажатием <strong>Enter</strong> (например: '2 пары джинсов, 1 набор Лего')
+        </div>
+      
+        <!-- Скрытое поле, которое будет содержать строку тегов через запятую -->
+        <input type="hidden" name="description" id="description-hidden">
       </div>
     
       <div class="mb-4">
@@ -492,6 +506,54 @@
   })
 </script>
 
+<script>
+  const input = document.getElementById('tag-input');
+  const container = document.getElementById('tags-container');
+  const hiddenInput = document.getElementById('description-hidden');
+
+  let tags = [];
+
+  function updateHiddenInput() {
+    hiddenInput.value = tags.join(', ');
+  }
+
+  function createTagElement(text) {
+    const span = document.createElement('span');
+    span.className = 'badge bg-success d-flex align-items-center';
+    span.style.padding = '0.5rem';
+    span.style.borderRadius = '0.5rem';
+    span.style.gap = '0.5rem';
+
+    span.textContent = text;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'btn-close btn-close-white ms-2';
+    closeBtn.style.fontSize = '0.6rem';
+
+    closeBtn.onclick = () => {
+      tags = tags.filter(t => t !== text);
+      container.removeChild(span);
+      updateHiddenInput();
+    };
+
+    span.appendChild(closeBtn);
+    container.insertBefore(span, input);
+  }
+
+  input.addEventListener('keydown', function (e) {
+    if (e.key === ',' || e.key === 'Enter') {
+      e.preventDefault();
+      const value = input.value.trim().replace(',', '');
+      if (value && !tags.includes(value)) {
+        tags.push(value);
+        createTagElement(value);
+        updateHiddenInput();
+      }
+      input.value = '';
+    }
+  });
+</script>
 
 
 </body>

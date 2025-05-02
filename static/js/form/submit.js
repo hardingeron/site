@@ -1,3 +1,4 @@
+
 const form = document.getElementById('parcel-form');
 let pendingFormData = null;
 
@@ -10,17 +11,36 @@ form.addEventListener('submit', function (e) {
   const senderPhone = senderPhoneEl.value.trim();
   const recipientPhone = recipientPhoneEl.value.trim();
   const messageArea = document.getElementById('message-area');
+  const tagsContainer = document.getElementById('tags-container');
+  const input = document.getElementById('tag-input');
+
   messageArea.innerHTML = '';
+  tagsContainer.classList.remove('is-invalid');
 
   // Проверка отправителя
   if (senderPhone.length !== 12) {
     showError('Номер отправителя указан неверно. Проверьте и попробуйте снова.', senderPhoneEl);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
 
   // Проверка получателя
   if (recipientPhone.length !== 13) {
     showError('Номер получателя указан неверно. Проверьте и попробуйте снова.', recipientPhoneEl);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  // Проверка наличия хотя бы одного тега
+  if (tags.length === 0) {
+    showError('Опишите содержимое посылки. Добавьте хотя бы один предмет.', tagsContainer);
+    tagsContainer.classList.add('is-invalid');
+    input.classList.add('is-invalid');
+    setTimeout(() => {
+      tagsContainer.classList.remove('is-invalid');
+      input.classList.remove('is-invalid');
+    }, 5000);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
 
@@ -51,6 +71,10 @@ document.getElementById('confirmSubmitBtn').addEventListener('click', function (
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
         `;
         messageArea.appendChild(alert);
+
+        if (data.status !== 'success') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       }
 
       if (data.status === 'success') {
@@ -69,6 +93,8 @@ document.getElementById('confirmSubmitBtn').addEventListener('click', function (
     })
     .catch(err => {
       console.error('Ошибка:', err);
+      showError('Произошла ошибка при отправке. Попробуйте снова позже.', form);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 });
 
@@ -85,9 +111,9 @@ function showError(message, inputElement) {
   `;
   messageArea.appendChild(alert);
 
-  // Подсветка поля
   inputElement.classList.add('is-invalid');
   setTimeout(() => {
     inputElement.classList.remove('is-invalid');
   }, 5000);
 }
+

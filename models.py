@@ -171,3 +171,32 @@ class ParcelIssuance(db.Model):
     passport = db.Column(db.String(50), nullable=False)
     is_resident = db.Column(db.Boolean, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False)
+
+
+
+
+# Стол для отправлении из России 
+class Shipments(db.Model):
+    __tablename__ = "Shipments"
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # добавим id для ключа
+    city_from = db.Column(db.String(15))          # Город отправления
+    sender_name = db.Column(db.String(50))       # Имя отправителя
+    sender_surname = db.Column(db.String(50))    # Фамилия отправителя
+    sender_number = db.Column(db.String(15))     # Номер отправителя
+    recipient_name = db.Column(db.String(50))    # Имя получателя
+    recipient_surname = db.Column(db.String(50)) # Фамилия получателя
+    recipient_number = db.Column(db.String(15))  # Номер получателя
+    recipient_passport = db.Column(db.String(50))# Паспорт получателя
+    parcels_count = db.Column(db.Integer)        # Количество посылок
+    address = db.Column(db.String(100))          # Адрес
+    weights = db.Column(db.String(200))          # Веса
+    city_to = db.Column(db.String(50))           # Город получения
+    payment_status = db.Column(db.String(5))     # Статус оплаты
+    cargo_cost = db.Column(db.String(15))        # Стоимость груза
+    description = db.Column(db.String(1000))     # Опись
+    shipment_number = db.Column(db.Integer)      # Номер посылки
+    order_date = db.Column(db.DateTime)              # Дата оформления
+    send_date = db.Column(db.Date)               # Дата отправки
+    currency = db.Column(db.String(5))           # Валюта оплаты
+    payment_amount = db.Column(db.Integer)       # Оплата

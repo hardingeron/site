@@ -165,6 +165,11 @@
                     <div class="label">Опись</div>
                 </div>
 
+                <div class="step" data-step="4">
+                    <div class="circle">📝</div>
+                    <div class="label">Оплата</div>
+                </div>
+
             </div>
         </div>
 
@@ -248,11 +253,6 @@
                             <label>Стоимость груза</label>
                             <input type="number" placeholder="0.00">
                         </div>
-
-                        <div class="input-group">
-                            <label>К оплате</label>
-                            <input type="number" placeholder="0.00">
-                        </div>
                     </div>
 
                     <!-- Адрес -->
@@ -260,40 +260,68 @@
                         <label>Адрес доставки</label>
                         <input type="text" placeholder="Улица, дом, квартира">
                     </div>
-
-                    <!-- Оплата -->
-                    <div class="radio-group">
-                        <span class="group-title">Оплата</span>
-                        <label><input type="radio" name="payment"> Оплачено</label>
-                        <label><input type="radio" name="payment"> Не оплачено</label>
-                        <label><input type="radio" name="payment"> С карты</label>
-                    </div>
-
-                    <!-- Валюта -->
-                    <div class="radio-group">
-                        <span class="group-title">Валюта</span>
-                        <label><input type="radio" name="currency"> GEL</label>
-                        <label><input type="radio" name="currency"> RUB</label>
-                        <label><input type="radio" name="currency"> EUR</label>
-                        <label><input type="radio" name="currency"> USD</label>
-                    </div>
-
-                    <!-- Чекбокс -->
-                    <div class="checkbox-group">
-                        <label>
-                            <input type="checkbox">
-                            Получатель общий с предыдущей посылкой
-                        </label>
-                    </div>
-
                 </div>
-
             </div>
 
             <div class="step-content">
                 <h3>Опись</h3>
-                <div class="placeholder">Список товаров</div>
+                <!-- Новый текстовый блок -->
+            <div class="modern-textarea-wrapper">
+                <div id="inventoryContainer" class="inventory-container"></div>
+                <input 
+                    id="inventoryInput" 
+                    type="text" 
+                    placeholder="Введите описание..." 
+                    autocomplete="off"
+                    data-inventory='{{ inventory|tojson }}'>
+                <ul id="autocompleteList" class="autocomplete-list"></ul>
             </div>
+            </div>
+
+            <div class="step-content">
+                <h3>Оплата</h3>
+                <div class="parcel-form">
+                    <div class="input-group">
+                        <label>К оплате</label>
+                        <input type="number" placeholder="0.00">
+                    </div>
+                    <div class="radio-group">
+                        <span class="group-title">Статус оплаты</span>
+                        <label class="radio">
+                            <input type="radio" name="payment">
+                            <span>Оплачено</span>
+                        </label>
+
+                        <label class="radio">
+                            <input type="radio" name="payment">
+                            <span>Не оплачено</span>
+                        </label>
+
+                        <label class="radio">
+                            <input type="radio" name="payment">
+                            <span>С карты</span>
+                        </label>
+                    </div>
+
+                    <div class="radio-group">
+                        <span class="group-title">Валюта</span>
+
+                        <label class="radio"><input type="radio" name="currency"><span>GEL</span></label>
+                        <label class="radio"><input type="radio" name="currency"><span>RUB</span></label>
+                        <label class="radio"><input type="radio" name="currency"><span>EUR</span></label>
+                        <label class="radio"><input type="radio" name="currency"><span>USD</span></label>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox">
+                            <input type="checkbox">
+                            <span>Получатель общий с предыдущей посылкой</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
 
         </div>
 
@@ -357,12 +385,12 @@ function updateUI() {
     });
 
     prevBtn.disabled = currentStep === 0;
-    nextBtn.classList.toggle('hidden', currentStep === 3);
-    finishBtn.classList.toggle('hidden', currentStep !== 3);
+    nextBtn.classList.toggle('hidden', currentStep === 4);
+    finishBtn.classList.toggle('hidden', currentStep !== 4);
 }
 
 nextBtn.onclick = () => {
-    if (currentStep < 3) {
+    if (currentStep < 4) {
         currentStep++;
         updateUI();
     }
@@ -377,6 +405,11 @@ prevBtn.onclick = () => {
 
 updateUI();
 </script>
+
+
+
+<script src="/static/js/shipments/inventory_input.js"></script>
+
 
 
 </body>

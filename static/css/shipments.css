@@ -1,0 +1,562 @@
+body {
+    margin: 0;
+    background: #f2f5f9;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #1f2937;
+}
+
+.shipments {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 12px;
+}
+
+/* ===== Карточка ===== */
+.parcel-card {
+    position: relative;
+    background: #ffffff;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    overflow: hidden;
+    transition: all 0.25s ease;
+}
+
+.parcel-card:hover {
+    box-shadow: 0 10px 28px rgba(59,130,246,0.18);
+    transform: translateY(-2px);
+}
+
+/* ===== Левая полоса — растаможка ===== */
+.parcel-card.customs {
+    border-left: 6px solid #dc2626;
+}
+
+/* ===== Правая полоса — оплата ===== */
+.parcel-card.payment-paid {
+    border-right: 6px solid #16a34a;
+}
+
+.parcel-card.payment-unpaid {
+    border-right: 6px solid #dc2626;
+}
+
+/* ===== Верхняя часть ===== */
+.parcel-main {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr) auto;
+    gap: 14px;
+    padding: 16px;
+    align-items: center;
+    cursor: pointer;
+}
+
+.label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.phone {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+/* ===== Получатель + копирование ===== */
+.receiver-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.copy-btn {
+    background: #e0edff;
+    border: none;
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #2563eb;
+}
+
+.copy-btn:hover {
+    background: #c7dcff;
+}
+
+/* ===== Кнопка раскрытия ===== */
+.toggle-btn {
+    background: #eaf1ff;
+    border: none;
+    font-size: 18px;
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background 0.2s;
+}
+
+.toggle-btn:hover {
+    background: #dbe7ff;
+}
+
+/* ===== Детали ===== */
+.parcel-details {
+    padding: 16px;
+    border-top: 1px solid #e5e7eb;
+    display: none;
+    font-size: 14px;
+    background: #f9fbff;
+}
+
+.parcel-details div {
+    margin-bottom: 6px;
+}
+
+
+/* ===== Верхние действия ===== */
+.page-actions {
+    max-width: 1100px;
+    margin: 20px auto 10px;
+    padding: 0 12px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.action-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
+}
+
+.action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(59,130,246,0.18);
+}
+
+/* Иконка */
+.action-card .icon {
+    font-size: 26px;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Текст */
+.action-card .title {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.action-card .desc {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Цвета по смыслу */
+.action-card.add .icon {
+    background: #e0edff;
+    color: #2563eb;
+}
+
+.action-card.export .icon {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.action-card.stats .icon {
+    background: #fef3c7;
+    color: #ca8a04;
+}
+
+/* Адаптив */
+@media (max-width: 800px) {
+    .page-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ===== Адаптив ===== */
+@media (max-width: 900px) {
+    .parcel-main {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .toggle-btn {
+        grid-column: span 2;
+        justify-self: end;
+    }
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Верхняя панель шагов */
+.modal-steps {
+    position: relative;
+    margin: -40px -20px 20px;
+    padding: 0px 20px 10px;
+    background: #f8fafc;
+    border-radius: 16px 16px 0 0;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* Затемнение */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(6px);
+}   
+
+/* Окно */
+.modal {
+    width: 720px;
+    max-width: 95%;
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 20px 20px; /* ↑ добавили сверху */
+    box-shadow: 0 30px 80px rgba(0,0,0,0.35);
+}
+
+/* Контейнер шагов */
+.steps {
+    display: flex;
+    justify-content: center;
+    gap: 56px; /* регулируешь расстояние тут */
+    align-items: flex-start;
+    padding: 0 10px;
+}
+/* Шаг */
+.step {
+    position: relative;
+    top: -32px; /* ← ВАЖНО: выносим наружу */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+/* Кружок */
+.step .circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    transition: all 0.25s ease;
+}
+
+
+
+/* Подпись */
+.step .label {
+    margin-top: 2px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Активный */
+.step.active .circle {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+    transform: scale(1.12);
+}
+
+.step.active .label {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+/* Завершённый */
+.step.completed .circle {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #fff;
+}
+/* Контент */
+.modal-content {
+    min-height: 220px;
+}
+
+.step-content {
+    display: none;
+}
+
+.step-content.active {
+    display: block;
+}
+
+.placeholder {
+    margin-top: 20px;
+    height: 140px;
+    border-radius: 12px;
+    border: 2px dashed #cbd5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+}
+
+/* Кнопки */
+.modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#prevBtn {
+    background: #e5e7eb;
+}
+
+#nextBtn {
+    background: #2563eb;
+    color: #fff;
+}
+
+#finishBtn {
+    background: #16a34a;
+    color: #fff;
+}
+
+.hidden {
+    display: none;
+}
+
+
+
+@media (max-width: 640px) {
+
+    .modal {
+        width: 100%;
+        border-radius: 14px;
+        padding: 32px 14px 16px;
+    }
+
+    .modal-steps {
+        margin: -32px -14px 16px;
+        padding: 10px 10px 6px;
+    }
+
+    .steps {
+        gap: 24px;
+    }
+
+    .step {
+        top: -24px;
+    }
+
+    .step .circle {
+        width: 48px;
+        height: 48px;
+        font-size: 18px;
+    }
+
+    .step .label {
+        font-size: 11px;
+    }
+
+    .modal-actions button {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+ 
+}
+
+
+
+
+
+
+
+
+
+
+/* Форма отправителя */
+.sender-form {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Группа поля */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.input-group:last-child {
+    margin-bottom: 0;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+}
+
+/* Поля */
+.input-group input {
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+/* Фокус */
+.input-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+
+
+
+
+
+
+
+
+.parcel-form {
+    margin-top: 16px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Ряд из двух полей */
+.row {
+    display: flex;
+    gap: 12px;
+}
+
+.row .input-group {
+    flex: 1;
+}
+
+/* Select */
+.input-group select {
+    height: 44px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    font-size: 14px;
+}
+
+/* Радио */
+.radio-group {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.group-title {
+    width: 100%;
+    font-size: 13px;
+    font-weight: 500;
+    color: #475569;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* Чекбокс */
+.checkbox-group {
+    margin-top: 16px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}

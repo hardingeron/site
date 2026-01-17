@@ -29,7 +29,7 @@ from apps.expertise import register_expertise_routes
 from apps.feedback import register_feedback_routes
 from apps.parcel_delivery import register_parcel_delivery_routes
 from apps.analysis import register_analysis_routes
-
+from apps.shipments import register_shipments_routes
 
 app = Flask(__name__)
 
@@ -85,6 +85,7 @@ register_feedback_routes(app, db)
 # ------------------------------               /parcel_delivery     ------------------------------#
 register_parcel_delivery_routes(app, db)
 
+register_shipments_routes(app, db)
 
 
 @app.route('/reservation_big', methods=['POST', 'GET'])

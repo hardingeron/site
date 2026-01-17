@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/shipments.css') }}">s
+</head>
+<meta charset="UTF-8">
+<title>Список посылок</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+
+
+<!--  карточки на старнице -->
+<div class="page-actions">
+    <div class="action-card add">
+        <div class="icon">➕</div>
+        <div class="text">
+            <div class="title">Добавить посылку</div>
+            <div class="desc">Новая отправка</div>
+        </div>
+    </div>
+
+    <div class="action-card export">
+        <div class="icon">⬇️</div>
+        <div class="text">
+            <div class="title">Выгрузить данные</div>
+            <div class="desc">Excel / PDF</div>
+        </div>
+    </div>
+
+    <div class="action-card stats">
+        <div class="icon">📊</div>
+        <div class="text">
+            <div class="title">Статистика</div>
+            <div class="desc">Доходы и посылки</div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--  главный список на старнице -->
+<div class="shipments">
+
+<!-- ✅ Оплачена -->
+<div class="parcel-card payment-paid">
+    <div class="parcel-main">
+        <div>
+            <div class="label">№ посылки</div>
+            <div class="value">TRK-102938</div>
+        </div>
+
+        <div>
+            <div class="label">Отправитель</div>
+            <div class="value">Иван Петров</div>
+            <div class="phone">+995 555 111 222</div>
+        </div>
+
+        <div>
+            <div class="label">Получатель</div>
+            <div class="receiver-name">
+                <div class="value">Алексей Сидоров</div>
+                <button class="copy-btn" onclick="copyName(this)">📋</button>
+            </div>
+            <div class="phone">+7 999 333 44 55</div>
+        </div>
+
+        <div>
+            <div class="label">Кол-во / вес</div>
+            <div class="value">2 шт · 4.5 кг</div>
+        </div>
+
+        <div>
+            <div class="label">Город</div>
+            <div class="value">Тбилиси</div>
+        </div>
+
+        <button class="toggle-btn">⌄</button>
+    </div>
+
+    <div class="parcel-details">
+        <div><b>Опись:</b> Одежда, обувь</div>
+        <div><b>Оплата:</b> Оплачено</div>
+        <div><b>Стоимость груза:</b> 320 $</div>
+        <div><b>Паспорт:</b> AA1234567</div>
+        <div><b>Адрес доставки:</b> Тбилиси, ул. Руставели 25</div>
+    </div>
+</div>
+
+<!-- 🚨 Растаможка + не оплачено -->
+<div class="parcel-card customs payment-unpaid">
+    <div class="parcel-main">
+        <div>
+            <div class="label">№ посылки</div>
+            <div class="value">TRK-778899</div>
+        </div>
+
+        <div>
+            <div class="label">Отправитель</div>
+            <div class="value">Мария Иванова</div>
+            <div class="phone">+995 577 888 999</div>
+        </div>
+
+        <div>
+            <div class="label">Получатель</div>
+            <div class="receiver-name">
+                <div class="value">Дмитрий Орлов</div>
+                <button class="copy-btn" onclick="copyName(this)">📋</button>
+            </div>
+            <div class="phone">+7 901 222 11 00</div>
+        </div>
+
+        <div>
+            <div class="label">Кол-во / вес</div>
+            <div class="value">5 шт · 38 кг</div>
+        </div>
+
+        <div>
+            <div class="label">Город</div>
+            <div class="value">Батуми</div>
+        </div>
+
+        <button class="toggle-btn">⌄</button>
+    </div>
+
+    <div class="parcel-details">
+        <div><b>Опись:</b> Бытовая техника</div>
+        <div><b>Оплата:</b> Не оплачено</div>
+        <div><b>Стоимость груза:</b> 1800 $</div>
+        <div><b>Паспорт:</b> BB9988776</div>
+        <div><b>Адрес доставки:</b> Батуми, ул. Чавчавадзе 10</div>
+    </div>
+</div>
+
+</div>
+
+
+<!-- Модальное окно -->
+<div class="modal-overlay" id="parcelModal">
+    <div class="modal">
+
+        <!-- Шаги -->
+        <div class="modal-steps">
+            <div class="steps">
+
+                <div class="step active" data-step="0">
+                    <div class="circle">👤</div>
+                    <div class="label">Отправитель</div>
+                </div>
+
+                <div class="step" data-step="1">
+                    <div class="circle">📦</div>
+                    <div class="label">Получатель</div>
+                </div>
+
+                <div class="step" data-step="2">
+                    <div class="circle">⚖️</div>
+                    <div class="label">Посылка</div>
+                </div>
+
+                <div class="step" data-step="3">
+                    <div class="circle">📝</div>
+                    <div class="label">Опись</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Контент -->
+        <div class="modal-content">
+
+            <div class="step-content active">
+                <h3>Информация об отправителе</h3>
+                <div class="sender-form">
+
+                    <div class="input-group">
+                        <label>Имя</label>
+                        <input type="text" placeholder="Введите имя">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Фамилия</label>
+                        <input type="text" placeholder="Введите фамилию">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Телефон</label>
+                        <input type="tel" placeholder="+995 5XX XXX XXX">
+                    </div>
+
+                </div>
+                
+            </div>
+
+            <div class="step-content">
+                <h3>Информация о получателе</h3>
+                <div class="recipient-form">
+
+                    <div class="input-group">
+                        <label>Имя</label>
+                        <input type="text" placeholder="Введите имя">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Фамилия</label>
+                        <input type="text" placeholder="Введите фамилию">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Телефон</label>
+                        <input type="tel" placeholder="+995 5XX XXX XXX">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Паспорт</label>
+                        <input type="text" placeholder="* * * * *">
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="step-content">
+                <h3>Информация о посылке</h3>
+                <div class="parcel-form">
+                    <div class="input-group">
+                        <label>Вес</label>
+                        <input type="text" placeholder="Введите вес или веса">
+                    </div>
+
+                    <!-- Город (список) -->
+                    <div class="input-group">
+                        <label>Город Назначения</label>
+                        <select>
+                            <option value="">Выберите город</option>
+                            <option>Тбилиси</option>
+                            <option>Батуми</option>
+                            <option>Кутаиси</option>
+                            <option>Москва</option>
+                        </select>
+                    </div>
+
+
+                    <!-- Стоимость и к оплате -->
+                    <div class="row">
+                        <div class="input-group">
+                            <label>Стоимость груза</label>
+                            <input type="number" placeholder="0.00">
+                        </div>
+
+                        <div class="input-group">
+                            <label>К оплате</label>
+                            <input type="number" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <!-- Адрес -->
+                    <div class="input-group">
+                        <label>Адрес доставки</label>
+                        <input type="text" placeholder="Улица, дом, квартира">
+                    </div>
+
+                    <!-- Оплата -->
+                    <div class="radio-group">
+                        <span class="group-title">Оплата</span>
+                        <label><input type="radio" name="payment"> Оплачено</label>
+                        <label><input type="radio" name="payment"> Не оплачено</label>
+                        <label><input type="radio" name="payment"> С карты</label>
+                    </div>
+
+                    <!-- Валюта -->
+                    <div class="radio-group">
+                        <span class="group-title">Валюта</span>
+                        <label><input type="radio" name="currency"> GEL</label>
+                        <label><input type="radio" name="currency"> RUB</label>
+                        <label><input type="radio" name="currency"> EUR</label>
+                        <label><input type="radio" name="currency"> USD</label>
+                    </div>
+
+                    <!-- Чекбокс -->
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox">
+                            Получатель общий с предыдущей посылкой
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="step-content">
+                <h3>Опись</h3>
+                <div class="placeholder">Список товаров</div>
+            </div>
+
+        </div>
+
+        <!-- Кнопки -->
+        <div class="modal-actions">
+            <button id="prevBtn" disabled>Назад</button>
+            <button id="nextBtn">Далее</button>
+            <button id="finishBtn" class="hidden">Завершить</button>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script>
+document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const card = btn.closest('.parcel-card');
+        const details = card.querySelector('.parcel-details');
+
+        const open = details.style.display === 'block';
+        details.style.display = open ? 'none' : 'block';
+        btn.style.transform = open ? 'rotate(0)' : 'rotate(180deg)';
+    });
+});
+
+function copyName(btn) {
+    const name = btn.parentElement.querySelector('.value').innerText;
+    navigator.clipboard.writeText(name);
+
+    btn.innerText = '✓';
+    setTimeout(() => btn.innerText = '📋', 1000);
+}
+</script>
+
+
+
+
+
+
+
+<script>
+let currentStep = 0;
+
+const steps = document.querySelectorAll('.step');
+const contents = document.querySelectorAll('.step-content');
+
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const finishBtn = document.getElementById('finishBtn');
+
+function updateUI() {
+    steps.forEach((s, i) => {
+        s.classList.toggle('active', i === currentStep);
+        s.classList.toggle('completed', i < currentStep);
+    });
+
+    contents.forEach((c, i) => {
+        c.classList.toggle('active', i === currentStep);
+    });
+
+    prevBtn.disabled = currentStep === 0;
+    nextBtn.classList.toggle('hidden', currentStep === 3);
+    finishBtn.classList.toggle('hidden', currentStep !== 3);
+}
+
+nextBtn.onclick = () => {
+    if (currentStep < 3) {
+        currentStep++;
+        updateUI();
+    }
+};
+
+prevBtn.onclick = () => {
+    if (currentStep > 0) {
+        currentStep--;
+        updateUI();
+    }
+};
+
+updateUI();
+</script>
+
+
+</body>
+</html>

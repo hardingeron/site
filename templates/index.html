@@ -184,6 +184,47 @@
 
 
 
+
+
+    <div class="modal-content modal-reservation-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>შეავსეთ სათანადო ველები</h2>
+        <input type="date" id="datepicker" class="menu-item rounded-3 animate-fade-in-up" placeholder="ამოირჩიეთ თარიღი">
+        <select id="citySelect" class="menu-item rounded-3 animate-fade-in-up">
+            <option style="background-color: rgb(51, 48, 48)" value="Санкт-Петербург">სანქტ-პეტერბურგი</option>
+            <option style="background-color: rgb(51, 48, 48)" value="Москва">მოსკოვი</option>
+        </select>
+        <button onclick="redirectToPage()">გადასვლა</button>
+        <div class="dates_block">
+            <div class="spb_dates_block">
+                <label>პეტერბურგი</label>
+                <div class="spb_list_block">
+                    <ul>
+                        {% for date in spb_dates %}
+                            <li><a href="/shipments?date={{ date }}&where_from=Санкт-Петербург">{{ date }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="msk_dates_block">
+                <label>მოსკოვი</label>
+                <div class="msk_list_block">
+                    <ul>
+                        {% for date in msk_dates %}
+                            <li><a href="/shipments?date={{ date }}&where_from=Москва">{{ date }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Flatpickr JS -->

@@ -200,3 +200,4 @@ class Shipments(db.Model):
     send_date = db.Column(db.Date)               # Дата отправки
     currency = db.Column(db.String(5))           # Валюта оплаты
     payment_amount = db.Column(db.Integer)       # Оплата
+    sequence = db.Column(db.Integer)             # Очерёдность

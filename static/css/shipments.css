@@ -216,17 +216,16 @@ body {
 
 
 
+/* Подсветка placeholder */
+input.placeholder-error::placeholder,
+textarea.placeholder-error::placeholder {
+    color: #ef4444 !important;
+}
 
-
-
-
-
-
-
-
-
-
-
+/* Подсветка select (текст выбранного option) */
+select.select-error {
+    color: #ef4444 !important;
+}
 
 
 

@@ -37,11 +37,30 @@ class ShipmentSubmitView(MethodView):
 
     def post(self):
         data = request.get_json()
-        print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
         weights = data.get("weightsHidden", "")  # "1.23 5.34 1.23"
         weight_list = [w for w in weights.split() if w.strip()]  # фильтруем пустые строки
         parcels_count = len(weight_list)
         
+
+        # 🔹 Данные из URL
+        date_param = data.get("date")          # например "01-03-2025"
+        where_from_param = data.get("where_from")  # например "Москва"
+
+        print("Дата из URL:", date_param)
+        print("Город отправки из URL:", where_from_param)
+
+        shared_recipient = data.get("sharedRecipient")  # True или False
+        if shared_recipient:
+            payment_amount = 0
+            payment_status = "+"
+            sequence = 1
+        else:
+            payment_amount = data.get("paymentAmount", 0)
+            payment_status = data.get("paymentStatus", "")
+            sequence = 0
+
+
+
         if not data:
             return jsonify({"success": False, "message": "Нет данных"}), 400
         try:
@@ -64,10 +83,11 @@ class ShipmentSubmitView(MethodView):
 
                 description=", ".join(data.get("inventory", [])),  # объединяем массив тегов в строку
 
-                payment_amount=data.get("paymentAmount", 0),
-                payment_status=data.get("paymentStatus", ""),
+                payment_amount=payment_amount,
+                payment_status=payment_status,
                 currency=data.get("currency", ""),
-                order_date=datetime.now()  # <-- здесь текущая дата и время
+                order_date=datetime.now(),  # <-- здесь текущая дата и время
+                sequence=sequence
                 # sharedRecipient можно сохранить в отдельное поле, если нужно
             )
 

@@ -42,16 +42,21 @@
 
 
 <!--  главный список на старнице -->
+<style>
+.parcel-card.sequence-0 { background-color: #ffffff; }
+.parcel-card.sequence-1 { background-color: #dddddd; }
+
+
+</style>
+
 <div class="shipments">
 
 {% for shipment in shipments %}
-<div class="parcel-card 
-    {% if shipment.payment_status == 'paid' %}
-        payment-paid
-    {% else %}
-        payment-unpaid
+<div class="parcel-card
+    {% if shipment.payment_status == 'paid' or shipment.payment_status == 'card' %}payment-paid
+    {% elif shipment.payment_status == 'unpaid' %}payment-unpaid
     {% endif %}
-">
+    {% if shipment.sequence == 1 %} sequence-1{% elif shipment.sequence == 0 %} sequence-0{% endif %}">
 
     <div class="parcel-main">
 
@@ -395,6 +400,130 @@ const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
 const finishBtn = document.getElementById('finishBtn');
 
+/* =========================
+   Работа с ошибками (LABEL)
+========================= */
+
+function clearErrors(stepContent) {
+    stepContent.querySelectorAll('.label-error').forEach(label => {
+        label.classList.remove('label-error');
+    });
+}
+
+function markError(target) {
+    if (!target) return;
+
+    // 🔹 INPUT или TEXTAREA — подсветка placeholder
+    if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        target.classList.add('placeholder-error');
+
+        setTimeout(() => {
+            target.classList.remove('placeholder-error');
+        }, 2000);
+    } 
+    // 🔹 SELECT — подсветка текста выбранного option
+    else if (target.tagName === 'SELECT') {
+        target.classList.add('select-error');
+
+        setTimeout(() => {
+            target.classList.remove('select-error');
+        }, 2000);
+    }
+    // 🔹 inventoryContainer — подсветка placeholder у input внутри
+    else if (target.id === 'inventoryContainer') {
+        const input = target.closest('.modern-textarea-wrapper')?.querySelector('#inventoryInput');
+        if (!input) return;
+
+        input.classList.add('placeholder-error');
+
+        setTimeout(() => {
+            input.classList.remove('placeholder-error');
+        }, 2000);
+    } 
+    // 🔹 другие контейнеры — подсвечиваем label
+    else {
+        const label = target.querySelector('label');
+        if (!label) return;
+
+        const originalColor = label.style.color || getComputedStyle(label).color;
+        label.style.color = '#ef4444';
+
+        setTimeout(() => {
+            label.style.color = originalColor;
+        }, 2000);
+    }
+}
+
+/* =========================
+   Валидация шагов
+========================= */
+
+function validateStep(stepIndex) {
+    const step = contents[stepIndex];
+    clearErrors(step);
+
+    let valid = true;
+
+    // 🔹 Шаг 0 — Отправитель
+    if (stepIndex === 0) {
+        ["senderName", "senderSurname", "senderPhone"].forEach(id => {
+            const input = document.getElementById(id);
+            if (!input || !input.value.trim()) {
+                markError(input);
+                valid = false;
+            }
+        });
+    }
+
+    // 🔹 Шаг 1 — Получатель
+    if (stepIndex === 1) {
+        ["recipientName", "recipientSurname", "recipientPhone", "recipientPassport"].forEach(id => {
+            const input = document.getElementById(id);
+            if (!input || !input.value.trim()) {
+                markError(input);
+                valid = false;
+            }
+        });
+    }
+
+    // 🔹 Шаг 2 — Посылка
+    if (stepIndex === 2) {
+        const weightsHidden = document.getElementById("weightsHidden");
+        const weightInput = document.getElementById("parcelWeight");
+
+        if (!weightsHidden || !weightsHidden.value.trim()) {
+            markError(weightInput);
+            valid = false;
+        }
+
+        ["parcelCity", "parcelCost", "parcelAddress"].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el || !el.value.trim()) {
+                markError(el);
+                valid = false;
+            }
+        });
+    }
+
+    // 🔹 Шаг 3 — Опись (обязательно)
+    if (stepIndex === 3) {
+        const container = document.getElementById("inventoryContainer");
+
+        if (!container || container.children.length === 0) {
+            markError(container);
+            valid = false;
+        }
+    }
+
+    // ❌ ШАГ 4 — БЕЗ ПРОВЕРКИ
+
+    return valid;
+}
+
+/* =========================
+   UI и навигация
+========================= */
+
 function updateUI() {
     steps.forEach((s, i) => {
         s.classList.toggle('active', i === currentStep);
@@ -410,8 +539,14 @@ function updateUI() {
     finishBtn.classList.toggle('hidden', currentStep !== 4);
 }
 
+/* =========================
+   Кнопки
+========================= */
+
 nextBtn.onclick = () => {
-    if (currentStep < 4) {
+    if (!validateStep(currentStep)) return;
+
+    if (currentStep < contents.length - 1) {
         currentStep++;
         updateUI();
     }
@@ -423,6 +558,10 @@ prevBtn.onclick = () => {
         updateUI();
     }
 };
+
+/* =========================
+   Инициализация
+========================= */
 
 updateUI();
 </script>
@@ -498,45 +637,91 @@ updateUI();
 
 
 <script>
-    document.getElementById("finishBtn").addEventListener("click", () => {
-        const data = {
-            senderName: document.getElementById("senderName").value,
-            senderSurname: document.getElementById("senderSurname").value,
-            senderPhone: document.getElementById("senderPhone").value,
+document.getElementById("finishBtn").addEventListener("click", () => {
+    const sharedRecipient = document.getElementById("sharedRecipient").checked;
+    let step4Valid = true;
 
-            recipientName: document.getElementById("recipientName").value,
-            recipientSurname: document.getElementById("recipientSurname").value,
-            recipientPhone: document.getElementById("recipientPhone").value,
-            recipientPassport: document.getElementById("recipientPassport").value,
+    if (!sharedRecipient) {
+        const amount = document.getElementById("paymentAmount");
+        const payment = document.querySelector('input[name="payment"]:checked');
+        const currency = document.querySelector('input[name="currency"]:checked');
 
-            weightsHidden: document.getElementById("weightsHidden").value,
-            parcelCity: document.getElementById("parcelCity").value,
-            parcelCost: document.getElementById("parcelCost").value,
-            parcelAddress: document.getElementById("parcelAddress").value,
+        if (!amount.value.trim()) {
+            amount.classList.add('placeholder-error');
+            setTimeout(() => amount.classList.remove('placeholder-error'), 2000);
+            step4Valid = false;
+        }
 
-            inventory: Array.from(document.getElementById("inventoryContainer").children).map(e => e.textContent.trim()),
+        if (!payment) {
+            const paymentTitle = document.querySelector('.step-content:nth-child(5) .radio-group .group-title');
+            if (paymentTitle) {
+                const originalColor = paymentTitle.style.color || getComputedStyle(paymentTitle).color;
+                paymentTitle.style.color = '#ef4444';
+                setTimeout(() => paymentTitle.style.color = originalColor, 2000);
+            }
+            step4Valid = false;
+        }
 
-            paymentAmount: document.getElementById("paymentAmount").value,
-            paymentStatus: document.querySelector('input[name="paymentStatus"]:checked')?.value || "",
-            currency: document.querySelector('input[name="currency"]:checked')?.value || "",
-            sharedRecipient: document.getElementById("sharedRecipient").checked
-        };
+        if (!currency) {
+            const currencyTitle = document.querySelectorAll('.step-content:nth-child(5) .radio-group .group-title')[1];
+            if (currencyTitle) {
+                const originalColor = currencyTitle.style.color || getComputedStyle(currencyTitle).color;
+                currencyTitle.style.color = '#ef4444';
+                setTimeout(() => currencyTitle.style.color = originalColor, 2000);
+            }
+            step4Valid = false;
+        }
+    }
 
-        fetch("/shipment_submit", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(result => {
-            console.log("Результат:", result);
-            // Можно закрыть модалку и очистить поля
-        })
-        .catch(err => console.error("Ошибка:", err));
-    });
+    if (!step4Valid) return;
 
+    // 🔹 Получаем параметры из URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const dateParam = urlParams.get("date") || "";
+    const whereFromParam = urlParams.get("where_from") || "";
+
+    // 🔹 Собираем данные для отправки
+    const data = {
+        senderName: document.getElementById("senderName").value,
+        senderSurname: document.getElementById("senderSurname").value,
+        senderPhone: document.getElementById("senderPhone").value,
+
+        recipientName: document.getElementById("recipientName").value,
+        recipientSurname: document.getElementById("recipientSurname").value,
+        recipientPhone: document.getElementById("recipientPhone").value,
+        recipientPassport: document.getElementById("recipientPassport").value,
+
+        weightsHidden: document.getElementById("weightsHidden").value,
+        parcelCity: document.getElementById("parcelCity").value,
+        parcelCost: document.getElementById("parcelCost").value,
+        parcelAddress: document.getElementById("parcelAddress").value,
+
+        inventory: Array.from(document.getElementById("inventoryContainer").children).map(e => e.textContent.trim()),
+
+        paymentAmount: document.getElementById("paymentAmount").value,
+        paymentStatus: document.querySelector('input[name="payment"]:checked')?.id || "",
+        currency: document.querySelector('input[name="currency"]:checked')?.id || "",
+        sharedRecipient: sharedRecipient,
+
+        // 🔹 Добавляем параметры из URL
+        date: dateParam,
+        where_from: whereFromParam
+    };
+
+    fetch("/shipment_submit", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log("Результат:", result);
+        // Можно закрыть модалку и очистить поля
+    })
+    .catch(err => console.error("Ошибка:", err));
+});
 </script>
 </body>
 </html>

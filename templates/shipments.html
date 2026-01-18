@@ -14,7 +14,7 @@
 
 <!--  карточки на старнице -->
 <div class="page-actions">
-    <div class="action-card add">
+    <div class="action-card add" id="addParcelCard">
         <div class="icon">➕</div>
         <div class="text">
             <div class="title">Добавить посылку</div>
@@ -44,95 +44,110 @@
 <!--  главный список на старнице -->
 <div class="shipments">
 
-<!-- ✅ Оплачена -->
-<div class="parcel-card payment-paid">
+{% for shipment in shipments %}
+<div class="parcel-card 
+    {% if shipment.payment_status == 'paid' %}
+        payment-paid
+    {% else %}
+        payment-unpaid
+    {% endif %}
+">
+
     <div class="parcel-main">
+
+        <!-- № посылки -->
         <div>
             <div class="label">№ посылки</div>
-            <div class="value">TRK-102938</div>
+            <div class="value">
+                TRK-{{ shipment.shipment_number or shipment.id }}
+            </div>
+            <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
         </div>
 
+        <!-- Отправитель -->
         <div>
             <div class="label">Отправитель</div>
-            <div class="value">Иван Петров</div>
-            <div class="phone">+995 555 111 222</div>
+            <div class="value">
+                {{ shipment.sender_name }} {{ shipment.sender_surname }}
+            </div>
+            <div class="phone">
+                {{ shipment.sender_number }}
+            </div>
         </div>
 
+        <!-- Получатель -->
         <div>
             <div class="label">Получатель</div>
             <div class="receiver-name">
-                <div class="value">Алексей Сидоров</div>
+                <div class="value">
+                    {{ shipment.recipient_name }} {{ shipment.recipient_surname }}
+                </div>
                 <button class="copy-btn" onclick="copyName(this)">📋</button>
             </div>
-            <div class="phone">+7 999 333 44 55</div>
+            <div class="phone">
+                {{ shipment.recipient_number }}
+            </div>
         </div>
 
+        <!-- Кол-во / вес -->
         <div>
             <div class="label">Кол-во / вес</div>
-            <div class="value">2 шт · 4.5 кг</div>
+            <div class="value">
+                {{ shipment.parcels_count }} шт
+            </div>
         </div>
 
+        <!-- Город -->
         <div>
             <div class="label">Город</div>
-            <div class="value">Тбилиси</div>
+            <div class="value">
+                {{ shipment.city_to }}
+            </div>
         </div>
 
         <button class="toggle-btn">⌄</button>
     </div>
 
+    <!-- 🔽 Детали -->
     <div class="parcel-details">
-        <div><b>Опись:</b> Одежда, обувь</div>
-        <div><b>Оплата:</b> Оплачено</div>
-        <div><b>Стоимость груза:</b> 320 $</div>
-        <div><b>Паспорт:</b> AA1234567</div>
-        <div><b>Адрес доставки:</b> Тбилиси, ул. Руставели 25</div>
+        <div><b>Опись:</b> {{ shipment.description }}</div>
+
+        <div>
+            <b>Оплата:</b>
+            {% if shipment.payment_status == 'paid' %}
+                Оплачено
+            {% else %}
+                Не оплачено
+            {% endif %}
+        </div>
+        <div>
+            <b>Веса</b>
+            {{ shipment.weights }}
+        </div>
+        <div>
+            <b>Стоимость груза:</b>
+            {{ shipment.cargo_cost }} {{ shipment.currency }}
+        </div>
+
+        <div><b>Паспорт:</b> {{ shipment.recipient_passport }}</div>
+
+        <div><b>Адрес доставки:</b> {{ shipment.address }}</div>
+
+        <div>
+            <b>Дата оформления:</b>
+            {{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date }}
+        </div>
     </div>
+
+</div>
+{% else %}
+    <div class="empty-state">
+        Посылок пока нет
+    </div>
+{% endfor %}
+
 </div>
 
-<!-- 🚨 Растаможка + не оплачено -->
-<div class="parcel-card customs payment-unpaid">
-    <div class="parcel-main">
-        <div>
-            <div class="label">№ посылки</div>
-            <div class="value">TRK-778899</div>
-        </div>
-
-        <div>
-            <div class="label">Отправитель</div>
-            <div class="value">Мария Иванова</div>
-            <div class="phone">+995 577 888 999</div>
-        </div>
-
-        <div>
-            <div class="label">Получатель</div>
-            <div class="receiver-name">
-                <div class="value">Дмитрий Орлов</div>
-                <button class="copy-btn" onclick="copyName(this)">📋</button>
-            </div>
-            <div class="phone">+7 901 222 11 00</div>
-        </div>
-
-        <div>
-            <div class="label">Кол-во / вес</div>
-            <div class="value">5 шт · 38 кг</div>
-        </div>
-
-        <div>
-            <div class="label">Город</div>
-            <div class="value">Батуми</div>
-        </div>
-
-        <button class="toggle-btn">⌄</button>
-    </div>
-
-    <div class="parcel-details">
-        <div><b>Опись:</b> Бытовая техника</div>
-        <div><b>Оплата:</b> Не оплачено</div>
-        <div><b>Стоимость груза:</b> 1800 $</div>
-        <div><b>Паспорт:</b> BB9988776</div>
-        <div><b>Адрес доставки:</b> Батуми, ул. Чавчавадзе 10</div>
-    </div>
-</div>
 
 </div>
 
@@ -182,17 +197,17 @@
 
                     <div class="input-group">
                         <label>Имя</label>
-                        <input type="text" placeholder="Введите имя">
+                        <input type="text" placeholder="Введите имя" id="senderName">
                     </div>
 
                     <div class="input-group">
                         <label>Фамилия</label>
-                        <input type="text" placeholder="Введите фамилию">
+                        <input type="text" placeholder="Введите фамилию" id="senderSurname">
                     </div>
 
                     <div class="input-group">
                         <label>Телефон</label>
-                        <input type="tel" placeholder="+995 5XX XXX XXX">
+                        <input type="tel" placeholder="+995 5XX XXX XXX" id="senderPhone">
                     </div>
 
                 </div>
@@ -205,22 +220,23 @@
 
                     <div class="input-group">
                         <label>Имя</label>
-                        <input type="text" placeholder="Введите имя">
+                        <input type="text" placeholder="Введите имя" id="recipientName">
                     </div>
 
                     <div class="input-group">
                         <label>Фамилия</label>
-                        <input type="text" placeholder="Введите фамилию">
+                        <input type="text" placeholder="Введите фамилию" id="recipientSurname">
                     </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Телефон</label>
+                            <input type="tel" placeholder="+995 5XX XXX XXX" id="recipientPhone">
+                        </div>
 
-                    <div class="input-group">
-                        <label>Телефон</label>
-                        <input type="tel" placeholder="+995 5XX XXX XXX">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Паспорт</label>
-                        <input type="text" placeholder="* * * * *">
+                        <div class="input-group">
+                            <label>Паспорт</label>
+                            <input type="text" placeholder="* * * * *" id="recipientPassport">
+                        </div>
                     </div>
 
                 </div>
@@ -229,36 +245,40 @@
             <div class="step-content">
                 <h3>Информация о посылке</h3>
                 <div class="parcel-form">
-                    <div class="input-group">
-                        <label>Вес</label>
-                        <input type="text" placeholder="Введите вес или веса">
-                    </div>
 
-                    <!-- Город (список) -->
-                    <div class="input-group">
-                        <label>Город Назначения</label>
-                        <select>
-                            <option value="">Выберите город</option>
-                            <option>Тбилиси</option>
-                            <option>Батуми</option>
-                            <option>Кутаиси</option>
-                            <option>Москва</option>
-                        </select>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Вес</label>
+                            <input type="text" placeholder="Введите вес или веса" id="parcelWeight">
+                            <input type="hidden" name="weights" id="weightsHidden">
+                        </div>
+                        <!-- Город (список) -->
+                        <div class="input-group">
+                            <label>Город Назначения</label>
+                            <select id="parcelCity">
+                                <option value="">Выберите город</option>
+                                <option>Тбилиси</option>
+                                <option>Батуми</option>
+                                <option>Кутаиси</option>
+                                <option>Москва</option>
+                            </select>
+                        </div>
                     </div>
-
+                    <div id="weightContainer" class="weight-container"></div>
+                    
 
                     <!-- Стоимость и к оплате -->
                     <div class="row">
                         <div class="input-group">
                             <label>Стоимость груза</label>
-                            <input type="number" placeholder="0.00">
+                            <input type="number" placeholder="0.00" id="parcelCost">
                         </div>
                     </div>
 
                     <!-- Адрес -->
                     <div class="input-group">
                         <label>Адрес доставки</label>
-                        <input type="text" placeholder="Улица, дом, квартира">
+                        <input type="text" placeholder="Улица, дом, квартира" id="parcelAddress">
                     </div>
                 </div>
             </div>
@@ -283,22 +303,22 @@
                 <div class="parcel-form">
                     <div class="input-group">
                         <label>К оплате</label>
-                        <input type="number" placeholder="0.00">
+                        <input type="number" placeholder="0.00" id="paymentAmount">
                     </div>
                     <div class="radio-group">
                         <span class="group-title">Статус оплаты</span>
                         <label class="radio">
-                            <input type="radio" name="payment">
+                            <input type="radio" name="payment" id="paid">
                             <span>Оплачено</span>
                         </label>
 
                         <label class="radio">
-                            <input type="radio" name="payment">
+                            <input type="radio" name="payment" id="unpaid">
                             <span>Не оплачено</span>
                         </label>
 
                         <label class="radio">
-                            <input type="radio" name="payment">
+                            <input type="radio" name="payment" id="card">
                             <span>С карты</span>
                         </label>
                     </div>
@@ -306,15 +326,15 @@
                     <div class="radio-group">
                         <span class="group-title">Валюта</span>
 
-                        <label class="radio"><input type="radio" name="currency"><span>GEL</span></label>
-                        <label class="radio"><input type="radio" name="currency"><span>RUB</span></label>
-                        <label class="radio"><input type="radio" name="currency"><span>EUR</span></label>
-                        <label class="radio"><input type="radio" name="currency"><span>USD</span></label>
+                        <label class="radio"><input type="radio" name="currency" id="GEL"><span>GEL</span></label>
+                        <label class="radio"><input type="radio" name="currency" id="RUB"><span>RUB</span></label>
+                        <label class="radio"><input type="radio" name="currency" id="EUR"><span>EUR</span></label>
+                        <label class="radio"><input type="radio" name="currency" id="USD"><span>USD</span></label>
                     </div>
 
                     <div class="checkbox-group">
                         <label class="checkbox">
-                            <input type="checkbox">
+                            <input type="checkbox" id="sharedRecipient">
                             <span>Получатель общий с предыдущей посылкой</span>
                         </label>
                     </div>
@@ -328,6 +348,7 @@
         <!-- Кнопки -->
         <div class="modal-actions">
             <button id="prevBtn" disabled>Назад</button>
+            <button id="closeModalBtn" style="background-color: rgb(255, 97, 97)">Закрыть</button>
             <button id="nextBtn">Далее</button>
             <button id="finishBtn" class="hidden">Завершить</button>
         </div>
@@ -409,8 +430,113 @@ updateUI();
 
 
 <script src="/static/js/shipments/inventory_input.js"></script>
+<script src="/static/js/shipments/parcel-weight.js"></script>
+<!-- modal open close -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const addCard = document.getElementById("addParcelCard");
+        const modal = document.getElementById("parcelModal");
+        const closeBtn = document.getElementById("closeModalBtn");
+
+        // функция для сброса всех форм внутри модалки
+        function resetModalFields() {
+            const forms = modal.querySelectorAll("form"); // все формы внутри модалки
+            forms.forEach(form => form.reset());
+
+            // очищаем обычные инпуты, textarea, select
+            const inputs = modal.querySelectorAll("input, textarea, select");
+            inputs.forEach(input => {
+                if (input.type === "checkbox" || input.type === "radio") {
+                    input.checked = false;
+                } else if (input.tagName.toLowerCase() === "textarea") {
+                    input.value = "";
+                } else {
+                    input.value = "";
+                }
+            });
+
+            // специальная очистка для inventory поля с тегами
+            const inventoryInput = modal.querySelector("#inventoryInput");
+            const inventoryContainer = modal.querySelector("#inventoryContainer");
+            const autocompleteList = modal.querySelector("#autocompleteList");
+
+            if (inventoryInput) inventoryInput.value = "";
+            if (inventoryContainer) inventoryContainer.innerHTML = ""; // очищаем все визуальные теги
+            if (autocompleteList) autocompleteList.innerHTML = "";     // очищаем список автокомплита
+
+            // ✅ ВЕСА
+            const weightInput = modal.querySelector("#parcelWeight");
+            const weightContainer = modal.querySelector("#weightContainer");
+            const weightsHidden = modal.querySelector("#weightsHidden");
+
+            if (weightInput) weightInput.value = "";
+            if (weightContainer) weightContainer.innerHTML = "";
+            if (weightsHidden) weightsHidden.value = "";
+        }
+
+        // открываем модальное окно
+        addCard.addEventListener("click", () => {
+            modal.style.display = "flex";
+        });
+
+        // закрываем модальное окно
+        closeBtn.addEventListener("click", () => {
+            modal.style.display = "none";
+            resetModalFields();
+        });
+
+        // закрытие кликом по затемнению
+        modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+                modal.style.display = "none";
+                resetModalFields();
+            }
+        });
+    });
+
+</script>
 
 
+<script>
+    document.getElementById("finishBtn").addEventListener("click", () => {
+        const data = {
+            senderName: document.getElementById("senderName").value,
+            senderSurname: document.getElementById("senderSurname").value,
+            senderPhone: document.getElementById("senderPhone").value,
 
+            recipientName: document.getElementById("recipientName").value,
+            recipientSurname: document.getElementById("recipientSurname").value,
+            recipientPhone: document.getElementById("recipientPhone").value,
+            recipientPassport: document.getElementById("recipientPassport").value,
+
+            weightsHidden: document.getElementById("weightsHidden").value,
+            parcelCity: document.getElementById("parcelCity").value,
+            parcelCost: document.getElementById("parcelCost").value,
+            parcelAddress: document.getElementById("parcelAddress").value,
+
+            inventory: Array.from(document.getElementById("inventoryContainer").children).map(e => e.textContent.trim()),
+
+            paymentAmount: document.getElementById("paymentAmount").value,
+            paymentStatus: document.querySelector('input[name="paymentStatus"]:checked')?.value || "",
+            currency: document.querySelector('input[name="currency"]:checked')?.value || "",
+            sharedRecipient: document.getElementById("sharedRecipient").checked
+        };
+
+        fetch("/shipment_submit", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log("Результат:", result);
+            // Можно закрыть модалку и очистить поля
+        })
+        .catch(err => console.error("Ошибка:", err));
+    });
+
+</script>
 </body>
 </html>

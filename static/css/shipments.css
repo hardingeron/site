@@ -252,6 +252,10 @@ body {
 }
 
 
+#parcelModal {
+    display: none;
+}
+
 /* Затемнение */
 .modal-overlay {
     position: fixed;
@@ -497,6 +501,17 @@ body {
 
 
 
+.input-row {
+    display: flex;
+    gap: 12px;               /* расстояние между полями */
+    width: 100%;
+}
+
+.input-row .input-group {
+    flex: 1;                 /* делят ширину поровну */
+    min-width: 0;            /* важно для адаптивности */
+}
+
 
 
 
@@ -730,4 +745,19 @@ body {
 
 .autocomplete-list li:hover {
     background-color: #eef2ff;
+}
+
+/* контейнер для веса */
+.weight-container {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+.weight-tag {
+    padding: 6px 10px;
+    background: #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
 }

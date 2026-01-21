@@ -10,19 +10,19 @@
 </head>
 
 <body>
+<div id="toast-container"></div>
 
-
-<!--  карточки на старнице -->
-<div class="page-actions">
-    <div class="action-card add" id="addParcelCard">
-        <div class="icon">➕</div>
-        <div class="text">
-            <div class="title">Добавить посылку</div>
-            <div class="desc">Новая отправка</div>
+    <!--  карточки на старнице -->
+    <div class="page-actions">
+        <div class="action-card add" id="addParcelCard">
+            <div class="icon">➕</div>
+            <div class="text">
+                <div class="title">Добавить посылку</div>
+                <div class="desc">Новая отправка</div>
+            </div>
         </div>
-    </div>
 
-    <div class="action-card export">
+    <div class="action-card export" id="exportBtn">
         <div class="icon">⬇️</div>
         <div class="text">
             <div class="title">Выгрузить данные</div>
@@ -59,12 +59,19 @@
     {% if shipment.sequence == 1 %} sequence-1{% elif shipment.sequence == 0 %} sequence-0{% endif %}">
 
     <div class="parcel-main">
+        
+    <!-- Чекбокс -->
+    
+    <!-- № посылки -->
+    <div>
+            <label class="parcel-checkbox">
+                <input type="checkbox" name="selected_shipments" value="{{ shipment.id }}">
+                <span></span>
+            </label>
 
-        <!-- № посылки -->
-        <div>
             <div class="label">№ посылки</div>
             <div class="value">
-                TRK-{{ shipment.shipment_number or shipment.id }}
+                TRK-{{ shipment.shipment_number}}
             </div>
             <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
         </div>
@@ -98,7 +105,7 @@
         <div>
             <div class="label">Кол-во / вес</div>
             <div class="value">
-                {{ shipment.parcels_count }} шт
+                {{ shipment.parcels_count }} шт / {{shipment.total_weight}}
             </div>
         </div>
 
@@ -120,21 +127,24 @@
         <div>
             <b>Оплата:</b>
             {% if shipment.payment_status == 'paid' %}
-                Оплачено
+                <span class="weight-chip">оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}}{{shipment.currency}}</span>
             {% else %}
-                Не оплачено
+               <span class="weight-chip">Не оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}}{{shipment.currency}}</span>
             {% endif %}
         </div>
-        <div>
+        <div class="weights-block">
             <b>Веса</b>
-            {{ shipment.weights }}
+                {% for weight in shipment.weights.split() %}
+                    <span class="weight-chip">{{ weight }} кг
+                    </span>
+                {% endfor %}
         </div>
         <div>
             <b>Стоимость груза:</b>
-            {{ shipment.cargo_cost }} {{ shipment.currency }}
+            <span class="weight-chip">{{ shipment.cargo_cost }} {{ shipment.currency }}</span>
         </div>
 
-        <div><b>Паспорт:</b> {{ shipment.recipient_passport }}</div>
+        <div><b>Паспорт:</b><span class="weight-chip">{{ shipment.recipient_passport }}</span></div>
 
         <div><b>Адрес доставки:</b> {{ shipment.address }}</div>
 
@@ -166,27 +176,27 @@
             <div class="steps">
 
                 <div class="step active" data-step="0">
-                    <div class="circle">👤</div>
+                    <div>👤</div>
                     <div class="label">Отправитель</div>
                 </div>
 
                 <div class="step" data-step="1">
-                    <div class="circle">📦</div>
+                    <div>📦</div>
                     <div class="label">Получатель</div>
                 </div>
 
                 <div class="step" data-step="2">
-                    <div class="circle">⚖️</div>
+                    <div>⚖️</div>
                     <div class="label">Посылка</div>
                 </div>
 
                 <div class="step" data-step="3">
-                    <div class="circle">📝</div>
+                    <div>📝</div>
                     <div class="label">Опись</div>
                 </div>
 
                 <div class="step" data-step="4">
-                    <div class="circle">📝</div>
+                    <div>📝</div>
                     <div class="label">Оплата</div>
                 </div>
 
@@ -331,10 +341,25 @@
                     <div class="radio-group">
                         <span class="group-title">Валюта</span>
 
-                        <label class="radio"><input type="radio" name="currency" id="GEL"><span>GEL</span></label>
-                        <label class="radio"><input type="radio" name="currency" id="RUB"><span>RUB</span></label>
-                        <label class="radio"><input type="radio" name="currency" id="EUR"><span>EUR</span></label>
-                        <label class="radio"><input type="radio" name="currency" id="USD"><span>USD</span></label>
+                    <label class="radio">
+                        <input type="radio" name="currency" id="GEL">
+                        <span>🇬🇪 ₾ GEL</span>
+                    </label>
+
+                    <label class="radio">
+                        <input type="radio" name="currency" id="RUB">
+                        <span>🇷🇺 ₽ RUB</span>
+                    </label>
+
+                    <label class="radio">
+                        <input type="radio" name="currency" id="EUR">
+                        <span>🇪🇺 € EUR</span>
+                    </label>
+
+                    <label class="radio">
+                        <input type="radio" name="currency" id="USD">
+                        <span>🇺🇸 $ USD</span>
+                    </label>
                     </div>
 
                     <div class="checkbox-group">
@@ -388,6 +413,12 @@ function copyName(btn) {
 
 
 
+<script>
+function goToStep(stepIndex) {
+    currentStep = stepIndex;
+    updateUI();
+}
+</script>
 
 
 <script>
@@ -570,6 +601,7 @@ updateUI();
 
 <script src="/static/js/shipments/inventory_input.js"></script>
 <script src="/static/js/shipments/parcel-weight.js"></script>
+<script src="/static/js/shipments/id_selector.js"></script>
 <!-- modal open close -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
@@ -622,6 +654,7 @@ updateUI();
         closeBtn.addEventListener("click", () => {
             modal.style.display = "none";
             resetModalFields();
+            goToStep(0);
         });
 
         // закрытие кликом по затемнению
@@ -629,6 +662,7 @@ updateUI();
             if (e.target === modal) {
                 modal.style.display = "none";
                 resetModalFields();
+                goToStep(0);
             }
         });
     });
@@ -718,10 +752,83 @@ document.getElementById("finishBtn").addEventListener("click", () => {
     .then(response => response.json())
     .then(result => {
         console.log("Результат:", result);
-        // Можно закрыть модалку и очистить поля
+
+        const modal = document.getElementById("parcelModal");
+        const sharedRecipient = document.getElementById("sharedRecipient").checked;
+
+        if (sharedRecipient) {
+            // 🔁 получатель общий → возвращаемся на 1 шаг
+            resetModalExceptSender();
+            goToStep(0);
+        } else {
+            // ❌ обычное поведение → закрыть и очистить всё
+            modal.style.display = "none";
+            resetModalFields();
+            goToStep(0); // на всякий случай
+        }
     })
     .catch(err => console.error("Ошибка:", err));
 });
 </script>
+
+<!-- очистка всего кроме отправителя -->
+
+<script>
+function resetModalExceptSender() {
+    const modal = document.getElementById("parcelModal");
+
+    // все инпуты, кроме отправителя
+    const inputs = modal.querySelectorAll(
+        "input, textarea, select"
+    );
+
+    inputs.forEach(input => {
+        if (
+            input.id === "senderName" ||
+            input.id === "senderSurname" ||
+            input.id === "senderPhone"
+        ) {
+            return; // ❗ не трогаем отправителя
+        }
+
+        if (input.type === "checkbox" || input.type === "radio") {
+            input.checked = false;
+        } else {
+            input.value = "";
+        }
+    });
+
+    // очищаем опись
+    const inventoryContainer = modal.querySelector("#inventoryContainer");
+    const autocompleteList = modal.querySelector("#autocompleteList");
+    if (inventoryContainer) inventoryContainer.innerHTML = "";
+    if (autocompleteList) autocompleteList.innerHTML = "";
+
+    // очищаем веса
+    const weightContainer = modal.querySelector("#weightContainer");
+    const weightsHidden = modal.querySelector("#weightsHidden");
+    if (weightContainer) weightContainer.innerHTML = "";
+    if (weightsHidden) weightsHidden.value = "";
+}
+</script>
+
+
+<script>
+    function showToast(message, type = "success") {
+    const container = document.getElementById("toast-container");
+
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+
+    container.appendChild(toast);
+
+    // Убираем через 3 секунды
+    setTimeout(() => {
+        toast.remove();
+    }, 3000);
+}
+</script>
+
 </body>
 </html>

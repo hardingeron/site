@@ -5,13 +5,17 @@ import os
 import json
 from models import Shipments;
 from datetime import datetime;
+from decimal import Decimal
 
 class ListView(MethodView):
     decorators = [login_required]
 
     def get(self):
+        date_param = datetime.strptime(request.args.get('date'), "%d-%m-%Y").date() 
+        city_param = request.args.get('where_from')  # Получите значение параметра "city"
+
         # 1. Получаем все посылки из БД
-        shipments = Shipments.query.order_by(Shipments.id.desc()).all()
+        shipments = (Shipments.query.filter_by(send_date=date_param,city_from=city_param).order_by(Shipments.id.desc()).all())
 
         # 2. Загружаем inventory (как у тебя было)
         json_path = os.path.join(os.getcwd(), "documents", "inventory.json")
@@ -40,11 +44,19 @@ class ShipmentSubmitView(MethodView):
         weights = data.get("weightsHidden", "")  # "1.23 5.34 1.23"
         weight_list = [w for w in weights.split() if w.strip()]  # фильтруем пустые строки
         parcels_count = len(weight_list)
-        
+        total_weight = sum(Decimal(w) for w in weight_list)
+
 
         # 🔹 Данные из URL
-        date_param = data.get("date")          # например "01-03-2025"
+        date_param = datetime.strptime(data.get("date"), "%d-%m-%Y").date()        # например "01-03-2025"
         where_from_param = data.get("where_from")  # например "Москва"
+        # datetime.strptime(data.get("date"), "%d-%m-%Y").date()
+        last_shipment = (
+        Shipments.query.filter(Shipments.send_date == date_param,Shipments.city_from == where_from_param).order_by(Shipments.shipment_number.desc()).first())
+        if last_shipment is None:
+            shipment_number = 1
+        else:
+            shipment_number = last_shipment.shipment_number + 1
 
         print("Дата из URL:", date_param)
         print("Город отправки из URL:", where_from_param)
@@ -59,7 +71,11 @@ class ShipmentSubmitView(MethodView):
             payment_status = data.get("paymentStatus", "")
             sequence = 0
 
-
+        inventory = data.get("inventory", [])
+        clean_inventory = [
+            item.replace("×", "").strip()
+            for item in inventory
+                            ]
 
         if not data:
             return jsonify({"success": False, "message": "Нет данных"}), 400
@@ -76,12 +92,16 @@ class ShipmentSubmitView(MethodView):
                 recipient_passport=data.get("recipientPassport", ""),
 
                 weights=data.get("weightsHidden", ""),
+                total_weight=total_weight,
                 parcels_count=parcels_count,
                 city_to=data.get("parcelCity", ""),
                 cargo_cost=data.get("parcelCost", ""),
                 address=data.get("parcelAddress", ""),
+                shipment_number=shipment_number,
+                city_from=where_from_param,
+                send_date=date_param,
 
-                description=", ".join(data.get("inventory", [])),  # объединяем массив тегов в строку
+                description = ", ".join(clean_inventory),
 
                 payment_amount=payment_amount,
                 payment_status=payment_status,
@@ -101,6 +121,20 @@ class ShipmentSubmitView(MethodView):
             return jsonify({"success": False, "message": str(e)}), 500
 
 
+class ExportShipmentsView(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def post(self):
+        data = request.get_json()
+        shipment_ids = data.get("shipment_ids", [])
+        print(shipment_ids)
+
+        return jsonify({"status": "ok"})
+
 def register_shipments_routes(app, db):
     app.add_url_rule('/shipments', view_func=ListView.as_view('shipments'))
     app.add_url_rule('/shipment_submit', view_func=ShipmentSubmitView.as_view('shipment_submit', db=db))
+    app.add_url_rule('/export_shipments', view_func=ExportShipmentsView.as_view('export_shipments', db=db))

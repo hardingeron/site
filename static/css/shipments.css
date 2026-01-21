@@ -242,9 +242,8 @@ select.select-error {
 
 /* Верхняя панель шагов */
 .modal-steps {
-    position: relative;
     margin: -40px -20px 20px;
-    padding: 0px 20px 10px;
+    padding: 12px 16px;
     background: #f8fafc;
     border-radius: 16px 16px 0 0;
     border-bottom: 1px solid #e5e7eb;
@@ -285,66 +284,85 @@ select.select-error {
 /* Контейнер шагов */
 .steps {
     display: flex;
-    justify-content: center;
-    gap: 56px; /* регулируешь расстояние тут */
-    align-items: flex-start;
-    padding: 0 10px;
+    gap: 8px;
+    justify-content: space-between;
 }
 /* Шаг */
 .step {
-    position: relative;
-    top: -32px; /* ← ВАЖНО: выносим наружу */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #6b7280;
-}
+    flex: 1;
+    text-align: center;
 
-/* Кружок */
-.step .circle {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
+    padding: 12px 14px;
+    border-radius: 14px;
+
     background: #ffffff;
-    border: 2px solid #e5e7eb;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    border: 1px solid #e5e7eb;
+
+    font-size: 14px;
+    font-weight: 500;
+    color: #2600ff;
+
     transition: all 0.25s ease;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
 }
 
+@media (max-width: 1024px) {
+    .step {
+        padding: 10px 12px;
+        font-size: 13px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+}
+
+@media (max-width: 640px) {
+    .step {
+        padding: 8px 0px;
+        font-size: 8px;
+        border-radius: 10px;
+        box-shadow: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .steps {
+        gap: 8px;
+    }
+}
 
 
 /* Подпись */
+/* Текст */
 .step .label {
-    margin-top: 2px;
-    font-weight: 500;
     white-space: nowrap;
 }
 
 /* Активный */
-.step.active .circle {
+.step.active {
     background: #2563eb;
-    color: #fff;
+    color: #ffffff;
     border-color: #2563eb;
-    transform: scale(1.12);
+    box-shadow: 0 10px 25px rgba(37,99,235,0.35);
+    transform: translateY(-2px);
 }
 
 .step.active .label {
-    color: #2563eb;
+    color: #000000;
     font-weight: 600;
 }
 
 /* Завершённый */
-.step.completed .circle {
+/* Завершённый шаг */
+.step.completed {
     background: #16a34a;
+    color: #000000;
     border-color: #16a34a;
-    color: #fff;
 }
+
+.step:not(.active):not(.completed):hover {
+    background: #f1f5f9;
+}
+
 /* Контент */
 .modal-content {
     min-height: 220px;
@@ -417,23 +435,14 @@ select.select-error {
         padding: 10px 10px 6px;
     }
 
-    .steps {
-        gap: 24px;
-    }
+
 
     .step {
         top: -24px;
     }
 
-    .step .circle {
-        width: 48px;
-        height: 48px;
-        font-size: 18px;
-    }
 
-    .step .label {
-        font-size: 11px;
-    }
+
 
     .modal-actions button {
         padding: 10px 14px;
@@ -759,4 +768,126 @@ select.select-error {
     background: #e5e7eb;
     border-radius: 8px;
     font-size: 14px;
+}
+
+
+/* Стиль для выделения весов */
+
+.weights-list {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.weight-chip {
+    padding: 4px 8px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+
+
+
+
+/* Стиль для выбора посылок */
+
+.parcel-checkbox {
+    display: flex;
+    align-items: center;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.parcel-checkbox input {
+    display: none;
+}
+
+/* Кастомный чекбокс */
+.parcel-checkbox span {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    border: 2px solid #c7d2fe;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* Галочка */
+.parcel-checkbox span::after {
+    content: "✓";
+    font-size: 12px;
+    color: white;
+    display: none;
+}
+
+/* Активный */
+.parcel-checkbox input:checked + span {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.parcel-checkbox input:checked + span::after {
+    display: block;
+}
+
+.parcel-card:has(.parcel-checkbox input:checked) {
+    outline: 2px solid #2563eb; 
+}   
+
+
+
+#toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+}
+
+.toast {
+    min-width: 260px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    animation: slideIn 0.3s ease;
+}
+
+/* Типы */
+.toast.success {
+    background: linear-gradient(135deg, #16a34a, #22c55e);
+}
+
+.toast.error {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+}
+
+/* Анимация */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

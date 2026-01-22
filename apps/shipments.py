@@ -6,6 +6,13 @@ import json
 from models import Shipments;
 from datetime import datetime;
 from decimal import Decimal
+from io import BytesIO
+import random
+from openpyxl import load_workbook
+from models import Forms
+from functions import random_names
+from helper.shipments_helper import weight_list
+
 
 class ListView(MethodView):
     decorators = [login_required]
@@ -41,16 +48,15 @@ class ShipmentSubmitView(MethodView):
 
     def post(self):
         data = request.get_json()
-        weights = data.get("weightsHidden", "")  # "1.23 5.34 1.23"
-        weight_list = [w for w in weights.split() if w.strip()]  # фильтруем пустые строки
-        parcels_count = len(weight_list)
-        total_weight = sum(Decimal(w) for w in weight_list)
+        
+        # получаем общий вес и количество посылок
+        total_weight, parcels_count = weight_list(data)
 
 
         # 🔹 Данные из URL
         date_param = datetime.strptime(data.get("date"), "%d-%m-%Y").date()        # например "01-03-2025"
         where_from_param = data.get("where_from")  # например "Москва"
-        # datetime.strptime(data.get("date"), "%d-%m-%Y").date()
+
         last_shipment = (
         Shipments.query.filter(Shipments.send_date == date_param,Shipments.city_from == where_from_param).order_by(Shipments.shipment_number.desc()).first())
         if last_shipment is None:
@@ -113,6 +119,7 @@ class ShipmentSubmitView(MethodView):
 
             self.db.session.add(parcel)
             self.db.session.commit()
+            
 
             return jsonify({"success": True, "message": "Посылка успешно добавлена"})
 
@@ -133,8 +140,98 @@ class ExportShipmentsView(MethodView):
         print(shipment_ids)
 
         return jsonify({"status": "ok"})
+    
+
+
+
+class DownloadManifest(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def post(self):   # 🔥 ВАЖНО
+        data = request.get_json() or {}
+        shipment_ids = data.get("shipment_ids", [])
+
+        if not shipment_ids:
+            return jsonify({"error": "shipment_ids пуст"}), 400
+
+        # Фильтруем записи в таблице Shipments
+        filtered_forms = Shipments.query.filter(
+            Shipments.id.in_(shipment_ids)  # 🔹 фильтр по списку ID
+        ).all()
+
+        # Загрузка существующего Excel-файла
+        try:
+            wb = load_workbook('documents/Sample-Form.xlsx')  # Замените 'Sample-Form.xlsx' на имя вашего существующего файла
+            ws = wb.active
+        except FileNotFoundError:
+            # Обработайте ситуацию, когда файл не найден
+            return jsonify({"error": "Sample-Form.xlsx not found"}), 404
+
+        # Обработка данных и запись в Excel
+        row_num = ws.max_row + 1  # начинаем с новой строки
+
+        for form in filtered_forms:
+            weights = [float(weight) for weight in form.weights.split()]
+            price_chance = [15, 20, 25, 10]
+            count = 0
+            price = random.choice(price_chance)
+            vl = 'USD'
+            if form.sender_name:
+                if form.sender_name == 'DAMIR':
+                    s_n = random_names()
+                else:
+                    s_n = f'{form.sender_name} {form.sender_surname}'
+            else:
+                s_n = random_names()
+            purc_count = len(weights)
+            
+            for weight in weights:
+                if purc_count != 1:
+                    count += 1
+                    if form.city_from == 'Москва':
+                        number = f'{form.city_to}     {form.shipment_number}/{count}'
+                    else:
+                        number = f'{form.city_to}    0{form.shipment_number}/{count}'
+                else:
+                    if form.city_from == 'Москва':
+                        number = f'{form.city_to}     {form.shipment_number}'
+                    else:
+                        number = f'{form.city_to}    0{form.shipment_number}'
+                # Добавляем данные в соответствующие столбцы
+                ws.cell(row=row_num, column=1, value=s_n.split()[0])  # Имя отправителя
+                ws.cell(row=row_num, column=2, value=s_n.split()[-1])  # Фамилия отправителя
+                ws.cell(row=row_num, column=3, value='Russian Federation')
+                if form.city_from == 'Москва':
+                    ws.cell(row=row_num, column=4, value='MOSCOW')
+                else:
+                    ws.cell(row=row_num, column=4, value='S.P.B')
+                ws.cell(row=row_num, column=5, value=form.recipient_name)  # Имя получателя
+                ws.cell(row=row_num, column=6, value=form.recipient_surname)  # Фамилия получателя
+                ws.cell(row=row_num, column=7, value=form.recipient_passport)
+                ws.cell(row=row_num, column=8, value='Georgia')
+                ws.cell(row=row_num, column=9, value=number)
+                ws.cell(row=row_num, column=10, value=form.city_to)
+                ws.cell(row=row_num, column=11, value=form.recipient_number)
+                ws.cell(row=row_num, column=12, value=price)
+                ws.cell(row=row_num, column=13, value=vl)
+                ws.cell(row=row_num, column=14, value=weight)  # Значение веса
+
+                row_num += 1  # Переходим к следующей строке
+
+       # Сохраняем изменения в оперативной памяти (BytesIO)
+        output = BytesIO()
+        wb.save(output)
+        wb.close()
+        output.seek(0)  # Возвращаемся в начало буфера
+
+        # Возврат файла для скачивания
+        return send_file(output, as_attachment=True, download_name='manifest.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 def register_shipments_routes(app, db):
     app.add_url_rule('/shipments', view_func=ListView.as_view('shipments'))
     app.add_url_rule('/shipment_submit', view_func=ShipmentSubmitView.as_view('shipment_submit', db=db))
     app.add_url_rule('/export_shipments', view_func=ExportShipmentsView.as_view('export_shipments', db=db))
+    app.add_url_rule('/download_manifest', view_func=DownloadManifest.as_view('download_manifest', db=db))

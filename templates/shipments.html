@@ -22,7 +22,7 @@
             </div>
         </div>
 
-    <div class="action-card export" id="exportBtn">
+    <div class="action-card export" id="downloadExcelBtn">
         <div class="icon">⬇️</div>
         <div class="text">
             <div class="title">Выгрузить данные</div>
@@ -48,8 +48,20 @@
 
 
 </style>
+<!-- Выделить все -->
 
 <div class="shipments">
+    <div class="select-all-container">
+        <label class="select-all-checkbox">
+            <input type="checkbox" id="selectAllShipments">
+            <span>Выделить все посылки</span>
+        </label>
+        
+        <div class="selected-summary">
+            <div class="label">Выбрано:</div>
+            <div class="value" id="selectedInfo">0 шт / 0 кг</div>
+        </div>
+    </div>
 
 {% for shipment in shipments %}
 <div class="parcel-card
@@ -58,14 +70,18 @@
     {% endif %}
     {% if shipment.sequence == 1 %} sequence-1{% elif shipment.sequence == 0 %} sequence-0{% endif %}">
 
+    
     <div class="parcel-main">
-        
     <!-- Чекбокс -->
     
     <!-- № посылки -->
     <div>
             <label class="parcel-checkbox">
-                <input type="checkbox" name="selected_shipments" value="{{ shipment.id }}">
+                <input type="checkbox" 
+                        name="selected_shipments" 
+                        value="{{ shipment.id }}"
+                        data-parcels="{{ shipment.parcels_count }}"
+                        data-weight="{{ shipment.total_weight }}">
                 <span></span>
             </label>
 
@@ -127,9 +143,9 @@
         <div>
             <b>Оплата:</b>
             {% if shipment.payment_status == 'paid' %}
-                <span class="weight-chip">оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}}{{shipment.currency}}</span>
+                <span class="weight-chip" style="color: green;">оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
             {% else %}
-               <span class="weight-chip">Не оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}}{{shipment.currency}}</span>
+               <span class="weight-chip" style="color: red;">Не оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
             {% endif %}
         </div>
         <div class="weights-block">
@@ -272,10 +288,61 @@
                             <label>Город Назначения</label>
                             <select id="parcelCity">
                                 <option value="">Выберите город</option>
-                                <option>Тбилиси</option>
-                                <option>Батуми</option>
-                                <option>Кутаиси</option>
-                                <option>Москва</option>
+                            <option value="TBILISI">TBILISI</option>
+                            <option value="BATUMI">BATUMI</option>
+                            <option value="KOBULETI">KOBULETI</option>
+                            <option value="KUTAISI">KUTAISI</option>
+                            <option value="TELAVI">TELAVI</option>
+                            <option value="GORI">GORI</option>
+                            <option value="ZUGDIDI">ZUGDIDI</option>
+                            <option value="POTI">POTI</option>
+                            <option value="KHASHURI">KHASHURI</option>
+                            <option value="RUSTAVI">RUSTAVI</option>
+                            <option value="SAMTREDIA">SAMTREDIA</option>
+                            <option value="SENAKI">SENAKI</option>
+                            <option value="ZESTAPHONI">ZESTAPHONI</option>
+                            <option value="MARNEULI">MARNEULI</option>
+                            <option value="AKHALTSIKHE">AKHALTSIKHE</option>
+                            <option value="OZURGETI">OZURGETI</option>
+                            <option value="KASPI">KASPI</option>
+                            <option value="TCHIATURA">TCHIATURA</option>
+                            <option value="TSKALTUBO">TSKALTUBO</option>
+                            <option value="SAGAREJO">SAGAREJO</option>
+                            <option value="GARDABANI">GARDABANI</option>
+                            <option value="BORJOMI">BORJOMI</option>
+                            <option value="TKIBULI">TKIBULI</option>
+                            <option value="KHONI">KHONI</option>
+                            <option value="BOLNISI">BOLNISI</option>
+                            <option value="AKHALKALAKI">AKHALKALAKI</option>
+                            <option value="GURJAANI">GURJAANI</option>
+                            <option value="MTSKHETA">MTSKHETA</option>
+                            <option value="KVARELI">KVARELI</option>
+                            <option value="AKHMETA">AKHMETA</option>
+                            <option value="KARELI">KARELI</option>
+                            <option value="LANCHKHUTA">LANCHKHUTA</option>
+                            <option value="DUSHETI">DUSHETI</option>
+                            <option value="SACHKHERE">SACHKHERE</option>
+                            <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
+                            <option value="LAGODEKHI">LAGODEKHI</option>
+                            <option value="NINOTSMINDA">NINOTSMINDA</option>
+                            <option value="ABASHA">ABASHA</option>
+                            <option value="TSNORI">TSNORI</option>
+                            <option value="TERJOBA">TERJOBA</option>
+                            <option value="MARTVILI">MARTVILI</option>
+                            <option value="KHOBI">KHOBI</option>
+                            <option value="TSALENJIKHA">TSALENJIKHA</option>
+                            <option value="VANI">VANI</option>
+                            <option value="BAGDADI">BAGDADI</option>
+                            <option value="VALE">VALE</option>
+                            <option value="CHKHOROTSKU">CHKHOROTSKU</option>
+                            <option value="TETRITSQARO">TETRITSQARO</option>
+                            <option value="DMANISI">DMANISI</option>
+                            <option value="ONI">ONI</option>
+                            <option value="TSALKA">TSALKA</option>
+                            <option value="AMBROLAURI">AMBROLAURI</option>
+                            <option value="SIGNAGI">SIGNAGI</option>
+                            <option value="TSAGERI">TSAGERI</option>
+                            <option value="JVARI">JVARI</option>
                             </select>
                         </div>
                     </div>
@@ -316,12 +383,15 @@
             <div class="step-content">
                 <h3>Оплата</h3>
                 <div class="parcel-form">
+                <div id="paymentBlock">
                     <div class="input-group">
                         <label>К оплате</label>
                         <input type="number" placeholder="0.00" id="paymentAmount">
                     </div>
+
                     <div class="radio-group">
                         <span class="group-title">Статус оплаты</span>
+
                         <label class="radio">
                             <input type="radio" name="payment" id="paid">
                             <span>Оплачено</span>
@@ -341,31 +411,33 @@
                     <div class="radio-group">
                         <span class="group-title">Валюта</span>
 
-                    <label class="radio">
-                        <input type="radio" name="currency" id="GEL">
-                        <span>🇬🇪 ₾ GEL</span>
-                    </label>
+                        <label class="radio">
+                            <input type="radio" name="currency" id="GEL">
+                            <span>🇬🇪 ₾ GEL</span>
+                        </label>
 
-                    <label class="radio">
-                        <input type="radio" name="currency" id="RUB">
-                        <span>🇷🇺 ₽ RUB</span>
-                    </label>
+                        <label class="radio">
+                            <input type="radio" name="currency" id="RUB">
+                            <span>🇷🇺 ₽ RUB</span>
+                        </label>
 
-                    <label class="radio">
-                        <input type="radio" name="currency" id="EUR">
-                        <span>🇪🇺 € EUR</span>
-                    </label>
+                        <label class="radio">
+                            <input type="radio" name="currency" id="EUR">
+                            <span>🇪🇺 € EUR</span>
+                        </label>
 
-                    <label class="radio">
-                        <input type="radio" name="currency" id="USD">
-                        <span>🇺🇸 $ USD</span>
-                    </label>
+                        <label class="radio">
+                            <input type="radio" name="currency" id="USD">
+                            <span>🇺🇸 $ USD</span>
+                        </label>
                     </div>
+                </div>
+
 
                     <div class="checkbox-group">
                         <label class="checkbox">
                             <input type="checkbox" id="sharedRecipient">
-                            <span>Получатель общий с предыдущей посылкой</span>
+                            <span>Тот же клиент</span>
                         </label>
                     </div>
                 </div>
@@ -377,8 +449,8 @@
 
         <!-- Кнопки -->
         <div class="modal-actions">
-            <button id="prevBtn" disabled>Назад</button>
             <button id="closeModalBtn" style="background-color: rgb(255, 97, 97)">Закрыть</button>
+            <button id="prevBtn" disabled>Назад</button>
             <button id="nextBtn">Далее</button>
             <button id="finishBtn" class="hidden">Завершить</button>
         </div>
@@ -596,77 +668,110 @@ prevBtn.onclick = () => {
 
 updateUI();
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const sharedRecipientCheckbox = document.getElementById("sharedRecipient");
+    const paymentBlock = document.getElementById("paymentBlock");
+
+    if (!sharedRecipientCheckbox || !paymentBlock) return;
+
+    window.togglePaymentBlock = function () {
+        if (sharedRecipientCheckbox.checked) {
+            paymentBlock.style.display = "none";
+
+            // 🔹 сбрасываем значения оплаты
+            const amount = document.getElementById("paymentAmount");
+            if (amount) amount.value = "";
+
+            document.querySelectorAll('input[name="payment"]').forEach(r => r.checked = false);
+            document.querySelectorAll('input[name="currency"]').forEach(r => r.checked = false);
+        } else {
+            paymentBlock.style.display = "";
+        }
+    };
+
+    // 🔁 реакция на клик пользователя
+    sharedRecipientCheckbox.addEventListener("change", togglePaymentBlock);
+
+    // 🔁 инициализация при загрузке
+    togglePaymentBlock();
+});
+</script>
+
 
 
 
 <script src="/static/js/shipments/inventory_input.js"></script>
 <script src="/static/js/shipments/parcel-weight.js"></script>
 <script src="/static/js/shipments/id_selector.js"></script>
+<script src="/static/js/shipments/select-all.js"></script>
+<script src="/static/js/shipments/selected_tot_w_c.js"></script>
+<!-- скачивает готовый манифест -->
+<script src="/static/js/shipments/downloadManifest.js"></script>
+
+
+
 <!-- modal open close -->
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const addCard = document.getElementById("addParcelCard");
-        const modal = document.getElementById("parcelModal");
-        const closeBtn = document.getElementById("closeModalBtn");
+function resetModalFields() {
+    const modal = document.getElementById("parcelModal");
+    if (!modal) return;
 
-        // функция для сброса всех форм внутри модалки
-        function resetModalFields() {
-            const forms = modal.querySelectorAll("form"); // все формы внутри модалки
-            forms.forEach(form => form.reset());
-
-            // очищаем обычные инпуты, textarea, select
-            const inputs = modal.querySelectorAll("input, textarea, select");
-            inputs.forEach(input => {
-                if (input.type === "checkbox" || input.type === "radio") {
-                    input.checked = false;
-                } else if (input.tagName.toLowerCase() === "textarea") {
-                    input.value = "";
-                } else {
-                    input.value = "";
-                }
-            });
-
-            // специальная очистка для inventory поля с тегами
-            const inventoryInput = modal.querySelector("#inventoryInput");
-            const inventoryContainer = modal.querySelector("#inventoryContainer");
-            const autocompleteList = modal.querySelector("#autocompleteList");
-
-            if (inventoryInput) inventoryInput.value = "";
-            if (inventoryContainer) inventoryContainer.innerHTML = ""; // очищаем все визуальные теги
-            if (autocompleteList) autocompleteList.innerHTML = "";     // очищаем список автокомплита
-
-            // ✅ ВЕСА
-            const weightInput = modal.querySelector("#parcelWeight");
-            const weightContainer = modal.querySelector("#weightContainer");
-            const weightsHidden = modal.querySelector("#weightsHidden");
-
-            if (weightInput) weightInput.value = "";
-            if (weightContainer) weightContainer.innerHTML = "";
-            if (weightsHidden) weightsHidden.value = "";
+    modal.querySelectorAll("input, textarea, select").forEach(el => {
+        if (el.type === "radio" || el.type === "checkbox") {
+            el.checked = false;
+        } else {
+            el.value = "";
         }
+    });
 
-        // открываем модальное окно
-        addCard.addEventListener("click", () => {
-            modal.style.display = "flex";
-        });
+    // inventory
+    const inventoryInput = modal.querySelector("#inventoryInput");
+    const inventoryContainer = modal.querySelector("#inventoryContainer");
+    const autocompleteList = modal.querySelector("#autocompleteList");
 
-        // закрываем модальное окно
-        closeBtn.addEventListener("click", () => {
+    if (inventoryInput) inventoryInput.value = "";
+    if (inventoryContainer) inventoryContainer.innerHTML = "";
+    if (autocompleteList) autocompleteList.innerHTML = "";
+
+    // веса
+    const weightInput = modal.querySelector("#parcelWeight");
+    const weightContainer = modal.querySelector("#weightContainer");
+    const weightsHidden = modal.querySelector("#weightsHidden");
+
+    if (weightInput) weightInput.value = "";
+    if (weightContainer) weightContainer.innerHTML = "";
+    if (weightsHidden) weightsHidden.value = "";
+}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const addCard = document.getElementById("addParcelCard");
+    const modal = document.getElementById("parcelModal");
+    const closeBtn = document.getElementById("closeModalBtn");
+
+    // открыть модалку
+    addCard.addEventListener("click", () => {
+        modal.style.display = "flex";
+    });
+
+    // закрыть по кнопке
+    closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+        resetModalFields();
+        goToStep(0);
+    });
+
+    // закрыть по фону
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
             modal.style.display = "none";
             resetModalFields();
             goToStep(0);
-        });
-
-        // закрытие кликом по затемнению
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) {
-                modal.style.display = "none";
-                resetModalFields();
-                goToStep(0);
-            }
-        });
+        }
     });
-
+});
 </script>
 
 
@@ -760,6 +865,7 @@ document.getElementById("finishBtn").addEventListener("click", () => {
             // 🔁 получатель общий → возвращаемся на 1 шаг
             resetModalExceptSender();
             goToStep(0);
+            togglePaymentBlock();
         } else {
             // ❌ обычное поведение → закрыть и очистить всё
             modal.style.display = "none";

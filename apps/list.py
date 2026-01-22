@@ -137,7 +137,7 @@ class AddParcelToList(MethodView):
             return jsonify(response), 500
 
 
-class DownloadManifest(MethodView):
+class DownloadManifesto(MethodView):
     decorators = [login_required]
 
     def __init__(self, db):
@@ -376,6 +376,6 @@ class DownloadInfoExcel(MethodView):
 def register_list_routes(app, db):
     app.add_url_rule('/list', view_func=ListView.as_view('list'))
     app.add_url_rule('/add_parcell_to_list', view_func=AddParcelToList.as_view('add_parcell_to_list', db=db))
-    app.add_url_rule('/download_manifest', view_func=DownloadManifest.as_view('download_manifest', db=db))
+    app.add_url_rule('/download_manifesto', view_func=DownloadManifesto.as_view('download_manifesto', db=db))
     app.add_url_rule('/check_passport', view_func=CheckPassport.as_view('check_passport', db=db))
     app.add_url_rule('/download_info_excel', view_func=DownloadInfoExcel.as_view('download_info_excel', db=db))

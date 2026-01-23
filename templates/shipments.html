@@ -26,7 +26,7 @@
         <div class="icon">⬇️</div>
         <div class="text">
             <div class="title">Выгрузить данные</div>
-            <div class="desc">Excel / PDF</div>
+            <div class="desc">Excel</div>
         </div>
     </div>
 
@@ -51,6 +51,7 @@
 <!-- Выделить все -->
 
 <div class="shipments">
+
     <div class="select-all-container">
         <label class="select-all-checkbox">
             <input type="checkbox" id="selectAllShipments">
@@ -61,6 +62,7 @@
             <div class="label">Выбрано:</div>
             <div class="value" id="selectedInfo">0 шт / 0 кг</div>
         </div>
+
     </div>
 
 {% for shipment in shipments %}
@@ -73,41 +75,41 @@
     
     <div class="parcel-main">
     <!-- Чекбокс -->
-    
+
     <!-- № посылки -->
     <div>
-            <label class="parcel-checkbox">
-                <input type="checkbox" 
-                        name="selected_shipments" 
-                        value="{{ shipment.id }}"
-                        data-parcels="{{ shipment.parcels_count }}"
-                        data-weight="{{ shipment.total_weight }}">
-                <span></span>
-            </label>
-
-            <div class="label">№ посылки</div>
-            <div class="value">
-                TRK-{{ shipment.shipment_number}}
-            </div>
-            <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
+        <label class="parcel-checkbox">
+            <input type="checkbox" 
+            name="selected_shipments" 
+            value="{{ shipment.id }}"
+            data-parcels="{{ shipment.parcels_count }}"
+            data-weight="{{ shipment.total_weight }}">
+            <span></span>
+        </label>
+        
+        <div class="label">№ посылки</div>
+        <div class="value">
+            TRK-{{ shipment.shipment_number}}
         </div>
-
-        <!-- Отправитель -->
-        <div>
-            <div class="label">Отправитель</div>
-            <div class="value">
-                {{ shipment.sender_name }} {{ shipment.sender_surname }}
-            </div>
-            <div class="phone">
-                {{ shipment.sender_number }}
-            </div>
+        <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
+    </div>
+    
+    <!-- Отправитель -->
+    <div>
+        <div class="label">Отправитель</div>
+        <div class="value">
+            {{ shipment.sender_name }} {{ shipment.sender_surname }}
         </div>
-
-        <!-- Получатель -->
-        <div>
-            <div class="label">Получатель</div>
-            <div class="receiver-name">
-                <div class="value">
+        <div class="phone">
+            {{ shipment.sender_number }}
+        </div>
+    </div>
+    
+    <!-- Получатель -->
+    <div>
+        <div class="label">Получатель</div>
+        <div class="receiver-name">
+            <div class="value">
                     {{ shipment.recipient_name }} {{ shipment.recipient_surname }}
                 </div>
                 <button class="copy-btn" onclick="copyName(this)">📋</button>
@@ -116,7 +118,7 @@
                 {{ shipment.recipient_number }}
             </div>
         </div>
-
+        
         <!-- Кол-во / вес -->
         <div>
             <div class="label">Кол-во / вес</div>
@@ -124,7 +126,7 @@
                 {{ shipment.parcels_count }} шт / {{shipment.total_weight}}
             </div>
         </div>
-
+        
         <!-- Город -->
         <div>
             <div class="label">Город</div>
@@ -132,49 +134,47 @@
                 {{ shipment.city_to }}
             </div>
         </div>
-
+        
         <button class="toggle-btn">⌄</button>
+        
     </div>
-
+    
     <!-- 🔽 Детали -->
     <div class="parcel-details">
         <div><b>Опись:</b> {{ shipment.description }}</div>
-
+        
         <div>
             <b>Оплата:</b>
             {% if shipment.payment_status == 'paid' %}
-                <span class="weight-chip" style="color: green;">оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
+            <span class="weight-chip" style="color: green;">оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
             {% else %}
-               <span class="weight-chip" style="color: red;">Не оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
+            <span class="weight-chip" style="color: red;">Не оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
             {% endif %}
         </div>
         <div class="weights-block">
             <b>Веса</b>
-                {% for weight in shipment.weights.split() %}
-                    <span class="weight-chip">{{ weight }} кг
-                    </span>
-                {% endfor %}
+            {% for weight in shipment.weights.split() %}
+            <span class="weight-chip">{{ weight }} кг
+            </span>
+            {% endfor %}
         </div>
         <div>
             <b>Стоимость груза:</b>
             <span class="weight-chip">{{ shipment.cargo_cost }} {{ shipment.currency }}</span>
         </div>
-
+        
         <div><b>Паспорт:</b><span class="weight-chip">{{ shipment.recipient_passport }}</span></div>
-
+        
         <div><b>Адрес доставки:</b> {{ shipment.address }}</div>
-
-        <div>
-            <b>Дата оформления:</b>
-            {{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date }}
-        </div>
+        <div><b>Редактировать:</b><button class="edit-btn" data-id="{{ shipment.id }}">✏️</button></div>
+        
     </div>
 
 </div>
 {% else %}
-    <div class="empty-state">
-        Посылок пока нет
-    </div>
+<div class="empty-state">
+    Посылок пока нет
+</div>
 {% endfor %}
 
 </div>
@@ -190,17 +190,17 @@
         <!-- Шаги -->
         <div class="modal-steps">
             <div class="steps">
-
+                
                 <div class="step active" data-step="0">
                     <div>👤</div>
                     <div class="label">Отправитель</div>
                 </div>
-
+                
                 <div class="step" data-step="1">
                     <div>📦</div>
                     <div class="label">Получатель</div>
                 </div>
-
+                
                 <div class="step" data-step="2">
                     <div>⚖️</div>
                     <div class="label">Посылка</div>
@@ -210,12 +210,12 @@
                     <div>📝</div>
                     <div class="label">Опись</div>
                 </div>
-
+                
                 <div class="step" data-step="4">
                     <div>📝</div>
                     <div class="label">Оплата</div>
                 </div>
-
+                
             </div>
         </div>
 
@@ -225,35 +225,35 @@
             <div class="step-content active">
                 <h3>Информация об отправителе</h3>
                 <div class="sender-form">
-
+                    
                     <div class="input-group">
                         <label>Имя</label>
                         <input type="text" placeholder="Введите имя" id="senderName">
                     </div>
-
+                    
                     <div class="input-group">
                         <label>Фамилия</label>
                         <input type="text" placeholder="Введите фамилию" id="senderSurname">
                     </div>
-
+                    
                     <div class="input-group">
                         <label>Телефон</label>
-                        <input type="tel" placeholder="+995 5XX XXX XXX" id="senderPhone">
+                        <input type="tel" placeholder="+7 XXX XX XX XXX" id="senderPhone">
                     </div>
-
+                    
                 </div>
                 
             </div>
-
+            
             <div class="step-content">
                 <h3>Информация о получателе</h3>
                 <div class="recipient-form">
-
+                    
                     <div class="input-group">
                         <label>Имя</label>
                         <input type="text" placeholder="Введите имя" id="recipientName">
                     </div>
-
+                    
                     <div class="input-group">
                         <label>Фамилия</label>
                         <input type="text" placeholder="Введите фамилию" id="recipientSurname">
@@ -261,9 +261,9 @@
                     <div class="input-row">
                         <div class="input-group">
                             <label>Телефон</label>
-                            <input type="tel" placeholder="+995 5XX XXX XXX" id="recipientPhone">
+                            <input type="tel" placeholder="5XX XX XX XX" id="recipientPhone">
                         </div>
-
+                        
                         <div class="input-group">
                             <label>Паспорт</label>
                             <input type="text" placeholder="* * * * *" id="recipientPassport">
@@ -272,7 +272,7 @@
 
                 </div>
             </div>
-
+            
             <div class="step-content">
                 <h3>Информация о посылке</h3>
                 <div class="parcel-form">
@@ -288,9 +288,9 @@
                             <label>Город Назначения</label>
                             <select id="parcelCity">
                                 <option value="">Выберите город</option>
-                            <option value="TBILISI">TBILISI</option>
-                            <option value="BATUMI">BATUMI</option>
-                            <option value="KOBULETI">KOBULETI</option>
+                                <option value="TBILISI">TBILISI</option>
+                                <option value="BATUMI">BATUMI</option>
+                                <option value="KOBULETI">KOBULETI</option>
                             <option value="KUTAISI">KUTAISI</option>
                             <option value="TELAVI">TELAVI</option>
                             <option value="GORI">GORI</option>
@@ -343,12 +343,12 @@
                             <option value="SIGNAGI">SIGNAGI</option>
                             <option value="TSAGERI">TSAGERI</option>
                             <option value="JVARI">JVARI</option>
-                            </select>
+                        </select>
                         </div>
                     </div>
                     <div id="weightContainer" class="weight-container"></div>
                     
-
+                    
                     <!-- Стоимость и к оплате -->
                     <div class="row">
                         <div class="input-group">
@@ -356,7 +356,7 @@
                             <input type="number" placeholder="0.00" id="parcelCost">
                         </div>
                     </div>
-
+                    
                     <!-- Адрес -->
                     <div class="input-group">
                         <label>Адрес доставки</label>
@@ -364,41 +364,41 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="step-content">
                 <h3>Опись</h3>
                 <!-- Новый текстовый блок -->
-            <div class="modern-textarea-wrapper">
-                <div id="inventoryContainer" class="inventory-container"></div>
-                <input 
+                <div class="modern-textarea-wrapper">
+                    <div id="inventoryContainer" class="inventory-container"></div>
+                    <input 
                     id="inventoryInput" 
                     type="text" 
                     placeholder="Введите описание..." 
                     autocomplete="off"
                     data-inventory='{{ inventory|tojson }}'>
-                <ul id="autocompleteList" class="autocomplete-list"></ul>
+                    <ul id="autocompleteList" class="autocomplete-list"></ul>
+                </div>
             </div>
-            </div>
-
+            
             <div class="step-content">
                 <h3>Оплата</h3>
                 <div class="parcel-form">
-                <div id="paymentBlock">
-                    <div class="input-group">
-                        <label>К оплате</label>
-                        <input type="number" placeholder="0.00" id="paymentAmount">
-                    </div>
+                    <div id="paymentBlock">
+                        <div class="input-group">
+                            <label>К оплате</label>
+                            <input type="number" placeholder="0.00" id="paymentAmount">
+                        </div>
 
-                    <div class="radio-group">
-                        <span class="group-title">Статус оплаты</span>
+                        <div class="radio-group">
+                            <span class="group-title">Статус оплаты</span>
+                            
+                            <label class="radio">
+                                <input type="radio" name="payment" id="paid">
+                                <span>Оплачено</span>
+                            </label>
 
-                        <label class="radio">
-                            <input type="radio" name="payment" id="paid">
-                            <span>Оплачено</span>
-                        </label>
-
-                        <label class="radio">
-                            <input type="radio" name="payment" id="unpaid">
+                            <label class="radio">
+                                <input type="radio" name="payment" id="unpaid">
                             <span>Не оплачено</span>
                         </label>
 
@@ -410,12 +410,12 @@
 
                     <div class="radio-group">
                         <span class="group-title">Валюта</span>
-
+                        
                         <label class="radio">
                             <input type="radio" name="currency" id="GEL">
                             <span>🇬🇪 ₾ GEL</span>
                         </label>
-
+                        
                         <label class="radio">
                             <input type="radio" name="currency" id="RUB">
                             <span>🇷🇺 ₽ RUB</span>
@@ -432,7 +432,7 @@
                         </label>
                     </div>
                 </div>
-
+                
 
                     <div class="checkbox-group">
                         <label class="checkbox">
@@ -441,12 +441,12 @@
                         </label>
                     </div>
                 </div>
-
+                
             </div>
 
 
         </div>
-
+        
         <!-- Кнопки -->
         <div class="modal-actions">
             <button id="closeModalBtn" style="background-color: rgb(255, 97, 97)">Закрыть</button>
@@ -454,7 +454,7 @@
             <button id="nextBtn">Далее</button>
             <button id="finishBtn" class="hidden">Завершить</button>
         </div>
-
+        
     </div>
 </div>
 
@@ -708,6 +708,8 @@ document.addEventListener("DOMContentLoaded", () => {
 <script src="/static/js/shipments/selected_tot_w_c.js"></script>
 <!-- скачивает готовый манифест -->
 <script src="/static/js/shipments/downloadManifest.js"></script>
+<script src="/static/js/shipments/add_update_shipment.js"></script>
+<script src="/static/js/shipments/input_validation.js"></script>
 
 
 
@@ -718,6 +720,7 @@ function resetModalFields() {
     if (!modal) return;
 
     modal.querySelectorAll("input, textarea, select").forEach(el => {
+        if (!el) return;
         if (el.type === "radio" || el.type === "checkbox") {
             el.checked = false;
         } else {
@@ -745,137 +748,13 @@ function resetModalFields() {
 }
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    const addCard = document.getElementById("addParcelCard");
-    const modal = document.getElementById("parcelModal");
-    const closeBtn = document.getElementById("closeModalBtn");
-
-    // открыть модалку
-    addCard.addEventListener("click", () => {
-        modal.style.display = "flex";
-    });
-
-    // закрыть по кнопке
-    closeBtn.addEventListener("click", () => {
-        modal.style.display = "none";
-        resetModalFields();
-        goToStep(0);
-    });
-
-    // закрыть по фону
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-            modal.style.display = "none";
-            resetModalFields();
-            goToStep(0);
-        }
-    });
-});
-</script>
 
 
-<script>
-document.getElementById("finishBtn").addEventListener("click", () => {
-    const sharedRecipient = document.getElementById("sharedRecipient").checked;
-    let step4Valid = true;
 
-    if (!sharedRecipient) {
-        const amount = document.getElementById("paymentAmount");
-        const payment = document.querySelector('input[name="payment"]:checked');
-        const currency = document.querySelector('input[name="currency"]:checked');
 
-        if (!amount.value.trim()) {
-            amount.classList.add('placeholder-error');
-            setTimeout(() => amount.classList.remove('placeholder-error'), 2000);
-            step4Valid = false;
-        }
 
-        if (!payment) {
-            const paymentTitle = document.querySelector('.step-content:nth-child(5) .radio-group .group-title');
-            if (paymentTitle) {
-                const originalColor = paymentTitle.style.color || getComputedStyle(paymentTitle).color;
-                paymentTitle.style.color = '#ef4444';
-                setTimeout(() => paymentTitle.style.color = originalColor, 2000);
-            }
-            step4Valid = false;
-        }
 
-        if (!currency) {
-            const currencyTitle = document.querySelectorAll('.step-content:nth-child(5) .radio-group .group-title')[1];
-            if (currencyTitle) {
-                const originalColor = currencyTitle.style.color || getComputedStyle(currencyTitle).color;
-                currencyTitle.style.color = '#ef4444';
-                setTimeout(() => currencyTitle.style.color = originalColor, 2000);
-            }
-            step4Valid = false;
-        }
-    }
 
-    if (!step4Valid) return;
-
-    // 🔹 Получаем параметры из URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const dateParam = urlParams.get("date") || "";
-    const whereFromParam = urlParams.get("where_from") || "";
-
-    // 🔹 Собираем данные для отправки
-    const data = {
-        senderName: document.getElementById("senderName").value,
-        senderSurname: document.getElementById("senderSurname").value,
-        senderPhone: document.getElementById("senderPhone").value,
-
-        recipientName: document.getElementById("recipientName").value,
-        recipientSurname: document.getElementById("recipientSurname").value,
-        recipientPhone: document.getElementById("recipientPhone").value,
-        recipientPassport: document.getElementById("recipientPassport").value,
-
-        weightsHidden: document.getElementById("weightsHidden").value,
-        parcelCity: document.getElementById("parcelCity").value,
-        parcelCost: document.getElementById("parcelCost").value,
-        parcelAddress: document.getElementById("parcelAddress").value,
-
-        inventory: Array.from(document.getElementById("inventoryContainer").children).map(e => e.textContent.trim()),
-
-        paymentAmount: document.getElementById("paymentAmount").value,
-        paymentStatus: document.querySelector('input[name="payment"]:checked')?.id || "",
-        currency: document.querySelector('input[name="currency"]:checked')?.id || "",
-        sharedRecipient: sharedRecipient,
-
-        // 🔹 Добавляем параметры из URL
-        date: dateParam,
-        where_from: whereFromParam
-    };
-
-    fetch("/shipment_submit", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        console.log("Результат:", result);
-
-        const modal = document.getElementById("parcelModal");
-        const sharedRecipient = document.getElementById("sharedRecipient").checked;
-
-        if (sharedRecipient) {
-            // 🔁 получатель общий → возвращаемся на 1 шаг
-            resetModalExceptSender();
-            goToStep(0);
-            togglePaymentBlock();
-        } else {
-            // ❌ обычное поведение → закрыть и очистить всё
-            modal.style.display = "none";
-            resetModalFields();
-            goToStep(0); // на всякий случай
-        }
-    })
-    .catch(err => console.error("Ошибка:", err));
-});
-</script>
 
 <!-- очистка всего кроме отправителя -->
 

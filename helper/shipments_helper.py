@@ -11,3 +11,14 @@ def weight_list(data):
     total_weight = sum(Decimal(w) for w in weight_list)
 
     return total_weight, parcels_count
+
+
+def extract_inventory_names(clean_inventory):
+    names = []
+    print(clean_inventory)
+    for item in clean_inventory:
+        name = item.split(":")[0].strip()
+        if name:
+            names.append(name)
+
+    return names

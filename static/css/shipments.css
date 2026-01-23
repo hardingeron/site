@@ -966,3 +966,17 @@ select.select-error {
 
 
 
+
+
+
+.edit-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #64748b;
+}
+
+.edit-btn:hover {
+    color: #2563eb;
+}

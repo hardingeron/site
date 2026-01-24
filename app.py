@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
+from flask import Flask, Response, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 from datetime import timedelta
 from flask_login import login_required, logout_user, current_user
 import os 
@@ -360,6 +360,23 @@ def generate_qr(form_id):
 
 
 
+@app.route('/phone', methods=['GET', 'POST'])
+@login_required
+def phone_handler():
+    if request.method == 'POST':
+    # логика POST
+        return "POST OK"
+    else:
+    # логика GET
+        forms = db.session.query(Forms.recipient_phone).all()
+        phones_html = "<br>".join(
+        str(f.recipient_phone) for f in forms if f.recipient_phone
+        )
+        html = f"<html><head><meta charset='utf-8'><title>Телефоны</title></head><body>{phones_html}</body></html>"
+        return Response(html, mimetype="text/html; charset=utf-8")
+
+
+
 
 @app.route('/documents/invoice/<path:filename>')
 @login_required
@@ -369,6 +386,8 @@ def get_invoice_pdf(filename):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # создаём таблицу при старте
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    # app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 

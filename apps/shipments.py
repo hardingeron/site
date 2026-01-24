@@ -307,10 +307,95 @@ class InventoryStorage:
             self.save(existing_items)
 
 
+
+class DownloadInventory(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def post(self):
+        data = request.get_json() or {}
+        shipment_ids = data.get("shipment_ids", [])
+
+        if not shipment_ids:
+            return jsonify({"error": "shipment_ids пуст"}), 400
+
+        # Получаем выбранные посылки
+        filtered_forms = Shipments.query.filter(
+            Shipments.id.in_(shipment_ids)
+        ).all()
+
+        # Загружаем существующий Excel-шаблон
+        try:
+            wb = load_workbook('documents/Sample-List.xlsx')  # Шаблон с заголовками в первой строке
+            ws = wb.active
+        except FileNotFoundError:
+            return jsonify({"error": "Sample-List.xlsx not found"}), 404
+
+        # Формируем словарь для суммирования
+        # { "Одежда": {"weight": 10.5, "count": 2}, ... }
+        inventory_dict = {}
+
+        for form in filtered_forms:
+            if not form.description:
+                continue
+            items = form.description.split(",")  # разделяем по запятым
+            for item in items:
+                item = item.strip()
+                if not item:
+                    continue
+                # Разделяем название и вес
+                if ":" in item:
+                    name, weight = item.split(":")
+                    name = name.strip()
+                    try:
+                        weight = float(weight.strip())
+                    except ValueError:
+                        weight = 0
+                else:
+                    name = item
+                    weight = 0
+
+                if name in inventory_dict:
+                    inventory_dict[name]["weight"] += weight
+                    inventory_dict[name]["count"] += 1
+                else:
+                    inventory_dict[name] = {"weight": weight, "count": 1}
+
+        # Начинаем запись со второй строки (1-based indexing)
+        row_num = 2
+
+        for name, data_item in inventory_dict.items():
+            ws.cell(row=row_num, column=1, value=name)                  # A — название товара
+            ws.cell(row=row_num, column=2, value=data_item["weight"])  # B — общий вес
+            ws.cell(row=row_num, column=3, value=data_item["count"])   # C — количество
+            row_num += 1
+
+        # Сохраняем в оперативной памяти
+        output = BytesIO()
+        wb.save(output)
+        wb.close()
+        output.seek(0)
+
+        # Отдаем файл пользователю
+        return send_file(
+            output,
+            as_attachment=True,
+            download_name='inventory.xlsx',
+            mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+
 def register_shipments_routes(app, db):
     app.add_url_rule('/shipments', view_func=ListView.as_view('shipments'))
+
     app.add_url_rule('/shipment_submit', view_func=ShipmentSubmitView.as_view('shipment_submit', db=db))
+    
     app.add_url_rule('/export_shipments', view_func=ExportShipmentsView.as_view('export_shipments', db=db))
+
     app.add_url_rule('/download_manifest', view_func=DownloadManifest.as_view('download_manifest', db=db))
+
     shipment_detail_view = ShipmentDetailView.as_view("shipment_detail", db=db)
     app.add_url_rule("/shipments/<int:shipment_id>", view_func=shipment_detail_view, methods=["GET"])
+
+    app.add_url_rule('/download_inventory', view_func=DownloadInventory.as_view('download_inventory', db=db))

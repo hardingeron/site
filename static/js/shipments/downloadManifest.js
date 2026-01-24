@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     const exportBtn = document.getElementById("downloadExcelBtn");
     const selectAll = document.getElementById("selectAllShipments");
@@ -20,9 +19,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const ids = checked.map(cb => cb.value);
 
-        if (!confirm("თქვენ მართლა გსურთ მანიფესტის გადმოწერა?")) return;
+        // 🔹 Спрашиваем через кнопки
+        let choice = null;
+        if (confirm("Скачать Манифест? (Если отмените, будет Опись)")) {
+            choice = "манифест";
+        } else {
+            choice = "опись";
+        }
 
-        fetch("/download_manifest", {
+        if (!confirm("თქვენ მართლა გსურთ გადმოწერა?")) return;
+
+        const url = choice === "манифест" ? "/download_manifest" : "/download_inventory";
+
+        fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -38,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const a = document.createElement("a");
             a.href = url;
-            a.download = "manifest.xlsx";
+            a.download = choice === "манифест" ? "manifest.xlsx" : "inventory.xlsx";
             document.body.appendChild(a);
             a.click();
 
@@ -47,11 +56,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             showToast("Файл успешно скачан", "success");
 
-            // ✅ СБРОС ЧЕКБОКСОВ
+            // ✅ Сброс чекбоксов
             checked.forEach(cb => cb.checked = false);
             if (selectAll) selectAll.checked = false;
 
-            // 🔥 ПЕРЕСЧЁТ (ВАЖНО)
+            // 🔥 Пересчёт выбранных
             updateSelectedInfo();
         })
         .catch(() => {
@@ -59,4 +68,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-

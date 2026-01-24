@@ -160,7 +160,7 @@
         </div>
         <div>
             <b>Стоимость груза:</b>
-            <span class="weight-chip">{{ shipment.cargo_cost }} {{ shipment.currency }}</span>
+            <span class="weight-chip">{{ shipment.cargo_cost }} RUB</span>
         </div>
         
         <div><b>Паспорт:</b><span class="weight-chip">{{ shipment.recipient_passport }}</span></div>
@@ -460,6 +460,9 @@
 
 
 
+
+
+
 <script>
 document.querySelectorAll('.toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -599,7 +602,7 @@ function validateStep(stepIndex) {
             valid = false;
         }
 
-        ["parcelCity", "parcelCost", "parcelAddress"].forEach(id => {
+        ["parcelCity"].forEach(id => {
             const el = document.getElementById(id);
             if (!el || !el.value.trim()) {
                 markError(el);
@@ -652,6 +655,7 @@ nextBtn.onclick = () => {
     if (currentStep < contents.length - 1) {
         currentStep++;
         updateUI();
+        window.initInventoryWeightLabel(); // обновляет доступный вес сразу
     }
 };
 

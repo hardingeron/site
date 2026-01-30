@@ -6,11 +6,11 @@
     {% endblock %}
     
     {% block content %}
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/shipments.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/shipments.css') }}">
 
 <body>
-<div id="toast-container"></div>
-
+    <div id="toast-container"></div>
+    
     <!--  карточки на старнице -->
     <div class="page-actions">
         <div class="action-card add" id="addParcelCard">
@@ -20,37 +20,35 @@
                 <div class="desc">Новая отправка</div>
             </div>
         </div>
-
-    <div class="action-card export" id="downloadExcelBtn">
-        <div class="icon">⬇️</div>
-        <div class="text">
-            <div class="title">Выгрузить данные</div>
-            <div class="desc">Excel</div>
+        
+        <div class="action-card export" id="downloadExcelBtn">
+            <div class="icon">⬇️</div>
+            <div class="text">
+                <div class="title">Выгрузить данные</div>
+                <div class="desc">Excel</div>
+            </div>
+        </div>
+        
+        <div class="action-card stats">
+            <div class="icon">📊</div>
+            <div class="text">
+                <div class="title">Статистика</div>
+                <div class="desc">Доходы и посылки</div>
+            </div>
         </div>
     </div>
-
-    <div class="action-card stats">
-        <div class="icon">📊</div>
-        <div class="text">
-            <div class="title">Статистика</div>
-            <div class="desc">Доходы и посылки</div>
-        </div>
-    </div>
-</div>
-
-
-
-<!--  главный список на старнице -->
-<style>
-.parcel-card.sequence-0 { background-color: #ffffff; }
-.parcel-card.sequence-1 { background-color: #dddddd; }
-
-
-</style>
+    
+    
+    
+    <!--  главный список на старнице -->
+    <style>
+        .parcel-card.sequence-0 { background-color: #ffffff; }
+        .parcel-card.sequence-1 { background-color: #dddddd; }
+    </style>
 <!-- Выделить все -->
 
 <div class="shipments">
-
+    
     <div class="select-all-container">
         <label class="select-all-checkbox">
             <input type="checkbox" id="selectAllShipments">
@@ -61,55 +59,55 @@
             <div class="label">Выбрано:</div>
             <div class="value" id="selectedInfo">0 шт / 0 кг</div>
         </div>
-
+        
     </div>
-
-{% for shipment in shipments %}
-<div class="parcel-card
+    
+    {% for shipment in shipments %}
+    <div class="parcel-card
     {% if shipment.payment_status == 'paid' or shipment.payment_status == 'card' %}payment-paid
     {% elif shipment.payment_status == 'unpaid' %}payment-unpaid
     {% endif %}
     {% if shipment.sequence == 1 %} sequence-1{% elif shipment.sequence == 0 %} sequence-0{% endif %}">
-
+    
     
     <div class="parcel-main">
-    <!-- Чекбокс -->
-
-    <!-- № посылки -->
-    <div>
-        <label class="parcel-checkbox">
-            <input type="checkbox" 
-            name="selected_shipments" 
-            value="{{ shipment.id }}"
-            data-parcels="{{ shipment.parcels_count }}"
-            data-weight="{{ shipment.total_weight }}">
-            <span></span>
-        </label>
+        <!-- Чекбокс -->
         
-        <div class="label">№ посылки</div>
-        <div class="value">
-            TRK-{{ shipment.shipment_number}}
-        </div>
-        <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
-    </div>
-
-    
-    <!-- Отправитель -->
-    <div>
-        <div class="label">Отправитель</div>
-        <div class="value">
-            {{ shipment.sender_name }} {{ shipment.sender_surname }}
-        </div>
-        <div class="phone">
-            {{ shipment.sender_number }}
-        </div>
-    </div>
-    
-    <!-- Получатель -->
-    <div>
-        <div class="label">Получатель</div>
-        <div class="receiver-name">
+        <!-- № посылки -->
+        <div>
+            <label class="parcel-checkbox">
+                <input type="checkbox" 
+                name="selected_shipments" 
+                value="{{ shipment.id }}"
+                data-parcels="{{ shipment.parcels_count }}"
+                data-weight="{{ shipment.total_weight }}">
+                <span></span>
+            </label>
+            
+            <div class="label">№ посылки</div>
             <div class="value">
+                TRK-{{ shipment.shipment_number}}
+            </div>
+            <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
+        </div>
+        
+        
+        <!-- Отправитель -->
+        <div>
+            <div class="label">Отправитель</div>
+            <div class="value">
+                {{ shipment.sender_name }} {{ shipment.sender_surname }}
+            </div>
+            <div class="phone">
+                {{ shipment.sender_number }}
+            </div>
+        </div>
+        
+        <!-- Получатель -->
+        <div>
+            <div class="label">Получатель</div>
+            <div class="receiver-name">
+                <div class="value">
                     {{ shipment.recipient_name }} {{ shipment.recipient_surname }}
                 </div>
                 <button class="copy-btn" onclick="copyName(this)">📋</button>
@@ -140,36 +138,86 @@
     </div>
     
     <!-- 🔽 Детали -->
-    <div class="parcel-details">
-        <div><b>Опись:</b> {{ shipment.description }}</div>
-        
-        <div>
-            <b>Оплата:</b>
-            {% if shipment.payment_status == 'paid' %}
-            <span class="weight-chip" style="color: green;">оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
-            {% else %}
-            <span class="weight-chip" style="color: red;">Не оплачено</span>:<span class="weight-chip">{{shipment.payment_amount}} {{shipment.currency}}</span>
-            {% endif %}
-        </div>
-        <div class="weights-block">
-            <b>Веса</b>
-            {% for weight in shipment.weights.split() %}
-            <span class="weight-chip">{{ weight }} кг
-            </span>
-            {% endfor %}
-        </div>
-        <div>
-            <b>Стоимость груза:</b>
-            <span class="weight-chip">{{ shipment.cargo_cost }} RUB</span>
-        </div>
-        
-        <div><b>Паспорт:</b><span class="weight-chip">{{ shipment.recipient_passport }}</span></div>
-        
-        <div><b>Адрес доставки:</b> {{ shipment.address }}</div>
-        <div><b>Редактировать:</b><button class="edit-btn" data-id="{{ shipment.id }}">✏️</button></div>
-        
+<div class="parcel-details mt-3">
+
+    <!-- 1. Описание -->
+    <div class="mb-3">
+        <div class="fw-semibold text-muted mb-1">📦 Опись</div>
+        <div>{{ shipment.description }}</div>
     </div>
 
+    <div class="mb-3">
+        <div class="fw-semibold text-muted mb-1">🏢 Информация для офиса</div>
+        <div>{{ shipment.information_for_office }}</div>
+    </div>
+
+    <hr>
+
+    <!-- 2. Оплата / Стоимость / Паспорт -->
+    <div class="row g-2 mb-3 align-items-start">
+
+        <!-- Оплата -->
+        <div class="col-md-4">
+            <div class="fw-semibold text-muted mb-1">💳 Оплата</div>
+            {% if shipment.payment_status == 'paid' %}
+                <span class="badge bg-success">Оплачено</span>
+            {% else %}
+                <span class="badge bg-danger">Не оплачено</span>
+            {% endif %}
+            <span class="badge bg-light text-dark">
+                {{ shipment.payment_amount }} {{ shipment.currency }}
+            </span>
+        </div>
+
+        <!-- Стоимость -->
+        <div class="col-md-4">
+            <div class="fw-semibold text-muted mb-1">💰 Стоимость</div>
+            <span class="badge bg-primary">
+                {{ shipment.cargo_cost }} RUB
+            </span>
+        </div>
+
+        <!-- Паспорт -->
+        <div class="col-md-4">
+            <div class="fw-semibold text-muted mb-1">🪪 Паспорт</div>
+            <span class="badge bg-light text-dark">
+                {{ shipment.recipient_passport }}
+            </span>
+        </div>
+
+    </div>
+    <hr>
+
+    <!-- 3. Вес и адрес -->
+    <div class="row g-2 mb-3 align-items-start">
+
+        <!-- Вес -->
+        <div class="col-md-4">
+            <div class="fw-semibold text-muted mb-1">⚖️ Вес</div>
+            {% for weight in shipment.weights.split() %}
+                <span class="badge bg-secondary rounded-pill">
+                    {{ weight }} кг
+                </span>
+            {% endfor %}
+        </div>
+
+        <!-- Адрес -->
+        <div class="col-md-8">
+            <div class="fw-semibold text-muted mb-1">📍 Адрес доставки</div>
+            <div>{{ shipment.address }}</div>
+        </div>
+
+    </div>
+
+    <!-- Редактирование -->
+    <div class="text-end">
+        <button class="btn btn-sm btn-outline-primary edit-btn" data-id="{{ shipment.id }}">
+            ✏️ Редактировать
+        </button>
+    </div>
+
+</div>
+    
 </div>
 {% else %}
 <div class="empty-state">
@@ -186,7 +234,7 @@
 <!-- Модальное окно -->
 <div class="modal-overlay" id="parcelModal">
     <div class="shipment-modal">
-
+        
         <!-- Шаги -->
         <div class="modal-steps">
             <div class="steps">
@@ -205,7 +253,7 @@
                     <div>⚖️</div>
                     <div class="label">Посылка</div>
                 </div>
-
+                
                 <div class="step" data-step="3">
                     <div>📝</div>
                     <div class="label">Опись</div>
@@ -218,10 +266,10 @@
                 
             </div>
         </div>
-
+        
         <!-- Контент -->
         <div class="modal-content">
-
+            
             <div class="step-content active">
                 <h3>Информация об отправителе</h3>
                 <div class="sender-form">
@@ -269,14 +317,14 @@
                             <input type="text" placeholder="* * * * *" id="recipientPassport">
                         </div>
                     </div>
-
+                    
                 </div>
             </div>
             
             <div class="step-content">
                 <h3>Информация о посылке</h3>
                 <div class="parcel-form">
-
+                    
                     <div class="input-row">
                         <div class="input-group">
                             <label>Вес</label>
@@ -291,59 +339,59 @@
                                 <option value="TBILISI">TBILISI</option>
                                 <option value="BATUMI">BATUMI</option>
                                 <option value="KOBULETI">KOBULETI</option>
-                            <option value="KUTAISI">KUTAISI</option>
-                            <option value="TELAVI">TELAVI</option>
-                            <option value="GORI">GORI</option>
-                            <option value="ZUGDIDI">ZUGDIDI</option>
-                            <option value="POTI">POTI</option>
-                            <option value="KHASHURI">KHASHURI</option>
-                            <option value="RUSTAVI">RUSTAVI</option>
-                            <option value="SAMTREDIA">SAMTREDIA</option>
-                            <option value="SENAKI">SENAKI</option>
-                            <option value="ZESTAPHONI">ZESTAPHONI</option>
-                            <option value="MARNEULI">MARNEULI</option>
-                            <option value="AKHALTSIKHE">AKHALTSIKHE</option>
-                            <option value="OZURGETI">OZURGETI</option>
-                            <option value="KASPI">KASPI</option>
-                            <option value="TCHIATURA">TCHIATURA</option>
-                            <option value="TSKALTUBO">TSKALTUBO</option>
-                            <option value="SAGAREJO">SAGAREJO</option>
-                            <option value="GARDABANI">GARDABANI</option>
-                            <option value="BORJOMI">BORJOMI</option>
-                            <option value="TKIBULI">TKIBULI</option>
-                            <option value="KHONI">KHONI</option>
-                            <option value="BOLNISI">BOLNISI</option>
-                            <option value="AKHALKALAKI">AKHALKALAKI</option>
-                            <option value="GURJAANI">GURJAANI</option>
-                            <option value="MTSKHETA">MTSKHETA</option>
-                            <option value="KVARELI">KVARELI</option>
-                            <option value="AKHMETA">AKHMETA</option>
-                            <option value="KARELI">KARELI</option>
-                            <option value="LANCHKHUTA">LANCHKHUTA</option>
-                            <option value="DUSHETI">DUSHETI</option>
-                            <option value="SACHKHERE">SACHKHERE</option>
-                            <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
-                            <option value="LAGODEKHI">LAGODEKHI</option>
-                            <option value="NINOTSMINDA">NINOTSMINDA</option>
-                            <option value="ABASHA">ABASHA</option>
-                            <option value="TSNORI">TSNORI</option>
-                            <option value="TERJOBA">TERJOBA</option>
-                            <option value="MARTVILI">MARTVILI</option>
-                            <option value="KHOBI">KHOBI</option>
-                            <option value="TSALENJIKHA">TSALENJIKHA</option>
-                            <option value="VANI">VANI</option>
-                            <option value="BAGDADI">BAGDADI</option>
-                            <option value="VALE">VALE</option>
-                            <option value="CHKHOROTSKU">CHKHOROTSKU</option>
-                            <option value="TETRITSQARO">TETRITSQARO</option>
-                            <option value="DMANISI">DMANISI</option>
-                            <option value="ONI">ONI</option>
-                            <option value="TSALKA">TSALKA</option>
-                            <option value="AMBROLAURI">AMBROLAURI</option>
-                            <option value="SIGNAGI">SIGNAGI</option>
-                            <option value="TSAGERI">TSAGERI</option>
-                            <option value="JVARI">JVARI</option>
-                        </select>
+                                <option value="KUTAISI">KUTAISI</option>
+                                <option value="TELAVI">TELAVI</option>
+                                <option value="GORI">GORI</option>
+                                <option value="ZUGDIDI">ZUGDIDI</option>
+                                <option value="POTI">POTI</option>
+                                <option value="KHASHURI">KHASHURI</option>
+                                <option value="RUSTAVI">RUSTAVI</option>
+                                <option value="SAMTREDIA">SAMTREDIA</option>
+                                <option value="SENAKI">SENAKI</option>
+                                <option value="ZESTAPHONI">ZESTAPHONI</option>
+                                <option value="MARNEULI">MARNEULI</option>
+                                <option value="AKHALTSIKHE">AKHALTSIKHE</option>
+                                <option value="OZURGETI">OZURGETI</option>
+                                <option value="KASPI">KASPI</option>
+                                <option value="TCHIATURA">TCHIATURA</option>
+                                <option value="TSKALTUBO">TSKALTUBO</option>
+                                <option value="SAGAREJO">SAGAREJO</option>
+                                <option value="GARDABANI">GARDABANI</option>
+                                <option value="BORJOMI">BORJOMI</option>
+                                <option value="TKIBULI">TKIBULI</option>
+                                <option value="KHONI">KHONI</option>
+                                <option value="BOLNISI">BOLNISI</option>
+                                <option value="AKHALKALAKI">AKHALKALAKI</option>
+                                <option value="GURJAANI">GURJAANI</option>
+                                <option value="MTSKHETA">MTSKHETA</option>
+                                <option value="KVARELI">KVARELI</option>
+                                <option value="AKHMETA">AKHMETA</option>
+                                <option value="KARELI">KARELI</option>
+                                <option value="LANCHKHUTA">LANCHKHUTA</option>
+                                <option value="DUSHETI">DUSHETI</option>
+                                <option value="SACHKHERE">SACHKHERE</option>
+                                <option value="DEDOPLISTSKARO">DEDOPLISTSKARO</option>
+                                <option value="LAGODEKHI">LAGODEKHI</option>
+                                <option value="NINOTSMINDA">NINOTSMINDA</option>
+                                <option value="ABASHA">ABASHA</option>
+                                <option value="TSNORI">TSNORI</option>
+                                <option value="TERJOBA">TERJOBA</option>
+                                <option value="MARTVILI">MARTVILI</option>
+                                <option value="KHOBI">KHOBI</option>
+                                <option value="TSALENJIKHA">TSALENJIKHA</option>
+                                <option value="VANI">VANI</option>
+                                <option value="BAGDADI">BAGDADI</option>
+                                <option value="VALE">VALE</option>
+                                <option value="CHKHOROTSKU">CHKHOROTSKU</option>
+                                <option value="TETRITSQARO">TETRITSQARO</option>
+                                <option value="DMANISI">DMANISI</option>
+                                <option value="ONI">ONI</option>
+                                <option value="TSALKA">TSALKA</option>
+                                <option value="AMBROLAURI">AMBROLAURI</option>
+                                <option value="SIGNAGI">SIGNAGI</option>
+                                <option value="TSAGERI">TSAGERI</option>
+                                <option value="JVARI">JVARI</option>
+                            </select>
                         </div>
                     </div>
                     <div id="weightContainer" class="weight-container"></div>
@@ -367,16 +415,23 @@
             
             <div class="step-content">
                 <h3>Опись</h3>
-                <!-- Новый текстовый блок -->
-                <div class="modern-textarea-wrapper">
-                    <div id="inventoryContainer" class="inventory-container"></div>
-                    <input 
-                    id="inventoryInput" 
-                    type="text" 
-                    placeholder="Введите описание..." 
-                    autocomplete="off"
-                    data-inventory='{{ inventory|tojson }}'>
-                    <ul id="autocompleteList" class="autocomplete-list"></ul>
+                <div class="parcel-form">
+                    <!-- Новый текстовый блок -->
+                    <label>Список содержимого</label>
+                    <div class="modern-textarea-wrapper">
+                        <div id="inventoryContainer" class="inventory-container"></div>
+                        <input 
+                        id="inventoryInput" 
+                        type="text" 
+                        placeholder="Введите описание..." 
+                        autocomplete="off"
+                        data-inventory='{{ inventory|tojson }}'>
+                        <ul id="autocompleteList" class="autocomplete-list" style="display: none;"></ul>
+                    </div>
+                    <div class="input-group">
+                        <label>Информация для офиса</label>
+                        <input type="text" id="informationForOffice" autocomplete="off">
+                    </div>
                 </div>
             </div>
             
@@ -388,7 +443,7 @@
                             <label>К оплате</label>
                             <input type="number" placeholder="0.00" id="paymentAmount">
                         </div>
-
+                        
                         <div class="radio-group">
                             <span class="group-title">Статус оплаты</span>
                             
@@ -396,44 +451,44 @@
                                 <input type="radio" name="payment" id="paid">
                                 <span>Оплачено</span>
                             </label>
-
+                            
                             <label class="radio">
                                 <input type="radio" name="payment" id="unpaid">
-                            <span>Не оплачено</span>
-                        </label>
-
-                        <label class="radio">
-                            <input type="radio" name="payment" id="card">
-                            <span>С карты</span>
-                        </label>
-                    </div>
-
-                    <div class="radio-group">
-                        <span class="group-title">Валюта</span>
+                                <span>Не оплачено</span>
+                            </label>
+                            
+                            <label class="radio">
+                                <input type="radio" name="payment" id="card">
+                                <span>С карты</span>
+                            </label>
+                        </div>
                         
-                        <label class="radio">
-                            <input type="radio" name="currency" id="GEL">
-                            <span>🇬🇪 ₾ GEL</span>
-                        </label>
-                        
-                        <label class="radio">
-                            <input type="radio" name="currency" id="RUB">
-                            <span>🇷🇺 ₽ RUB</span>
-                        </label>
-
-                        <label class="radio">
-                            <input type="radio" name="currency" id="EUR">
-                            <span>🇪🇺 € EUR</span>
-                        </label>
-
-                        <label class="radio">
-                            <input type="radio" name="currency" id="USD">
-                            <span>🇺🇸 $ USD</span>
-                        </label>
+                        <div class="radio-group">
+                            <span class="group-title">Валюта</span>
+                            
+                            <label class="radio">
+                                <input type="radio" name="currency" id="GEL">
+                                <span>🇬🇪 ₾ GEL</span>
+                            </label>
+                            
+                            <label class="radio">
+                                <input type="radio" name="currency" id="RUB">
+                                <span>🇷🇺 ₽ RUB</span>
+                            </label>
+                            
+                            <label class="radio">
+                                <input type="radio" name="currency" id="EUR">
+                                <span>🇪🇺 € EUR</span>
+                            </label>
+                            
+                            <label class="radio">
+                                <input type="radio" name="currency" id="USD">
+                                <span>🇺🇸 $ USD</span>
+                            </label>
+                        </div>
                     </div>
-                </div>
-                
-
+                    
+                    
                     <div class="checkbox-group">
                         <label class="checkbox">
                             <input type="checkbox" id="sharedRecipient">
@@ -443,8 +498,8 @@
                 </div>
                 
             </div>
-
-
+            
+            
         </div>
         
         <!-- Кнопки -->
@@ -463,19 +518,20 @@
 
 
 
+
 <script>
-document.querySelectorAll('.toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const card = btn.closest('.parcel-card');
-        const details = card.querySelector('.parcel-details');
-
-        const open = details.style.display === 'block';
-        details.style.display = open ? 'none' : 'block';
-        btn.style.transform = open ? 'rotate(0)' : 'rotate(180deg)';
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const card = btn.closest('.parcel-card');
+            const details = card.querySelector('.parcel-details');
+            
+            const open = details.style.display === 'block';
+            details.style.display = open ? 'none' : 'block';
+            btn.style.transform = open ? 'rotate(0)' : 'rotate(180deg)';
+        });
     });
-});
-
-function copyName(btn) {
+    
+    function copyName(btn) {
     const name = btn.parentElement.querySelector('.value').innerText;
     navigator.clipboard.writeText(name);
 

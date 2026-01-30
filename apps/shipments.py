@@ -118,11 +118,15 @@ class ShipmentSubmitView(MethodView):
             parcel.cargo_cost = data.get("parcelCost", "")
             parcel.address = data.get("parcelAddress", "")
 
+          
+
             parcel.description = ", ".join(clean_inventory)
             parcel.payment_amount = payment_amount
             parcel.payment_status = payment_status
             parcel.currency = data.get("currency", "")
             parcel.sequence = sequence
+
+            parcel.information_for_office = data.get("informationForOffice", "")
 
             self.db.session.commit()
             message = "Посылка успешно обновлена" if shipment_id else "Посылка успешно добавлена"
@@ -134,19 +138,7 @@ class ShipmentSubmitView(MethodView):
 
 
 
-class ExportShipmentsView(MethodView):
-    decorators = [login_required]
 
-    def __init__(self, db):
-        self.db = db
-
-    def post(self):
-        data = request.get_json()
-        shipment_ids = data.get("shipment_ids", [])
-        print(shipment_ids)
-
-        return jsonify({"status": "ok"})
-    
 
 
 
@@ -269,6 +261,7 @@ class ShipmentDetailView(MethodView):
 
             # Опись
             "description": shipment.description,
+            "information_for_office": shipment.information_for_office,
 
             # Оплата
             "payment_amount": shipment.payment_amount,
@@ -391,7 +384,6 @@ def register_shipments_routes(app, db):
 
     app.add_url_rule('/shipment_submit', view_func=ShipmentSubmitView.as_view('shipment_submit', db=db))
     
-    app.add_url_rule('/export_shipments', view_func=ExportShipmentsView.as_view('export_shipments', db=db))
 
     app.add_url_rule('/download_manifest', view_func=DownloadManifest.as_view('download_manifest', db=db))
 

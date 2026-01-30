@@ -127,6 +127,8 @@ document.addEventListener("DOMContentLoaded", () => {
             safeSetValue("parcelAddress", data.address);
             safeSetValue("paymentAmount", data.payment_amount);
 
+            safeSetValue("informationForOffice", data.information_for_office);
+
             // ---- теги весов ----
             inputWeight.value = "";
             hiddenWeightInput.value = data.weights || "";
@@ -197,6 +199,8 @@ document.addEventListener("DOMContentLoaded", () => {
             parcelCity: document.getElementById("parcelCity").value,
             parcelCost: document.getElementById("parcelCost").value,
             parcelAddress: document.getElementById("parcelAddress").value,
+
+            informationForOffice: document.getElementById("informationForOffice").value,
 
             inventory: Array.from(inventoryContainer.children)
                             .map(e => e.textContent.trim()),

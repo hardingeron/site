@@ -11,7 +11,7 @@ from flask import jsonify
 from PIL import Image
 from PIL.ExifTags import TAGS
 from sqlalchemy import func
-from models import Purcell, Booking, Storage, Forms
+from models import Purcell, Booking, Storage, Forms, Shipments
 import re
 import xml.etree.ElementTree as ET
 from openpyxl.styles import Alignment, Font
@@ -386,23 +386,30 @@ def save_record(shelf, trecing, date, db):
 #===========================================================================================================================================================
 def get_sorted_dates(db):
     # Запрос уникальных дат и городов из базы данных
-    unique_dates_cities = db.session.query(Forms.date, Forms.where_from).filter(Forms.date.isnot(None)).distinct()
-
+    unique_dates_cities = (db.session.query(Shipments.send_date, Shipments.city_from).filter(Shipments.send_date.isnot(None)).distinct()
+)
+    print(unique_dates_cities, 'uniquedatescities!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     # Списки для дат Москвы и Санкт-Петербурга
     msk_dates = []
     spb_dates = []
 
     # Разбираем полученные даты и города
-    for date, city in unique_dates_cities:
-        if city == 'Москва':
-            msk_dates.append(date)
-        elif city == 'Санкт-Петербург':
-            spb_dates.append(date)
+    for send_date, city_from in unique_dates_cities:
+        if city_from == 'Москва':
+            msk_dates.append(send_date)
+        elif city_from == 'Санкт-Петербург':
+            spb_dates.append(send_date)
+    
+    print(msk_dates, spb_dates, 'mskdates spbdates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
     # Сортировка дат по убыванию (от новых к старым)
-    msk_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
-    spb_dates.sort(key=lambda x: datetime.strptime(x, '%d-%m-%Y'), reverse=True)
+    msk_dates.sort(reverse=True)
+    spb_dates.sort(reverse=True)
 
+    msk_dates = [d.strftime('%d-%m-%Y') for d in msk_dates]
+    spb_dates = [d.strftime('%d-%m-%Y') for d in spb_dates]
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    print(msk_dates, spb_dates, 'mskdates spbdates!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     # Возвращаем отсортированные даты
     return msk_dates, spb_dates
 

@@ -36,6 +36,6 @@ function redirectToPage() {
     
     if (selectedDate) {
         // Передаем выбранную дату и город в URL
-        window.location.href = `/list?date=${selectedDate}&where_from=${selectedCity}`;
+        window.location.href = `/shipments?date=${selectedDate}&where_from=${selectedCity}`;
     }
 }

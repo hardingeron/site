@@ -251,7 +251,7 @@
           data.spb_dates.forEach(date => {
               const li = document.createElement('li');
               const a = document.createElement('a');
-              a.href = `/list?date=${date}&where_from=Санкт-Петербург`;
+              a.href = `/shipments?date=${date}&where_from=Санкт-Петербург`;
               a.textContent = date;
               li.appendChild(a);
               spbDatesList.appendChild(li);
@@ -260,7 +260,7 @@
           data.msk_dates.forEach(date => {
               const li = document.createElement('li');
               const a = document.createElement('a');
-              a.href = `/list?date=${date}&where_from=Москва`;
+              a.href = `/shipments?date=${date}&where_from=Москва`;
               a.textContent = date;
               li.appendChild(a);
               mskDatesList.appendChild(li);

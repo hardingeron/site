@@ -1,13 +1,12 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/shipments.css') }}">s
-</head>
-<meta charset="UTF-8">
-<title>Список посылок</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-</head>
+ {% extends 'base.html' %}
+    
+    {% block title %}
+    {{ super() }}
+    ბლანკები
+    {% endblock %}
+    
+    {% block content %}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/shipments.css') }}">
 
 <body>
 <div id="toast-container"></div>
@@ -93,6 +92,7 @@
         </div>
         <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
     </div>
+
     
     <!-- Отправитель -->
     <div>
@@ -185,7 +185,7 @@
 
 <!-- Модальное окно -->
 <div class="modal-overlay" id="parcelModal">
-    <div class="modal">
+    <div class="shipment-modal">
 
         <!-- Шаги -->
         <div class="modal-steps">
@@ -212,7 +212,7 @@
                 </div>
                 
                 <div class="step" data-step="4">
-                    <div>📝</div>
+                    <div>💳</div>
                     <div class="label">Оплата</div>
                 </div>
                 
@@ -807,7 +807,7 @@ function resetModalExceptSender() {
     const container = document.getElementById("toast-container");
 
     const toast = document.createElement("div");
-    toast.className = `toast ${type}`;
+    toast.className = `shipment-toast ${type}`;
     toast.textContent = message;
 
     container.appendChild(toast);
@@ -821,3 +821,6 @@ function resetModalExceptSender() {
 
 </body>
 </html>
+
+
+{% endblock %}

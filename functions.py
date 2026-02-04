@@ -753,20 +753,19 @@ def save_data(file_path, data):
         json.dump(data, file, indent=4)
 
 def add_record_to_json(file_path, name, sender_phone, recipient, recipient_phone):
-    """Добавить запись в JSON-файл, если ее еще нет."""
+    """Добавить или обновить запись в JSON-файле."""
+    
     # Загрузить текущие данные
     data = load_data(file_path)
-    
-    # Проверить, существует ли запись
-    if name not in data:
-        # Добавить новую запись
-        data[name] = {
-            "sender phone": sender_phone,
-            "recipient": recipient,
-            "recipient phone": recipient_phone
-        }
-        # Сохранить обновленные данные
-        save_data(file_path, data)
-        print(f"Запись для {name} добавлена.")
-    else:
-        print(f"Запись для {name} уже существует.")
+
+    # Добавить новую запись или обновить существующую
+    data[name] = {
+        "sender phone": sender_phone,
+        "recipient": recipient,
+        "recipient phone": recipient_phone
+    }
+
+    # Сохранить обновленные данные
+    save_data(file_path, data)
+
+    print(f"Запись для {name} добавлена или обновлена.")

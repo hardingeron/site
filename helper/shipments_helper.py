@@ -22,3 +22,12 @@ def extract_inventory_names(clean_inventory):
             names.append(name)
 
     return names
+
+
+def split_fio(fio: str):
+    if not fio:
+        return "", ""
+    parts = fio.strip().split()
+    surname = parts[0] if len(parts) > 0 else ""
+    name = parts[1] if len(parts) > 1 else ""
+    return name, surname

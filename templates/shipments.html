@@ -85,8 +85,8 @@
             </label>
             
             <div class="label">№ посылки</div>
-            <div class="value">
-                TRK-{{ shipment.shipment_number}}
+            <div class="value {{ 'text-success' if shipment.is_processed }}">
+                TRK-{{ shipment.shipment_number }}
             </div>
             <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
         </div>
@@ -273,22 +273,46 @@
             <div class="step-content active">
                 <h3>Информация об отправителе</h3>
                 <div class="sender-form">
-                    
-                    <div class="input-group">
-                        <label>Имя</label>
-                        <input type="text" placeholder="Введите имя" id="senderName">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Фамилия</label>
-                        <input type="text" placeholder="Введите фамилию" id="senderSurname">
+                    <div class='input-row'>
+                        <div class="input-group">
+                            <label>Имя</label>
+                            <input type="text" placeholder="Введите имя" id="senderName">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label>Фамилия</label>
+                            <input type="text" placeholder="Введите фамилию" id="senderSurname">
+                        </div>
                     </div>
                     
                     <div class="input-group">
                         <label>Телефон</label>
-                        <input type="tel" placeholder="+7 XXX XX XX XXX" id="senderPhone">
-                    </div>
-                    
+                        <div class="input-row mb-3">
+                            <input
+                                type="tel"
+                                class="form-control"
+                                placeholder="+7 XXX XX XX XXX"
+                                id="senderPhone"
+                            >
+                        </div>
+                    </div>  
+                        <div class="input-group">
+                        <label>Введите паспотрт получателя для автозаполнения</label>
+                        <div class="input-row mb-3">
+                            <input
+                                class="form-control"
+                                placeholder="Введите паспорт"
+                                id="passportCheck"
+                            >
+                            <button 
+                                class="btn btn-primary"
+                                type="button"
+                                id="checkPassportBtn"
+                            >
+                                Проверить
+                            </button>
+                        </div>
+                    </div>  
                 </div>
                 
             </div>
@@ -328,7 +352,7 @@
                     <div class="input-row">
                         <div class="input-group">
                             <label>Вес</label>
-                            <input type="text" placeholder="Введите вес или веса" id="parcelWeight">
+                            <input type="text" placeholder="Введите вес и нажмите [Enter]" id="parcelWeight" inputmode="decimal" enterkeyhint="done">
                             <input type="hidden" name="weights" id="weightsHidden">
                         </div>
                         <!-- Город (список) -->
@@ -417,16 +441,20 @@
                 <h3>Опись</h3>
                 <div class="parcel-form">
                     <!-- Новый текстовый блок -->
-                    <label>Список содержимого</label>
                     <div class="modern-textarea-wrapper">
-                        <div id="inventoryContainer" class="inventory-container"></div>
-                        <input 
-                        id="inventoryInput" 
-                        type="text" 
-                        placeholder="Введите описание..." 
-                        autocomplete="off"
-                        data-inventory='{{ inventory|tojson }}'>
-                        <ul id="autocompleteList" class="autocomplete-list" style="display: none;"></ul>
+                        <div class="input-group">
+                            <div id="inventoryContainer" class="inventory-container"></div>
+                            <label>Список содержимого</label>   
+                            <input 
+                            id="inventoryInput" 
+                            type="text" 
+                            placeholder="Введите описание..." 
+                            autocomplete="off"
+                            data-inventory='{{ inventory|tojson }}'
+                            enterkeyhint="done">
+                            
+                            <ul id="autocompleteList" class="autocomplete-list" style="display: none;"></ul>
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>Информация для офиса</label>
@@ -874,6 +902,87 @@ function resetModalExceptSender() {
     }, 3000);
 }
 </script>
+
+
+
+
+
+
+<script>
+document.getElementById('checkPassportBtn').addEventListener('click', () => {
+    const passport = document.getElementById('passportCheck').value.trim();
+
+    if (!passport) {
+        alert('Введите номер паспорта');
+        return;
+    }
+
+    fetch('/check_sender', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ passport })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (!data.found) {
+            alert('Запись не найдена');
+            return;
+        }
+
+        // sender
+        document.getElementById('senderName').value = data.sender.name;
+        document.getElementById('senderSurname').value = data.sender.surname;
+        document.getElementById('senderPhone').value = data.sender.phone;
+
+        // recipient
+        document.getElementById('recipientName').value = data.recipient.name;
+        document.getElementById('recipientSurname').value = data.recipient.surname;
+        document.getElementById('recipientPhone').value = data.recipient.phone;
+        document.getElementById('recipientPassport').value = data.recipient.passport;
+
+        // address
+        document.getElementById('parcelCity').value = data.address.city;
+        document.getElementById('parcelAddress').value = data.address.street;
+    })
+    .catch(() => {
+        alert('Ошибка при проверке');
+    });
+});
+</script>
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const upperCaseInputs = [
+        "senderName",
+        "senderSurname",
+        "recipientName",
+        "recipientSurname", 
+        "recipientPassport"
+        // сюда просто добавляешь новые id
+    ];
+
+    upperCaseInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        input.addEventListener("input", () => {
+            const cursorPos = input.selectionStart;
+            input.value = input.value.toUpperCase();
+            input.setSelectionRange(cursorPos, cursorPos);
+        });
+    });
+});
+</script>
+
+
+
+
 
 </body>
 </html>

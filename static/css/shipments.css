@@ -545,6 +545,7 @@ body {
     resize: vertical;
 }
 
+
 .input-group input:focus,
 .input-group select:focus,
 .input-group textarea:focus {
@@ -726,45 +727,45 @@ body {
    ОПИСЬ (INVENTORY)
 =================================== */
 
+/* Контейнер — ТОЛЬКО область отображения */
 .inventory-container {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     padding: 12px;
-    min-height: 48px;
-    border: 2px solid #dee2e6;
+    min-height: 52px;
+
+    border: 2px dashed #dee2e6; /* нейтральная пунктирная рамка */
     border-radius: 12px;
-    background: #ffffff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background: #f8f9fa;
+
+    cursor: default;
 }
 
-.inventory-container:focus-within {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
-}
-
+/* Теги */
 .inventory-tag {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
+
     background: linear-gradient(135deg, #e7f3ff 0%, #cfe2ff 100%);
-    border: 2px solid #0d6efd;
+    border: 1px solid #0d6efd;
     border-radius: 8px;
+
     font-size: 14px;
     font-weight: 500;
-    animation: tagPop 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #0d6efd;
+
+    animation: tagPop 0.25s ease;
 }
 
 @keyframes tagPop {
-    0% {
+    from {
         opacity: 0;
-        transform: scale(0.8);
+        transform: scale(0.85);
     }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
+    to {
         opacity: 1;
         transform: scale(1);
     }
@@ -775,12 +776,12 @@ body {
 }
 
 .inventory-tag button {
-    background: transparent;
+    background: none;
     border: none;
     cursor: pointer;
     font-weight: bold;
     color: #0d6efd;
-    transition: all 0.2s ease;
+    transition: 0.2s;
 }
 
 .inventory-tag button:hover {
@@ -788,59 +789,74 @@ body {
     transform: scale(1.2);
 }
 
+/* ============================= */
+/* ГЛАВНОЕ — ПОЛЕ ВВОДА */
+/* ============================= */
+
 #inventoryInput {
     flex: 1;
-    border: none;
-    outline: none;
+    min-width: 160px;
+
+    padding: 8px 10px;
     font-size: 14px;
-    padding: 6px;
-    min-width: 120px;
+
+    border: 2px solid #adb5bd;
+    border-radius: 8px;
+    background: #ffffff;
+
+    outline: none;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* Фокус ТОЛЬКО у инпута */
+#inventoryInput:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.2);
+}
+
+/* Подсказка, что вводить именно тут */
+#inventoryInput::placeholder {
+    color: #adb5bd;
+    font-size: 13px;
+}
+
+/* ============================= */
 /* Автодополнение */
+/* ============================= */
+
 .autocomplete-list {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
+
     background: #fff;
     border: 2px solid #dee2e6;
     border-radius: 12px;
+
     max-height: 240px;
     overflow-y: auto;
     z-index: 100;
+
     list-style: none;
     padding: 8px;
-    margin: 6px 0 0 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    animation: dropdownSlide 0.3s ease-out;
-}
+    margin-top: 6px;
 
-@keyframes dropdownSlide {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .autocomplete-list li {
     padding: 10px 14px;
     cursor: pointer;
     border-radius: 8px;
-    transition: all 0.2s ease;
     font-size: 14px;
+    transition: background 0.2s ease;
 }
 
 .autocomplete-list li:hover {
-    background: linear-gradient(135deg, #e7f3ff 0%, #cfe2ff 100%);
+    background: #e7f3ff;
     color: #0d6efd;
-    transform: translateX(4px);
 }
-
 /* ===================================
    ВЕСА
 =================================== */

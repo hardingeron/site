@@ -11,7 +11,7 @@ import random
 from openpyxl import load_workbook
 from models import Forms
 from functions import random_names
-from helper.shipments_helper import weight_list, extract_inventory_names
+from helper.shipments_helper import weight_list, extract_inventory_names, split_fio
 
 
 class ListView(MethodView):
@@ -225,6 +225,15 @@ class DownloadManifest(MethodView):
         wb.close()
         output.seek(0)  # Возвращаемся в начало буфера
 
+        # ✅ Отмечаем посылки как обработанные
+        Shipments.query.filter(
+            Shipments.id.in_(shipment_ids)
+        ).update(
+            {Shipments.is_processed: True},
+            synchronize_session=False
+        )
+        self.db.session.commit()
+
         # Возврат файла для скачивания
         return send_file(output, as_attachment=True, download_name='manifest.xlsx', mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     
@@ -379,6 +388,93 @@ class DownloadInventory(MethodView):
             mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
 
+
+
+
+
+
+class CheckSender(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def post(self):
+        data = request.get_json()
+        recipient_passport = data.get('passport')
+
+        if not recipient_passport:
+            return jsonify({"found": False})
+
+        # 1️⃣ Пытаемся найти в НОВОЙ таблице
+        shipment = (
+            Shipments.query
+            .filter(Shipments.recipient_passport == recipient_passport)
+            .order_by(Shipments.id.desc())
+            .first()
+        )
+
+        if shipment:
+            return jsonify({
+                "found": True,
+                "source": "new",
+                "sender": {
+                    "name": shipment.sender_name,
+                    "surname": shipment.sender_surname,
+                    "phone": shipment.sender_number
+                },
+                "recipient": {
+                    "name": shipment.recipient_name,
+                    "surname": shipment.recipient_surname,
+                    "phone": shipment.recipient_number,
+                    "passport": shipment.recipient_passport
+                },
+                "address": {
+                    "city": shipment.city_to,
+                    "street": shipment.address
+                }
+            })
+
+        # 2️⃣ Если не нашли — ищем в СТАРОЙ таблице
+        form = (
+            Forms.query
+            .filter(Forms.passport == recipient_passport)
+            .order_by(Forms.id.desc())
+            .first()
+        )
+
+        if not form:
+            return jsonify({"found": False})
+
+        # 3️⃣ Разбиваем ФИО
+        sender_name, sender_surname = split_fio(form.sender_fio)
+        recipient_name, recipient_surname = split_fio(form.recipient_fio)
+
+        return jsonify({
+            "found": True,
+            "source": "old",
+            "sender": {
+                "name": sender_name,
+                "surname": sender_surname,
+                "phone": form.sender_phone
+            },
+            "recipient": {
+                "name": recipient_name,
+                "surname": recipient_surname,
+                "phone": form.recipient_phone,
+                "passport": form.passport
+            },
+            "address": {
+                "city": form.city,
+                "street": form.address
+            }
+        })
+
+
+
+
+
+
 def register_shipments_routes(app, db):
     app.add_url_rule('/shipments', view_func=ListView.as_view('shipments'))
 
@@ -391,3 +487,5 @@ def register_shipments_routes(app, db):
     app.add_url_rule("/shipments/<int:shipment_id>", view_func=shipment_detail_view, methods=["GET"])
 
     app.add_url_rule('/download_inventory', view_func=DownloadInventory.as_view('download_inventory', db=db))
+
+    app.add_url_rule('/check_sender', view_func=CheckSender.as_view('check_sender', db=db))

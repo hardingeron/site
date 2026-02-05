@@ -449,6 +449,7 @@ class CheckSender(MethodView):
         # 3️⃣ Разбиваем ФИО
         sender_name, sender_surname = split_fio(form.sender_fio)
         recipient_name, recipient_surname = split_fio(form.recipient_fio)
+        print(sender_name, sender_surname)
 
         return jsonify({
             "found": True,

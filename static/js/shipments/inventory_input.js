@@ -10,6 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let inlineSelected = false;
     let isDeleting = false;
 
+    // 🔧 Округление до 2 знаков (КЛЮЧЕВО)
+    function round2(num) {
+        return Math.round(num * 100) / 100;
+    }
+
     // Лейбл с доступным весом
     let weightLabel = document.createElement("div");
     weightLabel.style.color = "blue";
@@ -30,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const num = parseFloat(tag.textContent);
             if (!isNaN(num)) total += num;
         });
-        return total;
+        return round2(total);
     }
 
     function currentTotalWeight() {
@@ -40,11 +45,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const num = parseFloat(text);
             if (!isNaN(num)) total += num;
         });
-        return total;
+        return round2(total);
     }
 
     function updateWeightLabel() {
-        let available = getMaxTotalWeight() - currentTotalWeight();
+        let available = round2(getMaxTotalWeight() - currentTotalWeight());
         if (available < 0) available = 0;
         weightLabel.textContent = `Доступно ещё ${available.toFixed(2)} кг`;
     }
@@ -58,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function addTag(name, number) {
-        const numValue = parseFloat(number);
+        const numValue = round2(parseFloat(number));
 
         if (!numValue || numValue <= 0) {
             showWeightError("Вес должен быть больше 0!");
@@ -67,9 +72,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const totalUsed = currentTotalWeight();
         const maxTotal = getMaxTotalWeight();
+        const newTotal = round2(totalUsed + numValue);
 
-        if (totalUsed + numValue > maxTotal) {
-            showWeightError(`Превышен допустимый вес! Доступно ещё ${(maxTotal - totalUsed).toFixed(2)} кг.`);
+        if (newTotal > maxTotal) {
+            showWeightError(
+                `Превышен допустимый вес! Доступно ещё ${(maxTotal - totalUsed).toFixed(2)} кг.`
+            );
             return;
         }
 
@@ -96,20 +104,20 @@ document.addEventListener("DOMContentLoaded", () => {
     // ------------------- INLINE AUTOCOMPLETE -------------------
     function getBestMatch(typed) {
         if (!typed) return null;
-        const match = inventory.find(item => item.toLowerCase().startsWith(typed.toLowerCase()));
-        return match || null;
+        return inventory.find(item =>
+            item.toLowerCase().startsWith(typed.toLowerCase())
+        ) || null;
     }
 
     input.addEventListener("keydown", (e) => {
         const val = input.value;
 
-        // Удаление
         if (e.key === "Backspace" || e.key === "Delete") {
             isDeleting = true;
             inlineSelected = false;
         }
 
-        // Ввод веса после :
+        // Ограничения для ввода веса
         if (val.includes(":")) {
             const allowedKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"];
             const weightPart = val.split(":")[1] || "";
@@ -118,11 +126,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!/^\d$/.test(e.key) && e.key !== ".") {
                     e.preventDefault();
                 }
-                // запрещаем больше одной точки
                 if (e.key === "." && weightPart.includes(".")) {
                     e.preventDefault();
                 }
-                // запрещаем больше 2 цифр после точки
                 const dotIndex = weightPart.indexOf(".");
                 if (dotIndex !== -1 && weightPart.length - dotIndex > 2 && /^\d$/.test(e.key)) {
                     e.preventDefault();
@@ -133,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Enter
         if (e.key === "Enter") {
             e.preventDefault();
+
             if (!val.includes(":")) {
                 input.value = val + ": ";
                 inlineSelected = false;
@@ -143,10 +150,9 @@ document.addEventListener("DOMContentLoaded", () => {
             currentName = parts[0].trim();
             currentNumber = parts[1] ? parts[1].trim() : "";
 
-            // Приведение числа к формату X.00
             let num = parseFloat(currentNumber);
             if (isNaN(num)) num = 0;
-            currentNumber = num.toFixed(2);
+            currentNumber = round2(num).toFixed(2);
 
             if (currentName && currentNumber) {
                 addTag(currentName, currentNumber);
@@ -169,7 +175,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const cursorPos = input.selectionStart;
 
-        // автодополнение только если курсор в конце и не происходит удаление
         if (cursorPos !== val.length || isDeleting) {
             isDeleting = false;
             return;
@@ -189,5 +194,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.initInventoryWeightLabel = () => {
         updateWeightLabel();
     };
+
     updateWeightLabel();
 });

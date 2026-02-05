@@ -11,7 +11,14 @@ import random
 from openpyxl import load_workbook
 from models import Forms
 from functions import random_names
-from helper.shipments_helper import weight_list, extract_inventory_names, split_fio
+from helper.shipments_helper import weight_list, extract_inventory_names, split_fio, data_collection
+
+
+
+
+
+
+
 
 
 class ListView(MethodView):
@@ -23,7 +30,7 @@ class ListView(MethodView):
 
         # 1. Получаем все посылки из БД
         shipments = (Shipments.query.filter_by(send_date=date_param,city_from=city_param).order_by(Shipments.id.desc()).all())
-
+        stat_data = data_collection(shipments)
         # 2. Загружаем inventory (как у тебя было)
         json_path = os.path.join(os.getcwd(), "documents", "inventory.json")
         try:
@@ -36,7 +43,8 @@ class ListView(MethodView):
         return render_template(
             "shipments.html",
             shipments=shipments,
-            inventory=inventory_items
+            inventory=inventory_items,
+            stat_data=stat_data
         )
 
 # POST обработчик для сохранения данных из модалки

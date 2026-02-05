@@ -29,7 +29,10 @@
             </div>
         </div>
         
-        <div class="action-card stats">
+        <div class="action-card stats"
+            data-bs-toggle="modal"
+            data-bs-target="#statsModal"
+            style="cursor: pointer;">
             <div class="icon">📊</div>
             <div class="text">
                 <div class="title">Статистика</div>
@@ -159,11 +162,23 @@
         <!-- Оплата -->
         <div class="col-md-4">
             <div class="fw-semibold text-muted mb-1">💳 Оплата</div>
-            {% if shipment.payment_status == 'paid' %}
-                <span class="badge bg-success">Оплачено</span>
+
+            {% if shipment.payment_status == 'card' %}
+                <span class="badge bg-success">
+                    💳 Оплачено картой
+                </span>
+
+            {% elif shipment.payment_status == 'paid' %}
+                <span class="badge bg-success">
+                    💵 Оплачено наличными
+                </span>
+
             {% else %}
-                <span class="badge bg-danger">Не оплачено</span>
+                <span class="badge bg-secondary">
+                    ⏳ Не оплачено
+                </span>
             {% endif %}
+
             <span class="badge bg-light text-dark">
                 {{ shipment.payment_amount }} {{ shipment.currency }}
             </span>
@@ -543,6 +558,186 @@
 
 
 
+
+
+<div class="modal fade" id="statsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-4 shadow">
+
+            <!-- Заголовок -->
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-semibold">📊 Общая статистика</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Контент -->
+            <div class="modal-body">
+
+                <!-- KPI карточки -->
+                <div class="row g-3 mb-4">
+
+                    <!-- Общий вес -->
+                    <div class="col-md-3">
+                        <div class="stat-card stat-primary">
+                            <div class="stat-icon">⚖️</div>
+                            <div>
+                                <div class="stat-label">Общий вес</div>
+                                <div class="stat-value">{{ stat_data.total_weight }} кг</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RUB -->
+                    <div class="col-md-3">
+                        <div class="stat-card stat-success">
+                            <div class="stat-icon">💵</div>
+                            <div>
+                                <div class="stat-label">Наличные (₽)</div>
+                                <div class="stat-value">{{ stat_data.paid_rub }} ₽</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="stat-card stat-info">
+                            <div class="stat-icon">💳</div>
+                            <div>
+                                <div class="stat-label">Карта (₽)</div>
+                                <div class="stat-value">{{ stat_data.card_rub }} ₽</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="stat-card stat-danger">
+                            <div class="stat-icon">⛔</div>
+                            <div>
+                                <div class="stat-label">Не оплачено (₽)</div>
+                                <div class="stat-value">{{ stat_data.unpaid_rub }} ₽</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Клиенты -->
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon">👥</div>
+                            <div>
+                                <div class="stat-label">Уникальные клиенты</div>
+                                <div class="stat-value">{{ stat_data.unicue_users }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GEL -->
+                    <div class="col-md-3">
+                        <div class="stat-card stat-success">
+                            <div class="stat-icon">💵</div>
+                            <div>
+                                <div class="stat-label">Наличные (₾)</div>
+                                <div class="stat-value">{{ stat_data.paid_gel }} ₾</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="stat-card stat-info">
+                            <div class="stat-icon">💳</div>
+                            <div>
+                                <div class="stat-label">Карта (₾)</div>
+                                <div class="stat-value">{{ stat_data.card_gel }} ₾</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="stat-card stat-danger">
+                            <div class="stat-icon">⛔</div>
+                            <div>
+                                <div class="stat-label">Не оплачено (₾)</div>
+                                <div class="stat-value">{{ stat_data.unpaid_gel }} ₾</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <!-- График -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="fw-semibold fs-5">📈 Динамика оплат</div>
+                            <span class="badge bg-light text-muted">RUB + GEL</span>
+                        </div>
+
+                        <canvas id="paymentsChart"
+                            data-labels='{{ stat_data.chart_labels | default([]) | tojson }}'
+                            data-values='{{ stat_data.chart_values | default([]) | tojson }}'
+                            height="120">
+                        </canvas>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("statsModal");
+    let chartInstance = null;
+
+    modal.addEventListener("shown.bs.modal", () => {
+        const canvas = document.getElementById("paymentsChart");
+        if (!canvas) return;
+
+        if (chartInstance) {
+            chartInstance.destroy();
+        }
+
+        const labelsRaw = canvas.dataset.labels;
+        const valuesRaw = canvas.dataset.values;
+
+        if (!labelsRaw || !valuesRaw) return;
+
+        const labels = JSON.parse(labelsRaw);
+        const values = JSON.parse(valuesRaw);
+
+        chartInstance = new Chart(canvas, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    fill: true,
+                    tension: 0.4,
+                    borderColor: "#0d6efd",
+                    backgroundColor: "rgba(13,110,253,0.15)",
+                    pointRadius: 5,
+                    pointBackgroundColor: "#0d6efd"
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+});
+</script>
 
 
 

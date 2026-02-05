@@ -9,7 +9,7 @@ import json
 # bot.py
 
 
-bot = Bot(token='6370693434:AAEEPDaX9BrzkY07Xsp78AlP8Z4owmXSVX0')
+bot = Bot(token='6370693434:AAE9Vj_kV9ztLqmUsxa0k2Wd2G0PUuA4Rdw')
 dp = Dispatcher(bot)
 
 try:

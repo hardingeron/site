@@ -12,7 +12,7 @@ from openpyxl import load_workbook
 from models import Forms
 from functions import random_names
 from helper.shipments_helper import weight_list, extract_inventory_names, split_fio, data_collection
-
+import time
 
 
 
@@ -481,6 +481,17 @@ class CheckSender(MethodView):
 
 
 
+class ShipmentDeleteView(MethodView):
+    decorators = [login_required]
+
+    def __init__(self, db):
+        self.db = db
+
+    def post(self, shipment_id):
+        shipment = Shipments.query.get_or_404(shipment_id)
+        self.db.session.delete(shipment)
+        self.db.session.commit()
+        return jsonify({"success": True})
 
 
 
@@ -498,3 +509,6 @@ def register_shipments_routes(app, db):
     app.add_url_rule('/download_inventory', view_func=DownloadInventory.as_view('download_inventory', db=db))
 
     app.add_url_rule('/check_sender', view_func=CheckSender.as_view('check_sender', db=db))
+
+    shipment_delete_view = ShipmentDeleteView.as_view("shipment_delete", db=db)
+    app.add_url_rule("/shipments/<int:shipment_id>/delete", view_func=shipment_delete_view, methods=["POST"])

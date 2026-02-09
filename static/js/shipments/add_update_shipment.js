@@ -82,9 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     closeBtn.addEventListener("click", closeModal);
-    modal.addEventListener("click", (e) => {
-        if (e.target === modal) closeModal();
-    });
+
 
     // -------------------------------
     // Новая посылка
@@ -160,78 +158,92 @@ document.addEventListener("DOMContentLoaded", () => {
     // -------------------------------
     // Отправка формы
     // -------------------------------
-    finishBtn.addEventListener("click", async () => {
-        const sharedRecipient = document.getElementById("sharedRecipient").checked;
-        let step4Valid = true;
+let isSubmitting = false;
 
-        if (!sharedRecipient) {
-            const amount = document.getElementById("paymentAmount");
-            const payment = document.querySelector('input[name="payment"]:checked');
-            const currency = document.querySelector('input[name="currency"]:checked');
+finishBtn.addEventListener("click", async () => {
+    if (isSubmitting) return; // ⛔ защита от повторного клика
+    isSubmitting = true;
+    finishBtn.disabled = true;
 
-            if (!amount.value.trim()) {
-                amount.classList.add('placeholder-error');
-                setTimeout(() => amount.classList.remove('placeholder-error'), 2000);
-                step4Valid = false;
-            }
-            if (!payment) step4Valid = false;
-            if (!currency) step4Valid = false;
+    const sharedRecipient = document.getElementById("sharedRecipient").checked;
+    let step4Valid = true;
+
+    if (!sharedRecipient) {
+        const amount = document.getElementById("paymentAmount");
+        const payment = document.querySelector('input[name="payment"]:checked');
+        const currency = document.querySelector('input[name="currency"]:checked');
+
+        if (!amount.value.trim()) {
+            amount.classList.add('placeholder-error');
+            setTimeout(() => amount.classList.remove('placeholder-error'), 2000);
+            step4Valid = false;
         }
+        if (!payment) step4Valid = false;
+        if (!currency) step4Valid = false;
+    }
 
-        if (!step4Valid) return;
+    if (!step4Valid) {
+        isSubmitting = false;
+        finishBtn.disabled = false;
+        return;
+    }
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const dateParam = urlParams.get("date") || "";
-        const whereFromParam = urlParams.get("where_from") || "";
+    const urlParams = new URLSearchParams(window.location.search);
 
-        const payload = {
-            shipmentId: modal.dataset.editId || null,
-            senderName: document.getElementById("senderName").value,
-            senderSurname: document.getElementById("senderSurname").value,
-            senderPhone: document.getElementById("senderPhone").value,
+    const payload = {
+        shipmentId: modal.dataset.editId || null,
 
-            recipientName: document.getElementById("recipientName").value,
-            recipientSurname: document.getElementById("recipientSurname").value,
-            recipientPhone: document.getElementById("recipientPhone").value,
-            recipientPassport: document.getElementById("recipientPassport").value,
+        senderName: senderName.value,
+        senderSurname: senderSurname.value,
+        senderPhone: senderPhone.value,
 
-            weightsHidden: hiddenWeightInput.value,
-            parcelCity: document.getElementById("parcelCity").value,
-            parcelCost: document.getElementById("parcelCost").value,
-            parcelAddress: document.getElementById("parcelAddress").value,
+        recipientName: recipientName.value,
+        recipientSurname: recipientSurname.value,
+        recipientPhone: recipientPhone.value,
+        recipientPassport: recipientPassport.value,
 
-            informationForOffice: document.getElementById("informationForOffice").value,
+        weightsHidden: hiddenWeightInput.value,
+        parcelCity: parcelCity.value,
+        parcelCost: parcelCost.value,
+        parcelAddress: parcelAddress.value,
 
-            inventory: Array.from(inventoryContainer.children)
-                            .map(e => e.textContent.trim()),
+        informationForOffice: informationForOffice.value,
 
-            paymentAmount: document.getElementById("paymentAmount").value,
-            paymentStatus: document.querySelector('input[name="payment"]:checked')?.id || "",
-            currency: document.querySelector('input[name="currency"]:checked')?.id || "",
-            sharedRecipient: sharedRecipient,
+        inventory: [...inventoryContainer.children].map(e =>
+            e.querySelector("span")?.textContent.trim()
+        ),
 
-            date: dateParam,
-            where_from: whereFromParam
-        };
+        paymentAmount: paymentAmount.value,
+        paymentStatus: document.querySelector('input[name="payment"]:checked')?.id || "",
+        currency: document.querySelector('input[name="currency"]:checked')?.id || "",
+        sharedRecipient,
 
-        try {
-            const res = await fetch("/shipment_submit", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+        date: urlParams.get("date") || "",
+        where_from: urlParams.get("where_from") || ""
+    };
 
-            const result = await res.json();
-            if (res.ok && result.success) {
-                alert(result.message);
-                closeModal();
-                location.reload();
-            } else {
-                alert("Ошибка при сохранении: " + (result.message || "неизвестная"));
-            }
-        } catch (err) {
-            console.error(err);
-            alert("Ошибка при сохранении");
+    try {
+        const res = await fetch("/shipment_submit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.success) {
+            alert(result.message);
+            closeModal();
+            location.reload();
+        } else {
+            alert("Ошибка: " + (result.message || "неизвестная"));
         }
-    });
+    } catch (err) {
+        console.error(err);
+        alert("Ошибка при сохранении");
+    } finally {
+        isSubmitting = false;
+        finishBtn.disabled = false;
+    }
+});
 });

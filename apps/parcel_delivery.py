@@ -172,6 +172,7 @@ class ParcelProcessing(MethodView):
                     continue
 
                 # Если записи с таким трекингом нет, создаем новую запись
+                
                 storage = Storage.query.filter_by(trecing=tracking_number).first()
                 if storage:
                     location = storage.shelf  # Получаем местоположение (полку)

@@ -81,6 +81,12 @@ body {
     border-right: 5px solid #198754;
 }
 
+.parcel-card.issued {
+    border-left: 5px solid #cabe0c;
+}
+
+
+
 .parcel-card.payment-unpaid {
     border-right: 5px solid #dc3545;
 }

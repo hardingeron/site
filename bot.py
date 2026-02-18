@@ -1,9 +1,18 @@
 '''423361340'''
 import logging
+from io import BytesIO
 from aiogram import Bot, Dispatcher, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.utils import exceptions
 import json
+from functions import create_parcel_image
+from aiogram.utils.exceptions import (
+    MessageToDeleteNotFound,
+    MessageCantBeDeleted,
+    ChatNotFound,
+    UserDeactivated,
+    BotBlocked
+)
 
 
 # bot.py
@@ -31,33 +40,66 @@ async def start_handler(message: types.Message):
 
 
 async def send_location_message(trecing, location, info, date):
-    message_text = f"------------------------------------------------------------\nთრექინგი  --  {trecing}\n\nთარო  --  {location}\n\nნომერი  --  {info}\n\nთარიღი  --  {date}\n------------------------------------------------------------"
+    # --- Клавиатура ---
     keyboard = types.InlineKeyboardMarkup()
-    delete_button = types.InlineKeyboardButton(text="წაშლა", callback_data=f"delete_{trecing}")
+    delete_button = types.InlineKeyboardButton(
+        text="წაშლა",
+        callback_data=f"delete_{trecing}"
+    )
     keyboard.add(delete_button)
-    
-    for user in user_id:
-        try:
-            await bot.send_message(chat_id=user, text=message_text, reply_markup=keyboard)
-        except exceptions.BotBlocked as e:
-            logging.error(f"Пользователь {user} заблокировал бота")
-            continue  # Пропустить итерацию и перейти к следующему пользователю
-        except Exception as e:
-            logging.error(f"Необработанная ошибка при отправке сообщения пользователю {user}: {e}")
-            continue  # Пропустить итерацию и перейти к следующему пользователю
+
+    # --- Создаём изображение и сразу отправляем ---
+    image = create_parcel_image(trecing, location, info, date)  # возвращает BytesIO
+
+    # Используем контекстный менеджер, чтобы автоматически закрыть BytesIO
+    with image as img_bytes:
+        # Если нужно отправить нескольким пользователям, создаём отдельный объект для каждого
+        img_data = img_bytes.read()  # читаем данные один раз
+        for user in user_id:
+            try:
+                await bot.send_photo(
+                    chat_id=user,
+                    photo=BytesIO(img_data),  # создаём новый BytesIO для каждого
+                    caption=f"📦{trecing}",
+                    reply_markup=keyboard
+                )
+            except exceptions.BotBlocked:
+                continue
+            except Exception as e:
+                logging.error(f"Ошибка: {e}")
+                continue
 
 @dp.callback_query_handler(lambda c: c.data.startswith('delete_'))
 async def delete_message(callback_query: types.CallbackQuery):
-    trecing = callback_query.data.split('_')[1]
-    message_id = callback_query.message.message_id
-    for user in user_id:
-        try:
-            await bot.delete_message(chat_id=user, message_id=message_id)
-        except Exception as e:
-            print(f"Failed to delete message for user {user}: {e}")
+    try:
+        # Получаем tracking (если нужно для логики)
+        tracking = callback_query.data.split('_', 1)[1]
 
-    await bot.answer_callback_query(callback_query.id)  # Отправка ответа на callback-запрос
+        # Удаляем сообщение ТОЛЬКО в текущем чате
+        await callback_query.message.delete()
 
+        # Отвечаем на callback (обязательно!)
+        await callback_query.answer("Удалено ✅")
+
+        print(f"Сообщение по трекингу {tracking} удалено пользователем {callback_query.from_user.id}")
+
+    except MessageToDeleteNotFound:
+        print("Сообщение уже удалено.")
+
+    except MessageCantBeDeleted:
+        print("Невозможно удалить сообщение (возможно прошло >48 часов).")
+
+    except UserDeactivated:
+        print(f"Пользователь {callback_query.from_user.id} деактивирован.")
+
+    except BotBlocked:
+        print(f"Пользователь {callback_query.from_user.id} заблокировал бота.")
+
+    except ChatNotFound:
+        print("Чат не найден.")
+
+    except Exception as e:
+        print(f"Необработанная ошибка при удалении: {e}")
 
 
 

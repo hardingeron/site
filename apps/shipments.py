@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from flask import Blueprint, render_template, request, jsonify, url_for, redirect, send_file
 import os
 import json
-from models import Shipments;
+from models import Shipments, ParcelIssuance, Storage;
 from datetime import datetime;
 from decimal import Decimal
 from io import BytesIO
@@ -13,9 +13,9 @@ from models import Forms
 from functions import random_names
 from helper.shipments_helper import weight_list, extract_inventory_names, split_fio, data_collection
 import time
-
-
-
+from .storage import loop
+import asyncio
+from bot import send_location_message
 
 
 
@@ -495,6 +495,175 @@ class ShipmentDeleteView(MethodView):
 
 
 
+class GetShipmentData(MethodView):
+    decorators = [login_required]
+
+    def get(self, id):
+        shipment = Shipments.query.get_or_404(id)
+        full_name = (shipment.recipient_name + shipment.recipient_surname).upper()
+
+        # Веса из БД
+        db_weights = []
+        if shipment.weights:
+            try:
+                db_weights = [round(float(w), 2) for w in shipment.weights.split()]
+            except ValueError:
+                db_weights = []
+
+        # Загружаем JSON
+        import os, json, datetime
+        from collections import defaultdict
+
+        json_path = os.path.join(os.getcwd(), "expertise_data.json")
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception as e:
+            return jsonify({"error": "JSON файл не найден"}), 500
+
+        # Фильтруем записи по имени
+        relevant_entries = [
+            (mp, values)
+            for mp, values in data.items()
+            if str(values[5]).upper() == full_name
+        ]
+
+        # Группируем по дате выдачи
+        grouped_by_date = defaultdict(list)
+        for mp, values in relevant_entries:
+            try:
+                date_obj = datetime.datetime.strptime(values[4], "%d.%m.%Y")
+                grouped_by_date[date_obj].append((mp, values))
+            except (ValueError, IndexError):
+                continue
+
+        # Сортируем даты по убыванию
+        sorted_dates = sorted(grouped_by_date.keys(), reverse=True)
+
+        found_parcels = []
+        warning_message = None
+
+        for date in sorted_dates:
+            entries = grouped_by_date[date]
+
+            # Отбираем только записи с весами, которые есть в БД
+            candidate_entries = [
+                (mp, values) for mp, values in entries
+                if round(float(values[7]), 2) in db_weights
+            ]
+
+            # Проверяем, совпадает ли количество с DB
+            if len(candidate_entries) != len(db_weights):
+                continue
+
+            # Проверка точного совпадения весов
+            candidate_weights = [round(float(values[7]), 2) for _, values in candidate_entries]
+            if not all(any(abs(w - db_w) < 0.01 for db_w in db_weights) for w in candidate_weights):
+                continue
+
+            # ⚠️ Проверяем статус только нужных посылок
+            if any(values[1] != "დაუბეგრავი" for _, values in candidate_entries):
+                warning_message = (
+                    "Невозможно выдать посылку: она под растаможкой. "
+                    "Проверьте статус во вкладке 'ექსპერტიზა'."
+                )
+                # не формируем found_parcels и не выходим — просто возвращаем предупреждение
+                found_parcels = []
+                break
+
+            # Всё ок — формируем посылки
+            found_parcels = [
+                {"number": mp, "weight": round(float(values[7]), 2)}
+                for mp, values in candidate_entries
+            ]
+            break  # нашли подходящую дату
+
+        response = {
+            "recipient_name": shipment.recipient_name,
+            "recipient_surname": shipment.recipient_surname,
+            "recipient_passport": shipment.recipient_passport or "",
+            "parcels": found_parcels
+        }
+
+        if warning_message:
+            response["warning"] = warning_message
+
+        return jsonify(response)
+    
+
+class IssueShipmentView(MethodView):
+    decorators = [login_required]
+    
+    def __init__(self, db):
+        self.db = db
+
+    def post(self):
+        data = request.get_json()
+
+        shipment_id = data.get("shipment_id")
+        passport = data.get("passport")
+        parcels = data.get("parcels", [])
+        resident = data.get("resident", 0)  # 0 или 1
+
+        if not shipment_id or not passport:
+            return jsonify({
+                "success": False,
+                "message": "Недостаточно данных"
+            }), 400
+
+        # 1. Находим shipment
+        shipment = Shipments.query.get_or_404(shipment_id)
+
+        if not parcels:
+            return jsonify({
+                "success": False,
+                "message": "Нет посылок для выдачи"
+            })
+
+        if shipment.issued:
+            return jsonify({
+                "success": False,
+                "message": "Посылка уже выдана"
+            })
+
+        # 2. Формируем имя
+        recipient = f"{shipment.recipient_name} {shipment.recipient_surname}"
+
+        # 3. Обновляем статус
+        shipment.issued = True
+
+        # 4. Записываем посылки
+        for mp in parcels:
+            storage = Storage.query.filter_by(trecing=mp).first()
+            
+            if storage:
+                # Отправляем сообщение через бота
+                asyncio.run_coroutine_threadsafe(
+                    send_location_message(mp, storage.shelf, shipment.shipment_number, storage.date), loop
+                )
+                # 🔹 Удаляем запись из Storage
+                self.db.session.delete(storage)
+            else:
+                asyncio.run_coroutine_threadsafe(
+                    send_location_message(mp, '!', '!', '!'), loop
+                )
+
+            issuance = ParcelIssuance(
+                tracking_number=mp,
+                recipient=recipient,
+                passport=passport,
+                is_resident=bool(resident),
+                created_at=datetime.utcnow()
+            )
+            self.db.session.add(issuance)
+
+        # 🔹 Сохраняем все изменения (удаление Storage + добавление ParcelIssuance)
+        self.db.session.commit()
+
+        return jsonify({"success": True})
+
+
+
 def register_shipments_routes(app, db):
     app.add_url_rule('/shipments', view_func=ListView.as_view('shipments'))
 
@@ -512,3 +681,10 @@ def register_shipments_routes(app, db):
 
     shipment_delete_view = ShipmentDeleteView.as_view("shipment_delete", db=db)
     app.add_url_rule("/shipments/<int:shipment_id>/delete", view_func=shipment_delete_view, methods=["POST"])
+
+    shipment_detail_view = GetShipmentData.as_view("get_shipment")
+    app.add_url_rule("/get_shipment/<int:id>", view_func=shipment_detail_view)
+
+
+    issue_shipment_view = IssueShipmentView.as_view("issue_shipment", db=db)
+    app.add_url_rule("/issue_shipment", view_func=issue_shipment_view, methods=["POST"])

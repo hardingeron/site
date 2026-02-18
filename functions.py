@@ -1,14 +1,13 @@
-from PIL import Image
-from PIL.ExifTags import TAGS
+
 from models import Purcell
 import os
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
 import json
-
+from io import BytesIO
 from flask import jsonify
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 from PIL.ExifTags import TAGS
 from sqlalchemy import func
 from models import Purcell, Booking, Storage, Forms, Shipments
@@ -769,3 +768,68 @@ def add_record_to_json(file_path, name, sender_phone, recipient, recipient_phone
     save_data(file_path, data)
 
     print(f"Запись для {name} добавлена или обновлена.")
+
+
+    
+
+
+
+
+def create_parcel_image(tracking, location, info, date):
+    width, height = 500, 500
+
+    # --- Градиентный фон ---
+    base = Image.new("RGB", (width, height), "#0f172a")
+    draw = ImageDraw.Draw(base)
+
+    for i in range(height):
+        r = int(15 + (30 * i / height))
+        g = int(23 + (40 * i / height))
+        b = int(42 + (60 * i / height))
+        draw.line([(0, i), (width, i)], fill=(r, g, b))
+
+    # --- Акцентная полоса слева ---
+    accent_color = (255, 193, 7)  # жёлтый
+    draw.rectangle([0, 0, 12, height], fill=accent_color)
+
+    # --- Шрифты ---
+    try:
+        font_big = ImageFont.truetype("arialbd.ttf", 60)
+        font_label = ImageFont.truetype("arial.ttf", 26)
+        font_text = ImageFont.truetype("arial.ttf", 34)
+    except:
+        font_big = ImageFont.load_default()
+        font_label = ImageFont.load_default()
+        font_text = ImageFont.load_default()
+
+    # --- Заголовок ---
+    draw.text((40, 40), "TRACKING", font=font_label, fill=(148, 163, 184))
+    draw.text((40, 70), tracking, font=font_big, fill="white")
+
+    # --- Разделительная линия ---
+    draw.line([(40, 150), (width - 40, 150)], fill=(71, 85, 105), width=2)
+
+    # --- Блоки информации ---
+    start_y = 190
+    gap = 80
+
+    blocks = [
+        ("Shelf", location),
+        ("Shipment №", info),
+        ("Date", date)
+    ]
+
+    for label, value in blocks:
+        draw.text((60, start_y), label.upper(), font=font_label, fill=(148, 163, 184))
+        draw.text((60, start_y + 30), str(value), font=font_text, fill="white")
+        start_y += gap
+
+    # --- Нижняя подпись ---
+    draw.text((width - 300, height - 50), "Vip-Tour", font=font_label, fill=(100, 116, 139))
+
+    # --- Создаём виртуальный файл в памяти ---
+    img_bytes = BytesIO()
+    base.save(img_bytes, format="PNG")
+    img_bytes.seek(0)  # обязательно возвращаем курсор в начало
+
+    return img_bytes

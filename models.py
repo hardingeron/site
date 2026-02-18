@@ -204,3 +204,4 @@ class Shipments(db.Model):
     sequence = db.Column(db.Integer)                                  # Очерёдность
     information_for_office = db.Column(db.String(1000))               # информация для офиса
     is_processed = db.Column(db.Boolean, default=False)               # булевое значение для проверки скачивания
+    issued = db.Column(db.Boolean, default=False)                     # выдача посылки

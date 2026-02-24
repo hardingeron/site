@@ -7,6 +7,7 @@
     
     {% block content %}
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/shipments.css') }}">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <body>
     <div id="toast-container"></div>
@@ -141,108 +142,113 @@
         
     </div>
     
-    <!-- 🔽 Детали -->
+<!-- 🔽 Детали -->
 <div class="parcel-details mt-3">
 
     <!-- 1. Описание -->
-    <div class="mb-3">
-        <div class="fw-semibold text-muted mb-1">📦 Опись</div>
-        <div>{{ shipment.description }}</div>
+    <div class="pd-section">
+        <div class="pd-section-label"><span class="icon">📦</span> Опись</div>
+        <div class="pd-section-value">
+            {% if shipment.description %}
+                {{ shipment.description }}
+            {% else %}
+                <span class="pd-empty">—</span>
+            {% endif %}
+        </div>
     </div>
 
-    <div class="mb-3">
-        <div class="fw-semibold text-muted mb-1">🏢 Информация для офиса</div>
-        <div>{{ shipment.information_for_office }}</div>
+    <!-- Информация для офиса -->
+    <div class="pd-section">
+        <div class="pd-section-label"><span class="icon">🏢</span> Информация для офиса</div>
+        <div class="pd-section-value">
+            {% if shipment.information_for_office %}
+                {{ shipment.information_for_office }}
+            {% else %}
+                <span class="pd-empty">—</span>
+            {% endif %}
+        </div>
     </div>
-
-    <hr>
 
     <!-- 2. Оплата / Стоимость / Паспорт -->
-    <div class="row g-2 mb-3 align-items-start">
+    <div class="pd-grid pd-grid-3">
 
         <!-- Оплата -->
-        <div class="col-md-4">
-            <div class="fw-semibold text-muted mb-1">💳 Оплата</div>
-
-            {% if shipment.payment_status == 'card' %}
-                <span class="badge bg-success">
-                    💳 Оплачено картой
-                </span>
-
-            {% elif shipment.payment_status == 'paid' %}
-                <span class="badge bg-success">
-                    💵 Оплачено наличными
-                </span>
-
-            {% else %}
-                <span class="badge bg-secondary">
-                    ⏳ Не оплачено
-                </span>
-            {% endif %}
-
-            <span class="badge bg-light text-dark">
-                {{ shipment.payment_amount }} {{ shipment.currency }}
-            </span>
+        <div class="pd-section">
+            <div class="pd-section-label"><span class="icon">💳</span> Оплата</div>
+            <div class="pd-badges">
+                {% if shipment.payment_status == 'card' %}
+                    <span class="pd-badge pd-badge-success">💳 Оплачено картой</span>
+                {% elif shipment.payment_status == 'paid' %}
+                    <span class="pd-badge pd-badge-success">💵 Оплачено наличными</span>
+                {% else %}
+                    <span class="pd-badge pd-badge-secondary">⏳ Не оплачено</span>
+                {% endif %}
+                <span class="pd-badge pd-badge-amount">{{ shipment.payment_amount }} {{ shipment.currency }}</span>
+            </div>
         </div>
 
         <!-- Стоимость -->
-        <div class="col-md-4">
-            <div class="fw-semibold text-muted mb-1">💰 Стоимость</div>
-            <span class="badge bg-primary">
-                {{ shipment.cargo_cost }} RUB
-            </span>
+        <div class="pd-section">
+            <div class="pd-section-label"><span class="icon">💰</span> Стоимость груза</div>
+            <div class="pd-badges">
+                <span class="pd-badge pd-badge-rub">{{ shipment.cargo_cost }} RUB</span>
+            </div>
         </div>
 
         <!-- Паспорт -->
-        <div class="col-md-4">
-            <div class="fw-semibold text-muted mb-1">🪪 Паспорт</div>
-            <span class="badge bg-light text-dark">
-                {{ shipment.recipient_passport }}
-            </span>
+        <div class="pd-section">
+            <div class="pd-section-label"><span class="icon">🪪</span> Паспорт</div>
+            <div class="pd-passport-value">
+                {% if shipment.recipient_passport %}
+                    {{ shipment.recipient_passport }}
+                {% else %}
+                    <span class="pd-empty">—</span>
+                {% endif %}
+            </div>
         </div>
 
     </div>
-    <hr>
 
-    <!-- 3. Вес и адрес -->
-    <div class="row g-2 mb-3 align-items-start">
+    <!-- 3. Вес / Адрес -->
+    <div class="pd-grid pd-grid-2">
 
         <!-- Вес -->
-        <div class="col-md-4">
-            <div class="fw-semibold text-muted mb-1">⚖️ Вес</div>
-            {% for weight in shipment.weights.split() %}
-                <span class="badge bg-secondary rounded-pill">
-                    {{ weight }} кг
-                </span>
-            {% endfor %}
+        <div class="pd-section">
+            <div class="pd-section-label"><span class="icon">⚖️</span> Вес</div>
+            <div class="pd-badges">
+                {% for weight in shipment.weights.split() %}
+                    <span class="pd-badge pd-badge-weight">{{ weight }} кг</span>
+                {% endfor %}
+            </div>
         </div>
 
         <!-- Адрес -->
-        <div class="col-md-8">
-            <div class="fw-semibold text-muted mb-1">📍 Адрес доставки</div>
-            <div>{{ shipment.address }}</div>
+        <div class="pd-section">
+            <div class="pd-section-label"><span class="icon">📍</span> Адрес доставки</div>
+            <div class="pd-section-value">
+                {% if shipment.address %}
+                    {{ shipment.address }}
+                {% else %}
+                    <span class="pd-empty">—</span>
+                {% endif %}
+            </div>
         </div>
 
     </div>
 
-    <!-- Редактирование -->
-    <div class="text-end d-flex justify-content-end gap-2">
-        <button class="btn btn-sm btn-outline-primary edit-btn"
-                data-id="{{ shipment.id }}">
+    <!-- Кнопки -->
+    <div class="pd-actions">
+        <button class="pd-btn pd-btn-edit edit-btn" data-id="{{ shipment.id }}">
             ✏️ Редактировать
         </button>
-
-        <button class="btn btn-sm btn-outline-danger delete-btn"
-                data-id="{{ shipment.id }}">
+        <button class="pd-btn pd-btn-danger delete-btn" data-id="{{ shipment.id }}">
             🗑 Удалить
         </button>
-
-    {% if not shipment.issued %}
-        <button class="btn btn-sm btn-outline-success issue-btn"
-                data-id="{{ shipment.id }}">
-            🎁 Выдать
-        </button>
-    {% endif %}
+        {% if not shipment.issued %}
+            <button class="pd-btn pd-btn-success issue-btn" data-id="{{ shipment.id }}">
+                🎁 Выдать
+            </button>
+        {% endif %}
     </div>
 
 </div>

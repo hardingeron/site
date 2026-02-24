@@ -231,9 +231,6 @@ body {
     transition: transform 0.2s ease;
 }
 
-.parcel-details div:hover {
-    transform: translateX(4px);
-}
 
 /* ===================================
    ВЕРХНИЕ КАРТОЧКИ ДЕЙСТВИЙ
@@ -1192,28 +1189,7 @@ body {
 }
 
 
-/* ===================================
-   КНОПКА РЕДАКТИРОВАНИЯ
-=================================== */
 
-.edit-btn {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 2px solid #dee2e6;
-    font-size: 18px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #6c757d;
-    
-}
-
-.edit-btn:hover {
-    background: linear-gradient(135deg, #e7f3ff 0%, #cfe2ff 100%);
-    border-color: #0d6efd;
-    color: #0d6efd;
-
-    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
-}
 
 /* ===================================
    ВАЛИДАЦИЯ ОШИБОК
@@ -1449,3 +1425,147 @@ body.loaded .parcel-card {
 .stat-info .stat-icon    { background: rgba(13,110,253,.15); }
 .stat-danger .stat-icon  { background: rgba(220,53,69,.15); }
 .stat-primary .stat-icon { background: rgba(13,202,240,.15); }
+
+
+
+
+/* улучшенное доп инфо */
+/* ───── Parcel Details ───── */
+.parcel-details {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+    font-family: 'Manrope', sans-serif;
+}
+
+.pd-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid #7a7a7a;
+}
+.pd-section:last-child { border-bottom: none; }
+
+.pd-section-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7a7a7a;
+    margin-bottom: 7px;
+}
+.pd-section-label .icon { font-size: 13px; line-height: 1; }
+
+.pd-section-value {
+    font-size: 14px;
+    color: #1a1d2e;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.pd-empty {
+    color: #c5cadd;
+    font-style: italic;
+    font-size: 13px;
+}
+
+.pd-passport-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1d2e;
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+    margin-top: 4px;
+}
+
+/* ── Сетки ── */
+.pd-grid {
+    display: grid;
+    border-bottom: 1px solid #7a7a7a;
+}
+.pd-grid .pd-section {
+    border-right: 1px solid #7a7a7a;
+    border-bottom: none;
+}
+.pd-grid .pd-section:last-child { border-right: none; }
+
+.pd-grid-3 { grid-template-columns: repeat(3, 1fr); }
+.pd-grid-2 { grid-template-columns: 1fr 2fr; }
+
+/* ── Бейджи ── */
+.pd-badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.pd-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.pd-badge-success  { background: #e8f9f0; color: #1a9e5c; }
+.pd-badge-secondary{ background: #f59285; color: #5c6484; }
+.pd-badge-amount   { background: #f5f6ff; color: #4a52c9; }
+.pd-badge-rub      { background: #fff3e8; color: #e07a1a; }
+.pd-badge-weight   { background: #eef6ff; color: #1a78c9; border-radius: 20px; }
+
+/* ── Кнопки ── */
+.pd-actions {
+    padding: 14px 20px;
+    background: #fafbfd;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #f0f2f7;
+}
+
+.pd-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 16px;
+    border-radius: 10px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 12.5px;
+    font-weight: 700;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    background: transparent;
+}
+.pd-btn:hover { transform: translateY(-1px); }
+.pd-btn:active { transform: translateY(0); }
+
+.pd-btn-edit    { border-color: #c5cadd; color: #3d4466; }
+.pd-btn-edit:hover { background: #f0f2f7; border-color: #9ba3b8; }
+
+.pd-btn-danger  { border-color: #fbc5c5; color: #c0392b; }
+.pd-btn-danger:hover { background: #fff0f0; border-color: #e74c3c; }
+
+.pd-btn-success { background: #1a9e5c; border-color: #1a9e5c; color: #fff; }
+.pd-btn-success:hover { background: #158f52; box-shadow: 0 4px 12px rgba(26,158,92,0.3); }
+
+/* ── Адаптив ── */
+@media (max-width: 600px) {
+    .pd-grid-3, .pd-grid-2 { grid-template-columns: 1fr; }
+    .pd-grid .pd-section {
+        border-right: none;
+        border-bottom: 1px solid #f0f2f7;
+    }
+}
+
+
+
+/* окно выдавчи */

@@ -162,31 +162,12 @@ let isSubmitting = false;
 
 finishBtn.addEventListener("click", async () => {
     if (isSubmitting) return; // ⛔ защита от повторного клика
+    if (typeof validateShipmentForm === "function" && !validateShipmentForm()) return;
+
     isSubmitting = true;
     finishBtn.disabled = true;
 
     const sharedRecipient = document.getElementById("sharedRecipient").checked;
-    let step4Valid = true;
-
-    if (!sharedRecipient) {
-        const amount = document.getElementById("paymentAmount");
-        const payment = document.querySelector('input[name="payment"]:checked');
-        const currency = document.querySelector('input[name="currency"]:checked');
-
-        if (!amount.value.trim()) {
-            amount.classList.add('placeholder-error');
-            setTimeout(() => amount.classList.remove('placeholder-error'), 2000);
-            step4Valid = false;
-        }
-        if (!payment) step4Valid = false;
-        if (!currency) step4Valid = false;
-    }
-
-    if (!step4Valid) {
-        isSubmitting = false;
-        finishBtn.disabled = false;
-        return;
-    }
 
     const urlParams = new URLSearchParams(window.location.search);
 

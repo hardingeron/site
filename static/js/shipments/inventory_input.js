@@ -170,6 +170,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        if (/\s$/.test(val)) {
+            inlineSelected = false;
+            return;
+        }
+
         currentName = val.trim();
         if (!currentName) return;
 

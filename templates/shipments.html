@@ -120,6 +120,14 @@
             <div class="phone">
                 {{ shipment.recipient_number }}
             </div>
+            <div class="recipient-passport">
+                <span class="recipient-passport-label">Паспорт:</span>
+                {% if shipment.recipient_passport %}
+                    <span>{{ shipment.recipient_passport }}</span>
+                {% else %}
+                    <span class="recipient-passport-empty">—</span>
+                {% endif %}
+            </div>
         </div>
         
         <!-- Кол-во / вес -->
@@ -169,8 +177,8 @@
         </div>
     </div>
 
-    <!-- 2. Оплата / Стоимость / Паспорт -->
-    <div class="pd-grid pd-grid-3">
+    <!-- 2. Оплата / Стоимость -->
+    <div class="pd-grid pd-grid-2-even">
 
         <!-- Оплата -->
         <div class="pd-section">
@@ -192,18 +200,6 @@
             <div class="pd-section-label"><span class="icon">💰</span> Стоимость груза</div>
             <div class="pd-badges">
                 <span class="pd-badge pd-badge-rub">{{ shipment.cargo_cost }} RUB</span>
-            </div>
-        </div>
-
-        <!-- Паспорт -->
-        <div class="pd-section">
-            <div class="pd-section-label"><span class="icon">🪪</span> Паспорт</div>
-            <div class="pd-passport-value">
-                {% if shipment.recipient_passport %}
-                    {{ shipment.recipient_passport }}
-                {% else %}
-                    <span class="pd-empty">—</span>
-                {% endif %}
             </div>
         </div>
 
@@ -846,8 +842,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script>
 function goToStep(stepIndex) {
+    if (stepIndex < 0 || stepIndex >= contents.length) return;
     currentStep = stepIndex;
     updateUI();
+    window.initInventoryWeightLabel?.();
 }
 </script>
 
@@ -982,6 +980,61 @@ function validateStep(stepIndex) {
     return valid;
 }
 
+function validatePaymentStep() {
+    const sharedRecipient = document.getElementById("sharedRecipient")?.checked;
+    let valid = true;
+
+    if (sharedRecipient) return true;
+
+    const amount = document.getElementById("paymentAmount");
+    const payment = document.querySelector('input[name="payment"]:checked');
+    const currency = document.querySelector('input[name="currency"]:checked');
+
+    if (!amount || !amount.value.trim()) {
+        markError(amount);
+        valid = false;
+    }
+
+    if (!payment) {
+        markError(document.querySelector('input[name="payment"]')?.closest(".radio-group"));
+        valid = false;
+    }
+
+    if (!currency) {
+        markError(document.querySelector('input[name="currency"]')?.closest(".radio-group"));
+        valid = false;
+    }
+
+    return valid;
+}
+
+function validateShipmentForm() {
+    let firstInvalidStep = null;
+
+    steps.forEach(step => step.classList.remove("invalid"));
+
+    for (let i = 0; i < contents.length; i++) {
+        const valid = i === 4 ? validatePaymentStep() : validateStep(i);
+
+        if (!valid) {
+            steps[i].classList.add("invalid");
+            if (firstInvalidStep === null) firstInvalidStep = i;
+        }
+    }
+
+    if (firstInvalidStep !== null) {
+        if (typeof showToast === "function") {
+            showToast("Заполните поля в красных шагах", "error");
+        } else {
+            alert("Заполните поля в красных шагах");
+        }
+        goToStep(firstInvalidStep);
+        return false;
+    }
+
+    return true;
+}
+
 /* =========================
    UI и навигация
 ========================= */
@@ -1006,8 +1059,6 @@ function updateUI() {
 ========================= */
 
 nextBtn.onclick = () => {
-    if (!validateStep(currentStep)) return;
-
     if (currentStep < contents.length - 1) {
         currentStep++;
         updateUI();
@@ -1021,6 +1072,12 @@ prevBtn.onclick = () => {
         updateUI();
     }
 };
+
+steps.forEach(step => {
+    step.addEventListener("click", () => {
+        goToStep(Number(step.dataset.step));
+    });
+});
 
 /* =========================
    Инициализация
@@ -1083,11 +1140,17 @@ function resetModalFields() {
 
     modal.querySelectorAll("input, textarea, select").forEach(el => {
         if (!el) return;
+        el.classList.remove("placeholder-error", "select-error");
+
         if (el.type === "radio" || el.type === "checkbox") {
             el.checked = false;
         } else {
             el.value = "";
         }
+    });
+
+    document.querySelectorAll(".step.invalid").forEach(step => {
+        step.classList.remove("invalid");
     });
 
     // inventory

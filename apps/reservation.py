@@ -12,8 +12,62 @@ from openpyxl.styles import Font, Alignment
 from openpyxl import load_workbook
 import re
 import qrcode
+import os
+import json
 from datetime import datetime
 from openpyxl.drawing.image import Image
+
+BLACKLIST_PATH = os.path.join(os.getcwd(), "documents", "reservation_blacklist.json")
+
+
+def ensure_blacklist_file():
+    os.makedirs(os.path.dirname(BLACKLIST_PATH), exist_ok=True)
+    if not os.path.exists(BLACKLIST_PATH):
+        with open(BLACKLIST_PATH, "w", encoding="utf-8") as f:
+            json.dump([], f, ensure_ascii=False, indent=2)
+
+
+def normalize_passport(value):
+    return re.sub(r"\s+", "", value or "").upper()
+
+
+def normalize_phone(value):
+    return re.sub(r"\D", "", value or "")
+
+
+def load_reservation_blacklist():
+    ensure_blacklist_file()
+    try:
+        with open(BLACKLIST_PATH, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return []
+
+    return data if isinstance(data, list) else []
+
+
+def save_reservation_blacklist(entries):
+    ensure_blacklist_file()
+    with open(BLACKLIST_PATH, "w", encoding="utf-8") as f:
+        json.dump(entries, f, ensure_ascii=False, indent=2)
+
+
+def find_blacklist_match(phone, passport):
+    entries = load_reservation_blacklist()
+    passport_key = normalize_passport(passport)
+    phone_key = normalize_phone(phone)
+
+    if passport_key:
+        for entry in entries:
+            if normalize_passport(entry.get("passport")) == passport_key:
+                return entry, "passport"
+
+    if phone_key:
+        for entry in entries:
+            if normalize_phone(entry.get("phone")) == phone_key:
+                return entry, "phone"
+
+    return None, None
 
 class ReservationView(MethodView):
     def __init__(self):
@@ -383,6 +437,64 @@ class UserCheckWithPassport(MethodView):
             return jsonify({"success": False})
 
 
+class ReservationBlacklistCheckView(MethodView):
+    decorators = [login_required]
+
+    def post(self):
+        data = request.get_json() or {}
+        phone = data.get("phone", "")
+        passport = data.get("passport", "")
+
+        entry, match_by = find_blacklist_match(phone, passport)
+
+        if not entry:
+            return jsonify({"found": False})
+
+        return jsonify({
+            "found": True,
+            "match_by": match_by,
+            "phone": entry.get("phone", ""),
+            "passport": entry.get("passport", ""),
+            "reason": entry.get("reason", "")
+        })
+
+
+class ReservationBlacklistAddView(MethodView):
+    decorators = [login_required]
+
+    def post(self):
+        data = request.get_json() or {}
+        phone = (data.get("phone") or "").strip()
+        passport = (data.get("passport") or "").strip()
+        reason = (data.get("reason") or "").strip()
+
+        if not passport:
+            return jsonify({"success": False, "message": "Укажите паспорт"}), 400
+
+        if not reason:
+            return jsonify({"success": False, "message": "Укажите причину"}), 400
+
+        entries = load_reservation_blacklist()
+        passport_key = normalize_passport(passport)
+        phone_key = normalize_phone(phone)
+
+        for entry in entries:
+            if normalize_passport(entry.get("passport")) == passport_key:
+                return jsonify({"success": False, "message": "Такой паспорт уже есть в черном списке"}), 409
+
+            if phone_key and normalize_phone(entry.get("phone")) == phone_key:
+                return jsonify({"success": False, "message": "Такой телефон уже есть в черном списке"}), 409
+
+        entries.append({
+            "passport": passport,
+            "phone": phone,
+            "reason": reason
+        })
+        save_reservation_blacklist(entries)
+
+        return jsonify({"success": True, "message": "Запись добавлена в черный список"})
+
+
 
 
 
@@ -396,3 +508,5 @@ def register_reservation_routes(app, db):
     app.add_url_rule('/ticket', view_func=GenerateTicketView.as_view('generate_ticket', db=db))
     app.add_url_rule('/check_user_with_phone', view_func=UserCheckWithPhone.as_view('check_user_with_phone', db=db))
     app.add_url_rule('/check_user_with_passport', view_func=UserCheckWithPassport.as_view('check_user_with_passport', db=db))
+    app.add_url_rule('/reservation_blacklist_check', view_func=ReservationBlacklistCheckView.as_view('reservation_blacklist_check'))
+    app.add_url_rule('/reservation_blacklist_add', view_func=ReservationBlacklistAddView.as_view('reservation_blacklist_add'))

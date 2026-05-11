@@ -31,17 +31,23 @@ body {
 .parcel-card {
     position: relative;
     background: #ffffff;
-    border-radius: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.06);
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
     transform-origin: center;
 }
 
 .parcel-card:hover {
-    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12), 0 16px 48px rgba(37, 99, 235, 0.08);
-    transform: translateY(-4px) scale(1.01);
+    border-color: #d3deea;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06), 0 12px 28px rgba(59, 84, 112, 0.08);
+}
+
+.parcel-card.expanded {
+    border-color: #d5e0eb;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05), 0 10px 26px rgba(15, 23, 42, 0.08);
 }
 
 /* Анимация появления карточек */
@@ -73,22 +79,22 @@ body {
 
 /* Левая полоса — растаможка */
 .parcel-card.customs {
-    border-left: 5px solid #dc3545;
+    border-left: 4px solid #c98f8f;
 }
 
 /* Правая полоса — оплата */
 .parcel-card.payment-paid {
-    border-right: 5px solid #198754;
+    border-left: 4px solid #8bb89b;
 }
 
 .parcel-card.issued {
-    border-left: 5px solid #cabe0c;
+    border-left-color: #a89ac5;
 }
 
 
 
 .parcel-card.payment-unpaid {
-    border-right: 5px solid #dc3545;
+    border-left: 4px solid #c98f8f;
 }
 
 /* Чередующиеся цвета фона */
@@ -96,8 +102,13 @@ body {
     background-color: #ffffff; 
 }
 
-.parcel-card.sequence-1 { 
-    background-color: #f8f9fa; 
+.parcel-card.sequence-1 {
+    background-color: #f2f5f8;
+    border-color: #d8e0e8;
+}
+
+.parcel-card.sequence-1 .parcel-main:hover {
+    background-color: #edf2f6;
 }
 
 /* ===================================
@@ -106,38 +117,136 @@ body {
 
 .parcel-main {
     display: grid;
-    grid-template-columns: repeat(5, 1fr) auto;
-    gap: 16px;
-    padding: 20px;
-    align-items: center;
-    cursor: pointer;
+    grid-template-columns: minmax(190px, 1.2fr) minmax(150px, 1fr) minmax(190px, 1.25fr) minmax(120px, 0.75fr) minmax(120px, 0.75fr) 44px;
+    gap: 18px;
+    padding: 16px 18px;
+    align-items: stretch;
+    cursor: default;
     transition: background-color 0.3s ease;
 }
 
 .parcel-main:hover {
-    background-color: rgba(37, 99, 235, 0.02);
+    background-color: rgba(248, 250, 252, 0.86);
 }
 
 .label {
-    font-size: 12px;
+    font-size: 10px;
     color: #6c757d;
-    font-weight: 500;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    letter-spacing: 0.08em;
+    margin-bottom: 5px;
 }
 
 .value {
     font-size: 15px;
-    font-weight: 600;
-    color: #212529;
+    font-weight: 750;
+    color: #111827;
     transition: color 0.3s ease;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
 }
 
 .phone {
     font-size: 13px;
-    color: #6c757d;
-    font-weight: 400;
+    color: #64748b;
+    font-weight: 650;
+    line-height: 1.3;
+    margin-top: 3px;
+}
+
+.parcel-id-cell,
+.parcel-person,
+.parcel-metric,
+.parcel-city-cell {
+    min-width: 0;
+}
+
+.parcel-id-cell {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+}
+
+.parcel-id-body {
+    min-width: 0;
+}
+
+.parcel-number {
+    color: #0f172a;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 1.15;
+}
+
+.parcel-date {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.parcel-status-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 22px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.status-paid {
+    background: #edf7f1;
+    color: #356a49;
+}
+
+.status-unpaid {
+    background: #f8eeee;
+    color: #875050;
+}
+
+.status-issued {
+    background: #f0eef8;
+    color: #63527e;
+}
+
+.metric-value {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.metric-value span,
+.city-value {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 5px 10px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: #f7f9fb;
+    color: #263445;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.city-value {
+    background: #f1f6fb;
+    border-color: #dde8f4;
+    color: #365d83;
+    overflow-wrap: anywhere;
 }
 
 .recipient-passport {
@@ -145,10 +254,11 @@ body {
     align-items: center;
     flex-wrap: wrap;
     gap: 4px;
-    margin-top: 6px;
-    padding: 3px 8px;
+    margin-top: 7px;
+    padding: 4px 8px;
     border-radius: 8px;
-    background: rgba(13, 110, 253, 0.08);
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
     color: #1f2937;
     font-size: 12px;
     font-weight: 700;
@@ -179,28 +289,31 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
+    min-width: 0;
 }
 
 .copy-btn {
-    background: linear-gradient(135deg, #e7f3ff 0%, #cfe2ff 100%);
-    border: none;
+    flex: 0 0 auto;
+    width: 30px;
+    height: 30px;
+    background: #f4f7fb;
+    border: 1px solid #dde6f0;
     border-radius: 8px;
-    padding: 4px 8px;
+    padding: 0;
     font-size: 14px;
     cursor: pointer;
-    color: #0d6efd;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.1);
+    color: #456b91;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    box-shadow: none;
 }
 
 .copy-btn:hover {
-    background: linear-gradient(135deg, #cfe2ff 0%, #9ec5fe 100%);
-    transform: scale(1.1) rotate(5deg);
-    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.2);
+    background: #eaf1f8;
+    border-color: #ccdbea;
 }
 
 .copy-btn:active {
-    transform: scale(0.95);
+    background: #dde8f4;
 }
 
 /* ===================================
@@ -208,25 +321,32 @@ body {
 =================================== */
 
 .toggle-btn {
-    background: linear-gradient(135deg, #e7f3ff 0%, #d0e7ff 100%);
-    border: none;
-    font-size: 20px;
+    align-self: center;
+    justify-self: end;
+    width: 38px;
+    height: 38px;
+    background: #f7f9fb;
+    border: 1px solid #dbe3ef;
+    font-size: 22px;
+    line-height: 1;
     border-radius: 10px;
-    padding: 8px 12px;
+    padding: 0;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 6px rgba(13, 110, 253, 0.1);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    box-shadow: none;
+    color: #475569;
 }
 
 .toggle-btn:hover {
-    background: linear-gradient(135deg, #cfe2ff 0%, #b6d4fe 100%);
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+    background: #edf3f8;
+    border-color: #ccdbea;
 }
 
 /* Анимация вращения при раскрытии */
 .parcel-card.expanded .toggle-btn {
     transform: rotate(180deg);
+    background: #edf3f8;
+    border-color: #ccdbea;
 }
 
 /* ===================================
@@ -234,11 +354,11 @@ body {
 =================================== */
 
 .parcel-details {
-    padding: 20px;
+    padding: 0;
     border-top: 1px solid #e9ecef;
     display: none;
     font-size: 14px;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+    background: #fbfcfe;
     animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -252,13 +372,13 @@ body {
     to {
         opacity: 1;
         max-height: 500px;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding-top: 0;
+        padding-bottom: 0;
     }
 }
 
 .parcel-details div {
-    margin-bottom: 8px;
+    margin-bottom: 0;
     transition: transform 0.2s ease;
 }
 
@@ -957,9 +1077,9 @@ body {
 =================================== */
 
 .parcel-checkbox {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    margin-right: 10px;
+    margin: 2px 0 0;
     cursor: pointer;
 }
 
@@ -1013,9 +1133,9 @@ body {
 }
 
 .parcel-card:has(.parcel-checkbox input:checked) {
-    outline: 3px solid #0d6efd;
-    outline-offset: -3px;
-    box-shadow: 0 8px 24px rgba(13, 110, 253, 0.2), 0 16px 48px rgba(13, 110, 253, 0.15);
+    outline: 2px solid #8aa9c8;
+    outline-offset: -2px;
+    box-shadow: 0 2px 8px rgba(59, 84, 112, 0.14), 0 14px 32px rgba(59, 84, 112, 0.08);
 }
 
 /* ===================================
@@ -1284,8 +1404,13 @@ select.select-error {
 
 @media (max-width: 992px) {
     .parcel-main {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1.1fr 1fr;
         gap: 14px;
+    }
+
+    .parcel-id-cell,
+    .parcel-recipient {
+        grid-column: span 2;
     }
 
     .toggle-btn {
@@ -1325,6 +1450,27 @@ select.select-error {
 }
 
 @media (max-width: 576px) {
+    .parcel-main {
+        grid-template-columns: 1fr;
+        padding: 14px;
+    }
+
+    .parcel-id-cell,
+    .parcel-recipient,
+    .toggle-btn {
+        grid-column: auto;
+    }
+
+    .toggle-btn {
+        width: 100%;
+        justify-self: stretch;
+    }
+
+    .metric-value span,
+    .city-value {
+        min-height: 28px;
+    }
+
     .step {
         padding: 8px 4px;
         font-size: 10px;
@@ -1476,16 +1622,17 @@ body.loaded .parcel-card {
 /* улучшенное доп инфо */
 /* ───── Parcel Details ───── */
 .parcel-details {
-    background: #ffffff;
-    border-radius: 16px;
+    background: #fbfcfe;
+    border-top: 1px solid #e7edf4;
+    border-radius: 0;
     overflow: hidden;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+    box-shadow: none;
     font-family: 'Manrope', sans-serif;
 }
 
 .pd-section {
-    padding: 16px 20px;
-    border-bottom: 1px solid #7a7a7a;
+    padding: 14px 18px;
+    border-bottom: 1px solid #e7edf4;
 }
 .pd-section:last-child { border-bottom: none; }
 
@@ -1493,18 +1640,22 @@ body.loaded .parcel-card {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: #7a7a7a;
+    color: #7c8797;
     margin-bottom: 7px;
 }
-.pd-section-label .icon { font-size: 13px; line-height: 1; }
+.pd-section-label .icon {
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0.76;
+}
 
 .pd-section-value {
     font-size: 14px;
-    color: #1a1d2e;
+    color: #263445;
     font-weight: 500;
     line-height: 1.5;
 }
@@ -1527,10 +1678,10 @@ body.loaded .parcel-card {
 /* ── Сетки ── */
 .pd-grid {
     display: grid;
-    border-bottom: 1px solid #7a7a7a;
+    border-bottom: 1px solid #e7edf4;
 }
 .pd-grid .pd-section {
-    border-right: 1px solid #7a7a7a;
+    border-right: 1px solid #e7edf4;
     border-bottom: none;
 }
 .pd-grid .pd-section:last-child { border-right: none; }
@@ -1552,28 +1703,28 @@ body.loaded .parcel-card {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 4px 10px;
-    border-radius: 8px;
+    padding: 5px 10px;
+    border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
     line-height: 1;
     white-space: nowrap;
 }
 
-.pd-badge-success  { background: #e8f9f0; color: #1a9e5c; }
-.pd-badge-secondary{ background: #f59285; color: #5c6484; }
-.pd-badge-amount   { background: #f5f6ff; color: #4a52c9; }
-.pd-badge-rub      { background: #fff3e8; color: #e07a1a; }
-.pd-badge-weight   { background: #eef6ff; color: #1a78c9; border-radius: 20px; }
+.pd-badge-success  { background: #edf7f1; color: #356a49; }
+.pd-badge-secondary{ background: #f8eeee; color: #875050; }
+.pd-badge-amount   { background: #f1f3fa; color: #58627f; }
+.pd-badge-rub      { background: #f8f3ed; color: #805f3e; }
+.pd-badge-weight   { background: #f1f6fb; color: #365d83; }
 
 /* ── Кнопки ── */
 .pd-actions {
-    padding: 14px 20px;
-    background: #fafbfd;
+    padding: 14px 18px;
+    background: #f7f9fc;
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    border-top: 1px solid #f0f2f7;
+    border-top: 1px solid #e7edf4;
 }
 
 .pd-btn {
@@ -1581,26 +1732,26 @@ body.loaded .parcel-card {
     align-items: center;
     gap: 5px;
     padding: 7px 16px;
-    border-radius: 10px;
+    border-radius: 8px;
     font-family: 'Manrope', sans-serif;
     font-size: 12.5px;
     font-weight: 700;
     border: 1.5px solid transparent;
     cursor: pointer;
-    transition: all 0.18s ease;
+    transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     background: transparent;
 }
-.pd-btn:hover { transform: translateY(-1px); }
-.pd-btn:active { transform: translateY(0); }
+.pd-btn:hover { transform: none; }
+.pd-btn:active { transform: none; }
 
-.pd-btn-edit    { border-color: #c5cadd; color: #3d4466; }
-.pd-btn-edit:hover { background: #f0f2f7; border-color: #9ba3b8; }
+.pd-btn-edit    { border-color: #ccd6e2; color: #43566d; }
+.pd-btn-edit:hover { background: #edf2f7; border-color: #b8c6d6; }
 
-.pd-btn-danger  { border-color: #fbc5c5; color: #c0392b; }
-.pd-btn-danger:hover { background: #fff0f0; border-color: #e74c3c; }
+.pd-btn-danger  { border-color: #ead0d0; color: #875050; }
+.pd-btn-danger:hover { background: #f8eeee; border-color: #d9baba; }
 
-.pd-btn-success { background: #1a9e5c; border-color: #1a9e5c; color: #fff; }
-.pd-btn-success:hover { background: #158f52; box-shadow: 0 4px 12px rgba(26,158,92,0.3); }
+.pd-btn-success { background: #eaf5ee; border-color: #cfe6d7; color: #356a49; }
+.pd-btn-success:hover { background: #deefe5; border-color: #bddcc8; box-shadow: none; }
 
 /* ── Адаптив ── */
 @media (max-width: 600px) {

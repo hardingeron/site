@@ -31,6 +31,7 @@
     </div> 
     <button data-lang="ge" class="btn btn-primary" id="openModalStatisticGe">სტატისტიკა</button>
     <button data-lang="ru" class="btn btn-primary hidden" id="openModalStatisticRu">Статистика</button>
+    <button type="button" class="btn btn-danger" id="openBlacklistModal">Черный список</button>
     <form id="download_form" action="/download_ved" method="POST">
       <input type="hidden" name="reis" value="">
       <input type="hidden" name="selected_date" value="">
@@ -215,6 +216,7 @@
         <h2 data-lang="ge" class="modal_text_block">ჩაწერეთ მონაცემები</h2>
         <h2 data-lang="ru" class="modal_text_block hidden">Введите данные</h2>
         <div id="alert" class="alert alert-danger d-none">Данные не найдены!</div>
+        <div id="reservation-blacklist-warning" class="reservation-blacklist-warning hidden"></div>
         <input type="hidden" value="" name="old_seat_number">
         <input type="hidden" value="{{reis}}" name="reis" required readonly><br>
         <input type="hidden" value="{{d}}" name="selected_date" required readonly><br>
@@ -257,9 +259,10 @@
                 <label data-lang="ge">ტელეფონი</label>
                 <label data-lang="ru" class="hidden">Телефон</label>
                 <div class="d-flex">
-                  <input type="text" id="phone" name="phone" class="form-control" required>
+                  <input type="text" id="phone" name="phone" class="form-control" inputmode="numeric" autocomplete="tel" required>
                   <button id="check" class="btn_check">?</button>
                 </div>
+                <div id="phoneValidationMessage" class="phone-validation-message hidden"></div>
             </div>
         </div>
         
@@ -368,6 +371,30 @@
 </div>
 
 
+<div id="blacklistModal" class="blacklist-modal hidden">
+  <form id="blacklist-form" class="blacklist-form">
+    <div class="blacklist-modal-header">
+      <h2>Черный список</h2>
+      <button type="button" id="closeBlacklistModal" class="bi bi-x-circle"></button>
+    </div>
+
+    <label for="blacklistPassport">Паспорт</label>
+    <input type="text" id="blacklistPassport" name="passport" required>
+
+    <label for="blacklistPhone">Телефон</label>
+    <input type="text" id="blacklistPhone" name="phone" inputmode="numeric" autocomplete="tel">
+    <div id="blacklistPhoneValidationMessage" class="phone-validation-message hidden"></div>
+
+    <label for="blacklistReason">Причина</label>
+    <textarea id="blacklistReason" name="reason" rows="4" required></textarea>
+
+    <div id="blacklistFormMessage" class="blacklist-form-message hidden"></div>
+
+    <button type="submit">Добавить</button>
+  </form>
+</div>
+
+
 
 
 <div id="myModalStatistic" class="modal_statistic">
@@ -446,6 +473,166 @@ const editButton = document.getElementById('edit');
 const seats = document.querySelectorAll('.seat');
 let selectedSeatNumber = null;
 const exitButton = document.getElementById('exit');
+const blacklistWarning = document.getElementById('reservation-blacklist-warning');
+let blacklistCheckTimeout = null;
+
+function hideBlacklistWarning() {
+  if (!blacklistWarning) return;
+  blacklistWarning.textContent = '';
+  blacklistWarning.classList.add('hidden');
+}
+
+async function checkReservationBlacklist() {
+  if (!blacklistWarning) return;
+
+  const phone = modalForm.querySelector('[name="phone"]').value.trim();
+  const passport = modalForm.querySelector('[name="pasport"]').value.trim();
+
+  if (!phone && !passport) {
+    hideBlacklistWarning();
+    return;
+  }
+
+  try {
+    const response = await fetch('/reservation_blacklist_check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, passport })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.found) {
+      hideBlacklistWarning();
+      return;
+    }
+
+    const matchText = data.match_by === 'passport' ? 'паспорт' : 'телефон';
+    blacklistWarning.textContent = `Не стоит бронировать: ${data.reason || 'причина не указана'} (совпадение: ${matchText})`;
+    blacklistWarning.classList.remove('hidden');
+  } catch (error) {
+    console.error('Ошибка проверки черного списка:', error);
+  }
+}
+
+function scheduleReservationBlacklistCheck() {
+  clearTimeout(blacklistCheckTimeout);
+  blacklistCheckTimeout = setTimeout(checkReservationBlacklist, 250);
+}
+
+window.checkReservationBlacklist = checkReservationBlacklist;
+
+function validatePhoneInput(input, messageElement) {
+  let value = input.value.replace(/\D/g, '');
+  const firstDigit = value[0] || '';
+  let message = '';
+
+  if (firstDigit === '7') {
+    value = value.slice(0, 11);
+    if (value.length > 0 && value.length < 11) {
+      message = 'Некорректный номер: российский номер должен содержать 11 цифр';
+    }
+  } else if (firstDigit === '5') {
+    value = value.slice(0, 9);
+    if (value.length > 0 && value.length < 9) {
+      message = 'Некорректный номер: грузинский номер должен содержать 9 цифр';
+    }
+  } else if (firstDigit) {
+    message = 'Номер может начинаться только с 7 или 5';
+    value = '';
+  }
+
+  input.value = value;
+
+  if (!messageElement) return;
+  messageElement.textContent = message;
+  messageElement.classList.toggle('hidden', !message);
+}
+
+function setupPhoneInputStandard(input, messageElement, onChange) {
+  if (!input) return;
+
+  input.addEventListener('input', () => {
+    validatePhoneInput(input, messageElement);
+    onChange?.();
+  });
+
+  validatePhoneInput(input, messageElement);
+}
+
+const reservationPhoneInput = modalForm.querySelector('[name="phone"]');
+const reservationPhoneMessage = document.getElementById('phoneValidationMessage');
+const blacklistPhoneInput = document.getElementById('blacklistPhone');
+const blacklistPhoneMessage = document.getElementById('blacklistPhoneValidationMessage');
+
+setupPhoneInputStandard(reservationPhoneInput, reservationPhoneMessage, scheduleReservationBlacklistCheck);
+setupPhoneInputStandard(blacklistPhoneInput, blacklistPhoneMessage);
+modalForm.querySelector('[name="pasport"]').addEventListener('input', scheduleReservationBlacklistCheck);
+window.validateReservationPhone = () => validatePhoneInput(reservationPhoneInput, reservationPhoneMessage);
+
+const blacklistModal = document.getElementById('blacklistModal');
+const openBlacklistModalButton = document.getElementById('openBlacklistModal');
+const closeBlacklistModalButton = document.getElementById('closeBlacklistModal');
+const blacklistForm = document.getElementById('blacklist-form');
+const blacklistFormMessage = document.getElementById('blacklistFormMessage');
+
+function showBlacklistFormMessage(message, success) {
+  blacklistFormMessage.textContent = message;
+  blacklistFormMessage.classList.remove('hidden', 'success', 'error');
+  blacklistFormMessage.classList.add(success ? 'success' : 'error');
+}
+
+function openBlacklistModal() {
+  blacklistForm.reset();
+  validatePhoneInput(blacklistPhoneInput, blacklistPhoneMessage);
+  blacklistFormMessage.textContent = '';
+  blacklistFormMessage.classList.add('hidden');
+  blacklistFormMessage.classList.remove('success', 'error');
+  blacklistModal.classList.remove('hidden');
+}
+
+function closeBlacklistModal() {
+  blacklistModal.classList.add('hidden');
+}
+
+openBlacklistModalButton.addEventListener('click', openBlacklistModal);
+closeBlacklistModalButton.addEventListener('click', closeBlacklistModal);
+blacklistModal.addEventListener('click', event => {
+  if (event.target === blacklistModal) closeBlacklistModal();
+});
+
+blacklistForm.addEventListener('submit', async event => {
+  event.preventDefault();
+
+  const submitButton = blacklistForm.querySelector('[type="submit"]');
+  submitButton.disabled = true;
+
+  const payload = {
+    passport: blacklistForm.passport.value.trim(),
+    phone: blacklistForm.phone.value.trim(),
+    reason: blacklistForm.reason.value.trim()
+  };
+
+  try {
+    const response = await fetch('/reservation_blacklist_add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json();
+
+    showBlacklistFormMessage(data.message || 'Готово', response.ok && data.success);
+
+    if (response.ok && data.success) {
+      blacklistForm.reset();
+    }
+  } catch (error) {
+    console.error('Ошибка добавления в черный список:', error);
+    showBlacklistFormMessage('Не удалось добавить запись', false);
+  } finally {
+    submitButton.disabled = false;
+  }
+});
 
 
 
@@ -534,6 +721,8 @@ seats.forEach(seat => {
     }
 
     modal.style.display = 'block';
+    window.validateReservationPhone?.();
+    scheduleReservationBlacklistCheck();
   });
 });
 
@@ -568,6 +757,7 @@ modalForm.addEventListener('submit', async (event) => {
 
 exitButton.addEventListener('click', () => {
   modal.style.display = 'none';
+  hideBlacklistWarning();
 });
 
 editButton.addEventListener('click', () => {

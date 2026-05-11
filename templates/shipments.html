@@ -45,10 +45,6 @@
     
     
     <!--  главный список на старнице -->
-    <style>
-        .parcel-card.sequence-0 { background-color: #ffffff; }
-        .parcel-card.sequence-1 { background-color: #dddddd; }
-    </style>
 <!-- Выделить все -->
 
 <div class="shipments">
@@ -76,10 +72,7 @@
     
     
     <div class="parcel-main">
-        <!-- Чекбокс -->
-        
-        <!-- № посылки -->
-        <div>
+        <div class="parcel-id-cell">
             <label class="parcel-checkbox">
                 <input type="checkbox" 
                 name="selected_shipments" 
@@ -88,17 +81,32 @@
                 data-weight="{{ shipment.total_weight }}">
                 <span></span>
             </label>
-            
-            <div class="label">№ посылки</div>
-            <div class="value {{ 'text-success' if shipment.is_processed }}">
-                TRK-{{ shipment.shipment_number }}
+            <div class="parcel-id-body">
+                <div class="label">№ посылки</div>
+                <div class="parcel-number {{ 'text-success' if shipment.is_processed }}">
+                    TRK-{% if shipment.city_from == 'Санкт-Петербург' %}0{% endif %}{{ shipment.shipment_number }}
+                </div>
+                <div class="parcel-date">
+                    {{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}
+                </div>
+                <div class="parcel-status-row">
+                    {% if shipment.payment_status == 'card' %}
+                        <span class="status-pill status-paid">Карта</span>
+                    {% elif shipment.payment_status == 'paid' %}
+                        <span class="status-pill status-paid">Оплачено</span>
+                    {% else %}
+                        <span class="status-pill status-unpaid">Не оплачено</span>
+                    {% endif %}
+                    {% if shipment.issued %}
+                        <span class="status-pill status-issued">Выдана</span>
+                    {% endif %}
+                </div>
             </div>
-            <div class="label">{{ shipment.order_date.strftime('%d.%m.%Y %H:%M') if shipment.order_date else 'Не указано' }}</div>
         </div>
         
         
         <!-- Отправитель -->
-        <div>
+        <div class="parcel-person">
             <div class="label">Отправитель</div>
             <div class="value">
                 {{ shipment.sender_name }} {{ shipment.sender_surname }}
@@ -109,7 +117,7 @@
         </div>
         
         <!-- Получатель -->
-        <div>
+        <div class="parcel-person parcel-recipient">
             <div class="label">Получатель</div>
             <div class="receiver-name">
                 <div class="value">
@@ -131,27 +139,28 @@
         </div>
         
         <!-- Кол-во / вес -->
-        <div>
-            <div class="label">Кол-во / вес</div>
-            <div class="value">
-                {{ shipment.parcels_count }} шт / {{shipment.total_weight}}
+        <div class="parcel-metric">
+            <div class="label">Места / вес</div>
+            <div class="metric-value">
+                <span>{{ shipment.parcels_count }} шт</span>
+                <span>{{ shipment.total_weight }} кг</span>
             </div>
         </div>
         
         <!-- Город -->
-        <div>
+        <div class="parcel-city-cell">
             <div class="label">Город</div>
-            <div class="value">
+            <div class="city-value">
                 {{ shipment.city_to }}
             </div>
         </div>
         
-        <button class="toggle-btn">⌄</button>
+        <button class="toggle-btn" type="button" aria-label="Развернуть детали">⌄</button>
         
     </div>
     
 <!-- 🔽 Детали -->
-<div class="parcel-details mt-3">
+<div class="parcel-details">
 
     <!-- 1. Описание -->
     <div class="pd-section">
@@ -823,6 +832,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const open = details.style.display === 'block';
             details.style.display = open ? 'none' : 'block';
+            card.classList.toggle('expanded', !open);
             btn.style.transform = open ? 'rotate(0)' : 'rotate(180deg)';
         });
     });

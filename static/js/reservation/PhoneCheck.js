@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.querySelector("[name='flname']").value = data.flname;
                 document.querySelector("[name='pasport']").value = data.pasport;
                 document.querySelector("[name='date_of_birth']").value = data.date_of_birth;
+                window.checkReservationBlacklist?.();
 
                 if (data.gender === "male") {
                     document.getElementById("male").checked = true;

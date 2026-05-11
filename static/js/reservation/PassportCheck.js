@@ -31,6 +31,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.querySelector("[name='flname']").value = data.flname;
                 document.querySelector("[name='phone']").value = data.phone;
                 document.querySelector("[name='date_of_birth']").value = data.date_of_birth;
+                document.querySelector("[name='phone']").dispatchEvent(new Event("input"));
+                window.checkReservationBlacklist?.();
 
                 if (data.gender === "male") {
                     document.getElementById("male").checked = true;

@@ -1,6 +1,7 @@
 // messages.js
 function showMessage(message, success) {
     var messageContainer = document.getElementById("message-container");
+    messageContainer.classList.remove("hidden");
     messageContainer.textContent = message;
 
     if (success) {
@@ -13,6 +14,7 @@ function showMessage(message, success) {
 
     setTimeout(function() {
         messageContainer.style.display = "none";
+        messageContainer.classList.add("hidden");
         messageContainer.classList.remove("success", "error");
     }, 3000);
 }

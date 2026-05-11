@@ -365,12 +365,10 @@
         <div class="edit_block">
             <button type="button" id="edit">რედაქტირება</button>
         </div>
+        <div class="error_block">
+            <div id="error-message"></div>
+        </div>
     </form>
-    
-    
-    <div class="error_block">
-        <div id="error-message"></div>
-    </div>
 </div>
 
 
@@ -584,6 +582,18 @@ function scheduleReservationBlacklistCheck() {
 }
 
 window.checkReservationBlacklist = checkReservationBlacklist;
+
+function showReservationFormError(message) {
+  const errorMessageElement = document.getElementById('error-message');
+
+  if (errorMessageElement) {
+    errorMessageElement.textContent = message;
+    errorMessageElement.style.display = 'block';
+    errorMessageElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  showMessage(message, false);
+}
 
 function validatePhoneInput(input, messageElement) {
   let value = input.value.replace(/\D/g, '');
@@ -811,18 +821,26 @@ modalForm.addEventListener('submit', async (event) => {
         const formData = new FormData(modalForm);
         formData.append('seat_number', selectedSeatNumber);
 
-        const response = await fetch('/save_data', {
-            method: 'POST',
-            body: formData,
-        });
-
-        if (response.ok) {
-            console.log('Данные успешно отправлены на сервер');
-            location.reload();
-        } else {
+        try {
+            const response = await fetch('/save_data', {
+                method: 'POST',
+                body: formData,
+            });
             const responseData = await response.json();
 
-            showMessage(responseData.message, false);
+            if (response.ok && responseData.success !== false) {
+                console.log('Данные успешно отправлены на сервер');
+                location.reload();
+                return;
+            }
+
+            const message = isRussianLanguage()
+                ? (responseData.message_ru || responseData.message || 'Не удалось сохранить бронь')
+                : (responseData.message || responseData.message_ru || 'ჯავშნის შენახვა ვერ მოხერხდა');
+            showReservationFormError(message);
+        } catch (error) {
+            console.error('Ошибка сохранения бронирования:', error);
+            showReservationFormError('Не удалось сохранить бронь');
         }
     } else {
         console.error('Номер сиденья не выбран');

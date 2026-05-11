@@ -1068,6 +1068,11 @@ canvas {
   margin: 10px auto 0;
 }
 
+#modal-form .error_block {
+  width: 100%;
+  margin: 12px 0 0;
+}
+
 #error-message {
   display: none;
   padding: 10px 12px;

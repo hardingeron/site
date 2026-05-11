@@ -120,12 +120,16 @@ class SaveDataView(MethodView):
         # Проверяем, существует ли уже запись с таким flname
         existing_booking = Booking.query.filter_by(flname=flname, data=selected_date, fwc=fwc).first()
         if existing_booking:
-            return jsonify({'success': False, 'message': 'ამ სახელსა და გვარზე ადგილი უკვე დაჯავშნილია!!!!'}), 400
+            return jsonify({
+                'success': False,
+                'message': 'ამ სახელსა და გვარზე ადგილი უკვე დაჯავშნილია!!!!',
+                'message_ru': 'Такой человек уже забронирован на этот рейс'
+            })
         else:
             # Сохранение данных в базе данных
             save_booking_to_db(self.db, selected_date, seat_number, flname, gender, phone, pasport, comment, payment, fwc, destination, date_of_birth)
 
-            return jsonify({"message": "Данные успешно сохранены"})
+            return jsonify({"success": True, "message": "Данные успешно сохранены"})
 
 
 

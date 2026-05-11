@@ -469,10 +469,20 @@ class ReservationBlacklistAddView(MethodView):
         reason = (data.get("reason") or "").strip()
 
         if not passport:
-            return jsonify({"success": False, "message": "Укажите паспорт"}), 400
+            return jsonify({
+                "success": False,
+                "message": "Укажите паспорт",
+                "message_ru": "Укажите паспорт",
+                "message_ge": "მიუთითეთ პასპორტი"
+            }), 400
 
         if not reason:
-            return jsonify({"success": False, "message": "Укажите причину"}), 400
+            return jsonify({
+                "success": False,
+                "message": "Укажите причину",
+                "message_ru": "Укажите причину",
+                "message_ge": "მიუთითეთ მიზეზი"
+            }), 400
 
         entries = load_reservation_blacklist()
         passport_key = normalize_passport(passport)
@@ -480,10 +490,20 @@ class ReservationBlacklistAddView(MethodView):
 
         for entry in entries:
             if normalize_passport(entry.get("passport")) == passport_key:
-                return jsonify({"success": False, "message": "Такой паспорт уже есть в черном списке"}), 409
+                return jsonify({
+                    "success": False,
+                    "message": "Такой паспорт уже есть в черном списке",
+                    "message_ru": "Такой паспорт уже есть в черном списке",
+                    "message_ge": "ასეთი პასპორტი უკვე არის შავ სიაში"
+                }), 409
 
             if phone_key and normalize_phone(entry.get("phone")) == phone_key:
-                return jsonify({"success": False, "message": "Такой телефон уже есть в черном списке"}), 409
+                return jsonify({
+                    "success": False,
+                    "message": "Такой телефон уже есть в черном списке",
+                    "message_ru": "Такой телефон уже есть в черном списке",
+                    "message_ge": "ასეთი ტელეფონი უკვე არის შავ სიაში"
+                }), 409
 
         entries.append({
             "passport": passport,
@@ -492,7 +512,12 @@ class ReservationBlacklistAddView(MethodView):
         })
         save_reservation_blacklist(entries)
 
-        return jsonify({"success": True, "message": "Запись добавлена в черный список"})
+        return jsonify({
+            "success": True,
+            "message": "Запись добавлена в черный список",
+            "message_ru": "Запись добавлена в черный список",
+            "message_ge": "ჩანაწერი დაემატა შავ სიაში"
+        })
 
 
 

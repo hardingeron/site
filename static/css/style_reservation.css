@@ -749,4 +749,486 @@ canvas {
   min-height: 200px;
 }
 
+.hidden {
+  display: none !important;
+}
+
+/* Modern reservation form */
+#modal {
+  background: rgba(9, 16, 24, 0.72);
+  inset: 0;
+  height: 100vh;
+  height: 100dvh;
+  padding: 16px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+}
+
+#modal-form {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(720px, calc(100vw - 28px));
+  max-width: 720px;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  margin: 0;
+  padding: 18px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  background: #1f2b38;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  color: #eef5fb;
+  box-sizing: border-box;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.modal_text_block {
+  margin: 4px 0 16px;
+  font-size: 22px;
+  font-weight: 800;
+  text-align: left;
+  color: #f8fafc;
+}
+
+.exit_ticet_block {
+  max-width: none;
+  margin: 0 0 14px;
+  gap: 8px;
+}
+
+.ticket-button,
+#delete,
+#exit {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(203, 213, 225, 0.18);
+  border-radius: 10px;
+  background: #283849;
+  color: #e2edf6;
+  font-size: 18px;
+  box-shadow: none;
+  transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.ticket-button:hover,
+#delete:hover,
+#exit:hover {
+  background: #33465a;
+  border-color: rgba(203, 213, 225, 0.32);
+  transform: none;
+}
+
+#delete {
+  color: #f2b8b8;
+}
+
+#exit {
+  color: #d8e4ee;
+}
+
+.gender_block,
+.fl_name_phone_block,
+.pass_comm_block,
+.pay_dest_block {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.chair_block,
+.solo-content,
+.pay_radio_block,
+.pay_radio_block_two {
+  margin-bottom: 12px;
+}
+
+.gender_block {
+  grid-template-columns: repeat(2, minmax(150px, 190px));
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.gender_block > label {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-bottom: 2px;
+  text-align: center;
+}
+
+#modal-form label {
+  display: block;
+  margin: 0 0 6px;
+  color: #b8c7d6;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#modal-form input[type="text"]:not(#phone):not(#pasport),
+#modal-form select,
+#phone,
+#pasport {
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #46596c;
+  border-radius: 10px;
+  background: #263545;
+  color: #f8fafc;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+#modal-form input[type="text"]:focus,
+#modal-form select:focus,
+#phone:focus,
+#pasport:focus {
+  border-color: #7ba6c8;
+  background: #2a3b4d;
+  box-shadow: 0 0 0 3px rgba(123, 166, 200, 0.18);
+}
+
+#modal-form .chair_block > label,
+#modal-form .fl_name_block > label,
+#modal-form .phone_block > label,
+#modal-form .passport_block > label,
+#modal-form .date_of_birth_block > label,
+#modal-form .comment_block > label,
+#modal-form .pay_block > label,
+#modal-form .destination_block > label {
+  min-height: 34px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.d-flex {
+  align-items: stretch;
+}
+
+#phone,
+#pasport {
+  border-radius: 10px 0 0 10px;
+}
+
+.btn_check {
+  width: 46px;
+  max-width: 46px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #46596c;
+  border-left: 0;
+  border-radius: 0 10px 10px 0;
+  background: #324457;
+  color: #dbeafe;
+  font-weight: 900;
+}
+
+.btn_check:hover {
+  background: #3d5268;
+  transform: none;
+}
+
+.fl_name_block,
+.phone_block,
+.passport_block,
+.date_of_birth_block,
+.pay_block,
+.destination_block,
+.comment_block,
+.chair_block {
+  min-width: 0;
+}
+
+.comment_block,
+.chair_block {
+  width: 100%;
+}
+
+.pay_radio_block,
+.pay_radio_block_two {
+  display: grid;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.pay_radio_block {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pay_radio_block_two {
+  grid-template-columns: repeat(4, 1fr);
+  padding-top: 10px;
+}
+
+.gender_block input[type="radio"],
+.pay_radio_block input[type="radio"],
+.pay_radio_block_two input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gender_block .form-check {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.gender_block .form-check-label,
+.pay_radio_block label,
+.pay_radio_block_two label {
+  width: 100%;
+  min-height: 42px;
+  margin: 0;
+  padding: 10px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #46596c;
+  border-radius: 10px;
+  background: #263545;
+  color: #dbe7f2 !important;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.gender_block input[type="radio"]:checked + .form-check-label,
+.pay_radio_block input[type="radio"]:checked + label,
+.pay_radio_block_two input[type="radio"]:checked + label {
+  border-color: #88b5d8;
+  background: #dbeafe;
+  color: #17324b !important;
+  box-shadow: 0 0 0 3px rgba(136, 181, 216, 0.18);
+}
+
+.gender_block .form-check-label:hover,
+.pay_radio_block label:hover,
+.pay_radio_block_two label:hover {
+  border-color: #6f91ad;
+  background: #304155;
+}
+
+.reservation-blacklist-warning,
+.phone-validation-message,
+#alert,
+#error-message {
+  border-radius: 10px;
+}
+
+.reservation-blacklist-warning,
+#alert {
+  margin: 0 0 12px;
+  padding: 11px 12px;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  background: rgba(127, 29, 29, 0.36);
+  color: #fecaca;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.phone-validation-message {
+  margin: 7px 0 0;
+  padding: 8px 10px;
+  border: 1px solid rgba(248, 113, 113, 0.34);
+  background: rgba(127, 29, 29, 0.26);
+  color: #fecaca;
+}
+
+.error_block {
+  width: min(720px, calc(100vw - 28px));
+  margin: 10px auto 0;
+}
+
+#error-message {
+  display: none;
+  padding: 10px 12px;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  background: rgba(127, 29, 29, 0.42);
+  color: #fecaca;
+  text-align: center;
+}
+
+.button_block,
+.edit_block {
+  margin: 12px 0 0;
+}
+
+.button_block input,
+#edit {
+  width: 100%;
+  min-height: 46px;
+  margin: 0;
+  border-radius: 10px;
+  background: #6d96b6;
+  color: #fff;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: none;
+}
+
+.button_block input:hover,
+#edit:hover {
+  background: #5f88a8;
+  transform: none;
+}
+
+.blacklist-form {
+  width: min(520px, calc(100vw - 28px));
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 14px;
+  background: #1f2b38;
+}
+
+.blacklist-form input,
+.blacklist-form textarea {
+  border-color: #46596c;
+  border-radius: 10px;
+  background: #263545;
+}
+
+.blacklist-form button[type="submit"] {
+  border-radius: 10px;
+  background: #6d96b6;
+}
+
+@media (max-width: 720px) {
+  #modal {
+    align-items: center;
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  #modal-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    max-height: calc(100dvh - 20px);
+    padding: 14px;
+    margin: 0;
+    overflow-y: auto;
+  }
+
+  .fl_name_phone_block,
+  .pass_comm_block,
+  .pay_dest_block,
+  .pay_radio_block,
+  .pay_radio_block_two {
+    grid-template-columns: 1fr;
+  }
+
+  .gender_block {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gender_block > label {
+    margin-bottom: 2px;
+  }
+
+  .exit_ticet_block {
+    justify-content: flex-end;
+  }
+
+  .ticket-button,
+  #delete,
+  #exit {
+    width: 40px;
+  }
+}
+
+@media (max-width: 420px) {
+  #modal {
+    padding: 8px;
+    align-items: center;
+  }
+
+  #modal-form {
+    width: calc(100vw - 16px);
+    max-height: calc(100vh - 16px);
+    max-height: calc(100dvh - 16px);
+    min-height: auto;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .modal_text_block {
+    font-size: 19px;
+    margin-bottom: 12px;
+  }
+
+  #modal-form input[type="text"]:not(#phone):not(#pasport),
+  #modal-form select,
+  #phone,
+  #pasport {
+    font-size: 14px;
+    min-height: 46px;
+  }
+
+  .gender_block,
+  .pay_radio_block,
+  .pay_radio_block_two {
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .gender_block .form-check-label,
+  .pay_radio_block label,
+  .pay_radio_block_two label {
+    min-height: 46px;
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .pay_radio_block_two {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .button_block input,
+  #edit {
+    min-height: 48px;
+  }
+
+  .blacklist-modal {
+    align-items: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .blacklist-form {
+    margin: 8px auto;
+    padding: 14px;
+  }
+}
+
 

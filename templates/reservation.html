@@ -31,7 +31,10 @@
     </div> 
     <button data-lang="ge" class="btn btn-primary" id="openModalStatisticGe">სტატისტიკა</button>
     <button data-lang="ru" class="btn btn-primary hidden" id="openModalStatisticRu">Статистика</button>
-    <button type="button" class="btn btn-danger" id="openBlacklistModal">Черный список</button>
+    <button type="button" class="btn btn-danger" id="openBlacklistModal">
+      <span data-lang="ge">შავი სია</span>
+      <span data-lang="ru" class="hidden">Черный список</span>
+    </button>
     <form id="download_form" action="/download_ved" method="POST">
       <input type="hidden" name="reis" value="">
       <input type="hidden" name="selected_date" value="">
@@ -374,23 +377,38 @@
 <div id="blacklistModal" class="blacklist-modal hidden">
   <form id="blacklist-form" class="blacklist-form">
     <div class="blacklist-modal-header">
-      <h2>Черный список</h2>
+      <h2>
+        <span data-lang="ge">შავი სია</span>
+        <span data-lang="ru" class="hidden">Черный список</span>
+      </h2>
       <button type="button" id="closeBlacklistModal" class="bi bi-x-circle"></button>
     </div>
 
-    <label for="blacklistPassport">Паспорт</label>
+    <label for="blacklistPassport">
+      <span data-lang="ge">პასპორტი</span>
+      <span data-lang="ru" class="hidden">Паспорт</span>
+    </label>
     <input type="text" id="blacklistPassport" name="passport" required>
 
-    <label for="blacklistPhone">Телефон</label>
+    <label for="blacklistPhone">
+      <span data-lang="ge">ტელეფონი</span>
+      <span data-lang="ru" class="hidden">Телефон</span>
+    </label>
     <input type="text" id="blacklistPhone" name="phone" inputmode="numeric" autocomplete="tel">
     <div id="blacklistPhoneValidationMessage" class="phone-validation-message hidden"></div>
 
-    <label for="blacklistReason">Причина</label>
+    <label for="blacklistReason">
+      <span data-lang="ge">მიზეზი</span>
+      <span data-lang="ru" class="hidden">Причина</span>
+    </label>
     <textarea id="blacklistReason" name="reason" rows="4" required></textarea>
 
     <div id="blacklistFormMessage" class="blacklist-form-message hidden"></div>
 
-    <button type="submit">Добавить</button>
+    <button type="submit">
+      <span data-lang="ge">დამატება</span>
+      <span data-lang="ru" class="hidden">Добавить</span>
+    </button>
   </form>
 </div>
 
@@ -475,6 +493,46 @@ let selectedSeatNumber = null;
 const exitButton = document.getElementById('exit');
 const blacklistWarning = document.getElementById('reservation-blacklist-warning');
 let blacklistCheckTimeout = null;
+let reservationScrollY = 0;
+
+function isRussianLanguage() {
+  const ruElement = document.querySelector('[data-lang="ru"]');
+  return ruElement ? !ruElement.classList.contains('hidden') : false;
+}
+
+function textByLang(geText, ruText) {
+  return isRussianLanguage() ? ruText : geText;
+}
+
+function openPassengerBookingModal() {
+  reservationScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+  modal.style.display = 'block';
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+  modalForm.scrollTop = 0;
+}
+
+function closePassengerBookingModal() {
+  modal.style.display = 'none';
+  document.documentElement.style.overflow = '';
+  document.body.style.overflow = '';
+  window.scrollTo(0, reservationScrollY);
+  hideBlacklistWarning();
+}
+
+modal.addEventListener('touchmove', event => {
+  if (!modalForm.contains(event.target)) {
+    event.preventDefault();
+  }
+}, { passive: false });
+
+document.addEventListener('click', event => {
+  const seat = event.target.closest?.('.seat');
+  if (!seat) return;
+  selectedSeatNumber = seat.getAttribute('data-seat-number');
+  modalForm.querySelector('[name="s_n"]').value = selectedSeatNumber;
+  openPassengerBookingModal();
+}, true);
 
 function hideBlacklistWarning() {
   if (!blacklistWarning) return;
@@ -507,8 +565,13 @@ async function checkReservationBlacklist() {
       return;
     }
 
-    const matchText = data.match_by === 'passport' ? 'паспорт' : 'телефон';
-    blacklistWarning.textContent = `Не стоит бронировать: ${data.reason || 'причина не указана'} (совпадение: ${matchText})`;
+    const matchText = data.match_by === 'passport'
+      ? textByLang('პასპორტი', 'паспорт')
+      : textByLang('ტელეფონი', 'телефон');
+    const defaultReason = textByLang('მიზეზი არ არის მითითებული', 'причина не указана');
+    const warningPrefix = textByLang('არ ღირს დაჯავშნა', 'Не стоит бронировать');
+    const matchLabel = textByLang('დამთხვევა', 'совпадение');
+    blacklistWarning.textContent = `${warningPrefix}: ${data.reason || defaultReason} (${matchLabel}: ${matchText})`;
     blacklistWarning.classList.remove('hidden');
   } catch (error) {
     console.error('Ошибка проверки черного списка:', error);
@@ -530,15 +593,21 @@ function validatePhoneInput(input, messageElement) {
   if (firstDigit === '7') {
     value = value.slice(0, 11);
     if (value.length > 0 && value.length < 11) {
-      message = 'Некорректный номер: российский номер должен содержать 11 цифр';
+      message = textByLang(
+        'არასწორი ნომერი: რუსული ნომერი უნდა შეიცავდეს 11 ციფრს',
+        'Некорректный номер: российский номер должен содержать 11 цифр'
+      );
     }
   } else if (firstDigit === '5') {
     value = value.slice(0, 9);
     if (value.length > 0 && value.length < 9) {
-      message = 'Некорректный номер: грузинский номер должен содержать 9 цифр';
+      message = textByLang(
+        'არასწორი ნომერი: ქართული ნომერი უნდა შეიცავდეს 9 ციფრს',
+        'Некорректный номер: грузинский номер должен содержать 9 цифр'
+      );
     }
   } else if (firstDigit) {
-    message = 'Номер может начинаться только с 7 или 5';
+    message = textByLang('ნომერი უნდა იწყებოდეს მხოლოდ 7-ით ან 5-ით', 'Номер может начинаться только с 7 или 5');
     value = '';
   }
 
@@ -621,14 +690,20 @@ blacklistForm.addEventListener('submit', async event => {
     });
     const data = await response.json();
 
-    showBlacklistFormMessage(data.message || 'Готово', response.ok && data.success);
+    const responseMessage = isRussianLanguage()
+      ? (data.message_ru || data.message || 'Готово')
+      : (data.message_ge || data.message || 'მზადაა');
+    showBlacklistFormMessage(responseMessage, response.ok && data.success);
 
     if (response.ok && data.success) {
       blacklistForm.reset();
     }
   } catch (error) {
     console.error('Ошибка добавления в черный список:', error);
-    showBlacklistFormMessage('Не удалось добавить запись', false);
+    showBlacklistFormMessage(
+      textByLang('ჩანაწერის დამატება ვერ მოხერხდა', 'Не удалось добавить запись'),
+      false
+    );
   } finally {
     submitButton.disabled = false;
   }
@@ -640,6 +715,7 @@ blacklistForm.addEventListener('submit', async event => {
 
 seats.forEach(seat => {
   seat.addEventListener('click', () => {
+    openPassengerBookingModal();
     selectedSeatNumber = seat.getAttribute('data-seat-number');
     const seatDataJSON = '{{ seat_data|tojson|safe }}';
     const seatData = JSON.parse(seatDataJSON)[selectedSeatNumber];
@@ -720,7 +796,6 @@ seats.forEach(seat => {
       });
     }
 
-    modal.style.display = 'block';
     window.validateReservationPhone?.();
     scheduleReservationBlacklistCheck();
   });
@@ -756,8 +831,7 @@ modalForm.addEventListener('submit', async (event) => {
 
 
 exitButton.addEventListener('click', () => {
-  modal.style.display = 'none';
-  hideBlacklistWarning();
+  closePassengerBookingModal();
 });
 
 editButton.addEventListener('click', () => {
@@ -918,7 +992,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Закрытие модального окна
-            modal.style.display = 'none'; // Или используйте класс, который скрывает модальное окно
+            closePassengerBookingModal(); // Или используйте класс, который скрывает модальное окно
         } else {
             const responseData = await response.json();
             console.error('Ошибка при генерации билета:', responseData.message);
@@ -1202,6 +1276,45 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   document.getElementById('toggleLanguageButton').addEventListener('click', toggleLanguage);
+</script>
+
+<script>
+(() => {
+  const bookingModal = document.getElementById('modal');
+  const bookingForm = document.getElementById('modal-form');
+  if (!bookingModal || !bookingForm) return;
+
+  const openBookingForm = seat => {
+    const seatNumber = seat?.getAttribute('data-seat-number') || '';
+    const seatInput = bookingForm.querySelector('[name="s_n"]');
+
+    if (seatInput && seatNumber) {
+      seatInput.value = seatNumber;
+    }
+
+    bookingModal.style.display = 'block';
+    bookingForm.scrollTop = 0;
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeBookingForm = () => {
+    bookingModal.style.display = 'none';
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+  };
+
+  document.addEventListener('click', event => {
+    const seat = event.target.closest?.('.seat');
+    if (seat) {
+      openBookingForm(seat);
+    }
+  }, true);
+
+  document.getElementById('exit')?.addEventListener('click', closeBookingForm);
+  window.openPassengerBookingModal = () => openBookingForm();
+  window.closePassengerBookingModal = closeBookingForm;
+})();
 </script>
 
 <script src="/static/js/reservation/PhoneCheck.js"></script>

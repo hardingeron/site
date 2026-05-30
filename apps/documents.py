@@ -1,8 +1,56 @@
+import json
+import os
+
 from flask import render_template, request, jsonify, send_file, redirect, url_for, flash
 from flask.views import MethodView
 from flask_login import login_required, current_user
 from io import BytesIO
 from docx import Document
+
+
+DOCUMENTS_SETTINGS_PATH = os.path.join('documents', 'document_settings.json')
+PRICE_SETTINGS_KEYS = ('moscow_gel', 'moscow_rub', 'spb_gel', 'spb_rub')
+
+
+def get_empty_price_settings():
+    return {key: '' for key in PRICE_SETTINGS_KEYS}
+
+
+def read_document_settings():
+    if not os.path.exists(DOCUMENTS_SETTINGS_PATH):
+        return get_empty_price_settings()
+
+    try:
+        with open(DOCUMENTS_SETTINGS_PATH, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+    except (json.JSONDecodeError, OSError):
+        return get_empty_price_settings()
+
+    return {key: data.get(key, '') for key in PRICE_SETTINGS_KEYS}
+
+
+def save_document_settings(data):
+    os.makedirs(os.path.dirname(DOCUMENTS_SETTINGS_PATH), exist_ok=True)
+
+    try:
+        with open(DOCUMENTS_SETTINGS_PATH, 'r', encoding='utf-8') as file:
+            settings = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        settings = {}
+
+    if not isinstance(settings, dict):
+        settings = {}
+
+    price_settings = {
+        key: str(data.get(key, '')).strip()
+        for key in PRICE_SETTINGS_KEYS
+    }
+    settings.update(price_settings)
+
+    with open(DOCUMENTS_SETTINGS_PATH, 'w', encoding='utf-8') as file:
+        json.dump(settings, file, ensure_ascii=False, indent=4)
+
+    return price_settings
 
 
 
@@ -219,6 +267,25 @@ class PhoneCheckerView(MethodView):
         )
 
 
+class DocumentSettingsView(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        return jsonify({
+            'success': True,
+            'data': read_document_settings()
+        })
+
+    def post(self):
+        data = request.get_json(silent=True) or request.form
+        settings = save_document_settings(data)
+
+        return jsonify({
+            'success': True,
+            'data': settings,
+            'message': 'Settings saved'
+        })
+
 
 
 
@@ -228,3 +295,4 @@ def register_documents_routes(app, db):
     app.add_url_rule('/create_transporting_invoice', view_func=CreateDocxGetTransportingInvoiceView.as_view('create_transporting_invoice'))
     app.add_url_rule('/manifest_checker', view_func=ManifestCheckerView.as_view('manifest_checker'))
     app.add_url_rule('/phone_number_checker', view_func=PhoneCheckerView.as_view('phone_number_checker'))
+    app.add_url_rule('/document_settings', view_func=DocumentSettingsView.as_view('document_settings'))

@@ -64,7 +64,7 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label" for="weight">წონა</label>
-                        <input type="text" class="form-control" id="weight" name="weight" data-error="weight" >
+                        <input type="text" class="form-control" id="weight" name="weight" data-error="weight" oninput="formatWeight(this)">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="responsibility">ღირებულება</label>
@@ -79,7 +79,15 @@
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label" for="cost">ფასი</label>
-                        <input type="text" class="form-control" id="cost" name="cost" data-error="cost" oninput="formatCost(this)">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="cost" name="cost" data-error="cost" oninput="formatCost(this)">
+                            <span class="input-group-text auto-price-addon">
+                                <input type="checkbox" class="form-check-input" id="autoPrice" aria-label="Auto price">
+                                <label class="auto-price-label" for="autoPrice" title="Auto price">
+                                    <i class="fas fa-calculator"></i>
+                                </label>
+                            </span>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="city-select">ქალაქი</label>
@@ -191,6 +199,10 @@
 <script src="{{ url_for('static', filename='js/add/recipient_phone_format.js') }}"></script>
 <script src="{{ url_for('static', filename='js/add/weight_format.js') }}"></script>
 <script src="{{ url_for('static', filename='js/add/cost_format.js') }}"></script>
+<script>
+    window.documentSettingsUrl = "{{ url_for('document_settings') }}";
+</script>
+<script src="{{ url_for('static', filename='js/add/auto_price.js') }}"></script>
 <script src="{{ url_for('static', filename='js/add/image_upload_format.js') }}"></script>
 <script src="{{ url_for('static', filename='js/add/inventory_filter.js') }}"></script>
 

@@ -137,6 +137,10 @@ document.querySelector("form").addEventListener("submit", function(event) {
             document.querySelector("input[name='payment_currency']:checked").checked = false;
             document.getElementById("photo").value = ''; // Очистка загруженного файла
             document.getElementById("departureStatus").checked = false;
+            const autoPriceCheckbox = document.getElementById("autoPrice");
+            if (autoPriceCheckbox) {
+                autoPriceCheckbox.checked = false;
+            }
 
         } else {
             Swal.fire({

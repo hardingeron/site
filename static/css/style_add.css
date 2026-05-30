@@ -31,6 +31,40 @@
   box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
 }
 
+.auto-price-addon {
+  background-color: #f8f9fa;
+  border-color: #ced4da;
+  padding: 0;
+}
+
+.auto-price-addon .form-check-input {
+  position: absolute;
+  opacity: 0;
+}
+
+.auto-price-label {
+  align-items: center;
+  color: #6c757d;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  margin: 0;
+  min-width: 2.75rem;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.auto-price-label:hover,
+.auto-price-addon .form-check-input:focus + .auto-price-label {
+  background-color: #e9ecef;
+  color: #0d6efd;
+}
+
+.auto-price-addon .form-check-input:checked + .auto-price-label {
+  background-color: #0d6efd;
+  color: #fff;
+  transform: none;
+}
+
 /* Стиль для радио-кнопок и чекбоксов */
 .form-check-label img {
   width: 24px;

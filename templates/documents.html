@@ -26,6 +26,9 @@
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#phoneModal">
             ტელეფონების ფილტრი
         </button>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#documentSettingsModal">
+            Prices
+        </button>
     </div>
 
 
@@ -193,6 +196,67 @@
     </div>
 
 
+    <div class="modal fade" id="documentSettingsModal" tabindex="-1" aria-labelledby="documentSettingsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentSettingsModalLabel">Prices settings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="documentSettingsForm">
+                    <div class="modal-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h6 class="mb-3">Old prices</h6>
+                                <div class="mb-3">
+                                    <label for="old_moscow_gel" class="form-label">Moscow GEL</label>
+                                    <input type="number" step="0.01" class="form-control" id="old_moscow_gel" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="old_moscow_rub" class="form-label">Moscow RUB</label>
+                                    <input type="number" step="0.01" class="form-control" id="old_moscow_rub" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="old_spb_gel" class="form-label">SPB GEL</label>
+                                    <input type="number" step="0.01" class="form-control" id="old_spb_gel" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="old_spb_rub" class="form-label">SPB RUB</label>
+                                    <input type="number" step="0.01" class="form-control" id="old_spb_rub" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="mb-3">New prices</h6>
+                                <div class="mb-3">
+                                    <label for="new_moscow_gel" class="form-label">Moscow GEL</label>
+                                    <input type="number" step="0.01" class="form-control" id="new_moscow_gel" name="moscow_gel">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="new_moscow_rub" class="form-label">Moscow RUB</label>
+                                    <input type="number" step="0.01" class="form-control" id="new_moscow_rub" name="moscow_rub">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="new_spb_gel" class="form-label">SPB GEL</label>
+                                    <input type="number" step="0.01" class="form-control" id="new_spb_gel" name="spb_gel">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="new_spb_rub" class="form-label">SPB RUB</label>
+                                    <input type="number" step="0.01" class="form-control" id="new_spb_rub" name="spb_rub">
+                                </div>
+                            </div>
+                        </div>
+                        <div id="documentSettingsMessage" class="alert mt-3 d-none" role="alert"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-success">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
 
     <script>
         // Открыть модальное окно
@@ -282,6 +346,76 @@
         })
         .catch(error => {
             console.error('Error:', error);
+        });
+    });
+</script>
+
+
+<script>
+    const documentSettingsUrl = "{{ url_for('document_settings') }}";
+    const documentPriceFields = ['moscow_gel', 'moscow_rub', 'spb_gel', 'spb_rub'];
+
+    function setDocumentSettingsMessage(message, type) {
+        const messageElement = document.getElementById('documentSettingsMessage');
+        messageElement.textContent = message;
+        messageElement.className = `alert alert-${type} mt-3`;
+    }
+
+    function hideDocumentSettingsMessage() {
+        document.getElementById('documentSettingsMessage').className = 'alert mt-3 d-none';
+    }
+
+    function fillDocumentPriceFields(data) {
+        documentPriceFields.forEach(field => {
+            const value = data[field] || '';
+            document.getElementById(`old_${field}`).value = value;
+            document.getElementById(`new_${field}`).value = value;
+        });
+    }
+
+    document.getElementById('documentSettingsModal').addEventListener('show.bs.modal', function () {
+        hideDocumentSettingsMessage();
+
+        fetch(documentSettingsUrl)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    fillDocumentPriceFields(data.data);
+                } else {
+                    setDocumentSettingsMessage('Could not load settings.', 'danger');
+                }
+            })
+            .catch(() => {
+                setDocumentSettingsMessage('Could not load settings.', 'danger');
+            });
+    });
+
+    document.getElementById('documentSettingsForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const data = {};
+        documentPriceFields.forEach(field => {
+            data[field] = document.getElementById(`new_${field}`).value;
+        });
+
+        fetch(documentSettingsUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                fillDocumentPriceFields(result.data);
+                setDocumentSettingsMessage('Saved successfully.', 'success');
+            } else {
+                setDocumentSettingsMessage('Could not save settings.', 'danger');
+            }
+        })
+        .catch(() => {
+            setDocumentSettingsMessage('Could not save settings.', 'danger');
         });
     });
 </script>

@@ -1,218 +1,264 @@
-
-/* Общий стиль для формы */
-.card {
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
+:root {
+  --add-bg: linear-gradient(to bottom right, #221F26, #403E43, #0EA5E9);
+  --add-border: #d8dee8;
+  --add-text: #17202a;
+  --add-muted: #647386;
+  --add-accent: #2563eb;
+  --add-accent-soft: #eaf1ff;
+  --add-success-soft: #e9f8f1;
+  --add-success: #16825d;
 }
 
-/* Стиль для заголовка формы */
-.card h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-  color: #333;
+body {
+  background: linear-gradient(to bottom right, #221F26, #403E43, #0EA5E9);
+
+}
+.add-page {
+  background: var(--add-bg);
+  min-height: calc(100vh - 40px);
+  padding: 28px 14px 40px;
 }
 
-/* Стиль для блоков ввода */
-.form-label {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
+.parcel-form-card {
+  background: #fff;
+  border: 1px solid var(--add-border);
+  border-radius: 8px;
+  box-shadow: 0 16px 38px rgba(28, 39, 54, 0.08);
+  margin: 0 auto;
+  max-width: 700px;
+  padding: 26px;
 }
 
-.form-control {
-  border-radius: 0.25rem;
-  border-color: #ced4da;
+.parcel-form-card .header-section {
+  border-bottom: 1px solid var(--add-border);
+  margin: 0 0 20px;
+  padding-bottom: 16px;
+  text-align: center;
+}
+
+.parcel-form-card h2 {
+  color: var(--add-text);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0;
+}
+
+.quick-fill,
+.custom-border {
+  background: #fbfcfe;
+  border: 1px solid var(--add-border);
+  border-radius: 8px !important;
+  padding: 15px !important;
+}
+
+.parcel-form {
+  margin-top: 18px;
+}
+
+.parcel-form .row {
+  row-gap: 16px;
+}
+
+.parcel-form-card .form-label {
+  color: var(--add-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin-bottom: 7px;
+}
+
+.parcel-form-card .form-control,
+.parcel-form-card .form-select,
+.select2-container--default .select2-selection--single {
+  border: 1px solid var(--add-border);
+  border-radius: 8px;
   box-shadow: none;
+  color: var(--add-text);
+  font-size: 0.96rem;
+  min-height: 44px;
+  padding: 9px 12px;
+  transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
 }
 
-.form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+.parcel-form-card textarea.form-control {
+  min-height: 108px;
+  resize: vertical;
+}
+
+.parcel-form-card .form-control:focus,
+.parcel-form-card .form-select:focus,
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single {
+  border-color: var(--add-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.select2-container--default .select2-selection--single {
+  align-items: center;
+  display: flex;
+  height: 44px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: var(--add-text);
+  line-height: 42px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 42px;
+}
+
+#charCount {
+  color: var(--add-muted);
+  display: block;
+  font-size: 0.78rem;
+  margin-top: 6px;
+}
+
+.input-group .form-control {
+  border-bottom-right-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .auto-price-addon {
-  background-color: #f8f9fa;
-  border-color: #ced4da;
+  background: #fff;
+  border: 1px solid var(--add-border);
+  border-left: 0;
+  border-radius: 0 8px 8px 0;
+  min-height: 44px;
   padding: 0;
 }
 
-.auto-price-addon .form-check-input {
-  position: absolute;
+.auto-price-addon .form-check-input,
+.parcel-form-card .form-check-input {
   opacity: 0;
+  position: absolute;
 }
 
 .auto-price-label {
   align-items: center;
-  color: #6c757d;
+  color: var(--add-muted);
+  cursor: pointer;
   display: flex;
-  height: 100%;
+  height: 42px;
   justify-content: center;
   margin: 0;
-  min-width: 2.75rem;
-  transition: background-color 0.2s, color 0.2s;
+  min-width: 44px;
+  transition: background-color 0.15s, color 0.15s;
 }
 
 .auto-price-label:hover,
-.auto-price-addon .form-check-input:focus + .auto-price-label {
-  background-color: #e9ecef;
-  color: #0d6efd;
-}
-
+.auto-price-addon .form-check-input:focus + .auto-price-label,
 .auto-price-addon .form-check-input:checked + .auto-price-label {
-  background-color: #0d6efd;
-  color: #fff;
-  transform: none;
+  background: var(--add-accent-soft);
+  color: var(--add-accent);
 }
 
-/* Стиль для радио-кнопок и чекбоксов */
-.form-check-label img {
-  width: 24px;
-  height: auto;
+.custom-border > .form-label {
+  color: var(--add-text);
+  font-size: 0.86rem;
+  margin-bottom: 13px;
 }
 
-/* Стиль для блока с фото */
-#photo {
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  padding: 0.5rem;
+.custom-border .d-flex {
+  gap: 10px !important;
 }
 
-/* Стиль для кнопки отправки */
-.btn-primary {
-  background-color: #007bff;
-  border-color: #007bff;
-  border-radius: 0.25rem;
-  font-size: 1rem;
-  padding: 0.75rem 1.25rem;
+.parcel-form-card .form-check {
+  margin: 0;
+  min-height: 0;
+  padding-left: 0;
 }
 
-.btn-primary:hover {
-  background-color: #0056b3;
-  border-color: #004085;
-}
-
-/* Стиль для полей выбора (select) */
-.form-select {
-  border-radius: 0.25rem;
-  border-color: #ced4da;
-  box-shadow: none;
-}
-
-.form-select:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
-}
-
-/* Стиль для блоков с фото */
-.photo_block {
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
-  padding: 0.5rem;
-}
-
-/* Отступы и выравнивание */
-.mb-3 {
-  margin-bottom: 1rem;
-}
-
-.text-center {
-  text-align: center;
-}
-
-.row {
-  margin-bottom: 1rem;
-}
-
-
-
-/* Custom checkbox styles */
-.custom-checkbox-container {
-  display: flex;
+.parcel-form-card .form-check-label {
   align-items: center;
-}
-
-.custom-checkbox-container .form-check-input {
-  width: 1.5rem; /* Увеличение размера чекбокса */
-  height: 1.5rem; /* Увеличение размера чекбокса */
-  background-color: #e9ecef; /* Цвет фона чекбокса */
-  border-color: #ced4da; /* Цвет границы чекбокса */
-  cursor: pointer; /* Указатель для интерактивности */
-}
-
-.custom-checkbox-container .form-check-input:checked {
-  background-color: #0d6efd; /* Цвет фона чекбокса при выборе */
-  border-color: #0d6efd; /* Цвет границы чекбокса при выборе */
-}
-
-.custom-checkbox-container .form-check-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25); /* Добавление тени при фокусе */
-}
-
-.custom-checkbox-container .form-check-label {
-  margin-left: 0.5rem; /* Отступ между чекбоксом и текстом */
-  color: #212529; /* Цвет текста */
-}
-
-
-
-/* Custom container width for larger screens */
-.max-width-container {
-  max-width: 700px; /* Adjust the width as needed */
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.custom-border {
-  border: 1px solid #9c9c9c7a; /* Светло-серый цвет */
-}
-
-
-
-
-
-.form-check-input {
-  position: absolute;
-  opacity: 0;
-}
-
-.form-check-label {
-  display: flex;
-  align-items: center;
+  background: #fff;
+  border: 1px solid var(--add-border);
+  border-radius: 8px;
+  color: var(--add-text);
   cursor: pointer;
-  transition: color 0.3s, transform 0.3s;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 700;
+  justify-content: center;
+  min-height: 40px;
+  min-width: 92px;
+  padding: 8px 12px;
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
 }
 
-.form-check-input:checked + .form-check-label {
-  color: #007bff; /* Синий цвет */
-  transform: scale(1.1); /* Увеличение */
+.parcel-form-card .form-check-label i {
+  color: var(--add-muted);
 }
 
-.custom-radio {
-  position: relative;
-  padding-left: 2em; /* Отступ для создания пространства для кастомного радио */
+.parcel-form-card .form-check-input:focus + .form-check-label,
+.parcel-form-card .form-check-input:checked + .form-check-label {
+  border-color: var(--add-accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
-.custom-radio .form-check-label::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 1.5em;
-  height: 1.5em;
-  /* Убираем видимый круглый индикатор */
-  border: none;
-  background: none;
+.parcel-form-card .form-check-input:checked + .form-check-label {
+  background: var(--add-accent-soft);
+  color: var(--add-accent);
 }
 
-.custom-radio .form-check-input:checked + .form-check-label::before {
-  /* Скрываем индикатор полностью при выборе */
-  content: none;
+.parcel-form-card .form-check-input:checked + .form-check-label i {
+  color: var(--add-accent);
 }
 
-.form-check-input:focus + .form-check-label::before {
-  /* Фокусный эффект без индикатора */
-  box-shadow: none;
+.parcel-form-card .custom-checkbox .form-check-input:checked + .form-check-label {
+  background: var(--add-success-soft);
+  border-color: var(--add-success);
+  color: var(--add-success);
 }
 
+.parcel-form-card .custom-checkbox .form-check-input:checked + .form-check-label i {
+  color: var(--add-success);
+}
+
+.parcel-form-card .btn-primary {
+  background: var(--add-text);
+  border-color: var(--add-text);
+  border-radius: 8px;
+  box-shadow: 0 10px 22px rgba(23, 32, 42, 0.16);
+  font-weight: 700;
+  min-height: 44px;
+  min-width: 172px;
+  padding: 9px 22px;
+}
+
+.parcel-form-card .btn-primary:hover,
+.parcel-form-card .btn-primary:focus {
+  background: #0f1720;
+  border-color: #0f1720;
+}
+
+.flash {
+  margin: 16px auto 0;
+  max-width: 900px;
+}
+
+@media (max-width: 767px) {
+  .add-page {
+    padding: 16px 10px 30px;
+  }
+
+  .parcel-form-card {
+    padding: 16px;
+  }
+
+  .parcel-form-card h2 {
+    font-size: 1.28rem;
+  }
+
+  .parcel-form-card .form-check-label {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 0;
+  }
+
+  .parcel-form-card .btn-primary {
+    width: 100%;
+  }
+}

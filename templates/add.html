@@ -17,12 +17,12 @@
 
 
 
-    <div class="container my-5">
-        <div class="card p-4 max-width-container">
+    <div class="add-page">
+        <div class="card p-4 max-width-container parcel-form-card">
                     <div class="header-section">
             <h2 class="text-center mb-0">დამატება</h2>
         </div>
-        <div class="mb-3">
+        <div class="quick-fill mb-3">
             <label class="form-label" for="record-select">მომხმარებელთა სია</label>
             <select class="form-select" id="record-select" name="record_key" style="width: 100%">
                 <option value="">ამოირჩიეთ</option>
@@ -32,47 +32,47 @@
             </select>
         </div>
 
-            <form method="post" action="/saving_a_parcel " enctype="multipart/form-data">
+            <form class="parcel-form" method="post" action="/saving_a_parcel " enctype="multipart/form-data">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label" for="sender">სახელი / გვარი</label>
-                        <input type="text" class="form-control" id="sender" name="sender" data-error="sender">
+                        <input type="text" class="form-control" id="sender" name="sender" data-error="sender" autocomplete="name" enterkeyhint="next">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="sender_phone">გამგზავნის ტელეფონი</label>
-                        <input type="text" class="form-control" id="sender_phone" name="sender_phone" data-error="sender_phone" oninput="formatPhoneNumber(this)">
+                        <input type="text" class="form-control" id="sender_phone" name="sender_phone" data-error="sender_phone" inputmode="tel" autocomplete="tel" enterkeyhint="next" oninput="formatPhoneNumber(this)">
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label" for="recipient">სახელი / გვარი</label>
-                        <input type="text" class="form-control" id="recipient" name="recipient" data-error="recipient">
+                        <input type="text" class="form-control" id="recipient" name="recipient" data-error="recipient" autocomplete="name" enterkeyhint="next">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="recipient_phone">მიმღების ტელეფონი</label>
-                        <input type="text" class="form-control" id="recipient_phone" name="recipient_phone" value="+7" data-error="recipient_phone" oninput="formatRecipientPhone(this)">
+                        <input type="text" class="form-control" id="recipient_phone" name="recipient_phone" value="+7" data-error="recipient_phone" inputmode="tel" autocomplete="tel" enterkeyhint="next" oninput="formatRecipientPhone(this)">
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label" for="inventory">აღწერა</label>
-                    <textarea class="form-control" id="inventory" name="inventory" data-error="inventory" maxlength="200"></textarea>
+                    <textarea class="form-control" id="inventory" name="inventory" data-error="inventory" maxlength="200" enterkeyhint="next"></textarea>
                     <small id="charCount" class="form-text text-muted">დარჩა 200 სიმბოლო</small>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label class="form-label" for="weight">წონა</label>
-                        <input type="text" class="form-control" id="weight" name="weight" data-error="weight" oninput="formatWeight(this)">
+                        <input type="text" class="form-control" id="weight" name="weight" data-error="weight" inputmode="decimal" autocomplete="off" enterkeyhint="next" oninput="formatWeight(this)">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="responsibility">ღირებულება</label>
-                        <input type="text" class="form-control" id="responsibility" name="responsibility" data-error="responsibility">
+                        <input type="text" class="form-control" id="responsibility" name="responsibility" data-error="responsibility" inputmode="decimal" autocomplete="off" enterkeyhint="next">
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="passport">პასპორტი</label>
-                        <input type="text" class="form-control" id="passport" name="passport" data-error="passport">
+                        <input type="text" class="form-control" id="passport" name="passport" data-error="passport" inputmode="numeric" autocomplete="off" enterkeyhint="next">
                     </div>
                 </div>
 
@@ -80,10 +80,10 @@
                     <div class="col-md-4">
                         <label class="form-label" for="cost">ფასი</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" id="cost" name="cost" data-error="cost" oninput="formatCost(this)">
+                            <input type="text" class="form-control" id="cost" name="cost" data-error="cost" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="done" oninput="formatCost(this)">
                             <span class="input-group-text auto-price-addon">
-                                <input type="checkbox" class="form-check-input" id="autoPrice" aria-label="Auto price">
-                                <label class="auto-price-label" for="autoPrice" title="Auto price">
+                                <input type="checkbox" class="form-check-input" id="autoPrice" aria-label="ავტომატური ფასი">
+                                <label class="auto-price-label" for="autoPrice" title="ავტომატური ფასი">
                                     <i class="fas fa-calculator"></i>
                                 </label>
                             </span>
@@ -98,7 +98,7 @@
                     </div>
                     <div class="col-md-4">
                         <label class="form-label" for="photo">ფოტო</label>
-                        <input type="file" class="form-control" id="photo" name="photo" data-error="photo">
+                        <input type="file" class="form-control" id="photo" name="photo" data-error="photo" accept="image/*">
                     </div>
                 </div>
 
@@ -153,7 +153,7 @@
                 </div>
                 <input type="hidden" id="currentDateTime" name="currentDateTime">
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">დასრულება</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-check me-2"></i>დასრულება</button>
                 </div>
             </form>
         </div>

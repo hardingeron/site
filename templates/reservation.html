@@ -747,41 +747,128 @@ function showReservationFormError(message) {
   showMessage(message, false);
 }
 
-function validatePhoneInput(input, messageElement) {
-  const rawValue = input.value.trim();
-  const value = rawValue.replace(/\D/g, '');
+function getPhoneValidationMessage(rawValue) {
+  const value = rawValue.trim().replace(/\D/g, '');
   const firstDigit = value[0] || '';
-  const hasOnlyDigits = rawValue === '' || /^\d+$/.test(rawValue);
-  let message = '';
+  const isRussianPhone = firstDigit === '8' && value.length === 11;
+  const isGeorgianPhone = firstDigit === '5' && value.length === 9;
 
-  if (!hasOnlyDigits) {
-    message = textByLang(
-      'ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს',
-      'Номер должен содержать только цифры'
-    );
-  } else if (firstDigit === '8' && value.length !== 11) {
-    message = textByLang(
+  if (!rawValue.trim() || isRussianPhone || isGeorgianPhone) {
+    return '';
+  }
+
+  if (firstDigit === '8') {
+    return textByLang(
       'არასწორი ნომერი: რუსული ნომერი უნდა შეიცავდეს 11 ციფრს',
       'Некорректный номер: российский номер должен содержать 11 цифр'
     );
-  } else if (firstDigit === '5') {
-    if (value.length !== 9) {
-      message = textByLang(
-        'არასწორი ნომერი: ქართული ნომერი უნდა შეიცავდეს 9 ციფრს',
-        'Некорректный номер: грузинский номер должен содержать 9 цифр'
-      );
-    }
-  } else if (firstDigit) {
-    message = textByLang('ნომერი უნდა იწყებოდეს მხოლოდ 8-ით ან 5-ით', 'Номер может начинаться только с 8 или 5');
   }
 
+  if (firstDigit === '5') {
+    return textByLang(
+      'არასწორი ნომერი: ქართული ნომერი უნდა შეიცავდეს 9 ციფრს',
+      'Некорректный номер: грузинский номер должен содержать 9 цифр'
+    );
+  }
+
+  if (firstDigit) {
+    return textByLang('ნომერი უნდა იწყებოდეს მხოლოდ 8-ით ან 5-ით', 'Номер может начинаться только с 8 или 5');
+  }
+
+  return '';
+}
+
+function setPhoneValidationMessage(messageElement, message) {
   if (!messageElement) return;
   messageElement.textContent = message;
   messageElement.classList.toggle('hidden', !message);
 }
 
+function validatePhoneInput(input, messageElement) {
+  setPhoneValidationMessage(messageElement, getPhoneValidationMessage(input.value));
+}
+
+function getProposedPhoneValue(input, insertedText) {
+  const start = input.selectionStart ?? input.value.length;
+  const end = input.selectionEnd ?? input.value.length;
+  return input.value.slice(0, start) + insertedText + input.value.slice(end);
+}
+
+function isAllowedPhoneDraft(value) {
+  if (!value) return true;
+  const digits = value.replace(/\D/g, '');
+  if (!digits) return true;
+  const firstDigit = digits[0];
+
+  if (firstDigit !== '8' && firstDigit !== '5') {
+    return false;
+  }
+
+  return digits.length <= (firstDigit === '8' ? 11 : 9);
+}
+
+function getBlockedPhoneInputMessage(currentValue, proposedValue, fallbackMessage = '') {
+  const currentMessage = getPhoneValidationMessage(currentValue);
+
+  if (!currentMessage && currentValue.trim()) {
+    return '';
+  }
+
+  return currentMessage || fallbackMessage || getPhoneValidationMessage(proposedValue);
+}
+
+function setupPhoneInputLimits(input, messageElement) {
+  input.addEventListener('beforeinput', event => {
+    if (!event.inputType || !event.inputType.startsWith('insert')) return;
+
+    const insertedText = event.data || '';
+    if (!insertedText || !/^\d+$/.test(insertedText)) {
+      event.preventDefault();
+      setPhoneValidationMessage(
+        messageElement,
+        getBlockedPhoneInputMessage(
+          input.value,
+          getProposedPhoneValue(input, insertedText),
+          textByLang('ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს', 'Номер должен содержать только цифры')
+        )
+      );
+      return;
+    }
+
+    const proposedValue = getProposedPhoneValue(input, insertedText);
+    if (!isAllowedPhoneDraft(proposedValue)) {
+      event.preventDefault();
+      setPhoneValidationMessage(
+        messageElement,
+        getBlockedPhoneInputMessage(input.value, proposedValue)
+      );
+    }
+  });
+
+  input.addEventListener('paste', event => {
+    const pastedText = event.clipboardData?.getData('text') || '';
+    const proposedValue = getProposedPhoneValue(input, pastedText);
+
+    if (!/^\d+$/.test(pastedText) || !isAllowedPhoneDraft(proposedValue)) {
+      event.preventDefault();
+      setPhoneValidationMessage(
+        messageElement,
+        getBlockedPhoneInputMessage(
+          input.value,
+          proposedValue,
+          /^\d+$/.test(pastedText)
+            ? ''
+            : textByLang('ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს', 'Номер должен содержать только цифры')
+        )
+      );
+    }
+  });
+}
+
 function setupPhoneInputStandard(input, messageElement, onChange) {
   if (!input) return;
+
+  setupPhoneInputLimits(input, messageElement);
 
   input.addEventListener('input', () => {
     validatePhoneInput(input, messageElement);

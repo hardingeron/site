@@ -492,6 +492,21 @@ const exitButton = document.getElementById('exit');
 const blacklistWarning = document.getElementById('reservation-blacklist-warning');
 let blacklistCheckTimeout = null;
 let reservationScrollY = 0;
+let reservationSeatData = JSON.parse('{{ seat_data|tojson|safe }}');
+let reservationStateVersion = '';
+let reservationStateRefreshInProgress = false;
+const reservationStateUrl = `/reservation_state?date=${encodeURIComponent('{{ d }}')}&route=${encodeURIComponent('{{ reis }}')}`;
+const emptySeatData = {
+  gender: 'none',
+  name: '',
+  phone: '',
+  payment: '',
+  action: '',
+  comment: '',
+  pasport: '',
+  destination: '',
+  date_of_birth: ''
+};
 
 function isRussianLanguage() {
   const ruElement = document.querySelector('[data-lang="ru"]');
@@ -500,6 +515,143 @@ function isRussianLanguage() {
 
 function textByLang(geText, ruText) {
   return isRussianLanguage() ? ruText : geText;
+}
+
+function getReservationSeatData(seatNumber) {
+  return reservationSeatData[String(seatNumber)] || emptySeatData;
+}
+
+function renderReservationSeat(seatElement, seatData = emptySeatData) {
+  const genderClass = seatData.gender === 'male'
+    ? 'male_seats'
+    : seatData.gender === 'female'
+      ? 'female_seats'
+      : 'none_seats';
+  const payment = seatData.payment || '';
+  const paymentClass = payment && (payment[0] === '+' || payment[0] === 'C')
+    ? 'positive-payment'
+    : payment && payment[0] === 'g'
+      ? 'negative-payment'
+      : '';
+  const actionClass = seatData.action === 'yes' ? 'gray-background' : '';
+  const textClass = seatData.gender === 'male'
+    ? 'male-text'
+    : seatData.gender === 'female'
+      ? 'female-text'
+      : '';
+
+  seatElement.className = ['seat', genderClass, paymentClass, actionClass].filter(Boolean).join(' ');
+
+  const seatNumberElement = seatElement.querySelector('.seat-number');
+  if (seatNumberElement) {
+    seatNumberElement.classList.toggle('yellow-text', Boolean(seatData.comment));
+  }
+
+  const detailsElement = seatElement.querySelector('.seat-details');
+  if (detailsElement) {
+    detailsElement.className = ['seat-details', textClass].filter(Boolean).join(' ');
+  }
+
+  const nameElement = seatElement.querySelector('.name');
+  const phoneElement = seatElement.querySelector('.phone');
+  const paymentElement = seatElement.querySelector('.payment');
+
+  if (nameElement) nameElement.textContent = seatData.name || '';
+  if (phoneElement) phoneElement.textContent = seatData.phone || '';
+  if (paymentElement) paymentElement.textContent = payment;
+}
+
+function updateReservationHiddenValue(id, value) {
+  const element = document.getElementById(id);
+  if (element) element.textContent = value ?? 0;
+}
+
+function updateReservationCharts() {
+  const numericValue = id => parseFloat(document.getElementById(id)?.textContent || '0') || 0;
+
+  if (window.myChart1) {
+    window.myChart1.data.datasets[0].data = [
+      numericValue('sum_rub'),
+      numericValue('sum_gel'),
+      numericValue('sum_usd'),
+      numericValue('sum_eur')
+    ];
+    window.myChart1.update();
+  }
+
+  if (window.myChart2) {
+    window.myChart2.data.datasets[0].data = [
+      numericValue('sum_card_gel'),
+      numericValue('sum_card_rub'),
+      numericValue('sum_card_usd'),
+      numericValue('sum_card_eur')
+    ];
+    window.myChart2.update();
+  }
+
+  if (window.combinedChart) {
+    window.combinedChart.data.datasets[0].data = [
+      numericValue('male_count'),
+      numericValue('female_count'),
+      numericValue('number_of_free_records')
+    ];
+    window.combinedChart.update();
+  }
+
+  if (window.cameChart) {
+    window.cameChart.data.datasets[0].data = [
+      numericValue('came_count'),
+      numericValue('came_of_count_free')
+    ];
+    window.cameChart.update();
+  }
+}
+
+function applyReservationState(reservation) {
+  if (!reservation) return;
+
+  reservationSeatData = reservation.seat_data || {};
+  reservationStateVersion = reservation.version || reservationStateVersion;
+
+  document.querySelectorAll('.seat[data-seat-number]').forEach(seatElement => {
+    renderReservationSeat(seatElement, getReservationSeatData(seatElement.dataset.seatNumber));
+  });
+
+  [
+    'sum_rub',
+    'sum_gel',
+    'sum_usd',
+    'sum_eur',
+    'sum_card_gel',
+    'sum_card_rub',
+    'sum_card_usd',
+    'sum_card_eur',
+    'male_count',
+    'female_count',
+    'number_of_free_records',
+    'came_count',
+    'came_of_count_free'
+  ].forEach(id => updateReservationHiddenValue(id, reservation[id]));
+
+  updateReservationCharts();
+}
+
+async function refreshReservationState() {
+  if (reservationStateRefreshInProgress) return;
+  reservationStateRefreshInProgress = true;
+
+  try {
+    const response = await fetch(reservationStateUrl, { cache: 'no-store' });
+    const data = await response.json();
+
+    if (response.ok && data.success) {
+      applyReservationState(data.reservation);
+    }
+  } catch (error) {
+    console.error('Reservation refresh error:', error);
+  } finally {
+    reservationStateRefreshInProgress = false;
+  }
 }
 
 function openPassengerBookingModal() {
@@ -727,8 +879,7 @@ seats.forEach(seat => {
   seat.addEventListener('click', () => {
     openPassengerBookingModal();
     selectedSeatNumber = seat.getAttribute('data-seat-number');
-    const seatDataJSON = '{{ seat_data|tojson|safe }}';
-    const seatData = JSON.parse(seatDataJSON)[selectedSeatNumber];
+    const seatData = getReservationSeatData(selectedSeatNumber);
 
     modalForm['selected_date'].value = '{{ d }}';
     modalForm['gender'].value = seatData ? seatData.gender : '';
@@ -830,7 +981,9 @@ modalForm.addEventListener('submit', async (event) => {
 
             if (response.ok && responseData.success !== false) {
                 console.log('Данные успешно отправлены на сервер');
-                location.reload();
+                await refreshReservationState();
+                closePassengerBookingModal();
+                showMessage(responseData.message || 'Данные успешно сохранены', true);
                 return;
             }
 
@@ -898,10 +1051,12 @@ editButton.addEventListener('click', () => {
     body: formData,
   })
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
       if (data.success) {
         console.log('Данные успешно обновлены');
-        location.reload();
+        await refreshReservationState();
+        closePassengerBookingModal();
+        showMessage(data.message || 'Бронирование обновлено успешно', true);
       } else {
         console.error('Ошибка при обновлении данных:', data.message);
         const errorMessageElement = document.getElementById('error-message');
@@ -934,13 +1089,19 @@ deleteButton.addEventListener('click', () => {
         body: formData,
       })
         .then(response => response.json())
-        .then(data => {
+        .then(async data => {
           if (data.success) {
             console.log('Бронирование успешно удалено');
-            location.reload();
+            await refreshReservationState();
+            closePassengerBookingModal();
+            showMessage(data.message || 'Бронирование успешно удалено', true);
           } else {
             console.error('Ошибка при удалении бронирования:', data.message);
+            showReservationFormError(data.message || 'Бронирование не найдено');
           }
+        })
+        .finally(() => {
+          deleteConfirmation = false;
         });
 
       deleteConfirmation = true;
@@ -1008,6 +1169,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (seatElement) {
                 seatElement.classList.add('gray-background');
             }
+
+            await refreshReservationState();
 
             // Закрытие модального окна
             closePassengerBookingModal(); // Или используйте класс, который скрывает модальное окно
@@ -1333,6 +1496,20 @@ document.addEventListener('DOMContentLoaded', function() {
   window.openPassengerBookingModal = () => openBookingForm();
   window.closePassengerBookingModal = closeBookingForm;
 })();
+</script>
+
+<script>
+setInterval(() => {
+  if (!document.hidden) {
+    refreshReservationState();
+  }
+}, 7000);
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    refreshReservationState();
+  }
+});
 </script>
 
 <script src="/static/js/reservation/PhoneCheck.js"></script>

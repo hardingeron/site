@@ -69,6 +69,35 @@ def find_blacklist_match(phone, passport):
 
     return None, None
 
+
+def build_reservation_state_payload(selected_date, reis):
+    reservation_data = get_reservation_data(selected_date, reis, 55)
+    seat_data = {}
+
+    for seat_number, seat in reservation_data.get("seat_data", {}).items():
+        safe_seat = {}
+        for key, value in seat.items():
+            if hasattr(value, "isoformat"):
+                value = value.isoformat()
+            safe_seat[key] = value if value is not None else ""
+        seat_data[str(seat_number)] = safe_seat
+
+    reservation_data["seat_data"] = seat_data
+    reservation_data["version"] = "|".join([
+        str(reservation_data.get("number_of_records", 0)),
+        str(reservation_data.get("came_count", 0)),
+        str(reservation_data.get("sum_gel", 0)),
+        str(reservation_data.get("sum_rub", 0)),
+        str(reservation_data.get("sum_usd", 0)),
+        str(reservation_data.get("sum_eur", 0)),
+        str(reservation_data.get("sum_card_gel", 0)),
+        str(reservation_data.get("sum_card_rub", 0)),
+        str(reservation_data.get("sum_card_usd", 0)),
+        str(reservation_data.get("sum_card_eur", 0)),
+    ])
+
+    return reservation_data
+
 class ReservationView(MethodView):
     def __init__(self):
         pass
@@ -86,6 +115,23 @@ class ReservationView(MethodView):
         reis = request.args.get('route')
         reservation_data = get_reservation_data(selected_date, reis, 55)
         return render_template('reservation.html', **reservation_data)
+
+
+class ReservationStateView(MethodView):
+    decorators = [login_required]
+
+    def get(self):
+        access = ['admin', 'Tbilisi', 'Moscow']
+        if current_user.role not in access:
+            return jsonify({'success': False, 'message': 'Access denied'}), 403
+
+        selected_date = request.args.get('date')
+        reis = request.args.get('route')
+
+        return jsonify({
+            'success': True,
+            'reservation': build_reservation_state_payload(selected_date, reis)
+        })
 
 
 
@@ -213,15 +259,15 @@ class DownloadVedView(MethodView):
     decorators = [login_required]
 
     def post(self):
-        if current_user.role == 'Moscow':
-            destination_address = 'Тбилиси'
-        elif current_user.role == 'Tbilisi':
-            destination_address = 'Москва'
-        else:
-            destination_address = ''
-        
         reis = request.form.get('reis')
         selected_date = request.form.get('selected_date')
+        if reis == '1':
+            destination_address = 'Москва'
+        elif reis == '2':
+            destination_address = 'Тбилиси'
+        else:
+            destination_address = ''
+
         filtered_data = Booking.query.filter(
             Booking.fwc == reis,
             Booking.data == selected_date,
@@ -530,6 +576,7 @@ class ReservationBlacklistAddView(MethodView):
 
 def register_reservation_routes(app, db):
     app.add_url_rule('/reservation', view_func=ReservationView.as_view('reservation'))
+    app.add_url_rule('/reservation_state', view_func=ReservationStateView.as_view('reservation_state'))
     app.add_url_rule('/save_data', view_func=SaveDataView.as_view('save_data', db=db))
     app.add_url_rule('/edit_booking', view_func=EditBookingView.as_view('edit_booking', db=db))
     app.add_url_rule('/booking_del', view_func=BookingDeleteView.as_view('booking_del', db=db))

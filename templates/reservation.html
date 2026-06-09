@@ -748,21 +748,24 @@ function showReservationFormError(message) {
 }
 
 function validatePhoneInput(input, messageElement) {
-  let value = input.value.replace(/\D/g, '');
+  const rawValue = input.value.trim();
+  const value = rawValue.replace(/\D/g, '');
   const firstDigit = value[0] || '';
+  const hasOnlyDigits = rawValue === '' || /^\d+$/.test(rawValue);
   let message = '';
 
-  if (firstDigit === '8') {
-    value = value.slice(0, 11);
-    if (value.length > 0 && value.length < 11) {
-      message = textByLang(
-        'არასწორი ნომერი: რუსული ნომერი უნდა შეიცავდეს 11 ციფრს',
-        'Некорректный номер: российский номер должен содержать 11 цифр'
-      );
-    }
+  if (!hasOnlyDigits) {
+    message = textByLang(
+      'ნომერი უნდა შეიცავდეს მხოლოდ ციფრებს',
+      'Номер должен содержать только цифры'
+    );
+  } else if (firstDigit === '8' && value.length !== 11) {
+    message = textByLang(
+      'არასწორი ნომერი: რუსული ნომერი უნდა შეიცავდეს 11 ციფრს',
+      'Некорректный номер: российский номер должен содержать 11 цифр'
+    );
   } else if (firstDigit === '5') {
-    value = value.slice(0, 9);
-    if (value.length > 0 && value.length < 9) {
+    if (value.length !== 9) {
       message = textByLang(
         'არასწორი ნომერი: ქართული ნომერი უნდა შეიცავდეს 9 ციფრს',
         'Некорректный номер: грузинский номер должен содержать 9 цифр'
@@ -770,10 +773,7 @@ function validatePhoneInput(input, messageElement) {
     }
   } else if (firstDigit) {
     message = textByLang('ნომერი უნდა იწყებოდეს მხოლოდ 8-ით ან 5-ით', 'Номер может начинаться только с 8 или 5');
-    value = '';
   }
-
-  input.value = value;
 
   if (!messageElement) return;
   messageElement.textContent = message;

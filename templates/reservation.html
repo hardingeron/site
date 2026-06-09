@@ -600,7 +600,7 @@ function validatePhoneInput(input, messageElement) {
   const firstDigit = value[0] || '';
   let message = '';
 
-  if (firstDigit === '7') {
+  if (firstDigit === '8') {
     value = value.slice(0, 11);
     if (value.length > 0 && value.length < 11) {
       message = textByLang(
@@ -617,7 +617,7 @@ function validatePhoneInput(input, messageElement) {
       );
     }
   } else if (firstDigit) {
-    message = textByLang('ნომერი უნდა იწყებოდეს მხოლოდ 7-ით ან 5-ით', 'Номер может начинаться только с 7 или 5');
+    message = textByLang('ნომერი უნდა იწყებოდეს მხოლოდ 8-ით ან 5-ით', 'Номер может начинаться только с 8 или 5');
     value = '';
   }
 

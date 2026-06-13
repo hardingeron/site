@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ super() }} ყველა ამანათი
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style_all_new.css') }}">
+
+<main class="all-new-shell">
+    <section class="all-new-topbar">
+        <div>
+            <div class="page-kicker">ამანათების სია</div>
+            <h1>ყველა ამანათი</h1>
+        </div>
+        <div class="topbar-actions">
+            <a href="/all" class="ghost-link">
+                <i class="bi bi-table"></i>
+                ძველი ვერსია
+            </a>
+            <a href="/add" class="primary-link">
+                <i class="bi bi-plus-lg"></i>
+                დამატება
+            </a>
+        </div>
+    </section>
+
+    <section class="filter-panel" aria-label="ფილტრები">
+        <div class="city-tabs" role="tablist" aria-label="მიღების ქალაქი">
+            <button class="city-tab active" type="button" data-destination-city="all">ყველა</button>
+            <button class="city-tab" type="button" data-destination-city="Moscow">მოსკოვი</button>
+            <button class="city-tab" type="button" data-destination-city="S.P.B">სანქტ-პეტერბურგი</button>
+        </div>
+
+        <div class="filter-grid">
+            <label class="filter-field filter-field-wide">
+                <span>სწრაფი ძებნა</span>
+                <div class="field-shell">
+                    <i class="bi bi-search"></i>
+                    <input id="filterSearch" type="search" placeholder="სახელი, ტელეფონი, ნომერი, აღწერა">
+                </div>
+            </label>
+
+            <label class="filter-field">
+                <span>გამგზავნის ქალაქი</span>
+                <select id="filterOriginCitySelect">
+                    <option value="all">ყველა ქალაქი</option>
+                    <option value="Tbilisi">თბილისი</option>
+                    <option value="Batumi">ბათუმი</option>
+                </select>
+            </label>
+
+            <label class="filter-field">
+                <span>გადახდა</span>
+                <select id="filterPayment">
+                    <option value="">ნებისმიერი</option>
+                    <option value="paid">გადახდილია</option>
+                    <option value="due">მიღებისას</option>
+                </select>
+            </label>
+
+            <label class="filter-field">
+                <span>სტატუსი</span>
+                <select id="filterStatus">
+                    <option value="">ნებისმიერი</option>
+                    <option value="active">აქტიური</option>
+                    <option value="issued">გაცემული</option>
+                    <option value="ready">გასაგზავნად მზად</option>
+                </select>
+            </label>
+
+            <label class="filter-field">
+                <span>გამგზავნი</span>
+                <input id="filterSender" type="text" placeholder="სახელი ან გვარი">
+            </label>
+
+            <label class="filter-field">
+                <span>გამგზავნის ტელეფონი</span>
+                <input id="filterSenderPhone" type="text" inputmode="tel" placeholder="+7...">
+            </label>
+
+            <label class="filter-field">
+                <span>მიმღები</span>
+                <input id="filterRecipient" type="text" placeholder="სახელი ან გვარი">
+            </label>
+
+            <label class="filter-field">
+                <span>მიმღების ტელეფონი</span>
+                <input id="filterRecipientPhone" type="text" inputmode="tel" placeholder="+995...">
+            </label>
+        </div>
+
+        <div class="date-row">
+            <div class="range-tabs" aria-label="პერიოდი">
+                <button class="range-tab active" type="button" data-range="">ყველა თარიღი</button>
+                <button class="range-tab" type="button" data-range="today">დღეს</button>
+                <button class="range-tab" type="button" data-range="week">კვირა</button>
+                <button class="range-tab" type="button" data-range="month">თვე</button>
+                <button class="range-tab" type="button" data-range="custom">საკუთარი პერიოდი</button>
+            </div>
+            <div class="custom-dates" id="customDates" hidden>
+                <label>
+                    <span>დან</span>
+                    <input id="filterDateFrom" type="datetime-local">
+                </label>
+                <label>
+                    <span>მდე</span>
+                    <input id="filterDateTo" type="datetime-local">
+                </label>
+            </div>
+            <button class="reset-button" id="resetFilters" type="button">
+                <i class="bi bi-arrow-counterclockwise"></i>
+                გასუფთავება
+            </button>
+        </div>
+    </section>
+
+    <section class="analytics-grid" aria-label="ანალიტიკა">
+        <div class="metric-tile">
+            <span>ჩანაწერები</span>
+            <strong id="metricTotal">0</strong>
+        </div>
+        <div class="metric-tile">
+            <span>აქტიური / გაცემული</span>
+            <strong><span id="metricActive">0</span> / <span id="metricIssued">0</span></strong>
+        </div>
+        <div class="metric-tile">
+            <span>წონა</span>
+            <strong><span id="metricWeight">0</span> კგ</strong>
+        </div>
+        <div class="metric-tile accent-green">
+            <span>მოგება GEL</span>
+            <strong id="metricProfitGel">0</strong>
+        </div>
+        <div class="metric-tile accent-blue">
+            <span>მოგება RUB</span>
+            <strong id="metricProfitRub">0</strong>
+        </div>
+        <div class="metric-tile accent-amber">
+            <span>მისაღებია GEL / RUB</span>
+            <strong><span id="metricDueGel">0</span> / <span id="metricDueRub">0</span></strong>
+        </div>
+        <div class="metric-tile">
+            <span>მოსკოვი / სპბ</span>
+            <strong><span id="metricMoscow">0</span> / <span id="metricSpb">0</span></strong>
+        </div>
+        <div class="metric-tile">
+            <span>თბილისი / ბათუმი</span>
+            <strong><span id="metricTbilisi">0</span> / <span id="metricBatumi">0</span></strong>
+        </div>
+    </section>
+
+    <section class="list-toolbar">
+        <div>
+            <strong id="resultTitle">ნაპოვნია 0</strong>
+            <span id="resultMeta">მონაცემები იტვირთება</span>
+        </div>
+        <button class="soft-button" id="refreshList" type="button">
+            <i class="bi bi-arrow-clockwise"></i>
+            განახლება
+        </button>
+    </section>
+
+    <section class="parcel-list" id="parcelList" aria-live="polite"></section>
+
+    <div class="load-more-wrap">
+        <button class="load-more-button" id="loadMore" type="button" hidden>
+            <i class="bi bi-chevron-down"></i>
+            კიდევ 15
+        </button>
+    </div>
+</main>
+
+<div class="parcel-lightbox" id="imageLightbox" aria-hidden="true">
+    <button class="lightbox-close" id="closeLightbox" type="button" aria-label="დახურვა">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    <img id="lightboxImage" src="" alt="ამანათის ფოტო">
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+
+<div class="edit-overlay" id="editOverlay" aria-hidden="true">
+    <div class="edit-dialog" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+        <div class="edit-header">
+            <div>
+                <span>რედაქტირება</span>
+                <h2 id="editTitle">ამანათი</h2>
+            </div>
+            <button class="icon-button" id="closeEdit" type="button" aria-label="დახურვა">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <form id="editForm" class="edit-form">
+            <input type="hidden" id="editIdInput">
+            <label>
+                <span>გამგზავნი</span>
+                <input type="text" id="editSenderInput">
+            </label>
+            <label>
+                <span>გამგზავნის ტელეფონი</span>
+                <input type="text" id="editSenderPhoneInput">
+            </label>
+            <label>
+                <span>მიმღები</span>
+                <input type="text" id="editRecipientInput">
+            </label>
+            <label>
+                <span>მიმღების ტელეფონი</span>
+                <input type="text" id="editRecipientPhoneInput">
+            </label>
+            <label class="edit-wide">
+                <span>აღწერა</span>
+                <textarea id="editInventoryTextarea" rows="3"></textarea>
+            </label>
+            <label>
+                <span>წონა</span>
+                <input type="text" id="editWeightInput">
+            </label>
+            <label>
+                <span>ტვირთის ღირებულება</span>
+                <input type="text" id="editResponsibilityInput">
+            </label>
+            <label>
+                <span>პასპორტი</span>
+                <input type="text" id="editPassportInput">
+            </label>
+            <label>
+                <span>გადახდა</span>
+                <input type="text" id="editCostInput">
+            </label>
+            <label>
+                <span>ქალაქი</span>
+                <select id="editCitySelect">
+                    <option value="Moscow">მოსკოვი</option>
+                    <option value="S.P.B">სანქტ-პეტერბურგი</option>
+                    <option value="Tbilisi">თბილისი</option>
+                    <option value="Batumi">ბათუმი</option>
+                </select>
+            </label>
+            <label>
+                <span>ფოტო</span>
+                <input type="file" id="editPhotoInput" accept="image/*">
+            </label>
+            <label class="toggle-line">
+                <input type="checkbox" id="editDepartureStatusCheckbox">
+                <span>გასაგზავნად მზადაა</span>
+            </label>
+            <div class="edit-footer">
+                <button class="soft-button" type="button" id="cancelEdit">გაუქმება</button>
+                <button class="primary-link" type="submit">
+                    <i class="bi bi-check2"></i>
+                    შენახვა
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="toast-stack" id="toastStack"></div>
+
+<script src="{{ url_for('static', filename='js/all/all_new.js') }}"></script>
+{% endblock %}

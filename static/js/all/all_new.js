@@ -74,6 +74,7 @@
   }
 
   function paymentLabel(item) {
+    if (item.payment_kind === 'mixed') return 'შერეული გადახდა';
     if (item.payment_kind === 'due') return 'მიღებისას';
     if (item.payment_is_card) return 'ბარათით გადახდილია';
     return 'გადახდილია';
@@ -167,7 +168,7 @@
   function parcelTemplate(item) {
     const issued = item.delivery === 'yes';
     const ready = item.departure_status === '+';
-    const paymentClass = item.payment_kind === 'due' ? 'due' : 'paid';
+    const paymentClass = item.payment_kind === 'mixed' ? 'mixed' : (item.payment_kind === 'due' ? 'due' : 'paid');
     const compactClass = issued ? 'issued compact' : '';
     const orderLabel = orderDate(item);
     const routeText = `${cityLabel(item.where_from)} -> ${cityLabel(item.city)}`;
@@ -256,7 +257,7 @@
             <div class="detail-item">
               <span class="data-label">გადახდა</span>
               <span class="pay-pill ${paymentClass}">
-                <i class="bi ${item.payment_kind === 'due' ? 'bi-exclamation-circle' : 'bi-check-circle'}"></i>
+                <i class="bi ${item.payment_kind === 'mixed' ? 'bi-shuffle' : (item.payment_kind === 'due' ? 'bi-exclamation-circle' : 'bi-check-circle')}"></i>
                 ${escapeHtml(paymentLabel(item))}
               </span>
               <span class="data-value">${escapeHtml(item.cost)}</span>

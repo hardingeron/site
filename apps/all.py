@@ -67,24 +67,57 @@ def _parse_date(value, end_of_day=False):
 
 
 def _money_parts(value):
-    text = str(value or '').upper()
-    match = re.search(r'([+-]?)\s*([0-9]+(?:[.,][0-9]+)?)\s*(GEL|RUB|USD|EUR)?', text)
-    if not match:
-        return None
+    text = str(value or '').upper().replace('\xa0', ' ')
+    entries = []
+    totals = {
+        'GEL': {'paid': 0, 'due': 0},
+        'RUB': {'paid': 0, 'due': 0},
+        'USD': {'paid': 0, 'due': 0},
+        'EUR': {'paid': 0, 'due': 0},
+    }
 
-    currency = match.group(3) or 'UNKNOWN'
-    if currency == 'UNKNOWN':
-        if 'LARI' in text or 'Ð›ÐÐ ' in text:
+    pattern = r'([+-]?)\s*([0-9]+(?:[.,][0-9]+)?)\s*(GEL|RUB|USD|EUR|₾|₽|ЛАРИ|РУБ|RUR)'
+    for match in re.finditer(pattern, text, flags=re.IGNORECASE):
+        sign = match.group(1) or '+'
+        amount = float(match.group(2).replace(',', '.'))
+        currency = match.group(3).upper()
+
+        if currency in ('₾', 'ЛАРИ'):
             currency = 'GEL'
-        elif 'RUR' in text or 'Ð Ð£Ð‘' in text:
+        elif currency in ('₽', 'РУБ', 'RUR'):
             currency = 'RUB'
 
+        bucket = 'due' if sign == '-' else 'paid'
+        totals.setdefault(currency, {'paid': 0, 'due': 0})
+        totals[currency][bucket] += amount
+        entries.append({
+            'sign': sign,
+            'amount': amount,
+            'currency': currency,
+            'is_due': bucket == 'due',
+        })
+
+    if not entries:
+        return None
+
+    has_paid = any(entry['sign'] != '-' for entry in entries)
+    has_due = any(entry['sign'] == '-' for entry in entries)
+
+    if has_paid and has_due:
+        kind = 'mixed'
+    elif has_due:
+        kind = 'due'
+    else:
+        kind = 'paid'
+
     return {
-        'sign': match.group(1) or '',
-        'amount': float(match.group(2).replace(',', '.')),
-        'currency': currency,
+        'entries': entries,
+        'totals': totals,
+        'kind': kind,
+        'currency': entries[0]['currency'],
+        'amount': entries[0]['amount'],
         'is_card': '\U0001f4b3' in str(value or ''),
-        'is_due': (match.group(1) or '') == '-',
+        'is_due': has_due,
     }
 
 
@@ -100,6 +133,29 @@ def _image_url(record):
     if image.startswith('/'):
         return image
     return '/' + image
+
+
+def _image_file_path(record):
+    if not record.image:
+        return None
+    image_path = record.image.replace('\\', os.sep).lstrip('/\\')
+    full_path = os.path.abspath(os.path.join(os.getcwd(), image_path))
+    static_path = os.path.abspath(os.path.join(os.getcwd(), 'static'))
+    if os.path.commonpath([full_path, static_path]) != static_path or not os.path.exists(full_path):
+        return None
+    return full_path
+
+
+def _image_version(record):
+    full_path = _image_file_path(record)
+    if not full_path:
+        return 0
+    return int(os.path.getmtime(full_path))
+
+
+def _versioned_url(url, version):
+    separator = '&' if '?' in url else '?'
+    return f'{url}{separator}v={version}' if version else url
 
 
 def _format_flight_date(value, fallback=''):
@@ -120,6 +176,9 @@ def _serialize_parcel(record):
     parts = _money_parts(record.cost)
     date_label = record.date.strftime('%d.%m.%Y %H:%M') if record.date else ''
     order_label = _format_flight_date(record.flight, date_label)
+    image_version = _image_version(record)
+    image_url = _versioned_url(_image_url(record), image_version)
+    thumbnail_url = _versioned_url(f'/all-new/image-thumb/{record.id}', image_version)
     return {
         'id': record.id,
         'number': record.number or '',
@@ -140,11 +199,12 @@ def _serialize_parcel(record):
         'order_label': order_label,
         'departure_status': record.departure_status or '',
         'delivery': record.delivery or 'no',
-        'image': _image_url(record),
-        'thumbnail': f'/all-new/image-thumb/{record.id}',
-        'payment_kind': 'due' if parts and parts['is_due'] else 'paid',
+        'image': image_url,
+        'thumbnail': thumbnail_url,
+        'payment_kind': parts['kind'] if parts else 'paid',
         'payment_currency': parts['currency'] if parts else '',
         'payment_amount': parts['amount'] if parts else 0,
+        'payment_totals': parts['totals'] if parts else {},
         'payment_is_card': bool(parts and parts['is_card']),
     }
 
@@ -210,9 +270,9 @@ def _apply_all_new_filters(query, params):
 
     payment = (params.get('payment') or '').strip()
     if payment == 'paid':
-        query = query.filter(Purcell.cost.startswith('+'))
+        query = query.filter(Purcell.cost.ilike('%+%'))
     elif payment == 'due':
-        query = query.filter(Purcell.cost.startswith('-'))
+        query = query.filter(Purcell.cost.ilike('%-%'))
 
     status = (params.get('status') or '').strip()
     if status == 'issued':
@@ -268,14 +328,11 @@ def _build_analytics(records):
         if not parts:
             continue
 
-        key = None
-        if parts['currency'] == 'GEL':
-            key = 'due_gel' if parts['is_due'] else 'profit_gel'
-        elif parts['currency'] == 'RUB':
-            key = 'due_rub' if parts['is_due'] else 'profit_rub'
-
-        if key:
-            analytics[key] += parts['amount']
+        totals = parts['totals']
+        analytics['profit_gel'] += totals.get('GEL', {}).get('paid', 0)
+        analytics['due_gel'] += totals.get('GEL', {}).get('due', 0)
+        analytics['profit_rub'] += totals.get('RUB', {}).get('paid', 0)
+        analytics['due_rub'] += totals.get('RUB', {}).get('due', 0)
 
     analytics['weight'] = round(analytics['weight'], 2)
     for key in ('profit_gel', 'profit_rub', 'due_gel', 'due_rub'):

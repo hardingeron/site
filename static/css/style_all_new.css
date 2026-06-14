@@ -630,6 +630,11 @@ body {
   background: var(--an-red-soft);
 }
 
+.pay-pill.mixed {
+  color: var(--an-amber);
+  background: var(--an-amber-soft);
+}
+
 .weight-value {
   color: #f05a28;
 }

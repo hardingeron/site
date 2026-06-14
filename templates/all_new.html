@@ -271,6 +271,29 @@
     </div>
 </div>
 
+<div class="add-close-choice" id="addCloseChoice" aria-hidden="true">
+    <div class="add-close-panel" role="dialog" aria-modal="true" aria-labelledby="addCloseTitle">
+        <div class="add-close-icon">
+            <i class="bi bi-eraser"></i>
+        </div>
+        <h3 id="addCloseTitle">დახურვამდე გავასუფთავოთ ფორმა?</h3>
+        <p>შეგიძლიათ დახუროთ შევსებული ფორმის შენარჩუნებით ან სრულად გაასუფთავოთ ველები.</p>
+        <div class="add-close-actions">
+            <button class="primary-link" type="button" data-add-close-choice="clear">
+                <i class="bi bi-check2"></i>
+                გასუფთავება
+            </button>
+            <button class="ghost-link" type="button" data-add-close-choice="keep">
+                <i class="bi bi-x-lg"></i>
+                დახურვა
+            </button>
+            <button class="soft-button" type="button" data-add-close-choice="cancel">
+                დაბრუნება
+            </button>
+        </div>
+    </div>
+</div>
+
 <div class="toast-stack" id="toastStack"></div>
 
 <script src="{{ url_for('static', filename='js/all/all_new.js') }}"></script>

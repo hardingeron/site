@@ -1,3 +1,42 @@
+function resetParcelForm() {
+    const form = document.querySelector("form");
+    if (!form) return;
+
+    form.querySelectorAll("input, textarea, select").forEach((field) => {
+        field.style.border = "";
+
+        if (field.type === "checkbox" || field.type === "radio") {
+            field.checked = false;
+            return;
+        }
+
+        if (field.type === "file") {
+            field.value = "";
+            return;
+        }
+
+        field.value = "";
+    });
+
+    const recordSelect = document.getElementById("record-select");
+    if (recordSelect && window.jQuery) {
+        window.jQuery(recordSelect).val("").trigger("change");
+    }
+
+    const charCount = document.getElementById("charCount");
+    if (charCount) {
+        charCount.textContent = "დარჩა 200 სიმბოლო";
+    }
+}
+
+window.vipostResetAddForm = resetParcelForm;
+
+window.addEventListener("message", function (event) {
+    if (event.origin !== window.location.origin) return;
+    if (!event.data || event.data.type !== "vipost:reset-add-form") return;
+    resetParcelForm();
+});
+
 document.querySelector("form").addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -116,34 +155,7 @@ document.querySelector("form").addEventListener("submit", function (event) {
                     timer: 5000
                 });
 
-                document.querySelector("input[name='sender']").value = "";
-                document.querySelector("input[name='sender_phone']").value = "";
-                document.querySelector("input[name='recipient']").value = "";
-                document.querySelector("input[name='recipient_phone']").value = "";
-                document.querySelector("textarea[name='inventory']").value = "";
-                document.querySelector("input[name='weight']").value = "";
-                document.querySelector("input[name='responsibility']").value = "";
-                document.querySelector("input[name='passport']").value = "";
-                document.querySelector("input[name='cost']").value = "";
-                document.querySelector("select[name='city']").value = "";
-
-                const selectedPayment = document.querySelector("input[name='payment']:checked");
-                if (selectedPayment) {
-                    selectedPayment.checked = false;
-                }
-
-                const selectedCurrency = document.querySelector("input[name='payment_currency']:checked");
-                if (selectedCurrency) {
-                    selectedCurrency.checked = false;
-                }
-
-                document.getElementById("photo").value = "";
-                document.getElementById("departureStatus").checked = false;
-
-                const autoPriceCheckbox = document.getElementById("autoPrice");
-                if (autoPriceCheckbox) {
-                    autoPriceCheckbox.checked = false;
-                }
+                resetParcelForm();
             } else {
                 Swal.fire({
                     icon: "error",

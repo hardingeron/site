@@ -24,7 +24,10 @@
     editForm: document.getElementById('editForm'),
     addOverlay: document.getElementById('addOverlay'),
     addFrame: document.getElementById('addParcelFrame'),
+    addCloseChoice: document.getElementById('addCloseChoice'),
   };
+
+  let addCloseResolve = null;
 
   const filterIds = [
     'filterSearch',
@@ -451,9 +454,56 @@
     els.addOverlay.setAttribute('aria-hidden', 'false');
   }
 
-  function closeAddParcel() {
+  function closeAddParcel(options) {
+    const config = options || {};
+    if (addCloseResolve) {
+      const resolve = addCloseResolve;
+      addCloseResolve = null;
+      setAddCloseChoice(false);
+      resolve('cancel');
+    }
+    if (config.clear) {
+      resetAddParcelForm();
+    }
     els.addOverlay.classList.remove('open');
     els.addOverlay.setAttribute('aria-hidden', 'true');
+  }
+
+  function resetAddParcelForm() {
+    if (!els.addFrame.contentWindow) return;
+    els.addFrame.contentWindow.postMessage({ type: 'vipost:reset-add-form' }, window.location.origin);
+  }
+
+  function setAddCloseChoice(open) {
+    els.addCloseChoice.classList.toggle('open', open);
+    els.addCloseChoice.setAttribute('aria-hidden', open ? 'false' : 'true');
+  }
+
+  function resolveAddCloseChoice(choice) {
+    if (!addCloseResolve) return;
+    const resolve = addCloseResolve;
+    addCloseResolve = null;
+    setAddCloseChoice(false);
+    resolve(choice);
+  }
+
+  function askAddCloseChoice() {
+    if (addCloseResolve) return Promise.resolve('cancel');
+    setAddCloseChoice(true);
+    return new Promise((resolve) => {
+      addCloseResolve = resolve;
+    });
+  }
+
+  async function requestCloseAddParcel() {
+    if (!els.addOverlay.classList.contains('open')) return;
+    const choice = await askAddCloseChoice();
+    if (choice === 'clear') {
+      closeAddParcel({ clear: true });
+    }
+    if (choice === 'keep') {
+      closeAddParcel();
+    }
   }
 
   async function submitEdit(event) {
@@ -608,9 +658,17 @@
       if (event.target === els.editOverlay) closeEdit();
     });
     document.getElementById('openAddParcel').addEventListener('click', openAddParcel);
-    document.getElementById('closeAddParcel').addEventListener('click', closeAddParcel);
+    document.getElementById('closeAddParcel').addEventListener('click', requestCloseAddParcel);
     els.addOverlay.addEventListener('click', (event) => {
-      if (event.target === els.addOverlay) closeAddParcel();
+      if (event.target === els.addOverlay) requestCloseAddParcel();
+    });
+    els.addCloseChoice.addEventListener('click', (event) => {
+      if (event.target === els.addCloseChoice) {
+        resolveAddCloseChoice('cancel');
+        return;
+      }
+      const choiceButton = event.target.closest('[data-add-close-choice]');
+      if (choiceButton) resolveAddCloseChoice(choiceButton.dataset.addCloseChoice);
     });
     window.addEventListener('message', (event) => {
       if (event.origin !== window.location.origin) return;
@@ -622,9 +680,16 @@
     els.editForm.addEventListener('submit', submitEdit);
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
+        if (els.addCloseChoice.classList.contains('open')) {
+          resolveAddCloseChoice('cancel');
+          return;
+        }
+        if (els.addOverlay.classList.contains('open')) {
+          requestCloseAddParcel();
+          return;
+        }
         closeImage();
         closeEdit();
-        closeAddParcel();
       }
     });
   }

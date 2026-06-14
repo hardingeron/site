@@ -936,8 +936,8 @@ body {
 .add-dialog {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  width: min(1120px, 96vw);
-  height: min(92vh, 980px);
+  width: min(1180px, calc(100vw - 44px));
+  height: min(94vh, 980px);
   overflow: hidden;
   background: #ffffff;
   border-radius: 8px;
@@ -949,7 +949,7 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  padding: 16px 18px;
+  padding: 12px 16px;
   border-bottom: 1px solid var(--an-line);
   background: #fbfcfd;
 }
@@ -972,7 +972,7 @@ body {
 
 .add-dialog-header h2 {
   margin: 2px 0 0;
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 850;
 }
 
@@ -981,6 +981,69 @@ body {
   height: 100%;
   border: 0;
   background: #f3f6f8;
+}
+
+.add-close-choice {
+  position: fixed;
+  inset: 0;
+  z-index: 2300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(10, 16, 24, 0.46);
+}
+
+.add-close-choice.open {
+  display: flex;
+}
+
+.add-close-panel {
+  width: min(520px, calc(100vw - 32px));
+  border: 1px solid var(--an-line);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+  padding: 24px;
+  text-align: center;
+}
+
+.add-close-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  color: var(--an-blue);
+  background: var(--an-blue-soft);
+  font-size: 24px;
+}
+
+.add-close-panel h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 850;
+  letter-spacing: 0;
+}
+
+.add-close-panel p {
+  margin: 8px auto 18px;
+  max-width: 390px;
+  color: var(--an-muted);
+  line-height: 1.5;
+}
+
+.add-close-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.add-close-actions > * {
+  min-width: 132px;
 }
 
 .edit-header {
@@ -1103,6 +1166,28 @@ body {
 
   .list-toolbar .soft-button {
     width: 100%;
+  }
+
+  .add-dialog {
+    width: min(100vw - 20px, 1180px);
+    height: min(94vh, 980px);
+  }
+
+  .add-dialog-header {
+    padding: 10px 12px;
+  }
+
+  .add-dialog-header h2 {
+    font-size: 19px;
+  }
+
+  .add-close-panel {
+    padding: 18px;
+  }
+
+  .add-close-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   .city-tabs,

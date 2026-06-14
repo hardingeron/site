@@ -22,6 +22,8 @@
     lightboxCaption: document.getElementById('lightboxCaption'),
     editOverlay: document.getElementById('editOverlay'),
     editForm: document.getElementById('editForm'),
+    addOverlay: document.getElementById('addOverlay'),
+    addFrame: document.getElementById('addParcelFrame'),
   };
 
   const filterIds = [
@@ -441,6 +443,19 @@
     document.getElementById('editPhotoInput').value = '';
   }
 
+  function openAddParcel() {
+    if (!els.addFrame.getAttribute('src')) {
+      els.addFrame.setAttribute('src', '/add?embedded=1');
+    }
+    els.addOverlay.classList.add('open');
+    els.addOverlay.setAttribute('aria-hidden', 'false');
+  }
+
+  function closeAddParcel() {
+    els.addOverlay.classList.remove('open');
+    els.addOverlay.setAttribute('aria-hidden', 'true');
+  }
+
   async function submitEdit(event) {
     event.preventDefault();
     const formData = new FormData();
@@ -592,11 +607,24 @@
     els.editOverlay.addEventListener('click', (event) => {
       if (event.target === els.editOverlay) closeEdit();
     });
+    document.getElementById('openAddParcel').addEventListener('click', openAddParcel);
+    document.getElementById('closeAddParcel').addEventListener('click', closeAddParcel);
+    els.addOverlay.addEventListener('click', (event) => {
+      if (event.target === els.addOverlay) closeAddParcel();
+    });
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (!event.data || event.data.type !== 'vipost:parcel-created') return;
+      closeAddParcel();
+      toast('ამანათი დაემატა', 'success');
+      reloadFromFirstPage();
+    });
     els.editForm.addEventListener('submit', submitEdit);
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         closeImage();
         closeEdit();
+        closeAddParcel();
       }
     });
   }

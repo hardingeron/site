@@ -15,6 +15,92 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
+    {% if request.args.get('embedded') == '1' %}
+    <style>
+        html,
+        body {
+            background: #f3f6f8 !important;
+            min-height: auto !important;
+            overflow-x: hidden !important;
+        }
+        .menu_block,
+        #ModalMenu,
+        #loading-screen {
+            display: none !important;
+        }
+        #page-content {
+            display: block !important;
+        }
+        .content {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .add-page {
+            background: #f3f6f8 !important;
+            min-height: auto !important;
+            padding: 14px 18px 24px !important;
+        }
+        .parcel-form-card.card,
+        .parcel-form-card {
+            background: #ffffff !important;
+            border: 1px solid #dbe3ea !important;
+            border-radius: 8px !important;
+            box-shadow: none !important;
+            margin: 0 auto !important;
+            max-width: 940px !important;
+            padding: 18px !important;
+            width: 100% !important;
+        }
+        .parcel-form-card .header-section {
+            display: none !important;
+        }
+        .quick-fill {
+            margin-bottom: 14px !important;
+            padding: 12px !important;
+        }
+        .parcel-form {
+            margin-top: 0 !important;
+        }
+        .custom-border {
+            padding: 13px !important;
+        }
+        .parcel-form-card .form-control,
+        .parcel-form-card .form-select,
+        .select2-container--default .select2-selection--single {
+            min-height: 42px !important;
+        }
+        .parcel-form-card textarea.form-control {
+            min-height: 86px !important;
+        }
+        .parcel-form-card .btn-primary {
+            margin-top: 2px !important;
+            min-width: 190px !important;
+        }
+        @media (max-width: 767px) {
+            .add-page {
+                padding: 10px !important;
+            }
+            .parcel-form-card {
+                padding: 14px !important;
+            }
+        }
+        body.embedded-add #page-content {
+            display: block !important;
+        }
+    </style>
+    <script>
+        document.documentElement.classList.add('embedded-add');
+        document.body?.classList.add('embedded-add');
+        window.addEventListener('DOMContentLoaded', function () {
+            document.body.classList.add('embedded-add');
+        });
+    </script>
+    <style>
+        .embedded-add .add-page {
+            min-height: auto !important;
+        }
+    </style>
+    {% endif %}
 
 
     <div class="add-page">

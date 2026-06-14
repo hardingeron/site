@@ -18,10 +18,10 @@
                 <i class="bi bi-table"></i>
                 ძველი ვერსია
             </a>
-            <a href="/add" class="primary-link">
+            <button id="openAddParcel" class="primary-link" type="button">
                 <i class="bi bi-plus-lg"></i>
                 დამატება
-            </a>
+            </button>
         </div>
     </section>
 
@@ -253,6 +253,21 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+<div class="add-overlay" id="addOverlay" aria-hidden="true">
+    <div class="add-dialog" role="dialog" aria-modal="true" aria-labelledby="addParcelTitle">
+        <div class="add-dialog-header">
+            <div>
+                <span>ახალი ჩანაწერი</span>
+                <h2 id="addParcelTitle">ამანათის გაფორმება</h2>
+            </div>
+            <button class="icon-button" id="closeAddParcel" type="button" aria-label="დახურვა">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <iframe id="addParcelFrame" title="ამანათის გაფორმება" loading="lazy"></iframe>
     </div>
 </div>
 

@@ -34,11 +34,17 @@ body {
 }
 
 .all-new-topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
+  display: grid;
+  justify-content: center;
+  justify-items: center;
+  gap: 12px;
   margin-bottom: 18px;
+  text-align: center;
+}
+
+.all-new-topbar > div:first-child {
+  display: grid;
+  justify-items: center;
 }
 
 .page-kicker {
@@ -62,7 +68,12 @@ body {
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: center;
+}
+
+.topbar-actions .ghost-link,
+.topbar-actions .primary-link {
+  min-width: 170px;
 }
 
 .ghost-link,
@@ -864,7 +875,8 @@ body {
 }
 
 .parcel-lightbox,
-.edit-overlay {
+.edit-overlay,
+.add-overlay {
   position: fixed;
   inset: 0;
   z-index: 2000;
@@ -876,7 +888,8 @@ body {
 }
 
 .parcel-lightbox.open,
-.edit-overlay.open {
+.edit-overlay.open,
+.add-overlay.open {
   display: flex;
 }
 
@@ -918,6 +931,56 @@ body {
   background: #ffffff;
   border-radius: 8px;
   box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
+}
+
+.add-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(1120px, 96vw);
+  height: min(92vh, 980px);
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34);
+}
+
+.add-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--an-line);
+  background: #fbfcfd;
+}
+
+.add-dialog-header .icon-button,
+.edit-header .icon-button {
+  flex: 0 0 42px;
+  width: 42px;
+  min-width: 42px;
+  height: 42px;
+  border-radius: 8px;
+}
+
+.add-dialog-header span {
+  color: var(--an-muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.add-dialog-header h2 {
+  margin: 2px 0 0;
+  font-size: 24px;
+  font-weight: 850;
+}
+
+.add-dialog iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #f3f6f8;
 }
 
 .edit-header {
@@ -1016,18 +1079,28 @@ body {
     margin-top: 14px;
   }
 
-  .all-new-topbar,
+  .all-new-topbar {
+    align-items: center;
+  }
+
   .list-toolbar {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .topbar-actions,
-  .list-toolbar .soft-button {
-    justify-content: stretch;
+  .topbar-actions {
+    justify-content: center;
+    width: 100%;
   }
 
-  .topbar-actions > *,
+  .list-toolbar .soft-button {
+    justify-content: center;
+  }
+
+  .topbar-actions > * {
+    width: min(100%, 260px);
+  }
+
   .list-toolbar .soft-button {
     width: 100%;
   }

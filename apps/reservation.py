@@ -18,6 +18,7 @@ from datetime import datetime
 from openpyxl.drawing.image import Image
 
 BLACKLIST_PATH = os.path.join(os.getcwd(), "documents", "reservation_blacklist.json")
+RESERVATION_BUS_SEATS = 57
 
 
 def ensure_blacklist_file():
@@ -71,7 +72,7 @@ def find_blacklist_match(phone, passport):
 
 
 def build_reservation_state_payload(selected_date, reis):
-    reservation_data = get_reservation_data(selected_date, reis, 55)
+    reservation_data = get_reservation_data(selected_date, reis, RESERVATION_BUS_SEATS)
     seat_data = {}
 
     for seat_number, seat in reservation_data.get("seat_data", {}).items():
@@ -113,7 +114,7 @@ class ReservationView(MethodView):
 
         selected_date = request.args.get('date')
         reis = request.args.get('route')
-        reservation_data = get_reservation_data(selected_date, reis, 55)
+        reservation_data = get_reservation_data(selected_date, reis, RESERVATION_BUS_SEATS)
         return render_template('reservation.html', **reservation_data)
 
 

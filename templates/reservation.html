@@ -61,7 +61,7 @@
       </h1>
       <div class="bus">
         <div class="bus-seats">
-          {% for seat_number in [1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 39, 43, 47, 51] %}
+          {% for seat_number in [1, 5, 9, 13, 17, 21, 25, 29, 33, 35, 37, 41, 45, 49] %}
               {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
               {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
                                       else 'female_seats' if seat['gender'] == 'female'
@@ -83,7 +83,7 @@
         
         
         <div class="bus-seats_2">
-          {% for seat_number in [2, 6, 10, 14, 18, 22, 26, 30, 34, 38, 40, 44, 48, 52] %}
+          {% for seat_number in [2, 6, 10, 14, 18, 22, 26, 30, 34, 36, 38, 42, 46, 50] %}
           {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
           {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
                                   else 'female_seats' if seat['gender'] == 'female'
@@ -106,8 +106,7 @@
           <div class="defit_block"></div>
 
           <div class="bus-seats_3">
-            <div class="door"></div>
-            {% for seat_number in [3, 7, 11, 15, 19, 23, 27, 31, 35, 41, 45, 49] %}
+            {% for seat_number in [3, 7, 11, 15, 19, 23, 27, 31, 39, 43, 47, 51] %}
             {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
             {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
                                     else 'female_seats' if seat['gender'] == 'female'
@@ -124,7 +123,8 @@
                     <div class="payment">{{ seat['payment'] }}</div>
                 </div>
               </div>
-              {% if seat_number == 27 %}
+              {% if seat_number == 31 %}
+                <div class="door"></div>
                 <div class="door"></div>
               {% endif %}
             {% endfor %}
@@ -132,8 +132,7 @@
           
           
           <div class="bus-seats_4">
-            <div class="door"></div>
-            {% for seat_number in [4, 8, 12, 16, 20, 24, 28, 32, 36, 42, 46, 50] %}
+            {% for seat_number in [4, 8, 12, 16, 20, 24, 28, 32, 40, 44, 48, 52] %}
             {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
             {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
                                     else 'female_seats' if seat['gender'] == 'female'
@@ -150,7 +149,8 @@
                     <div class="payment">{{ seat['payment'] }}</div>
                 </div>
               </div>
-              {% if seat_number == 28 %}
+              {% if seat_number == 32 %}
+                <div class="door"></div>
                 <div class="door"></div>
               {% endif %}
             {% endfor %}
@@ -162,7 +162,7 @@
 
         </div>
         <div class="bus-seats_5">
-          {% for seat_number in [57, 56, 55, 54, 53] %}
+          {% for seat_number in [53, 54, 55, 56, 57] %}
           {% set seat = seat_data.get(seat_number, {'gender': 'none', 'name': '', 'phone': '', 'payment': '', 'action': '', 'comment': ''}) %}
           {% set gender_class = 'male_seats' if seat['gender'] == 'male' 
                                   else 'female_seats' if seat['gender'] == 'female'
@@ -1610,11 +1610,3 @@ document.addEventListener('visibilitychange', () => {
 
 
 {% endblock %}
-
-
-
-
-
-
-
-
